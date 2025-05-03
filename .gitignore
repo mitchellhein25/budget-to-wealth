@@ -1,0 +1,86 @@
+# --------------------
+# Global
+# --------------------
+.DS_Store
+Thumbs.db
+*.log
+.env*
+.env.*.local
+
+# Ignore system files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --------------------
+# Node.js / Frontend (React, React Native)
+# --------------------
+node_modules/
+dist/
+build/
+*.tgz
+.npm/
+.npmrc
+.yarn*
+.expo/
+web-build/
+coverage/
+jest-coverage/
+*.expo
+*.expo-shared
+
+# React Native specific
+ios/build/
+ios/Pods/
+android/.gradle/
+android/app/build/
+android/build/
+*.keystore
+
+# ESLint / Prettier
+.eslintcache
+
+# --------------------
+# .NET / Backend
+# --------------------
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+
+# ASP.NET Secrets
+secrets.json
+
+# Dotnet tooling
+*.dbmdl
+*.bak
+*.sql
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.testresults
+
+# --------------------
+# Docker / CI
+# --------------------
+docker-compose.override.yml
+**/Dockerfile.*
+**/docker-compose*.yml
+*.pid
+
+# GitHub Actions
+.github/workflows/*.temp.*
+
+# --------------------
+# PostgreSQL / DB
+# --------------------
+pgdata/
+*.sql
+*.dump
