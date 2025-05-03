@@ -1,1 +1,1 @@
-# control-your-money
+# budget-to-wealth
