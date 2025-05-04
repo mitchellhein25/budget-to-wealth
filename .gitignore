@@ -4,8 +4,13 @@
 .DS_Store
 Thumbs.db
 *.log
-.env*
-.env.*.local
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+!env.template
 
 # Ignore system files
 .idea/
@@ -14,7 +19,7 @@ Thumbs.db
 *.swo
 
 # --------------------
-# Node.js / Frontend (React, React Native)
+# Node.js / Frontend
 # --------------------
 node_modules/
 dist/
@@ -27,10 +32,10 @@ build/
 web-build/
 coverage/
 jest-coverage/
-*.expo
-*.expo-shared
 
-# React Native specific
+# --------------------
+# React Native
+# --------------------
 ios/build/
 ios/Pods/
 android/.gradle/
@@ -50,7 +55,7 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
-*.vs/
+.vs/
 
 # ASP.NET Secrets
 secrets.json
@@ -72,15 +77,13 @@ TestResults/
 # --------------------
 docker-compose.override.yml
 **/Dockerfile.*
-**/docker-compose*.yml
 *.pid
 
-# GitHub Actions
+# GitHub Actions temp
 .github/workflows/*.temp.*
 
 # --------------------
 # PostgreSQL / DB
 # --------------------
 pgdata/
-*.sql
 *.dump
