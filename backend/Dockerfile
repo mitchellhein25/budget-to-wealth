@@ -1,5 +1,6 @@
 # Base runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /app
 EXPOSE 80
 
@@ -24,4 +25,4 @@ RUN ls -al /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "BudgetToWealthApi.dll"]
+ENTRYPOINT ["dotnet", "BudgetToWealthApi.dll", "--urls", "http://0.0.0.0:80"]
