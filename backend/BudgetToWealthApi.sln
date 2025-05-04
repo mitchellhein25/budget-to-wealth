@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetToWealthApi", "BudgetToWealthApi.csproj", "{BD9022B0-4EAF-C859-B1E7-47D3C9BB7348}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetToWealthApi", "BudgetToWealthApi/BudgetToWealthApi.csproj", "{BD9022B0-4EAF-C859-B1E7-47D3C9BB7348}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
