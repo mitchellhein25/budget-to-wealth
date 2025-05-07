@@ -21,9 +21,9 @@ public class ApplicationDbContext : DbContext
 
         
         modelBuilder.Entity<ExpenseCategory>().HasData(
-            new ExpenseCategory { Id = 1, Name = "Groceries", UserId = null },
-            new ExpenseCategory { Id = 2, Name = "Utilities", UserId = null },
-            new ExpenseCategory { Id = 3, Name = "Transportation", UserId = null }
+            new ExpenseCategory { Id = Guid.NewGuid(), Name = "Groceries", UserId = null },
+            new ExpenseCategory { Id = Guid.NewGuid(), Name = "Utilities", UserId = null },
+            new ExpenseCategory { Id = Guid.NewGuid(), Name = "Transportation", UserId = null }
         );
     }
 }

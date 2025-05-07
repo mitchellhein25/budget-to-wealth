@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 [Route("api/[controller]")]
 public class ExpenseCategoriesController : ControllerBase
 {
+    private const string ConflictMessage = "Category already exists.";
+    private const string NameRequiredMessage = "Category name cannot be empty.";
     private readonly ApplicationDbContext _context;
 
     public ExpenseCategoriesController(ApplicationDbContext context)
@@ -22,7 +24,7 @@ public class ExpenseCategoriesController : ControllerBase
             return Unauthorized();
 
         List<ExpenseCategory> categories = await _context.ExpenseCategories
-            .Where(category => category.IsDefault || category.UserId == userId)
+            .Where(category => category.UserId == null || category.UserId == userId)
             .ToListAsync();
 
         return Ok(categories);
@@ -35,8 +37,15 @@ public class ExpenseCategoriesController : ControllerBase
         if (userId == null) 
             return Unauthorized();
 
-        category.UserId = userId;
+        if (string.IsNullOrWhiteSpace(category.Name)) 
+            return BadRequest(NameRequiredMessage);
 
+        var exists = await _context.ExpenseCategories
+            .AnyAsync(c => c.Name.ToLowerInvariant() == category.Name.ToLowerInvariant() && (c.UserId == userId || c.UserId == null));
+        if (exists)
+            return Conflict(ConflictMessage);
+
+        category.UserId = userId;
         _context.ExpenseCategories.Add(category);
         await _context.SaveChangesAsync();
 
@@ -44,14 +53,18 @@ public class ExpenseCategoriesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ExpenseCategory updatedCategory)
+    public async Task<IActionResult> Update(Guid id, [FromBody] ExpenseCategory updatedCategory)
     {
         string? userId = User.GetUserId();
         if (userId == null) 
             return Unauthorized();
 
+        if (string.IsNullOrWhiteSpace(updatedCategory.Name)) 
+            return BadRequest(NameRequiredMessage);
+
         ExpenseCategory? category = await _context.ExpenseCategories
-            .FirstOrDefaultAsync(category => IsCategoryMatch(category, userId, id));
+            .FirstOrDefaultAsync(category => 
+                category.Id == id && (category.UserId == userId));
 
         if (category == null) 
             return NotFound();
@@ -66,14 +79,15 @@ public class ExpenseCategoriesController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         string? userId = User.GetUserId();
         if (userId == null) 
             return Unauthorized();
 
         ExpenseCategory? category = await _context.ExpenseCategories
-            .FirstOrDefaultAsync(category => IsCategoryMatch(category, userId, id));
+            .FirstOrDefaultAsync(category => 
+                category.Id == id && (category.UserId == userId || category.UserId == null));
 
         if (category == null) 
             return NotFound();
@@ -83,7 +97,4 @@ public class ExpenseCategoriesController : ControllerBase
 
         return NoContent();
     }
-
-    private bool IsCategoryMatch(ExpenseCategory category, string? userId, int newCategoryId) =>
-        category.Id == newCategoryId && (category.UserId == userId || category.IsDefault);
 }
