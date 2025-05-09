@@ -1,9 +1,11 @@
 FROM node:23.11.0 as build
 WORKDIR /app
 COPY . .
+EXPOSE 3000
 RUN npm install
-RUN npm run build
 
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
+FROM node:23.11.0 as dev
+WORKDIR /app
+COPY --from=build /app /app
+
+CMD ["npm", "run", "dev"]
