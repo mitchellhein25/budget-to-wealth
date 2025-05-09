@@ -26,8 +26,8 @@ jobs:
       - name: Build
         run: dotnet build backend/BudgetToWealthApi --no-restore
 
-      # - name: Run Tests
-      #   run: dotnet test backend/BudgetToWealthApi.Tests --no-build --logger "trx"
+      - name: Run Tests
+        run: dotnet test backend/BudgetToWealthApi.Tests --no-build --logger "trx"
 
   frontend:
     name: Frontend Jobs
@@ -53,8 +53,8 @@ jobs:
           cd frontend
           npm run build
 
-      # - name: Run Tests
-      #   run: |
-      #     cd frontend
-      #     npm test -- --ci
+      - name: Run Tests
+        run: |
+          cd frontend
+          npm test -- --ci
 
