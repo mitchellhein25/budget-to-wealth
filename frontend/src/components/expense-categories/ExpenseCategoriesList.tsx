@@ -8,13 +8,14 @@ type Category = {
 
 export default async function ExpenseCategoriesList() {
   const session = await auth0.getSession();
+  
   const res = await fetch('http://localhost:5000/api/ExpenseCategories', {
     headers: {
       Authorization: `Bearer ${session?.tokenSet.accessToken}`,
     },
     cache: 'no-store', // Or use 'force-cache' if data rarely changes
   });
-  console.log(res);
+  
   if (!res.ok) {
     return <p className="text-red-500">Failed to load categories.</p>;
   }
