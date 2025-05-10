@@ -20,8 +20,19 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
+app.UseCors("AllowLocalhost3000");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
