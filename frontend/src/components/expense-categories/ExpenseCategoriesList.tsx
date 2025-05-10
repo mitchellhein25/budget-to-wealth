@@ -1,4 +1,4 @@
-import { useExpenseCategories } from '@/hooks/useExpenseCategories';
+import { useExpenseCategories } from '@/api/expense-categories/getExpenseCategories';
 import React from 'react';
 
 export default async function ExpenseCategoriesList() {
