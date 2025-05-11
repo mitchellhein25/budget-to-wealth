@@ -1,3 +1,4 @@
+import ExpenseCategoriesForm from "@/components/expense-categories/ExpenseCategoriesForm";
 import ExpenseCategoriesList from "@/components/expense-categories/ExpenseCategoriesList";
 import { auth0 } from "@/lib/auth0";
 
@@ -9,6 +10,7 @@ export default async function ExpenseCategories() {
             <div>
                 <h1>Expense Categories</h1>
                 <ExpenseCategoriesList/>
+                <ExpenseCategoriesForm/>
             </div>
         )}
     </>

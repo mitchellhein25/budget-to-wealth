@@ -41,7 +41,7 @@ public class ExpenseCategoriesController : ControllerBase
             return BadRequest(NameRequiredMessage);
 
         var exists = await _context.ExpenseCategories
-            .AnyAsync(c => c.Name.ToLowerInvariant() == category.Name.ToLowerInvariant() && (c.UserId == userId || c.UserId == null));
+            .AnyAsync(c => EF.Functions.ILike(c.Name, category.Name) && (c.UserId == userId || c.UserId == null));
         if (exists)
             return Conflict(ConflictMessage);
 
@@ -63,8 +63,7 @@ public class ExpenseCategoriesController : ControllerBase
             return BadRequest(NameRequiredMessage);
 
         ExpenseCategory? category = await _context.ExpenseCategories
-            .FirstOrDefaultAsync(category => 
-                category.Id == id && (category.UserId == userId));
+            .FirstOrDefaultAsync(category => category.Id == id && (category.UserId == userId));
 
         if (category == null) 
             return NotFound();
@@ -86,8 +85,7 @@ public class ExpenseCategoriesController : ControllerBase
             return Unauthorized();
 
         ExpenseCategory? category = await _context.ExpenseCategories
-            .FirstOrDefaultAsync(category => 
-                category.Id == id && (category.UserId == userId || category.UserId == null));
+            .FirstOrDefaultAsync(category => category.Id == id && (category.UserId == userId || category.UserId == null));
 
         if (category == null) 
             return NotFound();

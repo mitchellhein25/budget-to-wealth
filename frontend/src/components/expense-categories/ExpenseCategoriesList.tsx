@@ -1,16 +1,24 @@
-import { useExpenseCategories } from '@/api/expense-categories/getExpenseCategories';
+import { getExpenseCategories } from '@/api/expense-categories/getExpenseCategories';
+import { ExpenseCategory } from '@/models/ExpenseCategory';
 import React from 'react';
 
 export default async function ExpenseCategoriesList() {
-  let categories = [];
+  let categories: ExpenseCategory[] = [];
 
-  try {
-    categories = await useExpenseCategories();
-  } catch (error) {
+  let error = false;
+  let errorMessage = '';
+  const { data, responseMessage, successful } = await getExpenseCategories();
+  categories = data;
+  if (!successful) {
+    errorMessage = responseMessage;
+    error = true;
+  }
+
+  if (error) {
     return (
       <div className="p-4 rounded-md bg-red-50 border border-red-200 text-red-700 shadow">
         <h2 className="text-lg font-semibold">Failed to load categories</h2>
-        <p className="text-sm mt-1">{(error as Error).message}</p>
+        <p className="text-sm mt-1">{errorMessage}</p>
       </div>
     );
   }

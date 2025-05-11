@@ -1,4 +1,4 @@
 export type ExpenseCategory = {
-  id: number;
+  id?: number;
   name: string;
 };
