@@ -1,5 +1,5 @@
+import { getAccessToken } from '../auth/getAccessToken';
 import { API_BASE_URL } from './apiVariables';
-import { getAccessToken } from './getAccessToken';
 
 
 export enum HttpMethod {

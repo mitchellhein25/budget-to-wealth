@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import ExpenseCategoriesList from '@/components/expense-categories/ExpenseCategoriesList';
-import * as expenseHook from '@/api/expense-categories/getExpenseCategories';
+import ExpenseCategoriesList from '@/app/ui/components/expense-categories/ExpenseCategoriesList';
+import * as expenseHook from '@/app/lib/api/expense-categories/getExpenseCategories';
 
 jest.mock('@/hooks/useExpenseCategories');
 

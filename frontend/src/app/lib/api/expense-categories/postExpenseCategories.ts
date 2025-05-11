@@ -1,6 +1,6 @@
 'use server'
-import { fetchWithAuth, HttpMethod } from '@/lib/apiClient';
-import { ExpenseCategory } from '@/models/ExpenseCategory';
+import { ExpenseCategory } from '@/app/lib/models/ExpenseCategory';
+import { fetchWithAuth, HttpMethod } from '../apiClient';
 
 export async function postExpenseCategories(expenseCategory: ExpenseCategory): Promise<{data: ExpenseCategory, responseMessage: string, successful: boolean}> {
   return await fetchWithAuth<ExpenseCategory>(
