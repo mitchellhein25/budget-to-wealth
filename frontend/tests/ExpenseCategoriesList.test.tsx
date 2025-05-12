@@ -2,16 +2,20 @@ import { render, screen, waitFor } from '@testing-library/react';
 import ExpenseCategoriesList from '@/app/ui/components/expense-categories/ExpenseCategoriesList';
 import * as expenseHook from '@/app/lib/api/expense-categories/getExpenseCategories';
 
-jest.mock('@/hooks/useExpenseCategories');
+jest.mock('@/app/lib/api/expense-categories/getExpenseCategories');
 
-const mockUseExpenseCategories = expenseHook.useExpenseCategories as jest.Mock;
+const mockGetExpenseCategories = expenseHook.getExpenseCategories as jest.Mock;
 
 describe('ExpenseCategoriesList', () => {
   it('renders list of categories correctly', async () => {
-    mockUseExpenseCategories.mockResolvedValue([
-      { id: 1, name: 'Food' },
-      { id: 2, name: 'Utilities' },
-    ]);
+    mockGetExpenseCategories.mockResolvedValue({
+      data: [
+        { id: 1, name: 'Food' },
+        { id: 2, name: 'Utilities' },
+      ],
+      responseMessage: '',
+      successful: true
+    });
 
     const component = await ExpenseCategoriesList()
     render(component);
@@ -24,24 +28,35 @@ describe('ExpenseCategoriesList', () => {
   });
 
   it('renders empty state message when no categories exist', async () => {
-    mockUseExpenseCategories.mockResolvedValue([]);
+    mockGetExpenseCategories.mockResolvedValue({
+      data: [],
+      responseMessage: '',
+      successful: true
+    }); 
 
     const component = await ExpenseCategoriesList()
     render(component);
-
-    expect(screen.getByText('No Categories Found')).toBeInTheDocument();
-    expect(
-      screen.getByText("You haven’t added any expense categories yet.")
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('No Expense Categories Found')).toBeInTheDocument();
+      expect(
+        screen.getByText("You haven’t added any Expense Categories yet.")
+      ).toBeInTheDocument();
+    });
   });
 
   it('renders error message when fetch fails', async () => {
-    mockUseExpenseCategories.mockRejectedValue(new Error('Internal Server Error'));
+    mockGetExpenseCategories.mockResolvedValue({
+      data: [],
+      responseMessage: 'Internal Server Error',
+      successful: false
+    });
 
     const component = await ExpenseCategoriesList()
     render(component);
 
-    expect(screen.getByText('Failed to load categories')).toBeInTheDocument();
-    expect(screen.getByText(/Internal Server Error/)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Failed to load expense categories')).toBeInTheDocument();
+      expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
+    });
   });
 });

@@ -35,11 +35,14 @@ export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<{ da
     request.body = JSON.stringify(fetchOptions.body);
   }
 
-  const res = await fetch(`${API_BASE_URL}/${fetchOptions.endpoint}`, request);
-
-  if (!res.ok) 
-    return { data: {} as T, responseMessage: await res.text(), successful: res.ok };
-  
-  const data = await res.json() as T;
-  return { data, responseMessage: "", successful: res.ok };
+  try {
+    const res = await fetch(`${API_BASE_URL}/${fetchOptions.endpoint}`, request);
+    if (!res.ok) 
+      return { data: {} as T, responseMessage: await res.text(), successful: res.ok };
+    
+    const data = await res.json() as T;
+    return { data, responseMessage: "", successful: res.ok };
+  } catch (error) {
+    return { data: {} as T, responseMessage: `Error fetching data: ${error}`, successful: false };
+  }
 }
