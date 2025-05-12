@@ -1,5 +1,5 @@
 'use client';
-import React, { Component, useEffect, useState } from 'react';
+import React from 'react';
 
 type ListTemplateProps<T> = {
   items: T[];

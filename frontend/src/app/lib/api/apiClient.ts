@@ -12,7 +12,7 @@ export enum HttpMethod {
 type FetchOptions = {
   endpoint: string;
   method: HttpMethod;
-  body?: any;
+  body?: object;
 };
 
 export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<{ data: T; responseMessage: string, successful: boolean }> {
