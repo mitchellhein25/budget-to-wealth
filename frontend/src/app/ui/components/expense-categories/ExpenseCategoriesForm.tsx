@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import { postExpenseCategories } from '@/app/lib/api/expense-categories/postExpenseCategories';
 import { ExpenseCategory } from '@/app/lib/models/ExpenseCategory';

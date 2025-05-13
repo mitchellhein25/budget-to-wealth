@@ -1,6 +1,4 @@
-'use client';
-
-import React, { ReactElement, useState } from 'react';
+import React from 'react';
 import Form from 'next/form';
 import FormInputTemplate, { FormInputTemplateProps } from './FormInputTemplate';
 
