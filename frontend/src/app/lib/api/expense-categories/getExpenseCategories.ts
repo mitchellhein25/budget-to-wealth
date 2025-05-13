@@ -1,3 +1,4 @@
+'use server';
 import { fetchWithAuth, HttpMethod } from '@/app/lib/api/apiClient';
 import { ExpenseCategory } from '@/app/lib/models/ExpenseCategory';
 
