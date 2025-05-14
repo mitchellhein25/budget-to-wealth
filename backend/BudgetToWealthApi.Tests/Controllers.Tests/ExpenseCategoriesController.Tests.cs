@@ -1,68 +1,108 @@
-﻿using System.Security.Claims;
+﻿using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-public class ExpenseCategoriesControllerTests
+public class ExpenseCategoriesControllerTests : IDisposable
 {
     private const string ConflictMessage = "Category already exists.";
     private const string NameRequiredMessage = "Category name cannot be empty.";
-    private readonly string _defaultCatName = "Default";
-    private readonly string _userCatName = "User's";
-    private readonly string _otherUserCatName = "Another User's";
-    private readonly string _newCatName = "New Category";
+    private const string _testPrefix = "Test_";
+    private readonly string _defaultCatName = $"{_testPrefix}Test_Default";
+    private readonly string _userCatName = $"{_testPrefix}User's";
+    private readonly string _otherUserCatName = $"{_testPrefix}Another User's";
+    private readonly string _newCatName = $"{_testPrefix}New Category";
+    private readonly string _oldCatName = $"{_testPrefix}Old";
+    private readonly string _updatedCatName = $"{_testPrefix}Updated";
+    private readonly string _testOtherUserCat = $"{_testPrefix}OtherUser";
+    private readonly string _toDeleteCat = $"{_testPrefix}ToDelete";
     private readonly string _user1Id = "auth0|user1";
     private readonly string _user2Id = "auth0|user2";
-    private readonly Guid _cat1Guid = Guid.NewGuid();
-    private readonly Guid _cat2Guid = Guid.NewGuid();
-    private readonly Guid _cat3Guid = Guid.NewGuid();
     private ApplicationDbContext _context;
     private ExpenseCategoriesController _controller;
+    private readonly List<Guid> _testCategoryIds = new();
     public ExpenseCategoriesControllerTests()
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+        DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseNpgsql("Host=localhost;Port=5432;Database=budget_to_wealth_development;")
             .Options;
 
         _context = new ApplicationDbContext(options);
-        _context.ExpenseCategories.AddRange(
-            new ExpenseCategory { Id = _cat1Guid, Name = _defaultCatName, UserId = null },
-            new ExpenseCategory { Id = _cat2Guid, Name = _userCatName, UserId = _user1Id },
-            new ExpenseCategory { Id = _cat3Guid, Name = _otherUserCatName, UserId = _user2Id }
-        );
-        _context.SaveChanges();
+        
+        CleanupPreviousTestData();
+        
+        SetupTestData().Wait();
+        
         _controller = new ExpenseCategoriesController(_context);
+        SetupUserContext(_user1Id);
+    }
 
-        ResetUserContext();
+    private void CleanupPreviousTestData()
+    {
+        List<ExpenseCategory> categories = _context.ExpenseCategories.Where(c => 
+            c.Name.StartsWith(_testPrefix)).ToList();
+            
+        if (categories.Any())
+        {
+            _context.ExpenseCategories.RemoveRange(categories);
+            _context.SaveChanges();
+        }
+    }
+
+    private async Task SetupTestData()
+    {
+        await CreateTestCategory(_defaultCatName, null);
+        await CreateTestCategory(_userCatName, _user1Id);
+        await CreateTestCategory(_otherUserCatName, _user2Id);
+        _context.SaveChanges();
+    }
+
+    private void SetupUserContext(string userId)
+    {
+        List<Claim> claims = new() { new Claim(ClaimTypes.NameIdentifier, userId) };
+        ClaimsIdentity identity = new(claims, "TestAuthType");
+        ClaimsPrincipal claimsPrincipal = new(identity);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = claimsPrincipal }
+        };
     }
 
     private void SetUserUnauthorized()
     {
-        var claimsPrincipal = new ClaimsPrincipal();
-
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext { User = claimsPrincipal }
+            HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() }
         };
     }
-
-    private void ResetUserContext()
+    private async Task<ExpenseCategory> CreateTestCategory(string name, string userId = null)
     {
-        var claims = new List<Claim> { new Claim("sub", _user1Id) };
-        var identity = new ClaimsIdentity(claims, "TestAuthType");
-        var claimsPrincipal = new ClaimsPrincipal(identity);
+        ExpenseCategory category = new() { Name = name, UserId = userId };
+        _context.ExpenseCategories.Add(category);
+        await _context.SaveChangesAsync();
+        _testCategoryIds.Add(category.Id);
+        return category;
+    }
 
-        _controller.ControllerContext = new ControllerContext
+    public void Dispose()
+    {
+        foreach (Guid id in _testCategoryIds)
         {
-            HttpContext = new DefaultHttpContext { User = claimsPrincipal }
-        };
+            ExpenseCategory? category = _context.ExpenseCategories.Find(id);
+            if (category != null)
+                _context.ExpenseCategories.Remove(category);
+        }
+        _context.SaveChanges();
+        _context.Dispose();
     }
 
     [Fact]
     public async Task Get_ReturnsDefaultAndUserCategories()
     {
-        var result = await _controller.Get() as OkObjectResult;
-        var categories = Assert.IsAssignableFrom<IEnumerable<ExpenseCategory>>(result!.Value);
+        OkObjectResult? result = await _controller.Get() as OkObjectResult;
+        IEnumerable<ExpenseCategory> categories = Assert.IsAssignableFrom<IEnumerable<ExpenseCategory>>(result!.Value);
 
         Assert.Contains(categories, c => c.Name == _defaultCatName);
         Assert.Contains(categories, c => c.Name == _userCatName);
@@ -72,45 +112,47 @@ public class ExpenseCategoriesControllerTests
     [Fact]
     public async Task Create_AddsNewCategoryForUser()
     {
-        var newCategory = new ExpenseCategory { Name = _newCatName };
+        ExpenseCategory newCategory = new() { Name = _newCatName };
+        OkObjectResult? result = await _controller.Create(newCategory) as OkObjectResult;
+        ExpenseCategory? savedCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(c => c.Name == _newCatName);
 
-        var result = await _controller.Create(newCategory) as OkObjectResult;
+        if (savedCategory != null)
+            _testCategoryIds.Add(savedCategory.Id);
 
         Assert.NotNull(result);
-        var saved = await _context.ExpenseCategories.FirstOrDefaultAsync(c => c.Name == _newCatName);
-        Assert.Equal(_user1Id, saved!.UserId);
-        _context.ExpenseCategories.Remove(saved);
+        Assert.NotNull(savedCategory);
+        Assert.Equal(_user1Id, savedCategory!.UserId);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsDefault()
     {
-        var newCategory = new ExpenseCategory { Name = _defaultCatName };
-        var result = await _controller.Create(newCategory);
+        ExpenseCategory newCategory = new() { Name = _defaultCatName };
+        IActionResult result = await _controller.Create(newCategory);
 
-        var conflictResult = Assert.IsType<ConflictObjectResult>(result);    
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsExistingUserCategory()
     {
-        var newCategory = new ExpenseCategory { Name = _userCatName };
+        ExpenseCategory newCategory = new() { Name = _userCatName };
 
-        var result = await _controller.Create(newCategory);
+        IActionResult result = await _controller.Create(newCategory);
 
-        var conflictResult = Assert.IsType<ConflictObjectResult>(result);    
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowCategoryWithSameNameDifferentCasing()
     {
-        var newCategory = new ExpenseCategory { Name = _defaultCatName.ToLower() };
+        ExpenseCategory newCategory = new() { Name = _defaultCatName.ToLower() };
 
-        var result = await _controller.Create(newCategory);
+        IActionResult result = await _controller.Create(newCategory);
 
-        var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
@@ -120,37 +162,38 @@ public class ExpenseCategoriesControllerTests
     [InlineData(" ")]
     public async Task Create_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        var result = await _controller.Create(new ExpenseCategory { Name = invalidName });
+        IActionResult result = await _controller.Create(new ExpenseCategory { Name = invalidName });
 
-        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
     }
 
     [Fact]
     public async Task Update_ModifiesOwnedCategory()
     {
-        Guid updateGuid = Guid.NewGuid();
-        _context.ExpenseCategories.Add(new ExpenseCategory { Id = updateGuid, Name = "Old", UserId = _user1Id });
-        await _context.SaveChangesAsync();
+        ExpenseCategory oldCatCategory = await CreateTestCategory(_oldCatName, _user1Id);
 
-        string newName = "Updated";
-        var result = await _controller.Update(updateGuid, new ExpenseCategory { Name = newName }) as OkObjectResult;
+        string newName = _updatedCatName;
+        OkObjectResult? result = await _controller.Update(oldCatCategory.Id, new ExpenseCategory { Name = newName }) as OkObjectResult;
 
-        var updated = await _context.ExpenseCategories.FindAsync(updateGuid);
+        ExpenseCategory? updated = await _context.ExpenseCategories.FindAsync(oldCatCategory.Id);
+        Assert.NotNull(result);
         Assert.Equal(newName, updated?.Name);
     }
 
     [Fact]
     public async Task Update_DoesNotAllowModifyingOtherUsersCategory()
     {
-        var result = await _controller.Update(_cat3Guid, new ExpenseCategory { Name = "Updated" });
+        ExpenseCategory otherUserCategory = await CreateTestCategory(_testOtherUserCat, _user2Id);
+        IActionResult result = await _controller.Update(otherUserCategory.Id, new ExpenseCategory { Name = _updatedCatName });
         Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
     public async Task Update_DoesNotAllowModifyingDefaultCategories()
     {
-        var result = await _controller.Update(_cat1Guid, new ExpenseCategory { Name = "Updated" });
+        ExpenseCategory? defaultCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _defaultCatName);
+        IActionResult result = await _controller.Update(defaultCategory!.Id, new ExpenseCategory { Name = _updatedCatName });
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -160,30 +203,28 @@ public class ExpenseCategoriesControllerTests
     [InlineData(" ")]
     public async Task Update_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        var result = await _controller.Update(_cat2Guid, new ExpenseCategory { Name = invalidName });
+        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        IActionResult result = await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = invalidName });
 
-        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
     }
 
     [Fact]
     public async Task Delete_RemovesUserCategory()
     {
-        Guid deleteGuid = Guid.NewGuid();
-        string deleteName = "ToDelete";
-        _context.ExpenseCategories.Add(new ExpenseCategory { Id = deleteGuid, Name = deleteName, UserId = _user1Id });
-        await _context.SaveChangesAsync();
-
-        var result = await _controller.Delete(deleteGuid);
+        ExpenseCategory toDeleteCategory = await CreateTestCategory(_toDeleteCat, _user1Id);
+        IActionResult result = await _controller.Delete(toDeleteCategory.Id);
 
         Assert.IsType<NoContentResult>(result);
-        Assert.False(_context.ExpenseCategories.Any(c => c.Name == deleteName && c.UserId == _user1Id));
+        Assert.False(_context.ExpenseCategories.Any(c => c.Name == _toDeleteCat && c.UserId == _user1Id));
     }
 
     [Fact]
     public async Task Delete_DoesNotAllowDeletingOthersCategories()
     {
-        var result = await _controller.Delete(_cat3Guid);
+        ExpenseCategory? otherUserCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _otherUserCatName);
+        IActionResult result = await _controller.Delete(otherUserCategory!.Id);
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -195,15 +236,16 @@ public class ExpenseCategoriesControllerTests
     public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
     {
         SetUserUnauthorized();
-        var result = action switch
+        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        IActionResult result = action switch
         {
             "Get" => await _controller.Get(),
             "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
-            "Update" => await _controller.Update(_cat2Guid, new ExpenseCategory { Name = "Test" }),
-            "Delete" => await _controller.Delete(_cat2Guid),
+            "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
+            "Delete" => await _controller.Delete(userCategory!.Id),
             _ => throw new ArgumentOutOfRangeException()
         };
         Assert.IsType<UnauthorizedResult>(result);
-        ResetUserContext();
+        SetupUserContext(_user1Id);
     }
 }
