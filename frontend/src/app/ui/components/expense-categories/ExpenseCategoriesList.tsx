@@ -1,7 +1,7 @@
 import { getExpenseCategories } from '@/app/lib/api/expense-categories/getExpenseCategories';
 import React from 'react';
-import ListTemplate from '../list-template/ListTemplate';
 import { ExpenseCategory } from '@/app/lib/models/ExpenseCategory';
+import ExpenseCategoriesListClient from './ExpenseCategoriesListClient';
 
 export default async function ExpenseCategoriesList() {
   let expenseCategories: ExpenseCategory[] = [];
@@ -15,9 +15,8 @@ export default async function ExpenseCategoriesList() {
     isError = true;
   }
   return (
-    <ListTemplate<ExpenseCategory> 
-      items={expenseCategories}
-      itemName="Expense Categories"
+    <ExpenseCategoriesListClient 
+      expenseCategories={expenseCategories}
       errorMessage={errorMessage}
       isError={isError}
     />

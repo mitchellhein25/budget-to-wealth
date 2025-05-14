@@ -1,14 +1,22 @@
+'use client';
 import React from 'react';
-import ListCardTemplate, { ListCardTemplateProps } from './ListCardTemplate';
+import ListCardTemplate from './ListCardTemplate';
 
-type ListTemplateProps<T> = {
+export interface ListTemplateItem {
+  id?: number;
+  name: string;
+};
+
+type ListTemplateProps<T extends ListTemplateItem> = {
   items: T[];
   itemName: string,
   isError?: boolean;
   errorMessage?: string;
+  onEdit: (item: T) => void;
+  onDelete: (id?: number) => void;
 }
 
-export default function ListTemplate<T extends ListCardTemplateProps>(props: ListTemplateProps<T>) {
+export default function ListTemplate<T extends ListTemplateItem>(props: ListTemplateProps<T>) {
 
   if (props.isError) {
     return (
@@ -34,7 +42,12 @@ export default function ListTemplate<T extends ListCardTemplateProps>(props: Lis
       <ul className="space-y-2">
         {props.items.map((item, idx) => (
           <li key={idx}>
-            <ListCardTemplate name={item.name} />
+            <ListCardTemplate<T> 
+              item={item}
+              id={item.id}
+              name={item.name} 
+              onDelete={props.onDelete} 
+              onEdit={props.onEdit}/>
           </li>
         ))}
       </ul>

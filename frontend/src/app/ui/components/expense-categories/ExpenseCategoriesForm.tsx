@@ -8,9 +8,11 @@ export default function ExpenseCategoriesForm() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState<string | null>(null);
 
+  const nameField: string = 'Name';
+
   async function handleSubmit(formData: FormData) {
     setName('');
-    const name = formData.get('name') as string;
+    const name = formData.get(nameField) as string;
     const expenseCategory: ExpenseCategory = { name };
     const { responseMessage, successful } = await postExpenseCategories(expenseCategory);
     if (!successful) 
@@ -25,7 +27,7 @@ export default function ExpenseCategoriesForm() {
       buttonText='Create'
       inputFields={[
         {
-          labelString: 'Name',
+          labelString: nameField,
           type: 'text',
           value: name,
           setValue: setName
