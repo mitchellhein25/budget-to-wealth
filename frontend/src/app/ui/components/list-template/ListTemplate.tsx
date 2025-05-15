@@ -13,7 +13,7 @@ type ListTemplateProps<T extends ListTemplateItem> = {
   isError?: boolean;
   errorMessage?: string;
   onEdit: (item: T) => void;
-  onDelete: (id?: number) => void;
+  onDelete: (id: number) => void;
 }
 
 export default function ListTemplate<T extends ListTemplateItem>(props: ListTemplateProps<T>) {
@@ -40,15 +40,14 @@ export default function ListTemplate<T extends ListTemplateItem>(props: ListTemp
     <div className="p-6 rounded-xl bg-white dark:bg-gray-900 shadow-md border border-gray-200 dark:border-gray-700">
       <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">{props.itemName}</h2>
       <ul className="space-y-2">
-        {props.items.map((item, idx) => (
-          <li key={idx}>
-            <ListCardTemplate<T> 
-              item={item}
-              id={item.id}
-              name={item.name} 
-              onDelete={props.onDelete} 
-              onEdit={props.onEdit}/>
-          </li>
+        {props.items.sort((a, b) => a.name.localeCompare(b.name))
+          .map((item) => (
+            <li key={item.id}>
+              <ListCardTemplate<T> 
+                item={item}
+                onDelete={props.onDelete} 
+                onEdit={props.onEdit}/>
+            </li>
         ))}
       </ul>
     </div>

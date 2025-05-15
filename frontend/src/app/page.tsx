@@ -29,6 +29,9 @@ export default async function Home() {
                     <nav className="flex space-x-4">
                       <a href="/profile" className="text-gray-600 hover:text-gray-900">Profile</a>
                     </nav>
+                    <nav className="flex space-x-4">
+                      <a href="/expense-categories" className="text-gray-600 hover:text-gray-900">Expense Categories</a>
+                    </nav>
                   </div>
                 ) : (
                   <a href="/auth/login">

@@ -1,32 +1,31 @@
 'use client';
 import React, { useState } from 'react'
 import { Check, Pencil, Trash2, X } from 'lucide-react'
+import { ListTemplateItem } from './ListTemplate';
 
 export interface ListCardTemplateProps<T> {
   item: T;
-  id?: number;
-  name: string;
   onEdit: (item: T) => void;
-  onDelete: (id?: number) => void;
+  onDelete: (id: number) => void;
 }
 
-export default function ListCardTemplate<T>(props: ListCardTemplateProps<T>) {
+export default function ListCardTemplate<T extends ListTemplateItem>(props: ListCardTemplateProps<T>) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(props.name);
+  const [editedName, setEditedName] = useState(props.item.name);
 
   const handleSave = () => {
     setIsEditing(false);
-    if (editedName == props.name)
+    if (editedName == props.item.name)
       return;
     props.onEdit({
-      id: props.id,
+      id: props.item.id,
       name: editedName,
     } as T);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditedName(props.name);
+    setEditedName(props.item.name);
   };
 
   return (
@@ -40,7 +39,7 @@ export default function ListCardTemplate<T>(props: ListCardTemplateProps<T>) {
             autoFocus
           />
         ) : (
-          <span>{props.name}</span>
+          <span>{props.item.name}</span>
         )}
       </div>
       <div className="flex space-x-2">
@@ -64,6 +63,7 @@ export default function ListCardTemplate<T>(props: ListCardTemplateProps<T>) {
         ) : (
           <>
             <button
+              id="edit-button"
               onClick={() => setIsEditing(true)}
               className="p-1 text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200"
               aria-label="Edit"
@@ -71,7 +71,8 @@ export default function ListCardTemplate<T>(props: ListCardTemplateProps<T>) {
               <Pencil size={16} />
             </button>
             <button
-              onClick={() => props.onDelete(props.id)}
+              id="delete-button"
+              onClick={() => props.onDelete(props.item.id as number)}
               className="p-1 text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-200"
               aria-label="Delete"
             >

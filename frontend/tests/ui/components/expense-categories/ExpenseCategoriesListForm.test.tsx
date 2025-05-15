@@ -1,6 +1,6 @@
-import ExpenseCategoriesForm from "@/app/ui/components/expense-categories/ExpenseCategoriesForm";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import * as expenseHook from '@/app/lib/api/expense-categories/postExpenseCategories';
+import ExpenseCategories from "@/app/ui/components/expense-categories/ExpenseCategories";
 
 jest.mock('@/app/lib/api/expense-categories/postExpenseCategories');
 
@@ -14,16 +14,22 @@ describe('ExpenseCategoriesForm', () => {
     jest.clearAllMocks();
   });
 
+  function setupComponent() {
+    act(() => render(<ExpenseCategories isLoggedIn={true} />));
+  }
+
   it('renders the form correctly', () => {
-    render(<ExpenseCategoriesForm />);
+    setupComponent();
     expect(screen.getByLabelText(nameLabel)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: createButtonLabel })).toBeInTheDocument();
   });
 
   it('updates input value when typing', () => {
-    render(<ExpenseCategoriesForm />);
+    setupComponent();
     const input = screen.getByLabelText(nameLabel);
-    fireEvent.change(input, { target: { value: 'Utilities' } });
+    act(() => {
+      fireEvent.change(input, { target: { value: 'Utilities' } });
+    });
     expect(input).toHaveValue('Utilities');
   });
 
@@ -33,12 +39,14 @@ describe('ExpenseCategoriesForm', () => {
       responseMessage: '',
     });
 
-    render(<ExpenseCategoriesForm />);
+    setupComponent();
     const input = screen.getByLabelText(nameLabel);
     const button = screen.getByRole('button', { name: createButtonLabel });
 
-    fireEvent.change(input, { target: { value: 'Utilities' } });
-    fireEvent.click(button);
+    act(() => {
+      fireEvent.change(input, { target: { value: 'Utilities' } });
+      fireEvent.click(button);
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/created successfully/)).toBeInTheDocument();
@@ -51,12 +59,14 @@ describe('ExpenseCategoriesForm', () => {
       responseMessage: 'Category already exists',
     });
 
-    render(<ExpenseCategoriesForm />);
+    setupComponent();
     const input = screen.getByLabelText(nameLabel);
     const button = screen.getByRole('button', { name: createButtonLabel });
 
-    fireEvent.change(input, { target: { value: 'Rent' } });
-    fireEvent.click(button);
+    act(() => {
+      fireEvent.change(input, { target: { value: 'Rent' } });
+      fireEvent.click(button);
+    });
 
     await waitFor(() => {
       expect(screen.getByText(/Failed to create/)).toBeInTheDocument();
