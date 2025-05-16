@@ -1,21 +1,22 @@
-'use client';
-import { useUser } from "@auth0/nextjs-auth0"
+import { auth0 } from "@/app/lib/auth/auth0";
+import Image from "next/image";
 
-export default function Profile() {
-  const { user, isLoading } = useUser();
+export default async function Profile() {
+  const session = await auth0.getSession();
   return (
     <>
-      {isLoading && <p>Loading...</p>}
-      {user && (
+      {session?.user?.name && (
         <div style={{ textAlign: "center" }}>
-          <img
-            src={user.picture}
-            alt="Profile"
-            style={{ borderRadius: "50%", width: "80px", height: "80px" }}
-          />
-          <h2>{user.name}</h2>
-          <p>{user.email}</p>
-          <pre>{JSON.stringify(user, null, 2)}</pre>
+          {session?.user?.picture && (
+            <Image
+              src={session?.user?.picture}
+              alt="Profile"
+              style={{ borderRadius: "50%", width: "80px", height: "80px" }}
+            />
+          )}
+          <h2>{session?.user?.name}</h2>
+          <p>{session?.user?.email}</p>
+          <pre>{JSON.stringify(session?.user, null, 2)}</pre>
         </div>
       )}
     </>

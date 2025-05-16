@@ -1,5 +1,7 @@
 services:
   backend:
+    env_file:
+      - .env
     build: ./backend
     ports:
       - "5000:80"
@@ -9,12 +11,16 @@ services:
     depends_on:
       - db
   frontend:
+    env_file:
+      - .env
     build: ./frontend
     ports:
-      - "3000:80"
+      - "3000:3000"
     depends_on:
       - backend
   db:
+    env_file:
+      - .env
     image: postgres:17
     restart: always
     environment:
