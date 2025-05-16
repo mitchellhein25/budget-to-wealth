@@ -24,9 +24,7 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
   const endpoint: string = 'ExpenseCategories';
 
   async function fetchExpenseCategories() {
-    console.log("Fetching expense categories...");
     const response = await getRequest<ExpenseCategory>(endpoint);
-    console.log(response);
     setExpenseCategories(response.data as ExpenseCategory[]);
     if (!response.successful) {
       setErrorMessage(response.responseMessage);
