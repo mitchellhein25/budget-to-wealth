@@ -1,10 +1,10 @@
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
-import * as expenseHook from '@/app/lib/api/expense-categories/postExpenseCategories';
+import * as postRequestHook from '@/app/lib/api/rest-methods/postRequest';
 import ExpenseCategories from "@/app/ui/components/expense-categories/ExpenseCategories";
 
-jest.mock('@/app/lib/api/expense-categories/postExpenseCategories');
+jest.mock('@/app/lib/api/rest-methods/postRequest');
 
-const mockPostExpenseCategories = expenseHook.postExpenseCategories as jest.Mock;
+const mockPostExpenseCategories = postRequestHook.postRequest as jest.Mock;
 
 const nameLabel = "Name";
 const createButtonLabel = "Create";

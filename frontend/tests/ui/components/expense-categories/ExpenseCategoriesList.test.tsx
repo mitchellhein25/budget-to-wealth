@@ -1,17 +1,17 @@
 import { fireEvent, render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as getExpenseHook from '@/app/lib/api/expense-categories/getExpenseCategories';
-import * as putExpenseHook from '@/app/lib/api/expense-categories/putExpenseCategories';
-import * as deleteExpenseHook from '@/app/lib/api/expense-categories/deleteExpenseCategories';
+import * as getRequestHook from '@/app/lib/api/rest-methods/getRequest';
+import * as putRequestHook from '@/app/lib/api/rest-methods/putRequest';
+import * as deleteRequestHook from '@/app/lib/api/rest-methods/deleteRequest';
 import ExpenseCategories from '@/app/ui/components/expense-categories/ExpenseCategories';
 
-jest.mock('@/app/lib/api/expense-categories/getExpenseCategories');
-jest.mock('@/app/lib/api/expense-categories/putExpenseCategories');
-jest.mock('@/app/lib/api/expense-categories/deleteExpenseCategories');
+jest.mock('@/app/lib/api/rest-methods/getRequest');
+jest.mock('@/app/lib/api/rest-methods/putRequest');
+jest.mock('@/app/lib/api/rest-methods/deleteRequest');
 
-const mockGetExpenseCategories = getExpenseHook.getExpenseCategories as jest.Mock;
-const mockPutExpenseCategories = putExpenseHook.putExpenseCategories as jest.Mock;
-const mockDeleteExpenseCategories = deleteExpenseHook.deleteExpenseCategories as jest.Mock;
+const mockGetExpenseCategories = getRequestHook.getRequest as jest.Mock;
+const mockPutExpenseCategories = putRequestHook.putRequest as jest.Mock;
+const mockDeleteExpenseCategories = deleteRequestHook.deleteRequest as jest.Mock;
 
 const foodCategory = 'Food';
 const foodCategoryId = 1;
@@ -138,7 +138,7 @@ describe('ExpenseCategories', () => {
         fireEvent.click(saveButton);
       });
 
-      expect(mockPutExpenseCategories).toHaveBeenCalledWith({ id: 1, name: 'Updated Category' });
+      expect(mockPutExpenseCategories).toHaveBeenCalledWith("ExpenseCategories", 1, { id: 1, name: 'Updated Category' });
     });
 
     it('cancels changes when the cancel button is clicked', async () => {
@@ -179,7 +179,7 @@ describe('ExpenseCategories', () => {
         fireEvent.click(buttons[0]);
       });
 
-      expect(mockDeleteExpenseCategories).toHaveBeenCalledWith(1);
+      expect(mockDeleteExpenseCategories).toHaveBeenCalledWith("ExpenseCategories", 1);
       await waitFor(() => {
         expect(screen.queryByText(foodCategory)).not.toBeInTheDocument();
       });

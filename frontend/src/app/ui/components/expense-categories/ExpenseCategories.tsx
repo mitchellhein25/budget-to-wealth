@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { deleteExpenseCategories } from "@/app/lib/api/expense-categories/deleteExpenseCategories";
-import { putExpenseCategories } from "@/app/lib/api/expense-categories/putExpenseCategories";
+import { deleteRequest } from "@/app/lib/api/rest-methods/deleteRequest";
+import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { ExpenseCategory } from "@/app/lib/models/ExpenseCategory";
-import { getExpenseCategories } from "@/app/lib/api/expense-categories/getExpenseCategories";
+import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
 import ListTemplate from "@/app/ui/components/list-template/ListTemplate";
 import FormTemplate from "@/app/ui/components/form-template/FormTemplate";
-import { postExpenseCategories } from "@/app/lib/api/expense-categories/postExpenseCategories";
+import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
 
 interface ExpenseCategoriesProps {
   isLoggedIn: boolean;
@@ -21,10 +21,13 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
   const [message, setMessage] = useState<string | null>(null);
   
   const nameField: string = 'Name';
+  const endpoint: string = 'ExpenseCategories';
 
   async function fetchExpenseCategories() {
-    const response = await getExpenseCategories();
-    setExpenseCategories(response.data);
+    console.log("Fetching expense categories...");
+    const response = await getRequest<ExpenseCategory>(endpoint);
+    console.log(response);
+    setExpenseCategories(response.data as ExpenseCategory[]);
     if (!response.successful) {
       setErrorMessage(response.responseMessage);
       setIsError(true);
@@ -36,12 +39,15 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
   }, []);
 
   async function handleDelete(id: number) {
-    await deleteExpenseCategories(id);
+    await deleteRequest<ExpenseCategory>(endpoint, id);
     setExpenseCategories(prev => prev.filter(cat => cat.id !== id));
   };
 
   async function handleEdit(expenseCategory: ExpenseCategory) {
-    await putExpenseCategories(expenseCategory);
+    const response = await putRequest<ExpenseCategory>(endpoint, expenseCategory.id as number, expenseCategory);
+    if (!response.successful) {
+      return;
+    } 
     setExpenseCategories(prev => prev.map(cat => {
       if (cat.id === expenseCategory.id) {
         return { ...cat, name: expenseCategory.name };
@@ -55,12 +61,12 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
     setName('');
     const name = formData.get(nameField) as string;
     const expenseCategory: ExpenseCategory = { name };
-    const response = await postExpenseCategories(expenseCategory);
+    const response = await postRequest<ExpenseCategory>(endpoint, expenseCategory);
     if (!response.successful) 
       setMessage("Failed to create expense category: " + response.responseMessage);
-    else{
+    else {
       setMessage("Expense category created successfully.");
-    setExpenseCategories([...expenseCategories, response.data]);
+      setExpenseCategories([...expenseCategories, response.data as ExpenseCategory]);
     }
   }
 
