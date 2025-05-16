@@ -26,10 +26,7 @@ string? connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTI
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 if (connectionString != null && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://")))
 {
-    var uri = new Uri(connectionString);
-    var userInfo = uri.UserInfo.Split(':');
-    
-    connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
+    connectionString = DbStringService.ConvertPostgresUrlToConnectionString(connectionString);
 }
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
     options.UseNpgsql(connectionString));
