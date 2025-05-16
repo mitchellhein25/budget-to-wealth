@@ -35,8 +35,11 @@ describe('ExpenseCategories', () => {
     responseMessage: '',
     successful: true
   }) => {
-    mockGetExpenseCategories.mockResolvedValue(mockData);
-    await act(async () => render(<ExpenseCategories isLoggedIn={true} />));
+    await act(async () =>
+    {
+      mockGetExpenseCategories.mockResolvedValue(mockData);
+      render(<ExpenseCategories isLoggedIn={true} />)
+    });
   };
 
   const getNonNameTextbox = () => {

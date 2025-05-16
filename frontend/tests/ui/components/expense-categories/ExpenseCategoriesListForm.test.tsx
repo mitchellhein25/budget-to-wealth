@@ -14,18 +14,21 @@ describe('ExpenseCategoriesForm', () => {
     jest.clearAllMocks();
   });
 
-  function setupComponent() {
-    act(() => render(<ExpenseCategories isLoggedIn={true} />));
+  async function setupComponent() {
+    await act(async () =>
+    {
+      render(<ExpenseCategories isLoggedIn={true} />)
+    });
   }
 
-  it('renders the form correctly', () => {
-    setupComponent();
+  it('renders the form correctly', async () => {
+    await setupComponent();
     expect(screen.getByLabelText(nameLabel)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: createButtonLabel })).toBeInTheDocument();
   });
 
-  it('updates input value when typing', () => {
-    setupComponent();
+  it('updates input value when typing', async () => {
+    await setupComponent();
     const input = screen.getByLabelText(nameLabel);
     act(() => {
       fireEvent.change(input, { target: { value: 'Utilities' } });
@@ -39,7 +42,7 @@ describe('ExpenseCategoriesForm', () => {
       responseMessage: '',
     });
 
-    setupComponent();
+    await setupComponent();
     const input = screen.getByLabelText(nameLabel);
     const button = screen.getByRole('button', { name: createButtonLabel });
 
@@ -59,7 +62,7 @@ describe('ExpenseCategoriesForm', () => {
       responseMessage: 'Category already exists',
     });
 
-    setupComponent();
+    await setupComponent();
     const input = screen.getByLabelText(nameLabel);
     const button = screen.getByRole('button', { name: createButtonLabel });
 
