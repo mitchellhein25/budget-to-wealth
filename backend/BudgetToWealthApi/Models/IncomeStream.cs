@@ -1,8 +1,5 @@
 public class IncomeStream : BaseEntity
-{
-    public Guid Id { get; set; }
-
-    public string Name { get; set; } = null!;
-
-    public string? UserId { get; set; }
+{    
+    public required string Name { get; set; }
+    public required string UserId { get; set; }
 }

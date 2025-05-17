@@ -11,22 +11,27 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        SetCreatedAndUpdatedProperties<User>(modelBuilder);
-        SetCreatedAndUpdatedProperties<ExpenseCategory>(modelBuilder);
-        SetCreatedAndUpdatedProperties<IncomeStream>(modelBuilder);
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes()
+            .Where(e => typeof(IDbEntity).IsAssignableFrom(e.ClrType)))
+        {
+            SetDbProperties(modelBuilder, entityType.ClrType);
+        }
 
         SeedDefaultExpenseCategories(modelBuilder);
     }
 
-    private void SetCreatedAndUpdatedProperties<T>(ModelBuilder modelBuilder) where T : BaseEntity
+    private void SetDbProperties(ModelBuilder modelBuilder, Type entityType)
     {
-        modelBuilder.Entity<T>()
-            .Property(u => u.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-        modelBuilder.Entity<T>()
-            .Property(u => u.UpdatedAt)
+        modelBuilder.Entity(entityType)
+            .Property("Id")
+            .HasColumnType("uuid")
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("gen_random_uuid()");
+            
+        modelBuilder.Entity(entityType)
+            .Property("CreatedAt")
+            .HasColumnType("timestamp with time zone")
+            .ValueGeneratedOnAdd()
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 

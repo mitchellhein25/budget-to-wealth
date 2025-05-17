@@ -248,4 +248,31 @@ public class ExpenseCategoriesControllerTests : IDisposable
         Assert.IsType<UnauthorizedResult>(result);
         SetupUserContext(_user1Id);
     }
+
+    [Theory]
+    [InlineData("Create")]
+    [InlineData("Update")]
+    public async Task CreateAndUpdateDates(string action)
+    {
+        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        IActionResult result = action switch
+        {
+            "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
+            "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
+        };
+        OkObjectResult? okResult = result as OkObjectResult;
+        ExpenseCategory? category = Assert.IsType<ExpenseCategory>(okResult!.Value);
+        if (action == "Create")
+        {
+            Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
+            Assert.Equal(DateTime.MinValue, category.UpdatedAt);
+        }
+        if (action == "Update")
+        {
+            Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
+            Assert.NotEqual(DateTime.MinValue, category.UpdatedAt);
+            Assert.True(category.UpdatedAt > category.CreatedAt);
+            Assert.True(category.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
+        }
+    }
 }
