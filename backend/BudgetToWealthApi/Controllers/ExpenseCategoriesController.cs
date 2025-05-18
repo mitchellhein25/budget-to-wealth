@@ -69,7 +69,8 @@ public class ExpenseCategoriesController : ControllerBase
             return NotFound();
 
         category.Name = updatedCategory.Name;
-
+        category.UpdatedAt = DateTime.UtcNow;
+        
         _context.ExpenseCategories.Update(category);
 
         await _context.SaveChangesAsync();
