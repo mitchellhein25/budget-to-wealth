@@ -69,6 +69,7 @@ public class IncomeStreamsController : ControllerBase
             return NotFound();
 
         stream.Name = updatedCategory.Name;
+        stream.UpdatedAt = DateTime.UtcNow;
 
         _context.IncomeStreams.Update(stream);
 

@@ -1,60 +1,40 @@
-﻿using System.Runtime.CompilerServices;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 public class IncomeStreamsControllerTests : IDisposable
 {
     private const string ConflictMessage = "Stream already exists.";
     private const string NameRequiredMessage = "Stream name cannot be empty.";
     private const string _testPrefix = "Test_";
-    private readonly string _defaultCatName = $"{_testPrefix}Test_Default";
-    private readonly string _userCatName = $"{_testPrefix}User's";
-    private readonly string _otherUserCatName = $"{_testPrefix}Another User's";
-    private readonly string _newCatName = $"{_testPrefix}New Stream";
-    private readonly string _oldCatName = $"{_testPrefix}Old";
-    private readonly string _updatedCatName = $"{_testPrefix}Updated";
-    private readonly string _testOtherUserCat = $"{_testPrefix}OtherUser";
-    private readonly string _toDeleteCat = $"{_testPrefix}ToDelete";
+    private readonly string _defaultStreamName = $"{_testPrefix}Test_Default";
+    private readonly string _userStreamName = $"{_testPrefix}User's";
+    private readonly string _otherUserStreamName = $"{_testPrefix}Another User's";
+    private readonly string _newStreamName = $"{_testPrefix}New Stream";
+    private readonly string _oldStreamName = $"{_testPrefix}Old";
+    private readonly string _updatedStreamName = $"{_testPrefix}Updated";
+    private readonly string _testOtherUserStream = $"{_testPrefix}OtherUser";
+    private readonly string _toDeleteStream = $"{_testPrefix}ToDelete";
     private readonly string _user1Id = "auth0|user1";
     private readonly string _user2Id = "auth0|user2";
     private ApplicationDbContext _context;
-    private ExpenseCategoriesController _controller;
-    private readonly List<Guid> _testCategoryIds = new();
+    private IncomeStreamsController _controller;
+    private readonly IDbContextTransaction _transaction;
     public IncomeStreamsControllerTests()
     {
-        DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseNpgsql("Host=localhost;Port=5432;Database=budget_to_wealth_development;")
-            .Options;
-
-        _context = new ApplicationDbContext(options);
-        
-        CleanupPreviousTestData();
-        
+        _context = DatabaseSetup.GetDbContext();
+        _transaction = DatabaseSetup.GetTransaction(_context);
+        _controller = new IncomeStreamsController(_context);
         SetupTestData().Wait();
-        
-        _controller = new ExpenseCategoriesController(_context);
         SetupUserContext(_user1Id);
-    }
-
-    private void CleanupPreviousTestData()
-    {
-        List<ExpenseCategory> categories = _context.ExpenseCategories.Where(c => 
-            c.Name.StartsWith(_testPrefix)).ToList();
-            
-        if (categories.Any())
-        {
-            _context.ExpenseCategories.RemoveRange(categories);
-            _context.SaveChanges();
-        }
     }
 
     private async Task SetupTestData()
     {
-        await CreateTestCategory(_defaultCatName, null);
-        await CreateTestCategory(_userCatName, _user1Id);
-        await CreateTestCategory(_otherUserCatName, _user2Id);
+        await CreateTestStream(_userStreamName, _user1Id);
+        await CreateTestStream(_otherUserStreamName, _user2Id);
         _context.SaveChanges();
     }
 
@@ -77,80 +57,60 @@ public class IncomeStreamsControllerTests : IDisposable
             HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() }
         };
     }
-    private async Task<ExpenseCategory> CreateTestCategory(string name, string userId = null)
+    private async Task<IncomeStream> CreateTestStream(string name, string userId)
     {
-        ExpenseCategory category = new() { Name = name, UserId = userId };
-        _context.ExpenseCategories.Add(category);
+        IncomeStream stream = new() { Name = name, UserId = userId };
+        _context.IncomeStreams.Add(stream);
         await _context.SaveChangesAsync();
-        _testCategoryIds.Add(category.Id);
-        return category;
+        return stream;
     }
 
     public void Dispose()
     {
-        foreach (Guid id in _testCategoryIds)
-        {
-            ExpenseCategory? category = _context.ExpenseCategories.Find(id);
-            if (category != null)
-                _context.ExpenseCategories.Remove(category);
-        }
-        _context.SaveChanges();
+        _transaction.Rollback();
+        _transaction.Dispose();
         _context.Dispose();
     }
 
     [Fact]
-    public async Task Get_ReturnsDefaultAndUserCategories()
+    public async Task Get_ReturnsUserStreams()
     {
         OkObjectResult? result = await _controller.Get() as OkObjectResult;
-        IEnumerable<ExpenseCategory> categories = Assert.IsAssignableFrom<IEnumerable<ExpenseCategory>>(result!.Value);
+        IEnumerable<IncomeStream> streams = Assert.IsAssignableFrom<IEnumerable<IncomeStream>>(result!.Value);
 
-        Assert.Contains(categories, c => c.Name == _defaultCatName);
-        Assert.Contains(categories, c => c.Name == _userCatName);
-        Assert.DoesNotContain(categories, c => c.Name == _otherUserCatName);
+        Assert.Contains(streams, c => c.Name == _userStreamName);
+        Assert.DoesNotContain(streams, c => c.Name == _otherUserStreamName);
     }
 
     [Fact]
-    public async Task Create_AddsNewCategoryForUser()
+    public async Task Create_AddsNewStreamForUser()
     {
-        ExpenseCategory newCategory = new() { Name = _newCatName };
-        OkObjectResult? result = await _controller.Create(newCategory) as OkObjectResult;
-        ExpenseCategory? savedCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(c => c.Name == _newCatName);
-
-        if (savedCategory != null)
-            _testCategoryIds.Add(savedCategory.Id);
+        IncomeStream newStream = new() { Name = _newStreamName };
+        OkObjectResult? result = await _controller.Create(newStream) as OkObjectResult;
+        IncomeStream? savedStream = await _context.IncomeStreams.FirstOrDefaultAsync(c => c.Name == _newStreamName);
 
         Assert.NotNull(result);
-        Assert.NotNull(savedCategory);
-        Assert.Equal(_user1Id, savedCategory!.UserId);
+        Assert.NotNull(savedStream);
+        Assert.Equal(_user1Id, savedStream!.UserId);
     }
 
     [Fact]
-    public async Task Create_DoesNotAllowNewCategoryWithSameNameAsDefault()
+    public async Task Create_DoesNotAllowNewStreamWithSameNameAsExistingUserStream()
     {
-        ExpenseCategory newCategory = new() { Name = _defaultCatName };
-        IActionResult result = await _controller.Create(newCategory);
+        IncomeStream newStream = new() { Name = _userStreamName };
+
+        IActionResult result = await _controller.Create(newStream);
 
         ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
-    public async Task Create_DoesNotAllowNewCategoryWithSameNameAsExistingUserCategory()
+    public async Task Create_DoesNotAllowStreamWithSameNameDifferentCasing()
     {
-        ExpenseCategory newCategory = new() { Name = _userCatName };
+        IncomeStream newStream = new() { Name = _userStreamName.ToLower() };
 
-        IActionResult result = await _controller.Create(newCategory);
-
-        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
-        Assert.Equal(ConflictMessage, conflictResult.Value);
-    }
-
-    [Fact]
-    public async Task Create_DoesNotAllowCategoryWithSameNameDifferentCasing()
-    {
-        ExpenseCategory newCategory = new() { Name = _defaultCatName.ToLower() };
-
-        IActionResult result = await _controller.Create(newCategory);
+        IActionResult result = await _controller.Create(newStream);
 
         ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
         Assert.Equal(ConflictMessage, conflictResult.Value);
@@ -162,38 +122,30 @@ public class IncomeStreamsControllerTests : IDisposable
     [InlineData(" ")]
     public async Task Create_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        IActionResult result = await _controller.Create(new ExpenseCategory { Name = invalidName });
+        IActionResult result = await _controller.Create(new IncomeStream { Name = invalidName });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
     }
 
     [Fact]
-    public async Task Update_ModifiesOwnedCategory()
+    public async Task Update_ModifiesOwnedStream()
     {
-        ExpenseCategory oldCatCategory = await CreateTestCategory(_oldCatName, _user1Id);
+        IncomeStream oldStreamStream = await CreateTestStream(_oldStreamName, _user1Id);
 
-        string newName = _updatedCatName;
-        OkObjectResult? result = await _controller.Update(oldCatCategory.Id, new ExpenseCategory { Name = newName }) as OkObjectResult;
+        string newName = _updatedStreamName;
+        OkObjectResult? result = await _controller.Update(oldStreamStream.Id, new IncomeStream { Name = newName }) as OkObjectResult;
 
-        ExpenseCategory? updated = await _context.ExpenseCategories.FindAsync(oldCatCategory.Id);
+        IncomeStream? updated = await _context.IncomeStreams.FindAsync(oldStreamStream.Id);
         Assert.NotNull(result);
         Assert.Equal(newName, updated?.Name);
     }
 
     [Fact]
-    public async Task Update_DoesNotAllowModifyingOtherUsersCategory()
+    public async Task Update_DoesNotAllowModifyingOtherUsersStream()
     {
-        ExpenseCategory otherUserCategory = await CreateTestCategory(_testOtherUserCat, _user2Id);
-        IActionResult result = await _controller.Update(otherUserCategory.Id, new ExpenseCategory { Name = _updatedCatName });
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
-    public async Task Update_DoesNotAllowModifyingDefaultCategories()
-    {
-        ExpenseCategory? defaultCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _defaultCatName);
-        IActionResult result = await _controller.Update(defaultCategory!.Id, new ExpenseCategory { Name = _updatedCatName });
+        IncomeStream otherUserStream = await CreateTestStream(_testOtherUserStream, _user2Id);
+        IActionResult result = await _controller.Update(otherUserStream.Id, new IncomeStream { Name = _updatedStreamName });
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -203,28 +155,28 @@ public class IncomeStreamsControllerTests : IDisposable
     [InlineData(" ")]
     public async Task Update_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
-        IActionResult result = await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = invalidName });
+        IncomeStream? userStream = _context.IncomeStreams.FirstOrDefault(c => c.Name == _userStreamName);
+        IActionResult result = await _controller.Update(userStream!.Id, new IncomeStream { Name = invalidName });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
     }
 
     [Fact]
-    public async Task Delete_RemovesUserCategory()
+    public async Task Delete_RemovesUserStream()
     {
-        ExpenseCategory toDeleteCategory = await CreateTestCategory(_toDeleteCat, _user1Id);
-        IActionResult result = await _controller.Delete(toDeleteCategory.Id);
+        IncomeStream toDeleteStream = await CreateTestStream(_toDeleteStream, _user1Id);
+        IActionResult result = await _controller.Delete(toDeleteStream.Id);
 
         Assert.IsType<NoContentResult>(result);
-        Assert.False(_context.ExpenseCategories.Any(c => c.Name == _toDeleteCat && c.UserId == _user1Id));
+        Assert.False(_context.IncomeStreams.Any(c => c.Name == _toDeleteStream && c.UserId == _user1Id));
     }
 
     [Fact]
-    public async Task Delete_DoesNotAllowDeletingOthersCategories()
+    public async Task Delete_DoesNotAllowDeletingOthersStreams()
     {
-        ExpenseCategory? otherUserCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _otherUserCatName);
-        IActionResult result = await _controller.Delete(otherUserCategory!.Id);
+        IncomeStream? otherUserStream = _context.IncomeStreams.FirstOrDefault(c => c.Name == _otherUserStreamName);
+        IActionResult result = await _controller.Delete(otherUserStream!.Id);
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -236,13 +188,13 @@ public class IncomeStreamsControllerTests : IDisposable
     public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
     {
         SetUserUnauthorized();
-        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        IncomeStream? userStream = _context.IncomeStreams.FirstOrDefault(c => c.Name == _userStreamName);
         IActionResult result = action switch
         {
             "Get" => await _controller.Get(),
-            "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
-            "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
-            "Delete" => await _controller.Delete(userCategory!.Id),
+            "Create" => await _controller.Create(new IncomeStream { Name = _newStreamName }),
+            "Update" => await _controller.Update(userStream!.Id, new IncomeStream { Name = _newStreamName }),
+            "Delete" => await _controller.Delete(userStream!.Id),
             _ => throw new ArgumentOutOfRangeException()
         };
         Assert.IsType<UnauthorizedResult>(result);
@@ -254,25 +206,25 @@ public class IncomeStreamsControllerTests : IDisposable
     [InlineData("Update")]
     public async Task CreateAndUpdateDates(string action)
     {
-        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        IncomeStream? userStream = _context.IncomeStreams.FirstOrDefault(c => c.Name == _userStreamName);
         IActionResult result = action switch
         {
-            "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
-            "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
+            "Create" => await _controller.Create(new IncomeStream { Name = _newStreamName }),
+            "Update" => await _controller.Update(userStream!.Id, new IncomeStream { Name = _newStreamName }),
         };
         OkObjectResult? okResult = result as OkObjectResult;
-        ExpenseCategory? category = Assert.IsType<ExpenseCategory>(okResult!.Value);
+        IncomeStream? stream = Assert.IsType<IncomeStream>(okResult!.Value);
         if (action == "Create")
         {
-            Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
-            Assert.Equal(DateTime.MinValue, category.UpdatedAt);
+            Assert.NotEqual(DateTime.MinValue, stream.CreatedAt);
+            Assert.Equal(DateTime.MinValue, stream.UpdatedAt);
         }
         if (action == "Update")
         {
-            Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
-            Assert.NotEqual(DateTime.MinValue, category.UpdatedAt);
-            Assert.True(category.UpdatedAt > category.CreatedAt);
-            Assert.True(category.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
+            Assert.NotEqual(DateTime.MinValue, stream.CreatedAt);
+            Assert.NotEqual(DateTime.MinValue, stream.UpdatedAt);
+            Assert.True(stream.UpdatedAt > stream.CreatedAt);
+            Assert.True(stream.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
     }
 }

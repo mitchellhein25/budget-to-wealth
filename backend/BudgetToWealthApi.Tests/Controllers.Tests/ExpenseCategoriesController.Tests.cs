@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 public class ExpenseCategoriesControllerTests : IDisposable
 {
@@ -21,26 +21,14 @@ public class ExpenseCategoriesControllerTests : IDisposable
     private readonly string _user2Id = "auth0|user2";
     private ApplicationDbContext _context;
     private ExpenseCategoriesController _controller;
-    private readonly List<Guid> _testCategoryIds = new();
+    private readonly IDbContextTransaction _transaction;
     public ExpenseCategoriesControllerTests()
     {
         _context = DatabaseSetup.GetDbContext();
-        CleanupPreviousTestData();
-        SetupTestData().Wait();
+        _transaction = DatabaseSetup.GetTransaction(_context);
         _controller = new ExpenseCategoriesController(_context);
+        SetupTestData().Wait();
         SetupUserContext(_user1Id);
-    }
-
-    private void CleanupPreviousTestData()
-    {
-        List<ExpenseCategory> categories = _context.ExpenseCategories.Where(c => 
-            c.Name.StartsWith(_testPrefix)).ToList();
-            
-        if (categories.Any())
-        {
-            _context.ExpenseCategories.RemoveRange(categories);
-            _context.SaveChanges();
-        }
     }
 
     private async Task SetupTestData()
@@ -70,24 +58,19 @@ public class ExpenseCategoriesControllerTests : IDisposable
             HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() }
         };
     }
+
     private async Task<ExpenseCategory> CreateTestCategory(string name, string userId = null)
     {
         ExpenseCategory category = new() { Name = name, UserId = userId };
         _context.ExpenseCategories.Add(category);
         await _context.SaveChangesAsync();
-        _testCategoryIds.Add(category.Id);
         return category;
     }
 
     public void Dispose()
     {
-        foreach (Guid id in _testCategoryIds)
-        {
-            ExpenseCategory? category = _context.ExpenseCategories.Find(id);
-            if (category != null)
-                _context.ExpenseCategories.Remove(category);
-        }
-        _context.SaveChanges();
+        _transaction.Rollback();
+        _transaction.Dispose();
         _context.Dispose();
     }
 
@@ -108,9 +91,6 @@ public class ExpenseCategoriesControllerTests : IDisposable
         ExpenseCategory newCategory = new() { Name = _newCatName };
         OkObjectResult? result = await _controller.Create(newCategory) as OkObjectResult;
         ExpenseCategory? savedCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(c => c.Name == _newCatName);
-
-        if (savedCategory != null)
-            _testCategoryIds.Add(savedCategory.Id);
 
         Assert.NotNull(result);
         Assert.NotNull(savedCategory);
