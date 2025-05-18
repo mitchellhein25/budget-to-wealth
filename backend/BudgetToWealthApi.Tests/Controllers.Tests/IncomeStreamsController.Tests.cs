@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-public class ExpenseCategoriesControllerTests : IDisposable
+public class IncomeStreamsControllerTests : IDisposable
 {
-    private const string ConflictMessage = "Category already exists.";
-    private const string NameRequiredMessage = "Category name cannot be empty.";
+    private const string ConflictMessage = "Stream already exists.";
+    private const string NameRequiredMessage = "Stream name cannot be empty.";
     private const string _testPrefix = "Test_";
     private readonly string _defaultCatName = $"{_testPrefix}Test_Default";
     private readonly string _userCatName = $"{_testPrefix}User's";
     private readonly string _otherUserCatName = $"{_testPrefix}Another User's";
-    private readonly string _newCatName = $"{_testPrefix}New Category";
+    private readonly string _newCatName = $"{_testPrefix}New Stream";
     private readonly string _oldCatName = $"{_testPrefix}Old";
     private readonly string _updatedCatName = $"{_testPrefix}Updated";
     private readonly string _testOtherUserCat = $"{_testPrefix}OtherUser";
@@ -22,11 +22,18 @@ public class ExpenseCategoriesControllerTests : IDisposable
     private ApplicationDbContext _context;
     private ExpenseCategoriesController _controller;
     private readonly List<Guid> _testCategoryIds = new();
-    public ExpenseCategoriesControllerTests()
+    public IncomeStreamsControllerTests()
     {
-        _context = DatabaseSetup.GetDbContext();
+        DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseNpgsql("Host=localhost;Port=5432;Database=budget_to_wealth_development;")
+            .Options;
+
+        _context = new ApplicationDbContext(options);
+        
         CleanupPreviousTestData();
+        
         SetupTestData().Wait();
+        
         _controller = new ExpenseCategoriesController(_context);
         SetupUserContext(_user1Id);
     }
