@@ -9,7 +9,6 @@ public class IncomeStreamsControllerTests : IDisposable
     private const string ConflictMessage = "Stream already exists.";
     private const string NameRequiredMessage = "Stream name cannot be empty.";
     private const string _testPrefix = "Test_";
-    private readonly string _defaultStreamName = $"{_testPrefix}Test_Default";
     private readonly string _userStreamName = $"{_testPrefix}User's";
     private readonly string _otherUserStreamName = $"{_testPrefix}Another User's";
     private readonly string _newStreamName = $"{_testPrefix}New Stream";
