@@ -85,12 +85,9 @@ public class IncomeStreamsControllerTests : IDisposable
     public async Task Create_AddsNewStreamForUser()
     {
         IncomeStream newStream = new() { Name = _newStreamName };
-        OkObjectResult? result = await _controller.Create(newStream) as OkObjectResult;
-        IncomeStream? savedStream = await _context.IncomeStreams.FirstOrDefaultAsync(c => c.Name == _newStreamName);
-
-        Assert.NotNull(result);
-        Assert.NotNull(savedStream);
-        Assert.Equal(_user1Id, savedStream!.UserId);
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(await _controller.Create(newStream));
+        Assert.Equal(nameof(IncomeStreamsController.Get), createdAtActionResult.ActionName);
+        Assert.Equal(_newStreamName, (createdAtActionResult.Value as IncomeStream)?.Name);
     }
 
     [Fact]
@@ -211,15 +208,16 @@ public class IncomeStreamsControllerTests : IDisposable
             "Create" => await _controller.Create(new IncomeStream { Name = _newStreamName }),
             "Update" => await _controller.Update(userStream!.Id, new IncomeStream { Name = _newStreamName }),
         };
-        OkObjectResult? okResult = result as OkObjectResult;
-        IncomeStream? stream = Assert.IsType<IncomeStream>(okResult!.Value);
         if (action == "Create")
         {
-            Assert.NotEqual(DateTime.MinValue, stream.CreatedAt);
-            Assert.Equal(DateTime.MinValue, stream.UpdatedAt);
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal(nameof(IncomeStreamsController.Get), createdAtActionResult.ActionName);
+            Assert.Equal(_newStreamName, (createdAtActionResult.Value as IncomeStream)?.Name);
         }
         if (action == "Update")
         {
+            OkObjectResult? okResult = result as OkObjectResult;
+            IncomeStream? stream = Assert.IsType<IncomeStream>(okResult!.Value);
             Assert.NotEqual(DateTime.MinValue, stream.CreatedAt);
             Assert.NotEqual(DateTime.MinValue, stream.UpdatedAt);
             Assert.True(stream.UpdatedAt > stream.CreatedAt);

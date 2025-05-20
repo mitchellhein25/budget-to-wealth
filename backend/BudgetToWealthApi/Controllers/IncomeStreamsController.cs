@@ -49,7 +49,7 @@ public class IncomeStreamsController : ControllerBase
         _context.IncomeStreams.Add(stream);
         await _context.SaveChangesAsync();
 
-        return Ok(stream);
+        return CreatedAtAction(nameof(Get), new { id = stream.Id }, stream);
     }
 
     [HttpPut("{id}")]

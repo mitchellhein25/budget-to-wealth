@@ -54,4 +54,15 @@ public class ExpensesControllerTestObjects
     IsRecurring = false,
     UserId = _user1Id
   };
+
+  public Expense TestExpense4 => new()
+  {
+    Amount = 654.89m,
+    ExpenseCategoryId = TestUser2Category.Id,
+    ExpenseCategory = TestUser2Category,
+    Date = DateOnly.Parse("2023-05-15"),
+    Description = "Test description 4",
+    IsRecurring = false,
+    UserId = _user2Id
+  };
 }

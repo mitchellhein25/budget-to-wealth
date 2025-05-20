@@ -89,12 +89,9 @@ public class ExpenseCategoriesControllerTests : IDisposable
     public async Task Create_AddsNewCategoryForUser()
     {
         ExpenseCategory newCategory = new() { Name = _newCatName };
-        OkObjectResult? result = await _controller.Create(newCategory) as OkObjectResult;
-        ExpenseCategory? savedCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(c => c.Name == _newCatName);
-
-        Assert.NotNull(result);
-        Assert.NotNull(savedCategory);
-        Assert.Equal(_user1Id, savedCategory!.UserId);
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(await _controller.Create(newCategory));
+        Assert.Equal(nameof(ExpensesController.Get), createdAtActionResult.ActionName);
+        Assert.Equal(_newCatName, (createdAtActionResult.Value as ExpenseCategory)?.Name);
     }
 
     [Fact]
@@ -233,15 +230,16 @@ public class ExpenseCategoriesControllerTests : IDisposable
             "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
             "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
         };
-        OkObjectResult? okResult = result as OkObjectResult;
-        ExpenseCategory? category = Assert.IsType<ExpenseCategory>(okResult!.Value);
         if (action == "Create")
         {
-            Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
-            Assert.Equal(DateTime.MinValue, category.UpdatedAt);
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal(nameof(ExpensesController.Get), createdAtActionResult.ActionName);
+            Assert.Equal(_newCatName, (createdAtActionResult.Value as ExpenseCategory)?.Name);
         }
         if (action == "Update")
         {
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            ExpenseCategory? category = Assert.IsType<ExpenseCategory>(okResult.Value);
             Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
             Assert.NotEqual(DateTime.MinValue, category.UpdatedAt);
             Assert.True(category.UpdatedAt > category.CreatedAt);

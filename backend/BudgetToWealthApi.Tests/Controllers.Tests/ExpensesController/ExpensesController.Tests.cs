@@ -73,110 +73,260 @@ public class ExpensesControllerTests : IDisposable
         Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense1.Amount);
         Assert.Equal(2, expenses.Count());
     }
+    
+    [Theory]
+    [InlineData("2023-04-01")]
+    [InlineData("2023-04-13")]
+    [InlineData("2023-04-12")]
+    [InlineData("2023-01-01")]
+    [InlineData("2024-01-01")]
+    public async Task Get_FilterByStartDate(string startDateString)
+    {
+        OkObjectResult? result = await _controller.Get(startDate: DateOnly.Parse(startDateString)) as OkObjectResult;
+        IEnumerable<Expense> expenses = Assert.IsAssignableFrom<IEnumerable<Expense>>(result!.Value);
+
+        List<string> returnBoth = new() { "2023-04-01", "2023-04-12", "2023-01-01" };
+        if (returnBoth.Contains(startDateString))
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense1.Amount);
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense3.Amount);
+            Assert.Equal(2, expenses.Count());
+        }
+        else if (startDateString == "2023-04-13")
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense3.Amount);
+            Assert.Single(expenses);
+        }
+        else if (startDateString == "2024-01-01")
+        {
+            Assert.Empty(expenses);
+        }
+    }
+    
+    [Theory]
+    [InlineData("2023-04-01")]
+    [InlineData("2023-04-13")]
+    [InlineData("2023-04-12")]
+    [InlineData("2023-01-01")]
+    [InlineData("2024-01-01")]
+    public async Task Get_FilterByEndDate(string endDateString)
+    {
+        OkObjectResult? result = await _controller.Get(endDate: DateOnly.Parse(endDateString)) as OkObjectResult;
+        IEnumerable<Expense> expenses = Assert.IsAssignableFrom<IEnumerable<Expense>>(result!.Value);
+
+        List<string> returnNone = new() { "2023-04-01", "2023-01-01" };
+        List<string> returnOne = new() { "2023-04-13", "2023-04-12" };
+        if (endDateString == "2024-01-01")
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense1.Amount);
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense3.Amount);
+            Assert.Equal(2, expenses.Count());
+        }
+        else if (returnOne.Contains(endDateString))
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense1.Amount);
+            Assert.Single(expenses);
+        }
+        else if (returnNone.Contains(endDateString))
+        {
+            Assert.Empty(expenses);
+        }
+    }
+    
+    [Theory]
+    [InlineData("2023-04-01", "2023-04-01")]
+    [InlineData("2023-04-01", "2023-04-12")]
+    [InlineData("2023-04-12", "2023-05-14")]
+    [InlineData("2023-04-12", "2023-05-15")]
+    [InlineData("2023-05-15", "2023-05-23")]
+    [InlineData("2023-05-23", "2024-05-23")]
+    public async Task Get_FilterByStartAndEndDate(string startDateString, string endDateString)
+    {
+        OkObjectResult? result = await _controller.Get(startDate: DateOnly.Parse(startDateString), endDate: DateOnly.Parse(endDateString)) as OkObjectResult;
+        IEnumerable<Expense> expenses = Assert.IsAssignableFrom<IEnumerable<Expense>>(result!.Value);
+
+        if ((startDateString == "2023-04-01" && endDateString == "2023-04-01") || (startDateString == "2023-05-23" && endDateString == "2024-05-23"))
+        {
+            Assert.Empty(expenses);
+        }
+        else if ((startDateString == "2023-04-01" && endDateString == "2023-04-12") || (startDateString == "2023-04-12" && endDateString == "2023-05-14"))
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense1.Amount);
+            Assert.Single(expenses);
+        }
+        else if (startDateString == "2023-04-12" && endDateString == "2023-05-15")
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense1.Amount);
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense3.Amount);
+            Assert.Equal(2, expenses.Count());
+        }
+        else if (startDateString == "2023-05-15" && endDateString == "2023-05-23")
+        {
+            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestExpense3.Amount);
+            Assert.Single(expenses);
+        }
+    }
+
+    [Fact]
+    public async Task Create_ReturnsBadRequest_WhenAmountIsNegative()
+    {
+        Expense newExpense = new()
+        {   
+            Amount = -123.45m,
+            Date = new DateOnly(2025, 02, 03),
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+
+        var result = await _controller.Create(newExpense);
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Amount must be positive.", badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsBadRequest_WhenExpenseCategoryIdIsEmpty()
+    {
+        Expense newExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 02, 03),
+            ExpenseCategoryId = Guid.Empty,
+        };
+
+        var result = await _controller.Create(newExpense);
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("ExpenseCategoryId is required.", badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsBadRequest_WhenDateIsDefault()
+    {
+        Expense newExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = default,
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+
+        var result = await _controller.Create(newExpense);
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Date is required.", badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsBadRequest_WhenCategoryDoesNotExistForUser()
+    {
+        Expense newExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 02, 03),
+            ExpenseCategoryId = _testObjects.TestUser2Category.Id,
+        };
+
+        var result = await _controller.Create(newExpense);
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Invalid or unauthorized ExpenseCategoryId.", badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsCreatedAtAction_WhenExpenseIsValid()
+    {
+        Expense newExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 02, 03),
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+
+        var result = await _controller.Create(newExpense);
+
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.Equal(nameof(ExpensesController.Get), createdAtActionResult.ActionName);
+        Assert.Equal(newExpense, createdAtActionResult.Value);
+    }
+
+    [Fact]
+    public async Task Update_ReturnsNotFound_WhenExpenseDoesNotExist()
+    {
+        Expense updatedExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 02, 03),
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+        var result = await _controller.Update(Guid.NewGuid(), updatedExpense);
+        Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task Update_ReturnsBadRequest_WhenValidationFails()
+    {
+        Expense updatedExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = default,
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+        Expense? expenseToUpdate = _context.Expenses.FirstOrDefault(exp => exp.UserId == _user1Id);
+        var result = await _controller.Update(expenseToUpdate!.Id, updatedExpense);
+
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Date is required.", badRequestResult.Value);
+    }
 
     // [Fact]
-    // public async Task Create_AddsNewCategoryForUser()
+    // public async Task Update_ReturnsOk_WhenExpenseIsUpdatedSuccessfully()
     // {
-    //     Expense newCategory = new() { Name = _newCatName };
-    //     OkObjectResult? result = await _controller.Create(newCategory) as OkObjectResult;
-    //     Expense? savedCategory = await _context.Expenses.FirstOrDefaultAsync(c => c.Name == _newCatName);
+    // // Arrange
+    // var expenseId = Guid.NewGuid();
+    // var existingExpense = new Expense
+    // {
+    //     Id = expenseId,
+    //     UserId = "test-user-id",
+    //     Amount = 50,
+    //     Description = "Old Description",
+    //     Date = DateTime.UtcNow.AddDays(-1),
+    //     ExpenseCategoryId = Guid.NewGuid()
+    // };
 
-    //     Assert.NotNull(result);
-    //     Assert.NotNull(savedCategory);
-    //     Assert.Equal(_user1Id, savedCategory!.UserId);
+    // var updatedExpense = new Expense
+    // {
+    //     Amount = 100,
+    //     Description = "Updated Description",
+    //     Date = DateTime.UtcNow,
+    //     ExpenseCategoryId = Guid.NewGuid()
+    // };
+
+    // _mockContext.Setup(c => c.Expenses.FirstOrDefaultAsync(It.IsAny<Func<Expense, bool>>()))
+    //     .ReturnsAsync(existingExpense);
+
+    // _mockContext.Setup(c => c.ExpenseCategories.AnyAsync(It.IsAny<Func<ExpenseCategory, bool>>()))
+    //     .ReturnsAsync(true);
+
+    // _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
+
+    // // Act
+    // var result = await _controller.Update(expenseId, updatedExpense);
+
+    // // Assert
+    // var okResult = Assert.IsType<OkObjectResult>(result);
+    // var returnedExpense = Assert.IsType<Expense>(okResult.Value);
+
+    // Assert.Equal(updatedExpense.Amount, returnedExpense.Amount);
+    // Assert.Equal(updatedExpense.Description, returnedExpense.Description);
+    // Assert.Equal(updatedExpense.Date, returnedExpense.Date);
+    // Assert.Equal(updatedExpense.ExpenseCategoryId, returnedExpense.ExpenseCategoryId);
     // }
+
 
     // [Fact]
-    // public async Task Create_DoesNotAllowNewCategoryWithSameNameAsDefault()
+    // public async Task Delete_RemovesUserExpense()
     // {
-    //     Expense newCategory = new() { Name = _defaultCatName };
-    //     IActionResult result = await _controller.Create(newCategory);
-
-    //     ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
-    //     Assert.Equal(ConflictMessage, conflictResult.Value);
-    // }
-
-    // [Fact]
-    // public async Task Create_DoesNotAllowNewCategoryWithSameNameAsExistingUserCategory()
-    // {
-    //     Expense newCategory = new() { Name = _userCatName };
-
-    //     IActionResult result = await _controller.Create(newCategory);
-
-    //     ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
-    //     Assert.Equal(ConflictMessage, conflictResult.Value);
-    // }
-
-    // [Fact]
-    // public async Task Create_DoesNotAllowCategoryWithSameNameDifferentCasing()
-    // {
-    //     Expense newCategory = new() { Name = _defaultCatName.ToLower() };
-
-    //     IActionResult result = await _controller.Create(newCategory);
-
-    //     ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
-    //     Assert.Equal(ConflictMessage, conflictResult.Value);
-    // }
-
-    // [Theory]
-    // [InlineData(null)]
-    // [InlineData("")]
-    // [InlineData(" ")]
-    // public async Task Create_InvalidNameReturnsBadRequest(string? invalidName)
-    // {
-    //     IActionResult result = await _controller.Create(new Expense { Name = invalidName });
-
-    //     BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-    //     Assert.Equal(NameRequiredMessage, badRequest.Value);
-    // }
-
-    // [Fact]
-    // public async Task Update_ModifiesOwnedCategory()
-    // {
-    //     Expense oldCatCategory = await CreateTestExpense(_oldCatName, _user1Id);
-
-    //     string newName = _updatedCatName;
-    //     OkObjectResult? result = await _controller.Update(oldCatCategory.Id, new Expense { Name = newName }) as OkObjectResult;
-
-    //     Expense? updated = await _context.Expenses.FindAsync(oldCatCategory.Id);
-    //     Assert.NotNull(result);
-    //     Assert.Equal(newName, updated?.Name);
-    // }
-
-    // [Fact]
-    // public async Task Update_DoesNotAllowModifyingOtherUsersCategory()
-    // {
-    //     Expense otherUserCategory = await CreateTestExpense(_testOtherUserCat, _user2Id);
-    //     IActionResult result = await _controller.Update(otherUserCategory.Id, new Expense { Name = _updatedCatName });
-    //     Assert.IsType<NotFoundResult>(result);
-    // }
-
-    // [Fact]
-    // public async Task Update_DoesNotAllowModifyingDefaultExpenses()
-    // {
-    //     Expense? defaultCategory = _context.Expenses.FirstOrDefault(c => c.Name == _defaultCatName);
-    //     IActionResult result = await _controller.Update(defaultCategory!.Id, new Expense { Name = _updatedCatName });
-    //     Assert.IsType<NotFoundResult>(result);
-    // }
-
-    // [Theory]
-    // [InlineData(null)]
-    // [InlineData("")]
-    // [InlineData(" ")]
-    // public async Task Update_InvalidNameReturnsBadRequest(string? invalidName)
-    // {
-    //     Expense? userCategory = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
-    //     IActionResult result = await _controller.Update(userCategory!.Id, new Expense { Name = invalidName });
-
-    //     BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
-    //     Assert.Equal(NameRequiredMessage, badRequest.Value);
-    // }
-
-    // [Fact]
-    // public async Task Delete_RemovesUserCategory()
-    // {
-    //     Expense toDeleteCategory = await CreateTestExpense(_toDeleteCat, _user1Id);
-    //     IActionResult result = await _controller.Delete(toDeleteCategory.Id);
+    //     Expense toDeleteExpense = await CreateTestExpense(_toDeleteCat, _user1Id);
+    //     IActionResult result = await _controller.Delete(toDeleteExpense.Id);
 
     //     Assert.IsType<NoContentResult>(result);
     //     Assert.False(_context.Expenses.Any(c => c.Name == _toDeleteCat && c.UserId == _user1Id));
@@ -185,8 +335,8 @@ public class ExpensesControllerTests : IDisposable
     // [Fact]
     // public async Task Delete_DoesNotAllowDeletingOthersExpenses()
     // {
-    //     Expense? otherUserCategory = _context.Expenses.FirstOrDefault(c => c.Name == _otherUserCatName);
-    //     IActionResult result = await _controller.Delete(otherUserCategory!.Id);
+    //     Expense? otherUserExpense = _context.Expenses.FirstOrDefault(c => c.Name == _otherUserCatName);
+    //     IActionResult result = await _controller.Delete(otherUserExpense!.Id);
     //     Assert.IsType<NotFoundResult>(result);
     // }
 
@@ -198,13 +348,13 @@ public class ExpensesControllerTests : IDisposable
     // public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
     // {
     //     SetUserUnauthorized();
-    //     Expense? userCategory = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
+    //     Expense? userExpense = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
     //     IActionResult result = action switch
     //     {
     //         "Get" => await _controller.Get(),
     //         "Create" => await _controller.Create(new Expense { Name = _newCatName }),
-    //         "Update" => await _controller.Update(userCategory!.Id, new Expense { Name = _newCatName }),
-    //         "Delete" => await _controller.Delete(userCategory!.Id),
+    //         "Update" => await _controller.Update(userExpense!.Id, new Expense { Name = _newCatName }),
+    //         "Delete" => await _controller.Delete(userExpense!.Id),
     //         _ => throw new ArgumentOutOfRangeException()
     //     };
     //     Assert.IsType<UnauthorizedResult>(result);
@@ -216,11 +366,11 @@ public class ExpensesControllerTests : IDisposable
     // [InlineData("Update")]
     // public async Task CreateAndUpdateDates(string action)
     // {
-    //     Expense? userCategory = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
+    //     Expense? userExpense = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
     //     IActionResult result = action switch
     //     {
     //         "Create" => await _controller.Create(new Expense { Name = _newCatName }),
-    //         "Update" => await _controller.Update(userCategory!.Id, new Expense { Name = _newCatName }),
+    //         "Update" => await _controller.Update(userExpense!.Id, new Expense { Name = _newCatName }),
     //     };
     //     OkObjectResult? okResult = result as OkObjectResult;
     //     Expense? expense = Assert.IsType<Expense>(okResult!.Value);

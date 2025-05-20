@@ -34,52 +34,72 @@ public class ExpensesController : ControllerBase
         return Ok(expenses);
     }
 
-    // [HttpPost]
-    // public async Task<IActionResult> Create([FromBody] ExpenseCategory category)
-    // {
-    //     string? userId = User.GetUserId();
-    //     if (userId == null) 
-    //         return Unauthorized();
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] Expense expense)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null) 
+            return Unauthorized();
 
-    //     if (string.IsNullOrWhiteSpace(category.Name)) 
-    //         return BadRequest(NameRequiredMessage);
+        IActionResult? validationResult = await ValidateExpense(expense, userId);
+        if (validationResult != null)
+            return validationResult;
+    
+        expense.UserId = userId;
+        _context.Expenses.Add(expense);
+        await _context.SaveChangesAsync();
 
-    //     var exists = await _context.ExpenseCategories
-    //         .AnyAsync(c => EF.Functions.ILike(c.Name, category.Name) && (c.UserId == userId || c.UserId == null));
-    //     if (exists)
-    //         return Conflict(ConflictMessage);
+        return CreatedAtAction(nameof(Get), new { id = expense.Id }, expense);
+    }
 
-    //     category.UserId = userId;
-    //     _context.ExpenseCategories.Add(category);
-    //     await _context.SaveChangesAsync();
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] Expense updatedExpense)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null) 
+            return Unauthorized();
 
-    //     return Ok(category);
-    // }
+        Expense? existingExpense = await _context.Expenses
+            .FirstOrDefaultAsync(expense => expense.Id == id && expense.UserId == userId);
 
-    // [HttpPut("{id}")]
-    // public async Task<IActionResult> Update(Guid id, [FromBody] ExpenseCategory updatedCategory)
-    // {
-    //     string? userId = User.GetUserId();
-    //     if (userId == null) 
-    //         return Unauthorized();
+        if (existingExpense == null) 
+            return NotFound();
 
-    //     if (string.IsNullOrWhiteSpace(updatedCategory.Name)) 
-    //         return BadRequest(NameRequiredMessage);
+        IActionResult? validationResult = await ValidateExpense(updatedExpense, userId);
+        if (validationResult != null)
+            return validationResult;
 
-    //     ExpenseCategory? category = await _context.ExpenseCategories
-    //         .FirstOrDefaultAsync(category => category.Id == id && (category.UserId == userId));
+        existingExpense.Amount = updatedExpense.Amount;
+        existingExpense.Description = updatedExpense.Description;
+        existingExpense.Date = updatedExpense.Date;
+        existingExpense.ExpenseCategoryId = updatedExpense.ExpenseCategoryId;
+        existingExpense.UpdatedAt = DateTime.UtcNow;
 
-    //     if (category == null) 
-    //         return NotFound();
+        _context.Expenses.Update(existingExpense);
+        await _context.SaveChangesAsync();
 
-    //     category.Name = updatedCategory.Name;
-    //     category.UpdatedAt = DateTime.UtcNow;
-        
-    //     _context.ExpenseCategories.Update(category);
+        return Ok(existingExpense);
+    }
 
-    //     await _context.SaveChangesAsync();
-    //     return Ok(category);
-    // }
+    private async Task<IActionResult?> ValidateExpense(Expense expense, string userId)
+    {
+        if (expense.Amount < 0)
+            return BadRequest("Amount must be positive.");
+
+        if (expense.ExpenseCategoryId == Guid.Empty)
+            return BadRequest("ExpenseCategoryId is required.");
+
+        if (expense.Date == default)
+            return BadRequest("Date is required.");
+
+        bool categoryExistsForUser = await _context.ExpenseCategories
+            .AnyAsync(category => category.Id == expense.ExpenseCategoryId && 
+                      (category.UserId == userId || category.UserId == null));
+        if (!categoryExistsForUser)
+            return BadRequest("Invalid or unauthorized ExpenseCategoryId.");
+
+        return null;
+    }
 
 
     // [HttpDelete("{id}")]
@@ -89,13 +109,13 @@ public class ExpensesController : ControllerBase
     //     if (userId == null) 
     //         return Unauthorized();
 
-    //     ExpenseCategory? category = await _context.ExpenseCategories
-    //         .FirstOrDefaultAsync(category => category.Id == id && (category.UserId == userId || category.UserId == null));
+    //     Expense? expense = await _context.Expenses
+    //         .FirstOrDefaultAsync(expense => expense.Id == id && (expense.UserId == userId || expense.UserId == null));
 
-    //     if (category == null) 
+    //     if (expense == null) 
     //         return NotFound();
 
-    //     _context.ExpenseCategories.Remove(category);
+    //     _context.Expenses.Remove(expense);
     //     await _context.SaveChangesAsync();
 
     //     return NoContent();
