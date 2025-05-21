@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BudgetToWealthApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250519040223_CreatedExpensesModel")]
-    partial class CreatedExpensesModel
+    [Migration("20250521033913_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,15 +24,74 @@ namespace BudgetToWealthApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Expense", b =>
+            modelBuilder.Entity("CashFlowCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(12,2)");
+                    b.Property<int>("CategoryType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashFlowCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3f5c7b85-2b1e-4c3f-9e5a-f1d9b22f0cd8"),
+                            CategoryType = 0,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Groceries",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("9c3b8b5e-83e2-4e30-bb25-6fba8e7c3c45"),
+                            CategoryType = 0,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Utilities",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = new Guid("f2a91271-6a9a-45db-8f3c-e62cf6d972fa"),
+                            CategoryType = 0,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Transportation",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("CashFlowEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<long>("Amount")
+                        .HasColumnType("BIGINT");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -45,8 +104,8 @@ namespace BudgetToWealthApi.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ExpenseCategoryId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("EntryType")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsRecurring")
                         .HasColumnType("boolean");
@@ -60,87 +119,9 @@ namespace BudgetToWealthApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExpenseCategoryId");
+                    b.HasIndex("CategoryId");
 
-                    b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("ExpenseCategory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExpenseCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("3f5c7b85-2b1e-4c3f-9e5a-f1d9b22f0cd8"),
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Groceries",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("9c3b8b5e-83e2-4e30-bb25-6fba8e7c3c45"),
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Utilities",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = new Guid("f2a91271-6a9a-45db-8f3c-e62cf6d972fa"),
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Transportation",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
-                });
-
-            modelBuilder.Entity("IncomeStream", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IncomeStreams");
+                    b.ToTable("CashFlowEntries");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -167,15 +148,15 @@ namespace BudgetToWealthApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Expense", b =>
+            modelBuilder.Entity("CashFlowEntry", b =>
                 {
-                    b.HasOne("ExpenseCategory", "ExpenseCategory")
+                    b.HasOne("CashFlowCategory", "Category")
                         .WithMany()
-                        .HasForeignKey("ExpenseCategoryId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ExpenseCategory");
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

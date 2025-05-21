@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 
-public class ExpenseCategoriesControllerTests : IDisposable
+public class CashFlowCategoriesControllerTests : IDisposable
 {
     private const string ConflictMessage = "Category already exists.";
     private const string NameRequiredMessage = "Category name cannot be empty.";
@@ -19,13 +19,13 @@ public class ExpenseCategoriesControllerTests : IDisposable
     private readonly string _user1Id = "auth0|user1";
     private readonly string _user2Id = "auth0|user2";
     private ApplicationDbContext _context;
-    private ExpenseCategoriesController _controller;
+    private CashFlowCategoriesController _controller;
     private readonly IDbContextTransaction _transaction;
-    public ExpenseCategoriesControllerTests()
+    public CashFlowCategoriesControllerTests()
     {
         _context = DatabaseSetup.GetDbContext();
         _transaction = DatabaseSetup.GetTransaction(_context);
-        _controller = new ExpenseCategoriesController(_context);
+        _controller = new CashFlowCategoriesController(_context);
         SetupTestData().Wait();
         SetupUserContext(_user1Id);
     }
@@ -58,10 +58,14 @@ public class ExpenseCategoriesControllerTests : IDisposable
         };
     }
 
-    private async Task<ExpenseCategory> CreateTestCategory(string name, string userId = null)
+    private async Task<CashFlowCategory> CreateTestCategory(string name, string userId = null)
     {
-        ExpenseCategory category = new() { Name = name, UserId = userId };
-        _context.ExpenseCategories.Add(category);
+        CashFlowCategory category = new() { 
+            Name = name, 
+            CategoryType = CashFlowType.Expense,
+            UserId = userId 
+        };
+        _context.CashFlowCategories.Add(category);
         await _context.SaveChangesAsync();
         return category;
     }
@@ -77,7 +81,7 @@ public class ExpenseCategoriesControllerTests : IDisposable
     public async Task Get_ReturnsDefaultAndUserCategories()
     {
         OkObjectResult? result = await _controller.Get() as OkObjectResult;
-        IEnumerable<ExpenseCategory> categories = Assert.IsAssignableFrom<IEnumerable<ExpenseCategory>>(result!.Value);
+        IEnumerable<CashFlowCategory> categories = Assert.IsAssignableFrom<IEnumerable<CashFlowCategory>>(result!.Value);
 
         Assert.Contains(categories, c => c.Name == _defaultCatName);
         Assert.Contains(categories, c => c.Name == _userCatName);
@@ -87,16 +91,22 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_AddsNewCategoryForUser()
     {
-        ExpenseCategory newCategory = new() { Name = _newCatName };
+        CashFlowCategory newCategory = new() { 
+            Name = _newCatName,
+            CategoryType = CashFlowType.Expense
+        };
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(await _controller.Create(newCategory));
-        Assert.Equal(nameof(ExpensesController.Get), createdAtActionResult.ActionName);
-        Assert.Equal(_newCatName, (createdAtActionResult.Value as ExpenseCategory)?.Name);
+        Assert.Equal(nameof(CashFlowCategoriesController.Get), createdAtActionResult.ActionName);
+        Assert.Equal(_newCatName, (createdAtActionResult.Value as CashFlowCategory)?.Name);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsDefault()
     {
-        ExpenseCategory newCategory = new() { Name = _defaultCatName };
+        CashFlowCategory newCategory = new() { 
+            Name = _defaultCatName,
+            CategoryType = CashFlowType.Expense
+        };
         IActionResult result = await _controller.Create(newCategory);
 
         ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
@@ -106,7 +116,10 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsExistingUserCategory()
     {
-        ExpenseCategory newCategory = new() { Name = _userCatName };
+        CashFlowCategory newCategory = new() { 
+            Name = _userCatName,
+            CategoryType = CashFlowType.Expense
+        };
 
         IActionResult result = await _controller.Create(newCategory);
 
@@ -117,7 +130,10 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_DoesNotAllowCategoryWithSameNameDifferentCasing()
     {
-        ExpenseCategory newCategory = new() { Name = _defaultCatName.ToLower() };
+        CashFlowCategory newCategory = new() { 
+            Name = _defaultCatName.ToLower(),
+            CategoryType = CashFlowType.Expense
+        };
 
         IActionResult result = await _controller.Create(newCategory);
 
@@ -131,7 +147,7 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [InlineData(" ")]
     public async Task Create_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        IActionResult result = await _controller.Create(new ExpenseCategory { Name = invalidName });
+        IActionResult result = await _controller.Create(new CashFlowCategory { Name = invalidName, CategoryType = CashFlowType.Expense });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
@@ -140,12 +156,12 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Update_ModifiesOwnedCategory()
     {
-        ExpenseCategory oldCatCategory = await CreateTestCategory(_oldCatName, _user1Id);
+        CashFlowCategory oldCatCategory = await CreateTestCategory(_oldCatName, _user1Id);
 
         string newName = _updatedCatName;
-        OkObjectResult? result = await _controller.Update(oldCatCategory.Id, new ExpenseCategory { Name = newName }) as OkObjectResult;
+        OkObjectResult? result = await _controller.Update(oldCatCategory.Id, new CashFlowCategory { Name = newName, CategoryType = CashFlowType.Expense }) as OkObjectResult;
 
-        ExpenseCategory? updated = await _context.ExpenseCategories.FindAsync(oldCatCategory.Id);
+        CashFlowCategory? updated = await _context.CashFlowCategories.FindAsync(oldCatCategory.Id);
         Assert.NotNull(result);
         Assert.Equal(newName, updated?.Name);
     }
@@ -153,16 +169,16 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Update_DoesNotAllowModifyingOtherUsersCategory()
     {
-        ExpenseCategory otherUserCategory = await CreateTestCategory(_testOtherUserCat, _user2Id);
-        IActionResult result = await _controller.Update(otherUserCategory.Id, new ExpenseCategory { Name = _updatedCatName });
+        CashFlowCategory otherUserCategory = await CreateTestCategory(_testOtherUserCat, _user2Id);
+        IActionResult result = await _controller.Update(otherUserCategory.Id, new CashFlowCategory { Name = _updatedCatName, CategoryType = CashFlowType.Expense });
         Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
     public async Task Update_DoesNotAllowModifyingDefaultCategories()
     {
-        ExpenseCategory? defaultCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _defaultCatName);
-        IActionResult result = await _controller.Update(defaultCategory!.Id, new ExpenseCategory { Name = _updatedCatName });
+        CashFlowCategory? defaultCategory = _context.CashFlowCategories.FirstOrDefault(c => c.Name == _defaultCatName);
+        IActionResult result = await _controller.Update(defaultCategory!.Id, new CashFlowCategory { Name = _updatedCatName, CategoryType = CashFlowType.Expense });
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -172,8 +188,8 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [InlineData(" ")]
     public async Task Update_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
-        IActionResult result = await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = invalidName });
+        CashFlowCategory? userCategory = _context.CashFlowCategories.FirstOrDefault(c => c.Name == _userCatName);
+        IActionResult result = await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = invalidName, CategoryType = CashFlowType.Expense });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
@@ -182,17 +198,17 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Delete_RemovesUserCategory()
     {
-        ExpenseCategory toDeleteCategory = await CreateTestCategory(_toDeleteCat, _user1Id);
+        CashFlowCategory toDeleteCategory = await CreateTestCategory(_toDeleteCat, _user1Id);
         IActionResult result = await _controller.Delete(toDeleteCategory.Id);
 
         Assert.IsType<NoContentResult>(result);
-        Assert.False(_context.ExpenseCategories.Any(c => c.Name == _toDeleteCat && c.UserId == _user1Id));
+        Assert.False(_context.CashFlowCategories.Any(c => c.Name == _toDeleteCat && c.UserId == _user1Id));
     }
 
     [Fact]
     public async Task Delete_DoesNotAllowDeletingOthersCategories()
     {
-        ExpenseCategory? otherUserCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _otherUserCatName);
+        CashFlowCategory? otherUserCategory = _context.CashFlowCategories.FirstOrDefault(c => c.Name == _otherUserCatName);
         IActionResult result = await _controller.Delete(otherUserCategory!.Id);
         Assert.IsType<NotFoundResult>(result);
     }
@@ -205,12 +221,12 @@ public class ExpenseCategoriesControllerTests : IDisposable
     public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
     {
         SetUserUnauthorized();
-        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        CashFlowCategory? userCategory = _context.CashFlowCategories.FirstOrDefault(c => c.Name == _userCatName);
         IActionResult result = action switch
         {
             "Get" => await _controller.Get(),
-            "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
-            "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
+            "Create" => await _controller.Create(new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
+            "Update" => await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
             "Delete" => await _controller.Delete(userCategory!.Id),
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -223,23 +239,23 @@ public class ExpenseCategoriesControllerTests : IDisposable
     [InlineData("Update")]
     public async Task CreateAndUpdateDates(string action)
     {
-        ExpenseCategory? userCategory = _context.ExpenseCategories.FirstOrDefault(c => c.Name == _userCatName);
+        CashFlowCategory? userCategory = _context.CashFlowCategories.FirstOrDefault(c => c.Name == _userCatName);
         IActionResult result = action switch
         {
-            "Create" => await _controller.Create(new ExpenseCategory { Name = _newCatName }),
-            "Update" => await _controller.Update(userCategory!.Id, new ExpenseCategory { Name = _newCatName }),
+            "Create" => await _controller.Create(new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
+            "Update" => await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
         };
         if (action == "Create")
         {
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            ExpenseCategory? category = createdAtActionResult.Value as ExpenseCategory;
+            CashFlowCategory? category = createdAtActionResult.Value as CashFlowCategory;
             Assert.NotEqual(DateTime.MinValue, category?.CreatedAt);
             Assert.Equal(DateTime.MinValue, category?.UpdatedAt);
         }
         if (action == "Update")
         {
             var okResult = Assert.IsType<OkObjectResult>(result);
-            ExpenseCategory? category = Assert.IsType<ExpenseCategory>(okResult.Value);
+            CashFlowCategory? category = Assert.IsType<CashFlowCategory>(okResult.Value);
             Assert.NotEqual(DateTime.MinValue, category.CreatedAt);
             Assert.NotEqual(DateTime.MinValue, category.UpdatedAt);
             Assert.True(category.UpdatedAt > category.CreatedAt);
