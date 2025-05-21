@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class IncomeStreamsControllerTests : IDisposable
@@ -9,7 +8,6 @@ public class IncomeStreamsControllerTests : IDisposable
     private const string ConflictMessage = "Stream already exists.";
     private const string NameRequiredMessage = "Stream name cannot be empty.";
     private const string _testPrefix = "Test_";
-    private readonly string _defaultStreamName = $"{_testPrefix}Test_Default";
     private readonly string _userStreamName = $"{_testPrefix}User's";
     private readonly string _otherUserStreamName = $"{_testPrefix}Another User's";
     private readonly string _newStreamName = $"{_testPrefix}New Stream";
@@ -86,12 +84,9 @@ public class IncomeStreamsControllerTests : IDisposable
     public async Task Create_AddsNewStreamForUser()
     {
         IncomeStream newStream = new() { Name = _newStreamName };
-        OkObjectResult? result = await _controller.Create(newStream) as OkObjectResult;
-        IncomeStream? savedStream = await _context.IncomeStreams.FirstOrDefaultAsync(c => c.Name == _newStreamName);
-
-        Assert.NotNull(result);
-        Assert.NotNull(savedStream);
-        Assert.Equal(_user1Id, savedStream!.UserId);
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(await _controller.Create(newStream));
+        Assert.Equal(nameof(IncomeStreamsController.Get), createdAtActionResult.ActionName);
+        Assert.Equal(_newStreamName, (createdAtActionResult.Value as IncomeStream)?.Name);
     }
 
     [Fact]
@@ -212,15 +207,17 @@ public class IncomeStreamsControllerTests : IDisposable
             "Create" => await _controller.Create(new IncomeStream { Name = _newStreamName }),
             "Update" => await _controller.Update(userStream!.Id, new IncomeStream { Name = _newStreamName }),
         };
-        OkObjectResult? okResult = result as OkObjectResult;
-        IncomeStream? stream = Assert.IsType<IncomeStream>(okResult!.Value);
         if (action == "Create")
         {
-            Assert.NotEqual(DateTime.MinValue, stream.CreatedAt);
-            Assert.Equal(DateTime.MinValue, stream.UpdatedAt);
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            IncomeStream? stream = createdAtActionResult.Value as IncomeStream;
+            Assert.NotEqual(DateTime.MinValue, stream?.CreatedAt);
+            Assert.Equal(DateTime.MinValue, stream?.UpdatedAt);
         }
         if (action == "Update")
         {
+            OkObjectResult? okResult = result as OkObjectResult;
+            IncomeStream? stream = Assert.IsType<IncomeStream>(okResult!.Value);
             Assert.NotEqual(DateTime.MinValue, stream.CreatedAt);
             Assert.NotEqual(DateTime.MinValue, stream.UpdatedAt);
             Assert.True(stream.UpdatedAt > stream.CreatedAt);

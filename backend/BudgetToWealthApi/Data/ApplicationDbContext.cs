@@ -5,6 +5,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
     public DbSet<IncomeStream> IncomeStreams { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -14,13 +15,13 @@ public class ApplicationDbContext : DbContext
         foreach (var entityType in modelBuilder.Model.GetEntityTypes()
             .Where(e => typeof(IDbEntity).IsAssignableFrom(e.ClrType)))
         {
-            SetDbProperties(modelBuilder, entityType.ClrType);
+            SetDbEntityProperties(modelBuilder, entityType.ClrType);
         }
 
         SeedDefaultExpenseCategories(modelBuilder);
     }
 
-    private void SetDbProperties(ModelBuilder modelBuilder, Type entityType)
+    private void SetDbEntityProperties(ModelBuilder modelBuilder, Type entityType)
     {
         modelBuilder.Entity(entityType)
             .Property("Id")
@@ -33,6 +34,13 @@ public class ApplicationDbContext : DbContext
             .HasColumnType("timestamp with time zone")
             .ValueGeneratedOnAdd()
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        if (entityType.GetProperty("Amount") != null)
+        {
+            modelBuilder.Entity(entityType)
+                .Property("Amount")
+                .HasColumnType("decimal(12,2)");
+        }
     }
 
     private void SeedDefaultExpenseCategories(ModelBuilder modelBuilder)

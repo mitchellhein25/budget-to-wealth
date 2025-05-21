@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 public interface IDbEntity
 {
     public Guid Id { get; set; }

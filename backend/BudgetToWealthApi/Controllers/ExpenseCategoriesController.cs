@@ -49,7 +49,7 @@ public class ExpenseCategoriesController : ControllerBase
         _context.ExpenseCategories.Add(category);
         await _context.SaveChangesAsync();
 
-        return Ok(category);
+        return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
     }
 
     [HttpPut("{id}")]
