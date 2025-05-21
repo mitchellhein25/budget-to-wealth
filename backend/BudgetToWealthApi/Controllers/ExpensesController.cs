@@ -81,6 +81,25 @@ public class ExpensesController : ControllerBase
         return Ok(existingExpense);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null) 
+            return Unauthorized();
+
+        Expense? expense = await _context.Expenses
+            .FirstOrDefaultAsync(expense => expense.Id == id && expense.UserId == userId);
+
+        if (expense == null) 
+            return NotFound();
+
+        _context.Expenses.Remove(expense);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     private async Task<IActionResult?> ValidateExpense(Expense expense, string userId)
     {
         if (expense.Amount < 0)
@@ -100,24 +119,4 @@ public class ExpensesController : ControllerBase
 
         return null;
     }
-
-
-    // [HttpDelete("{id}")]
-    // public async Task<IActionResult> Delete(Guid id)
-    // {
-    //     string? userId = User.GetUserId();
-    //     if (userId == null) 
-    //         return Unauthorized();
-
-    //     Expense? expense = await _context.Expenses
-    //         .FirstOrDefaultAsync(expense => expense.Id == id && (expense.UserId == userId || expense.UserId == null));
-
-    //     if (expense == null) 
-    //         return NotFound();
-
-    //     _context.Expenses.Remove(expense);
-    //     await _context.SaveChangesAsync();
-
-    //     return NoContent();
-    // }
 }

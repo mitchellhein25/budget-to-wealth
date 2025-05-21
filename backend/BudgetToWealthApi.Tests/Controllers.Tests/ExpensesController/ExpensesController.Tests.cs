@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class ExpensesControllerTests : IDisposable
@@ -277,114 +276,115 @@ public class ExpensesControllerTests : IDisposable
         Assert.Equal("Date is required.", badRequestResult.Value);
     }
 
-    // [Fact]
-    // public async Task Update_ReturnsOk_WhenExpenseIsUpdatedSuccessfully()
-    // {
-    // // Arrange
-    // var expenseId = Guid.NewGuid();
-    // var existingExpense = new Expense
-    // {
-    //     Id = expenseId,
-    //     UserId = "test-user-id",
-    //     Amount = 50,
-    //     Description = "Old Description",
-    //     Date = DateTime.UtcNow.AddDays(-1),
-    //     ExpenseCategoryId = Guid.NewGuid()
-    // };
+    [Fact]
+    public async Task Update_ReturnsOk_WhenExpenseIsUpdatedSuccessfully()
+    {
+        Expense updatedExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 01, 02),
+            Description = "Test descript",
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+        Expense? expenseToUpdate = _context.Expenses.FirstOrDefault(exp => exp.UserId == _user1Id);
+        var result = await _controller.Update(expenseToUpdate!.Id, updatedExpense);
 
-    // var updatedExpense = new Expense
-    // {
-    //     Amount = 100,
-    //     Description = "Updated Description",
-    //     Date = DateTime.UtcNow,
-    //     ExpenseCategoryId = Guid.NewGuid()
-    // };
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnedExpense = Assert.IsType<Expense>(okResult.Value);
 
-    // _mockContext.Setup(c => c.Expenses.FirstOrDefaultAsync(It.IsAny<Func<Expense, bool>>()))
-    //     .ReturnsAsync(existingExpense);
+        Assert.Equal(updatedExpense.Amount, returnedExpense.Amount);
+        Assert.Equal(updatedExpense.Description, returnedExpense.Description);
+        Assert.Equal(updatedExpense.Date, returnedExpense.Date);
+        Assert.Equal(updatedExpense.ExpenseCategoryId, returnedExpense.ExpenseCategoryId);
+    }
 
-    // _mockContext.Setup(c => c.ExpenseCategories.AnyAsync(It.IsAny<Func<ExpenseCategory, bool>>()))
-    //     .ReturnsAsync(true);
+    [Fact]
+    public async Task Delete_ReturnsNotFound_WhenExpenseDoesNotExist()
+    {
+        var expenseId = Guid.NewGuid();
+        var result = await _controller.Delete(expenseId);
+        Assert.IsType<NotFoundResult>(result);
+    }
 
-    // _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
+    [Fact]
+    public async Task Delete_ReturnsNoContent_WhenExpenseIsDeletedSuccessfully()
+    {
+        Expense newExpenseToDelete = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 01, 02),
+            Description = "Test descript",
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+            UserId = _user1Id
+        };
+        _context.Expenses.Add(newExpenseToDelete);
+        await _context.SaveChangesAsync();
+        var result = await _controller.Delete(newExpenseToDelete.Id);
+        Assert.IsType<NoContentResult>(result);
+    }
 
-    // // Act
-    // var result = await _controller.Update(expenseId, updatedExpense);
+    [Fact]
+    public async Task Delete_DoesNotAllowDeletingOthersExpenses()
+    {
+        Expense? otherUserExpense = _context.Expenses.FirstOrDefault(exp => exp.UserId == _user2Id);
+        IActionResult result = await _controller.Delete(otherUserExpense!.Id);
+        Assert.IsType<NotFoundResult>(result);
+    }
 
-    // // Assert
-    // var okResult = Assert.IsType<OkObjectResult>(result);
-    // var returnedExpense = Assert.IsType<Expense>(okResult.Value);
+    [Theory]
+    [InlineData("Get")]
+    [InlineData("Create")]
+    [InlineData("Update")]
+    [InlineData("Delete")]
+    public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
+    {
+        SetUserUnauthorized();
+        Expense? userExpense = _context.Expenses.FirstOrDefault(exp => exp.UserId == _user1Id);
+        IActionResult result = action switch
+        {
+            "Get" => await _controller.Get(),
+            "Create" => await _controller.Create(userExpense!),
+            "Update" => await _controller.Update(userExpense!.Id, userExpense),
+            "Delete" => await _controller.Delete(userExpense!.Id),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        Assert.IsType<UnauthorizedResult>(result);
+        SetupUserContext(_user1Id);
+    }
 
-    // Assert.Equal(updatedExpense.Amount, returnedExpense.Amount);
-    // Assert.Equal(updatedExpense.Description, returnedExpense.Description);
-    // Assert.Equal(updatedExpense.Date, returnedExpense.Date);
-    // Assert.Equal(updatedExpense.ExpenseCategoryId, returnedExpense.ExpenseCategoryId);
-    // }
-
-
-    // [Fact]
-    // public async Task Delete_RemovesUserExpense()
-    // {
-    //     Expense toDeleteExpense = await CreateTestExpense(_toDeleteCat, _user1Id);
-    //     IActionResult result = await _controller.Delete(toDeleteExpense.Id);
-
-    //     Assert.IsType<NoContentResult>(result);
-    //     Assert.False(_context.Expenses.Any(c => c.Name == _toDeleteCat && c.UserId == _user1Id));
-    // }
-
-    // [Fact]
-    // public async Task Delete_DoesNotAllowDeletingOthersExpenses()
-    // {
-    //     Expense? otherUserExpense = _context.Expenses.FirstOrDefault(c => c.Name == _otherUserCatName);
-    //     IActionResult result = await _controller.Delete(otherUserExpense!.Id);
-    //     Assert.IsType<NotFoundResult>(result);
-    // }
-
-    // [Theory]
-    // [InlineData("Get")]
-    // [InlineData("Create")]
-    // [InlineData("Update")]
-    // [InlineData("Delete")]
-    // public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
-    // {
-    //     SetUserUnauthorized();
-    //     Expense? userExpense = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
-    //     IActionResult result = action switch
-    //     {
-    //         "Get" => await _controller.Get(),
-    //         "Create" => await _controller.Create(new Expense { Name = _newCatName }),
-    //         "Update" => await _controller.Update(userExpense!.Id, new Expense { Name = _newCatName }),
-    //         "Delete" => await _controller.Delete(userExpense!.Id),
-    //         _ => throw new ArgumentOutOfRangeException()
-    //     };
-    //     Assert.IsType<UnauthorizedResult>(result);
-    //     SetupUserContext(_user1Id);
-    // }
-
-    // [Theory]
-    // [InlineData("Create")]
-    // [InlineData("Update")]
-    // public async Task CreateAndUpdateDates(string action)
-    // {
-    //     Expense? userExpense = _context.Expenses.FirstOrDefault(c => c.Name == _userCatName);
-    //     IActionResult result = action switch
-    //     {
-    //         "Create" => await _controller.Create(new Expense { Name = _newCatName }),
-    //         "Update" => await _controller.Update(userExpense!.Id, new Expense { Name = _newCatName }),
-    //     };
-    //     OkObjectResult? okResult = result as OkObjectResult;
-    //     Expense? expense = Assert.IsType<Expense>(okResult!.Value);
-    //     if (action == "Create")
-    //     {
-    //         Assert.NotEqual(DateTime.MinValue, expense.CreatedAt);
-    //         Assert.Equal(DateTime.MinValue, expense.UpdatedAt);
-    //     }
-    //     if (action == "Update")
-    //     {
-    //         Assert.NotEqual(DateTime.MinValue, expense.CreatedAt);
-    //         Assert.NotEqual(DateTime.MinValue, expense.UpdatedAt);
-    //         Assert.True(expense.UpdatedAt > expense.CreatedAt);
-    //         Assert.True(expense.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
-    //     }
-    // }
+    [Theory]
+    [InlineData("Create")]
+    [InlineData("Update")]
+    public async Task CreateAndUpdateDates(string action)
+    {
+        Expense updatedExpense = new()
+        {   
+            Amount = 123.45m,
+            Date = new DateOnly(2025, 01, 02),
+            Description = "Test descript",
+            ExpenseCategoryId = _testObjects.TestUser1Category.Id,
+        };
+        Expense? userExpense = _context.Expenses.FirstOrDefault(exp => exp.UserId == _user1Id);
+        IActionResult result = action switch
+        {
+            "Create" => await _controller.Create(updatedExpense),
+            "Update" => await _controller.Update(userExpense!.Id, updatedExpense),
+        };
+        if (action == "Create")
+        {
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            Expense? expense = createdAtActionResult.Value as Expense;
+            Assert.NotEqual(DateTime.MinValue, expense?.CreatedAt);
+            Assert.Equal(DateTime.MinValue, expense?.UpdatedAt);
+        }
+        if (action == "Update")
+        {
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Expense? expense = Assert.IsType<Expense>(okResult.Value);
+            Assert.NotEqual(DateTime.MinValue, expense.CreatedAt);
+            Assert.NotEqual(DateTime.MinValue, expense.UpdatedAt);
+            Assert.True(expense.UpdatedAt > expense.CreatedAt);
+            Assert.True(expense.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
+        }
+    }
 }

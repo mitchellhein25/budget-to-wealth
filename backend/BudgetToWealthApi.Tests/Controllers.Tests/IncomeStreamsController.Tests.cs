@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class IncomeStreamsControllerTests : IDisposable
@@ -211,8 +210,9 @@ public class IncomeStreamsControllerTests : IDisposable
         if (action == "Create")
         {
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(nameof(IncomeStreamsController.Get), createdAtActionResult.ActionName);
-            Assert.Equal(_newStreamName, (createdAtActionResult.Value as IncomeStream)?.Name);
+            IncomeStream? stream = createdAtActionResult.Value as IncomeStream;
+            Assert.NotEqual(DateTime.MinValue, stream?.CreatedAt);
+            Assert.Equal(DateTime.MinValue, stream?.UpdatedAt);
         }
         if (action == "Update")
         {

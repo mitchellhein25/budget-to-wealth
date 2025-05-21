@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 public class Expense : BaseEntity
 {
     public required decimal Amount { get; set; }

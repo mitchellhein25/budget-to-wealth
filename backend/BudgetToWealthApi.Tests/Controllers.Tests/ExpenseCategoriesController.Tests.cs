@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class ExpenseCategoriesControllerTests : IDisposable
@@ -233,8 +232,9 @@ public class ExpenseCategoriesControllerTests : IDisposable
         if (action == "Create")
         {
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(nameof(ExpensesController.Get), createdAtActionResult.ActionName);
-            Assert.Equal(_newCatName, (createdAtActionResult.Value as ExpenseCategory)?.Name);
+            ExpenseCategory? category = createdAtActionResult.Value as ExpenseCategory;
+            Assert.NotEqual(DateTime.MinValue, category?.CreatedAt);
+            Assert.Equal(DateTime.MinValue, category?.UpdatedAt);
         }
         if (action == "Update")
         {
