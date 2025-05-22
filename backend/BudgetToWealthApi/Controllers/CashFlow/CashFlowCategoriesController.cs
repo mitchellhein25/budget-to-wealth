@@ -94,7 +94,7 @@ public class CashFlowCategoriesController : ControllerBase
             return Unauthorized();
 
         CashFlowCategory? category = await _context.CashFlowCategories
-            .FirstOrDefaultAsync(category => category.Id == id && (category.UserId == userId || category.UserId == null));
+            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
 
         if (category == null) 
             return NotFound();
