@@ -26,7 +26,7 @@ public class CashFlowEntriesController : ControllerBase
         IQueryable<CashFlowEntry> query = _context.CashFlowEntries.Where(cashFlowEntry => cashFlowEntry.UserId == userId);
 
         if (entryType != null)
-            query = query.Where(category => category.EntryType == entryType);
+            query = query.Where(cashFlowEntry => cashFlowEntry.EntryType == entryType);
 
         if (startDate.HasValue)
             query = query.Where(cashFlowEntry => cashFlowEntry.Date >= startDate);

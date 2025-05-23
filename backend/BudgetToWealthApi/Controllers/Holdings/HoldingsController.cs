@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-public class HoldingController : ControllerBase
+public class HoldingsController : ControllerBase
 {
     private const string ConflictMessage = "Holding already exists.";
     private const string NameRequiredMessage = "Holding name cannot be empty.";
     private readonly ApplicationDbContext _context;
 
-    public HoldingController(ApplicationDbContext context)
+    public HoldingsController(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -25,7 +25,7 @@ public class HoldingController : ControllerBase
         if (userId == null) 
             return Unauthorized();
 
-        IQueryable<Holding> query = _context.Holdings.Where(category => category.UserId == userId);
+        IQueryable<Holding> query = _context.Holdings.Where(holding => holding.UserId == userId);
 
         if (type != null)
             query = query.Where(holding => holding.Type == type);
@@ -33,9 +33,9 @@ public class HoldingController : ControllerBase
         if (holdingCategoryId != null)
             query = query.Where(holding => holding.HoldingCategoryId == holdingCategoryId);
 
-        List<Holding> categories = await query.ToListAsync();
+        List<Holding> holdings = await query.ToListAsync();
 
-        return Ok(categories);
+        return Ok(holdings);
     }
 
     [HttpPost]
@@ -48,10 +48,10 @@ public class HoldingController : ControllerBase
         if (string.IsNullOrWhiteSpace(newHolding.Name)) 
             return BadRequest(NameRequiredMessage);
 
-        var exists = await _context.Holdings.AnyAsync(c => c.UserId == userId && 
-                                                           EF.Functions.ILike(c.Name, newHolding.Name) && 
-                                                           c.Type == newHolding.Type && 
-                                                           c.HoldingCategoryId == newHolding.HoldingCategoryId);
+        var exists = await _context.Holdings.AnyAsync(holding => holding.UserId == userId && 
+                                                           EF.Functions.ILike(holding.Name, newHolding.Name) && 
+                                                           holding.Type == newHolding.Type && 
+                                                           holding.HoldingCategoryId == newHolding.HoldingCategoryId);
         if (exists)
             return Conflict(ConflictMessage);
 
@@ -72,21 +72,21 @@ public class HoldingController : ControllerBase
         if (string.IsNullOrWhiteSpace(updatedHolding.Name)) 
             return BadRequest(NameRequiredMessage);
 
-        Holding? category = await _context.Holdings
-            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
+        Holding? holding = await _context.Holdings
+            .FirstOrDefaultAsync(holding => holding.Id == id && holding.UserId == userId);
 
-        if (category == null) 
+        if (holding == null) 
             return NotFound();
 
-        category.Name = updatedHolding.Name;
-        category.Type = updatedHolding.Type;
-        category.HoldingCategoryId = updatedHolding.HoldingCategoryId;
-        category.UpdatedAt = DateTime.UtcNow;
+        holding.Name = updatedHolding.Name;
+        holding.Type = updatedHolding.Type;
+        holding.HoldingCategoryId = updatedHolding.HoldingCategoryId;
+        holding.UpdatedAt = DateTime.UtcNow;
         
-        _context.Holdings.Update(category);
+        _context.Holdings.Update(holding);
 
         await _context.SaveChangesAsync();
-        return Ok(category);
+        return Ok(holding);
     }
 
 
@@ -97,13 +97,13 @@ public class HoldingController : ControllerBase
         if (userId == null) 
             return Unauthorized();
 
-        Holding? category = await _context.Holdings
-            .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
+        Holding? holding = await _context.Holdings
+            .FirstOrDefaultAsync(holding => holding.Id == id && holding.UserId == userId);
 
-        if (category == null) 
+        if (holding == null) 
             return NotFound();
 
-        _context.Holdings.Remove(category);
+        _context.Holdings.Remove(holding);
         await _context.SaveChangesAsync();
 
         return NoContent();
