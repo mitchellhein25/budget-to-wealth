@@ -41,6 +41,10 @@ public class HoldingSnapshotsController : ControllerBase
         if (userId == null) 
             return Unauthorized();
 
+        IActionResult? validationResult = await ValidateHoldingSnapshot(newHoldingSnapshot, userId);
+        if (validationResult != null)
+            return validationResult;
+
         var exists = await _context.HoldingSnapshots.AnyAsync(snapshot => snapshot.UserId == userId && 
                                                            snapshot.HoldingId == newHoldingSnapshot.HoldingId && 
                                                            snapshot.Date == newHoldingSnapshot.Date);
@@ -60,6 +64,10 @@ public class HoldingSnapshotsController : ControllerBase
         string? userId = User.GetUserId();
         if (userId == null) 
             return Unauthorized();
+
+        IActionResult? validationResult = await ValidateHoldingSnapshot(updatedHoldingSnapshot, userId);
+        if (validationResult != null)
+            return validationResult;
 
         HoldingSnapshot? snapshot = await _context.HoldingSnapshots
             .FirstOrDefaultAsync(snapshot => snapshot.Id == id && snapshot.UserId == userId);
@@ -96,5 +104,19 @@ public class HoldingSnapshotsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    private async Task<IActionResult?> ValidateHoldingSnapshot(HoldingSnapshot holdingSnapshot, string userId)
+    {
+        if (holdingSnapshot.HoldingId == Guid.Empty)
+            return BadRequest("HoldingId is required.");
+
+        bool categoryExistsForUser = await _context.Holdings
+            .AnyAsync(snapshot => snapshot.Id == holdingSnapshot.HoldingId && 
+                      (snapshot.UserId == userId || snapshot.UserId == null));
+        if (!categoryExistsForUser)
+            return BadRequest("Invalid or unauthorized HoldingId.");
+
+        return null;
     }
 }
