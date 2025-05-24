@@ -23,14 +23,14 @@ public class HoldingsControllerTests : IDisposable
     private void SetupTestData()
     {
         _testObjects = new(_context);
-        _context.Holdings.Add(_testObjects.TestHolding1);
-        _context.Holdings.Add(_testObjects.TestHolding2);
-        _context.Holdings.Add(_testObjects.TestHolding3);
-        _context.Holdings.Add(_testObjects.TestHolding4);
-        _context.Holdings.Add(_testObjects.TestHolding5);
-        _context.Holdings.Add(_testObjects.TestHolding6);
-        _context.Holdings.Add(_testObjects.TestHolding7);
-        _context.Holdings.Add(_testObjects.TestHolding8);
+        _context.Holdings.Add(_testObjects.TestHoldingAssetDefaultUser1);
+        _context.Holdings.Add(_testObjects.TestHoldingAssetCat1User1);
+        _context.Holdings.Add(_testObjects.TestHoldingAssetCat2User2);
+        _context.Holdings.Add(_testObjects.TestHoldingAsset2Cat2User2);
+        _context.Holdings.Add(_testObjects.TestHoldingDebtDefCatUser1);
+        _context.Holdings.Add(_testObjects.TestHoldingDebtCat1User1);
+        _context.Holdings.Add(_testObjects.TestHoldingDebtCat2User2);
+        _context.Holdings.Add(_testObjects.TestHoldingDebt2Cat2User2);
         _context.SaveChanges();
     }
 
@@ -69,279 +69,189 @@ public class HoldingsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Get_QueryWithoutDateReturnsAllUserHoldings()
+    public async Task Get_QueryWithoutTypeOrCategoryReturnsAllUserHoldings()
     {
         OkObjectResult? result = await _controller.Get() as OkObjectResult;
         IEnumerable<Holding> holdings = Assert.IsAssignableFrom<IEnumerable<Holding>>(result!.Value);
 
-        Assert.Contains(holdings, exp => exp.Name == _testObjects.TestHolding1.Name);
+        Assert.Contains(holdings, exp => exp.Name == _testObjects.TestHoldingAssetDefaultUser1.Name);
         Assert.Equal(4, holdings.Count());
     }
     
     [Theory]
-    [InlineData("2023-04-01")]
-    [InlineData("2023-04-13")]
-    [InlineData("2023-04-12")]
-    [InlineData("2023-01-01")]
-    [InlineData("2024-01-01")]
-    public async Task Get_FilterByStartDate(string startDateString)
+    [InlineData(HoldingType.Asset)]
+    [InlineData(HoldingType.Debt)]
+    public async Task Get_FilterByType(HoldingType holdingType)
     {
-        OkObjectResult? result = await _controller.Get(startDate: DateOnly.Parse(startDateString)) as OkObjectResult;
-        IEnumerable<Holdings> expenses = Assert.IsAssignableFrom<IEnumerable<Holdings>>(result!.Value);
+        OkObjectResult? result = await _controller.Get(type: holdingType) as OkObjectResult;
+        IEnumerable<Holding> holdings = Assert.IsAssignableFrom<IEnumerable<Holding>>(result!.Value);
 
-        List<string> returnBoth = new() { "2023-04-01", "2023-04-12", "2023-01-01" };
-        if (returnBoth.Contains(startDateString))
+        if (holdingType == HoldingType.Asset)
         {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings1.Amount);
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings3.Amount);
-            Assert.Equal(4, expenses.Count());
+            Assert.Contains(holdings, holding => holding.Name == _testObjects.TestHoldingAssetCat1User1.Name);
+            Assert.Equal(2, holdings.Count());
         }
-        else if (startDateString == "2023-04-13")
+        if (holdingType == HoldingType.Debt)
         {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings3.Amount);
-            Assert.Equal(2, expenses.Count());
-        }
-        else if (startDateString == "2024-01-01")
-        {
-            Assert.Empty(expenses);
+            Assert.Contains(holdings, holding => holding.Name == _testObjects.TestHoldingDebtCat1User1.Name);
+            Assert.Equal(2, holdings.Count());
         }
     }
     
+    [Fact]
+    public async Task Get_FilterByCategoryId()
+    {
+        OkObjectResult? result = await _controller.Get(holdingCategoryId: _testObjects.TestUser1Category.Id) as OkObjectResult;
+        IEnumerable<Holding> holdings = Assert.IsAssignableFrom<IEnumerable<Holding>>(result!.Value);
+        Assert.Contains(holdings, hold => hold.HoldingCategoryId == _testObjects.TestUser1Category.Id);
+        Assert.Equal(2, holdings.Count());
+    }
+
     [Theory]
-    [InlineData("2023-04-01")]
-    [InlineData("2023-04-13")]
-    [InlineData("2023-04-12")]
-    [InlineData("2023-01-01")]
-    [InlineData("2024-01-01")]
-    public async Task Get_FilterByEndDate(string endDateString)
+    [InlineData("")]
+    [InlineData("  ")]
+    public async Task Create_ReturnsBadRequest_EmptyName(string newName)
     {
-        OkObjectResult? result = await _controller.Get(endDate: DateOnly.Parse(endDateString)) as OkObjectResult;
-        IEnumerable<Holdings> expenses = Assert.IsAssignableFrom<IEnumerable<Holdings>>(result!.Value);
+        Holding newHolding = new()
+        {   
+            Name = newName,
+            Type = HoldingType.Asset,
+            HoldingCategoryId = _testObjects.TestUser1Category.Id
+        };
 
-        List<string> returnNone = new() { "2023-04-01", "2023-01-01" };
-        List<string> returnOne = new() { "2023-04-13", "2023-04-12" };
-        if (endDateString == "2024-01-01")
-        {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings1.Amount);
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings3.Amount);
-            Assert.Equal(4, expenses.Count());
-        }
-        else if (returnOne.Contains(endDateString))
-        {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings1.Amount);
-            Assert.Equal(2, expenses.Count());
-        }
-        else if (returnNone.Contains(endDateString))
-        {
-            Assert.Empty(expenses);
-        }
-    }
-    
-    [Theory]
-    [InlineData("2023-04-01", "2023-04-01")]
-    [InlineData("2023-04-01", "2023-04-12")]
-    [InlineData("2023-04-12", "2023-05-14")]
-    [InlineData("2023-04-12", "2023-05-15")]
-    [InlineData("2023-05-15", "2023-05-23")]
-    [InlineData("2023-05-23", "2024-05-23")]
-    public async Task Get_FilterByStartAndEndDate(string startDateString, string endDateString)
-    {
-        OkObjectResult? result = await _controller.Get(startDate: DateOnly.Parse(startDateString), endDate: DateOnly.Parse(endDateString)) as OkObjectResult;
-        IEnumerable<Holdings> expenses = Assert.IsAssignableFrom<IEnumerable<Holdings>>(result!.Value);
+        var result = await _controller.Create(newHolding);
 
-        if ((startDateString == "2023-04-01" && endDateString == "2023-04-01") || (startDateString == "2023-05-23" && endDateString == "2024-05-23"))
-        {
-            Assert.Empty(expenses);
-        }
-        else if ((startDateString == "2023-04-01" && endDateString == "2023-04-12") || (startDateString == "2023-04-12" && endDateString == "2023-05-14"))
-        {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings1.Amount);
-            Assert.Equal(2, expenses.Count());
-        }
-        else if (startDateString == "2023-04-12" && endDateString == "2023-05-15")
-        {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings1.Amount);
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings3.Amount);
-            Assert.Equal(4, expenses.Count());
-        }
-        else if (startDateString == "2023-05-15" && endDateString == "2023-05-23")
-        {
-            Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestHoldings3.Amount);
-            Assert.Equal(2, expenses.Count());
-        }
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("Holding name cannot be empty.", badRequestResult.Value);
     }
 
     [Fact]
-    public async Task Create_ReturnsBadRequest_WhenAmountIsNegative()
+    public async Task Create_ReturnsBadRequest_WhenHoldingCategoryIdIsEmpty()
     {
-        Holdings newHoldings = new()
+        Holding newHolding = new()
         {   
-            Amount = -12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 02, 03),
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Asset,
+            HoldingCategoryId = Guid.Empty
         };
 
-        var result = await _controller.Create(newHoldings);
+        var result = await _controller.Create(newHolding);
 
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Amount must be positive.", badRequestResult.Value);
-    }
-
-    [Fact]
-    public async Task Create_ReturnsBadRequest_WhenHoldingsCategoryIdIsEmpty()
-    {
-        Holdings newHoldings = new()
-        {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 02, 03),
-            CategoryId = Guid.Empty,
-        };
-
-        var result = await _controller.Create(newHoldings);
-
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("CategoryId is required.", badRequestResult.Value);
-    }
-
-    [Fact]
-    public async Task Create_ReturnsBadRequest_WhenDateIsDefault()
-    {
-        Holdings newHoldings = new()
-        {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = default,
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
-        };
-
-        var result = await _controller.Create(newHoldings);
-
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Date is required.", badRequestResult.Value);
+        Assert.Equal("HoldingCategoryId is required.", badRequestResult.Value);
     }
 
     [Fact]
     public async Task Create_ReturnsBadRequest_WhenCategoryDoesNotExistForUser()
     {
-        Holdings newHoldings = new()
+        Holding newHolding = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 02, 03),
-            CategoryId = _testObjects.TestUser2CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Asset,
+            HoldingCategoryId = _testObjects.TestUser2Category.Id
         };
 
-        var result = await _controller.Create(newHoldings);
+        var result = await _controller.Create(newHolding);
 
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Invalid or unauthorized CategoryId.", badRequestResult.Value);
+        Assert.Equal("Invalid or unauthorized HoldingCategoryId.", badRequestResult.Value);
     }
 
     [Fact]
     public async Task Create_ReturnsCreatedAtAction_WhenHoldingsIsValid()
     {
-        Holdings newHoldings = new()
+        Holding newHolding = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 02, 03),
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Asset,
+            HoldingCategoryId = _testObjects.TestUser1Category.Id
         };
 
-        var result = await _controller.Create(newHoldings);
+        var result = await _controller.Create(newHolding);
 
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
         Assert.Equal(nameof(HoldingsController.Get), createdAtActionResult.ActionName);
-        Assert.Equal(newHoldings, createdAtActionResult.Value);
+        Assert.Equal(newHolding, createdAtActionResult.Value);
     }
 
     [Fact]
-    public async Task Update_ReturnsNotFound_WhenHoldingsDoesNotExist()
+    public async Task Update_ReturnsNotFound_WhenHoldingDoesNotExist()
     {
-        Holdings updatedHoldings = new()
+        Holding updatedHolding = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 02, 03),
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Asset,
+            HoldingCategoryId = _testObjects.TestUser1Category.Id
         };
-        var result = await _controller.Update(Guid.NewGuid(), updatedHoldings);
+        var result = await _controller.Update(Guid.NewGuid(), updatedHolding);
         Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
     public async Task Update_ReturnsBadRequest_WhenValidationFails()
     {
-        Holdings updatedHoldings = new()
+        Holding updatedHolding = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = default,
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Asset,
+            HoldingCategoryId = Guid.Empty
         };
-        Holdings? expenseToUpdate = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
-        var result = await _controller.Update(expenseToUpdate!.Id, updatedHoldings);
+        Holding? holdingToUpdate = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
+        var result = await _controller.Update(holdingToUpdate!.Id, updatedHolding);
 
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Date is required.", badRequestResult.Value);
+        Assert.Equal("HoldingCategoryId is required.", badRequestResult.Value);
     }
 
     [Fact]
-    public async Task Update_ReturnsOk_WhenHoldingsIsUpdatedSuccessfully()
+    public async Task Update_ReturnsOk_WhenHoldingIsUpdatedSuccessfully()
     {
-        Holdings updatedHoldings = new()
+        Holding updatedHolding = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 01, 02),
-            Description = "Test descript",
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Debt,
+            HoldingCategoryId = _testObjects.TestUser1Category.Id
         };
-        Holdings? expenseToUpdate = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
-        var result = await _controller.Update(expenseToUpdate!.Id, updatedHoldings);
+        Holding? holdingToUpdate = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
+        var result = await _controller.Update(holdingToUpdate!.Id, updatedHolding);
 
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnedHoldings = Assert.IsType<Holdings>(okResult.Value);
+        var returnedHolding = Assert.IsType<Holding>(okResult.Value);
 
-        Assert.Equal(updatedHoldings.Amount, returnedHoldings.Amount);
-        Assert.Equal(updatedHoldings.Description, returnedHoldings.Description);
-        Assert.Equal(updatedHoldings.Date, returnedHoldings.Date);
-        Assert.Equal(updatedHoldings.CategoryId, returnedHoldings.CategoryId);
+        Assert.Equal(updatedHolding.Name, returnedHolding.Name);
+        Assert.Equal(updatedHolding.Type, returnedHolding.Type);
+        Assert.Equal(updatedHolding.HoldingCategoryId, returnedHolding.HoldingCategoryId);
     }
 
     [Fact]
     public async Task Delete_ReturnsNotFound_WhenHoldingsDoesNotExist()
     {
-        var expenseId = Guid.NewGuid();
-        var result = await _controller.Delete(expenseId);
+        var holdingId = Guid.NewGuid();
+        var result = await _controller.Delete(holdingId);
         Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
     public async Task Delete_ReturnsNoContent_WhenHoldingsIsDeletedSuccessfully()
     {
-        Holdings newHoldingsToDelete = new()
+        Holding newHoldingToDelete = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 01, 02),
-            Description = "Test descript",
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
-            UserId = _user1Id
+            UserId = _user1Id,
+            Name = "Test new",
+            Type = HoldingType.Debt,
+            HoldingCategoryId = _testObjects.TestUser1Category.Id
         };
-        _context.Holdings.Add(newHoldingsToDelete);
+        _context.Holdings.Add(newHoldingToDelete);
         await _context.SaveChangesAsync();
-        var result = await _controller.Delete(newHoldingsToDelete.Id);
+        var result = await _controller.Delete(newHoldingToDelete.Id);
         Assert.IsType<NoContentResult>(result);
     }
 
     [Fact]
     public async Task Delete_DoesNotAllowDeletingOthersHoldings()
     {
-        Holdings? otherUserHoldings = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user2Id);
-        IActionResult result = await _controller.Delete(otherUserHoldings!.Id);
+        Holding? otherUserHolding = _context.Holdings.FirstOrDefault(hold => hold.UserId == _user2Id);
+        IActionResult result = await _controller.Delete(otherUserHolding!.Id);
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -353,13 +263,13 @@ public class HoldingsControllerTests : IDisposable
     public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
     {
         SetUserUnauthorized();
-        Holdings? userHoldings = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
+        Holding? userHolding = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
         IActionResult result = action switch
         {
             "Get" => await _controller.Get(),
-            "Create" => await _controller.Create(userHoldings!),
-            "Update" => await _controller.Update(userHoldings!.Id, userHoldings),
-            "Delete" => await _controller.Delete(userHoldings!.Id),
+            "Create" => await _controller.Create(userHolding!),
+            "Update" => await _controller.Update(userHolding!.Id, userHolding),
+            "Delete" => await _controller.Delete(userHolding!.Id),
             _ => throw new ArgumentOutOfRangeException()
         };
         Assert.IsType<UnauthorizedResult>(result);
@@ -371,35 +281,33 @@ public class HoldingsControllerTests : IDisposable
     [InlineData("Update")]
     public async Task CreateAndUpdateDates(string action)
     {
-        Holdings updatedHoldings = new()
+        Holding updatedHolding = new()
         {   
-            Amount = 12345,
-            EntryType = CashFlowType.Expense,
-            Date = new DateOnly(2025, 01, 02),
-            Description = "Test descript",
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            Name = "Test new",
+            Type = HoldingType.Debt,
+            HoldingCategoryId = _testObjects.TestUser1Category.Id
         };
-        Holdings? userHoldings = _context.Holdings.FirstOrDefault(exp => exp.UserId == _user1Id);
+        Holding? userHoldings = _context.Holdings.FirstOrDefault(holding => holding.UserId == _user1Id);
         IActionResult result = action switch
         {
-            "Create" => await _controller.Create(updatedHoldings),
-            "Update" => await _controller.Update(userHoldings!.Id, updatedHoldings),
+            "Create" => await _controller.Create(updatedHolding),
+            "Update" => await _controller.Update(userHoldings!.Id, updatedHolding),
         };
         if (action == "Create")
         {
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Holdings? expense = createdAtActionResult.Value as Holdings;
-            Assert.NotEqual(DateTime.MinValue, expense?.CreatedAt);
-            Assert.Equal(DateTime.MinValue, expense?.UpdatedAt);
+            Holding? holding = createdAtActionResult.Value as Holding;
+            Assert.NotEqual(DateTime.MinValue, holding?.CreatedAt);
+            Assert.Equal(DateTime.MinValue, holding?.UpdatedAt);
         }
         if (action == "Update")
         {
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Holdings? expense = Assert.IsType<Holdings>(okResult.Value);
-            Assert.NotEqual(DateTime.MinValue, expense.CreatedAt);
-            Assert.NotEqual(DateTime.MinValue, expense.UpdatedAt);
-            Assert.True(expense.UpdatedAt > expense.CreatedAt);
-            Assert.True(expense.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
+            Holding? holding = Assert.IsType<Holding>(okResult.Value);
+            Assert.NotEqual(DateTime.MinValue, holding.CreatedAt);
+            Assert.NotEqual(DateTime.MinValue, holding.UpdatedAt);
+            Assert.True(holding.UpdatedAt > holding.CreatedAt);
+            Assert.True(holding.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
     }
 }

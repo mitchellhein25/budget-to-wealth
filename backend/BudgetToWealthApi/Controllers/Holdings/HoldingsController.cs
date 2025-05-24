@@ -45,8 +45,9 @@ public class HoldingsController : ControllerBase
         if (userId == null) 
             return Unauthorized();
 
-        if (string.IsNullOrWhiteSpace(newHolding.Name)) 
-            return BadRequest(NameRequiredMessage);
+        IActionResult? validationResult = await ValidateHolding(newHolding, userId);
+        if (validationResult != null)
+            return validationResult;
 
         var exists = await _context.Holdings.AnyAsync(holding => holding.UserId == userId && 
                                                            EF.Functions.ILike(holding.Name, newHolding.Name) && 
@@ -69,12 +70,12 @@ public class HoldingsController : ControllerBase
         if (userId == null) 
             return Unauthorized();
 
-        if (string.IsNullOrWhiteSpace(updatedHolding.Name)) 
-            return BadRequest(NameRequiredMessage);
+        IActionResult? validationResult = await ValidateHolding(updatedHolding, userId);
+        if (validationResult != null)
+            return validationResult;
 
         Holding? holding = await _context.Holdings
             .FirstOrDefaultAsync(holding => holding.Id == id && holding.UserId == userId);
-
         if (holding == null) 
             return NotFound();
 
@@ -107,5 +108,22 @@ public class HoldingsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    private async Task<IActionResult?> ValidateHolding(Holding newHolding, string userId)
+    {
+        if (string.IsNullOrWhiteSpace(newHolding.Name)) 
+            return BadRequest(NameRequiredMessage);
+
+        if (newHolding.HoldingCategoryId == Guid.Empty)
+            return BadRequest("HoldingCategoryId is required.");
+
+        bool categoryExistsForUser = await _context.HoldingCategories
+            .AnyAsync(holding => holding.Id == newHolding.HoldingCategoryId && 
+                      (holding.UserId == userId || holding.UserId == null));
+        if (!categoryExistsForUser)
+            return BadRequest("Invalid or unauthorized HoldingCategoryId.");
+
+        return null;
     }
 }

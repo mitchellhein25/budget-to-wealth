@@ -34,7 +34,7 @@ public class HoldingsControllerTestObjects
     TestUser1Category = _context.HoldingCategories.First(c => c.Name == "Test_Category_1");
   }
 
-  public Holding TestHolding1 => new()
+  public Holding TestHoldingAssetDefaultUser1 => new()
   {
     HoldingCategory = DefaultCategory,
     HoldingCategoryId = DefaultCategory.Id,
@@ -43,7 +43,7 @@ public class HoldingsControllerTestObjects
     UserId = _user1Id
   };
 
-  public Holding TestHolding2 => new()
+  public Holding TestHoldingAssetCat2User2 => new()
   {
     HoldingCategory = TestUser2Category,
     HoldingCategoryId = TestUser2Category.Id,
@@ -52,7 +52,7 @@ public class HoldingsControllerTestObjects
     UserId = _user2Id
   };
 
-  public Holding TestHolding3 => new()
+  public Holding TestHoldingAssetCat1User1 => new()
   {
     HoldingCategory = TestUser1Category,
     HoldingCategoryId = TestUser1Category.Id,
@@ -61,7 +61,7 @@ public class HoldingsControllerTestObjects
     UserId = _user1Id
   };
 
-  public Holding TestHolding4 => new()
+  public Holding TestHoldingAsset2Cat2User2 => new()
   {
     HoldingCategory = TestUser2Category,
     HoldingCategoryId = TestUser2Category.Id,
@@ -69,7 +69,7 @@ public class HoldingsControllerTestObjects
     Type = HoldingType.Asset,
     UserId = _user2Id
   };
-  public Holding TestHolding5 => new()
+  public Holding TestHoldingDebtDefCatUser1 => new()
   {
     HoldingCategory = DefaultCategory,
     HoldingCategoryId = DefaultCategory.Id,
@@ -78,7 +78,7 @@ public class HoldingsControllerTestObjects
     UserId = _user1Id
   };
 
-  public Holding TestHolding6 => new()
+  public Holding TestHoldingDebtCat2User2 => new()
   {
     HoldingCategory = TestUser2Category,
     HoldingCategoryId = TestUser2Category.Id,
@@ -87,7 +87,7 @@ public class HoldingsControllerTestObjects
     UserId = _user2Id
   };
 
-  public Holding TestHolding7 => new()
+  public Holding TestHoldingDebtCat1User1 => new()
   {
     HoldingCategory = TestUser1Category,
     HoldingCategoryId = TestUser1Category.Id,
@@ -96,7 +96,7 @@ public class HoldingsControllerTestObjects
     UserId = _user1Id
   };
 
-  public Holding TestHolding8 => new()
+  public Holding TestHoldingDebt2Cat2User2 => new()
   {
     HoldingCategory = TestUser2Category,
     HoldingCategoryId = TestUser2Category.Id,
