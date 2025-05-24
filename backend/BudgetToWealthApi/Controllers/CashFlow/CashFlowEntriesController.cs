@@ -1,10 +1,12 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
 public class CashFlowEntriesController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -24,7 +26,7 @@ public class CashFlowEntriesController : ControllerBase
         IQueryable<CashFlowEntry> query = _context.CashFlowEntries.Where(cashFlowEntry => cashFlowEntry.UserId == userId);
 
         if (entryType != null)
-            query = query.Where(category => category.EntryType == entryType);
+            query = query.Where(cashFlowEntry => cashFlowEntry.EntryType == entryType);
 
         if (startDate.HasValue)
             query = query.Where(cashFlowEntry => cashFlowEntry.Date >= startDate);

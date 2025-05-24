@@ -5,6 +5,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<CashFlowCategory> CashFlowCategories { get; set; }
     public DbSet<CashFlowEntry> CashFlowEntries { get; set; }
+    public DbSet<HoldingCategory> HoldingCategories { get; set; }
+    public DbSet<Holding> Holdings { get; set; }
+    public DbSet<HoldingSnapshot> HoldingSnapshots { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -17,7 +20,7 @@ public class ApplicationDbContext : DbContext
             SetDbEntityProperties(modelBuilder, entityType.ClrType);
         }
 
-        SeedDefaultExpenseCategories(modelBuilder);
+        SeedDefaultCashFlowCategories(modelBuilder);
     }
 
     private void SetDbEntityProperties(ModelBuilder modelBuilder, Type entityType)
@@ -42,7 +45,7 @@ public class ApplicationDbContext : DbContext
         }
     }
 
-    private void SeedDefaultExpenseCategories(ModelBuilder modelBuilder)
+    private void SeedDefaultCashFlowCategories(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CashFlowCategory>().HasData(
             new CashFlowCategory 
