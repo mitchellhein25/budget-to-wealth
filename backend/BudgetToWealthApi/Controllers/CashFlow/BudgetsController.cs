@@ -9,122 +9,130 @@ using Microsoft.EntityFrameworkCore;
 [ApiVersion("1.0")]
 public class BudgetsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+	private readonly ApplicationDbContext _context;
 
-    public BudgetsController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+	public BudgetsController(ApplicationDbContext context)
+	{
+		_context = context;
+	}
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid? categoryId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
-    {
-        string? userId = User.GetUserId();
-        if (userId == null) 
-            return Unauthorized();
+	[HttpGet]
+	public async Task<IActionResult> Get([FromQuery] Guid? categoryId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
+	{
+		string? userId = User.GetUserId();
+		if (userId == null)
+			return Unauthorized();
 
-        IQueryable<Budget> query = _context.Budgets.Where(budget => budget.UserId == userId);
+		IQueryable<Budget> query = _context.Budgets.Where(budget => budget.UserId == userId);
 
-        if (categoryId != null)
-            query = query.Where(budget => budget.CategoryId == categoryId);
+		if (categoryId != null)
+			query = query.Where(budget => budget.CategoryId == categoryId);
 
-        if (startDate.HasValue)
-          query = query.Where(budget => budget.StartDate >= startDate || 
-                                       (budget.StartDate <= startDate && 
-                                       (budget.EndDate == null || budget.EndDate >= startDate)));
+		if (startDate.HasValue)
+			query = query.Where(budget => budget.StartDate >= startDate ||
+										 (budget.StartDate <= startDate &&
+										 (budget.EndDate == null || budget.EndDate >= startDate)));
 
-        if (endDate.HasValue)
-          query = query.Where(budget => budget.StartDate <= endDate);
+		if (endDate.HasValue)
+			query = query.Where(budget => budget.StartDate <= endDate);
 
-        List<Budget> budgets = await query.ToListAsync();
+		List<Budget> budgets = await query.ToListAsync();
 
-        return Ok(budgets);
-    }
+		return Ok(budgets);
+	}
 
-    // [HttpPost]
-    // public async Task<IActionResult> Create([FromBody] budget budget)
-    // {
-    //     string? userId = User.GetUserId();
-    //     if (userId == null) 
-    //         return Unauthorized();
+	[HttpPost]
+	public async Task<IActionResult> Create([FromBody] Budget newBudget)
+	{
+		string? userId = User.GetUserId();
+		if (userId == null)
+			return Unauthorized();
 
-    //     IActionResult? validationResult = await Validatebudget(budget, userId);
-    //     if (validationResult != null)
-    //         return validationResult;
-    
-    //     budget.UserId = userId;
-    //     _context.Budgets.Add(budget);
-    //     await _context.SaveChangesAsync();
+		IActionResult? validationResult = await ValidateBudget(newBudget, userId);
+		if (validationResult != null)
+			return validationResult;
 
-    //     return CreatedAtAction(nameof(Get), new { id = budget.Id }, budget);
-    // }
+		Budget? activeExistingBudget = await _context.Budgets
+			.FirstOrDefaultAsync(budget => budget.CategoryId == newBudget.CategoryId && budget.EndDate == null);
+		if (activeExistingBudget != null)
+		{
+			activeExistingBudget.EndDate = DateOnly.FromDateTime(DateTime.Now);
+			_context.Budgets.Update(activeExistingBudget);
+		}
 
-    // [HttpPut("{id}")]
-    // public async Task<IActionResult> Update(Guid id, [FromBody] budget updatedbudget)
-    // {
-    //     string? userId = User.GetUserId();
-    //     if (userId == null) 
-    //         return Unauthorized();
+		if (newBudget.StartDate == DateOnly.MinValue)
+			newBudget.StartDate = DateOnly.FromDateTime(DateTime.Now);
 
-    //     budget? existingbudget = await _context.Budgets
-    //         .FirstOrDefaultAsync(budget => budget.Id == id && budget.UserId == userId);
+		newBudget.UserId = userId;
+		_context.Budgets.Add(newBudget);
+		await _context.SaveChangesAsync();
 
-    //     if (existingbudget == null) 
-    //         return NotFound();
+		return CreatedAtAction(nameof(Get), new { id = newBudget.Id }, newBudget);
+	}
 
-    //     IActionResult? validationResult = await Validatebudget(updatedbudget, userId);
-    //     if (validationResult != null)
-    //         return validationResult;
+	[HttpPut("{id}")]
+	public async Task<IActionResult> Update(Guid id, [FromBody] Budget updatedBudget)
+	{
+		string? userId = User.GetUserId();
+		if (userId == null)
+			return Unauthorized();
 
-    //     existingbudget.Amount = updatedbudget.Amount;
-    //     existingbudget.Description = updatedbudget.Description;
-    //     existingbudget.Date = updatedbudget.Date;
-    //     existingbudget.CategoryId = updatedbudget.CategoryId;
-    //     existingbudget.UpdatedAt = DateTime.UtcNow;
+		Budget? existingbudget = await _context.Budgets
+			.FirstOrDefaultAsync(budget => budget.Id == id && budget.UserId == userId);
 
-    //     _context.Budgets.Update(existingbudget);
-    //     await _context.SaveChangesAsync();
+		if (existingbudget == null)
+			return NotFound();
 
-    //     return Ok(existingbudget);
-    // }
+		IActionResult? validationResult = await ValidateBudget(updatedBudget, userId);
+		if (validationResult != null)
+			return validationResult;
 
-    // [HttpDelete("{id}")]
-    // public async Task<IActionResult> Delete(Guid id)
-    // {
-    //     string? userId = User.GetUserId();
-    //     if (userId == null) 
-    //         return Unauthorized();
+		existingbudget.Amount = updatedBudget.Amount;
+		existingbudget.CategoryId = updatedBudget.CategoryId;
+		existingbudget.UpdatedAt = DateTime.UtcNow;
 
-    //     budget? budget = await _context.Budgets
-    //         .FirstOrDefaultAsync(budget => budget.Id == id && budget.UserId == userId);
+		_context.Budgets.Update(existingbudget);
+		await _context.SaveChangesAsync();
 
-    //     if (budget == null) 
-    //         return NotFound();
+		return Ok(existingbudget);
+	}
 
-    //     _context.Budgets.Remove(budget);
-    //     await _context.SaveChangesAsync();
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> Delete(Guid id)
+	{
+	    string? userId = User.GetUserId();
+	    if (userId == null) 
+	        return Unauthorized();
 
-    //     return NoContent();
-    // }
+	    Budget? budget = await _context.Budgets
+	        .FirstOrDefaultAsync(budget => budget.Id == id && budget.UserId == userId);
 
-    // private async Task<IActionResult?> Validatebudget(budget budget, string userId)
-    // {
-    //    ONLY ALLOW EXPENSE TYPES
-    //     if (budget.Amount < 0)
-    //         return BadRequest("Amount must be positive.");
+	    if (budget == null) 
+	        return NotFound();
 
-    //     if (budget.CategoryId == Guid.Empty)
-    //         return BadRequest("CategoryId is required.");
+	    _context.Budgets.Remove(budget);
+	    await _context.SaveChangesAsync();
 
-    //     if (budget.Date == default)
-    //         return BadRequest("Date is required.");
+	    return NoContent();
+	}
 
-    //     bool categoryExistsForUser = await _context.CashFlowCategories
-    //         .AnyAsync(category => category.Id == budget.CategoryId && 
-    //                   (category.UserId == userId || category.UserId == null));
-    //     if (!categoryExistsForUser)
-    //         return BadRequest("Invalid or unauthorized CategoryId.");
+	private async Task<IActionResult?> ValidateBudget(Budget budget, string userId)
+	{
+		if (budget.Amount < 0)
+			return BadRequest("Amount must be positive.");
 
-    //     return null;
-    // }
+		if (budget.CategoryId == Guid.Empty)
+			return BadRequest("CategoryId is required.");
+
+		bool categoryExistsForUser = await _context.CashFlowCategories
+			.AnyAsync(category => category.Id == budget.CategoryId &&
+					  (category.UserId == userId || category.UserId == null));
+		if (!categoryExistsForUser)
+			return BadRequest("Invalid or unauthorized CategoryId.");
+
+		if (budget.Category?.CategoryType != CashFlowType.Expense)
+			return BadRequest("Budgets can only be entered for Expense categories.");
+
+		return null;
+	}
 }

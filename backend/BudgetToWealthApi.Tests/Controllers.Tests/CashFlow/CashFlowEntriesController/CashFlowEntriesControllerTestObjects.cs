@@ -12,46 +12,46 @@ public class CashFlowEntryControllerTestObjects
   public CashFlowEntryControllerTestObjects(ApplicationDbContext _context)
   {
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Default", 
-          UserId = null, 
-          CategoryType = CashFlowType.Expense 
+        new CashFlowCategory
+        {
+          Name = "Test_Default",
+          UserId = null,
+          CategoryType = CashFlowType.Expense
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Category_2", 
-          UserId = _user2Id, 
-          CategoryType = CashFlowType.Expense 
+        new CashFlowCategory
+        {
+          Name = "Test_Category_2",
+          UserId = _user2Id,
+          CategoryType = CashFlowType.Expense
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Category_1", 
-          UserId = _user1Id, 
-          CategoryType = CashFlowType.Expense 
+        new CashFlowCategory
+        {
+          Name = "Test_Category_1",
+          UserId = _user1Id,
+          CategoryType = CashFlowType.Expense
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Default", 
-          UserId = null, 
-          CategoryType = CashFlowType.Income 
+        new CashFlowCategory
+        {
+          Name = "Test_Default",
+          UserId = null,
+          CategoryType = CashFlowType.Income
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Category_2", 
-          UserId = _user2Id, 
-          CategoryType = CashFlowType.Income 
+        new CashFlowCategory
+        {
+          Name = "Test_Category_2",
+          UserId = _user2Id,
+          CategoryType = CashFlowType.Income
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Category_1", 
-          UserId = _user1Id, 
-          CategoryType = CashFlowType.Income 
+        new CashFlowCategory
+        {
+          Name = "Test_Category_1",
+          UserId = _user1Id,
+          CategoryType = CashFlowType.Income
         });
 
     _context.SaveChanges();
@@ -111,7 +111,7 @@ public class CashFlowEntryControllerTestObjects
     IsRecurring = false,
     UserId = _user2Id
   };
-   public CashFlowEntry TestCashFlowEntry5 => new()
+  public CashFlowEntry TestCashFlowEntry5 => new()
   {
     Amount = 2316,
     EntryType = CashFlowType.Income,

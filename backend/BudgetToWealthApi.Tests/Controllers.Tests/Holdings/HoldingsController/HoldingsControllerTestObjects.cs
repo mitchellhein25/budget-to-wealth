@@ -10,20 +10,20 @@ public class HoldingsControllerTestObjects
   {
     _context.HoldingCategories.Add(
         new HoldingCategory
-        { 
-          Name = "Test_Default", 
-          UserId = null, 
+        {
+          Name = "Test_Default",
+          UserId = null,
         });
     _context.HoldingCategories.Add(
-        new HoldingCategory 
-        { 
-          Name = "Test_Category_2", 
-          UserId = _user2Id, 
+        new HoldingCategory
+        {
+          Name = "Test_Category_2",
+          UserId = _user2Id,
         });
     _context.HoldingCategories.Add(
-        new HoldingCategory 
-        { 
-          Name = "Test_Category_1", 
+        new HoldingCategory
+        {
+          Name = "Test_Category_1",
           UserId = _user1Id
         });
 

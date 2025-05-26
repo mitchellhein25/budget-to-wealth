@@ -20,7 +20,7 @@ public class CashFlowEntriesController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] CashFlowType? entryType = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IQueryable<CashFlowEntry> query = _context.CashFlowEntries.Where(cashFlowEntry => cashFlowEntry.UserId == userId);
@@ -43,13 +43,13 @@ public class CashFlowEntriesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CashFlowEntry cashFlowEntry)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IActionResult? validationResult = await ValidateCashFlowEntry(cashFlowEntry, userId);
         if (validationResult != null)
             return validationResult;
-    
+
         cashFlowEntry.UserId = userId;
         _context.CashFlowEntries.Add(cashFlowEntry);
         await _context.SaveChangesAsync();
@@ -61,13 +61,13 @@ public class CashFlowEntriesController : ControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] CashFlowEntry updatedCashFlowEntry)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         CashFlowEntry? existingCashFlowEntry = await _context.CashFlowEntries
             .FirstOrDefaultAsync(cashFlowEntry => cashFlowEntry.Id == id && cashFlowEntry.UserId == userId);
 
-        if (existingCashFlowEntry == null) 
+        if (existingCashFlowEntry == null)
             return NotFound();
 
         IActionResult? validationResult = await ValidateCashFlowEntry(updatedCashFlowEntry, userId);
@@ -90,13 +90,13 @@ public class CashFlowEntriesController : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         CashFlowEntry? cashFlowEntry = await _context.CashFlowEntries
             .FirstOrDefaultAsync(cashFlowEntry => cashFlowEntry.Id == id && cashFlowEntry.UserId == userId);
 
-        if (cashFlowEntry == null) 
+        if (cashFlowEntry == null)
             return NotFound();
 
         _context.CashFlowEntries.Remove(cashFlowEntry);
@@ -117,7 +117,7 @@ public class CashFlowEntriesController : ControllerBase
             return BadRequest("Date is required.");
 
         bool categoryExistsForUser = await _context.CashFlowCategories
-            .AnyAsync(category => category.Id == cashFlowEntry.CategoryId && 
+            .AnyAsync(category => category.Id == cashFlowEntry.CategoryId &&
                       (category.UserId == userId || category.UserId == null));
         if (!categoryExistsForUser)
             return BadRequest("Invalid or unauthorized CategoryId.");

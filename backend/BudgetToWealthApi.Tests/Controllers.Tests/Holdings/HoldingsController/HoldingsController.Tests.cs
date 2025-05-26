@@ -77,7 +77,7 @@ public class HoldingsControllerTests : IDisposable
         Assert.Contains(holdings, exp => exp.Name == _testObjects.TestHoldingAssetDefaultUser1.Name);
         Assert.Equal(4, holdings.Count());
     }
-    
+
     [Theory]
     [InlineData(HoldingType.Asset)]
     [InlineData(HoldingType.Debt)]
@@ -97,7 +97,7 @@ public class HoldingsControllerTests : IDisposable
             Assert.Equal(2, holdings.Count());
         }
     }
-    
+
     [Fact]
     public async Task Get_FilterByCategoryId()
     {
@@ -113,7 +113,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_EmptyName(string newName)
     {
         Holding newHolding = new()
-        {   
+        {
             Name = newName,
             Type = HoldingType.Asset,
             HoldingCategoryId = _testObjects.TestUser1Category.Id
@@ -129,7 +129,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenHoldingCategoryIdIsEmpty()
     {
         Holding newHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Asset,
             HoldingCategoryId = Guid.Empty
@@ -145,7 +145,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenCategoryDoesNotExistForUser()
     {
         Holding newHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Asset,
             HoldingCategoryId = _testObjects.TestUser2Category.Id
@@ -161,7 +161,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Create_ReturnsCreatedAtAction_WhenHoldingsIsValid()
     {
         Holding newHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Asset,
             HoldingCategoryId = _testObjects.TestUser1Category.Id
@@ -178,7 +178,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Update_ReturnsNotFound_WhenHoldingDoesNotExist()
     {
         Holding updatedHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Asset,
             HoldingCategoryId = _testObjects.TestUser1Category.Id
@@ -191,7 +191,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Update_ReturnsBadRequest_WhenValidationFails()
     {
         Holding updatedHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Asset,
             HoldingCategoryId = Guid.Empty
@@ -207,7 +207,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Update_ReturnsOk_WhenHoldingIsUpdatedSuccessfully()
     {
         Holding updatedHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Debt,
             HoldingCategoryId = _testObjects.TestUser1Category.Id
@@ -235,7 +235,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task Delete_ReturnsNoContent_WhenHoldingsIsDeletedSuccessfully()
     {
         Holding newHoldingToDelete = new()
-        {   
+        {
             UserId = _user1Id,
             Name = "Test new",
             Type = HoldingType.Debt,
@@ -282,7 +282,7 @@ public class HoldingsControllerTests : IDisposable
     public async Task CreateAndUpdateDates(string action)
     {
         Holding updatedHolding = new()
-        {   
+        {
             Name = "Test new",
             Type = HoldingType.Debt,
             HoldingCategoryId = _testObjects.TestUser1Category.Id

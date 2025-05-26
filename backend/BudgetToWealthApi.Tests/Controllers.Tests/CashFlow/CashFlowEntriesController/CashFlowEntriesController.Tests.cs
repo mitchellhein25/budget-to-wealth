@@ -77,7 +77,7 @@ public class CashFlowEntriesControllerTests : IDisposable
         Assert.Contains(expenses, exp => exp.Amount == _testObjects.TestCashFlowEntry1.Amount);
         Assert.Equal(4, expenses.Count());
     }
-    
+
     [Theory]
     [InlineData("2023-04-01")]
     [InlineData("2023-04-13")]
@@ -106,7 +106,7 @@ public class CashFlowEntriesControllerTests : IDisposable
             Assert.Empty(expenses);
         }
     }
-    
+
     [Theory]
     [InlineData("2023-04-01")]
     [InlineData("2023-04-13")]
@@ -136,7 +136,7 @@ public class CashFlowEntriesControllerTests : IDisposable
             Assert.Empty(expenses);
         }
     }
-    
+
     [Theory]
     [InlineData("2023-04-01", "2023-04-01")]
     [InlineData("2023-04-01", "2023-04-12")]
@@ -175,7 +175,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenAmountIsNegative()
     {
         CashFlowEntry newCashFlowEntry = new()
-        {   
+        {
             Amount = -12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 02, 03),
@@ -192,7 +192,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenCashFlowEntryCategoryIdIsEmpty()
     {
         CashFlowEntry newCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 02, 03),
@@ -209,7 +209,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenDateIsDefault()
     {
         CashFlowEntry newCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = default,
@@ -226,7 +226,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenCategoryDoesNotExistForUser()
     {
         CashFlowEntry newCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 02, 03),
@@ -243,7 +243,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Create_ReturnsCreatedAtAction_WhenCashFlowEntryIsValid()
     {
         CashFlowEntry newCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 02, 03),
@@ -261,7 +261,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Update_ReturnsNotFound_WhenCashFlowEntryDoesNotExist()
     {
         CashFlowEntry updatedCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 02, 03),
@@ -275,7 +275,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Update_ReturnsBadRequest_WhenValidationFails()
     {
         CashFlowEntry updatedCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = default,
@@ -292,7 +292,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Update_ReturnsOk_WhenCashFlowEntryIsUpdatedSuccessfully()
     {
         CashFlowEntry updatedCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 01, 02),
@@ -323,7 +323,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task Delete_ReturnsNoContent_WhenCashFlowEntryIsDeletedSuccessfully()
     {
         CashFlowEntry newCashFlowEntryToDelete = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 01, 02),
@@ -372,7 +372,7 @@ public class CashFlowEntriesControllerTests : IDisposable
     public async Task CreateAndUpdateDates(string action)
     {
         CashFlowEntry updatedCashFlowEntry = new()
-        {   
+        {
             Amount = 12345,
             EntryType = CashFlowType.Expense,
             Date = new DateOnly(2025, 01, 02),

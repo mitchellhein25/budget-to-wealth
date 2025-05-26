@@ -5,32 +5,37 @@ public class BudgetsControllerTestObjects
   public CashFlowCategory DefaultCategoryExpense { get; }
   public CashFlowCategory TestUser1CategoryExpense { get; }
   public CashFlowCategory TestUser2CategoryExpense { get; }
-  public CashFlowCategory DefaultCategoryIncome { get; }
   public CashFlowCategory TestUser1CategoryIncome { get; }
-  public CashFlowCategory TestUser2CategoryIncome { get; }
 
   public BudgetsControllerTestObjects(ApplicationDbContext _context)
   {
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Default", 
-          UserId = null, 
-          CategoryType = CashFlowType.Expense 
+        new CashFlowCategory
+        {
+          Name = "Test_Default",
+          UserId = null,
+          CategoryType = CashFlowType.Expense
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Category_2", 
-          UserId = _user2Id, 
-          CategoryType = CashFlowType.Expense 
+        new CashFlowCategory
+        {
+          Name = "Test_Category_2",
+          UserId = _user2Id,
+          CategoryType = CashFlowType.Expense
         });
     _context.CashFlowCategories.Add(
-        new CashFlowCategory 
-        { 
-          Name = "Test_Category_1", 
-          UserId = _user1Id, 
-          CategoryType = CashFlowType.Expense 
+        new CashFlowCategory
+        {
+          Name = "Test_Category_1",
+          UserId = _user1Id,
+          CategoryType = CashFlowType.Expense
+        });
+    _context.CashFlowCategories.Add(
+        new CashFlowCategory
+        {
+          Name = "Test_Category_1_income",
+          UserId = _user1Id,
+          CategoryType = CashFlowType.Income
         });
 
     _context.SaveChanges();
@@ -38,6 +43,7 @@ public class BudgetsControllerTestObjects
     DefaultCategoryExpense = _context.CashFlowCategories.First(c => c.Name == "Test_Default" && c.CategoryType == CashFlowType.Expense);
     TestUser2CategoryExpense = _context.CashFlowCategories.First(c => c.Name == "Test_Category_2" && c.CategoryType == CashFlowType.Expense);
     TestUser1CategoryExpense = _context.CashFlowCategories.First(c => c.Name == "Test_Category_1" && c.CategoryType == CashFlowType.Expense);
+    TestUser1CategoryIncome = _context.CashFlowCategories.First(c => c.Name == "Test_Category_1_income" && c.CategoryType == CashFlowType.Income);
   }
 
   public Budget TestBudget1 => new()

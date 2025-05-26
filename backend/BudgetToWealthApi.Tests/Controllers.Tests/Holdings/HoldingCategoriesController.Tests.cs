@@ -60,9 +60,10 @@ public class HoldingCategoriesControllerTests : IDisposable
 
     private async Task<HoldingCategory> CreateTestCategory(string name, string userId = null)
     {
-        HoldingCategory category = new() { 
-            Name = name, 
-            UserId = userId 
+        HoldingCategory category = new()
+        {
+            Name = name,
+            UserId = userId
         };
         _context.HoldingCategories.Add(category);
         await _context.SaveChangesAsync();
@@ -90,7 +91,8 @@ public class HoldingCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_AddsNewCategoryForUser()
     {
-        HoldingCategory newCategory = new() { 
+        HoldingCategory newCategory = new()
+        {
             Name = _newCatName
         };
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(await _controller.Create(newCategory));
@@ -101,32 +103,35 @@ public class HoldingCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsDefault()
     {
-        HoldingCategory newCategory = new() { 
+        HoldingCategory newCategory = new()
+        {
             Name = _defaultCatName
         };
         IActionResult result = await _controller.Create(newCategory);
 
-        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsExistingUserCategory()
     {
-        HoldingCategory newCategory = new() { 
+        HoldingCategory newCategory = new()
+        {
             Name = _userCatName
         };
 
         IActionResult result = await _controller.Create(newCategory);
 
-        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowCategoryWithSameNameDifferentCasing()
     {
-        HoldingCategory newCategory = new() { 
+        HoldingCategory newCategory = new()
+        {
             Name = _defaultCatName.ToLower()
         };
 
