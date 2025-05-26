@@ -14,57 +14,57 @@ public class HoldingSnapshotsControllerTestObjects
   {
     _context.HoldingCategories.Add(
         new HoldingCategory
-        { 
-          Name = "Test_Default", 
-          UserId = null, 
+        {
+          Name = "Test_Default",
+          UserId = null,
         });
     _context.HoldingCategories.Add(
-        new HoldingCategory 
-        { 
-          Name = "Test_Category_2", 
-          UserId = _user2Id, 
+        new HoldingCategory
+        {
+          Name = "Test_Category_2",
+          UserId = _user2Id,
         });
     _context.HoldingCategories.Add(
-        new HoldingCategory 
-        { 
-          Name = "Test_Category_1", 
+        new HoldingCategory
+        {
+          Name = "Test_Category_1",
           UserId = _user1Id
         });
     _context.SaveChanges();
-    
+
     DefaultCategory = _context.HoldingCategories.First(c => c.Name == "Test_Default");
     TestUser2Category = _context.HoldingCategories.First(c => c.Name == "Test_Category_2");
     TestUser1Category = _context.HoldingCategories.First(c => c.Name == "Test_Category_1");
 
     _context.Holdings.Add(
         new Holding
-        { 
-          Name = "TestUser1Holding1", 
-          Type = HoldingType.Debt, 
-          UserId = _user1Id, 
+        {
+          Name = "TestUser1Holding1",
+          Type = HoldingType.Debt,
+          UserId = _user1Id,
           HoldingCategoryId = DefaultCategory.Id
         });
     _context.Holdings.Add(
-        new Holding 
-        { 
-          Name = "TestUser2Holding1", 
-          Type = HoldingType.Debt, 
-          UserId = _user2Id, 
+        new Holding
+        {
+          Name = "TestUser2Holding1",
+          Type = HoldingType.Debt,
+          UserId = _user2Id,
           HoldingCategoryId = TestUser2Category.Id
         });
     _context.Holdings.Add(
-        new Holding 
-        { 
-          Name = "TestUser1Holding2", 
-          Type = HoldingType.Asset, 
+        new Holding
+        {
+          Name = "TestUser1Holding2",
+          Type = HoldingType.Asset,
           UserId = _user1Id,
           HoldingCategoryId = TestUser1Category.Id
         });
     _context.Holdings.Add(
-        new Holding 
-        { 
+        new Holding
+        {
           Name = "TestUser2Holding2",
-          Type = HoldingType.Asset, 
+          Type = HoldingType.Asset,
           UserId = _user2Id,
           HoldingCategoryId = TestUser2Category.Id
         });
@@ -77,7 +77,7 @@ public class HoldingSnapshotsControllerTestObjects
     TestUser2Holding2 = _context.Holdings.First(c => c.Name == "TestUser2Holding2");
   }
 
-  public HoldingSnapshot  TestHoldingSnapshotHolding1User1A => new()
+  public HoldingSnapshot TestHoldingSnapshotHolding1User1A => new()
   {
     HoldingId = TestUser1Holding1.Id,
     Balance = 12345,

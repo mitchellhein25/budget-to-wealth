@@ -60,10 +60,11 @@ public class CashFlowCategoriesControllerTests : IDisposable
 
     private async Task<CashFlowCategory> CreateTestCategory(string name, string userId = null)
     {
-        CashFlowCategory category = new() { 
-            Name = name, 
+        CashFlowCategory category = new()
+        {
+            Name = name,
             CategoryType = CashFlowType.Expense,
-            UserId = userId 
+            UserId = userId
         };
         _context.CashFlowCategories.Add(category);
         await _context.SaveChangesAsync();
@@ -91,7 +92,8 @@ public class CashFlowCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_AddsNewCategoryForUser()
     {
-        CashFlowCategory newCategory = new() { 
+        CashFlowCategory newCategory = new()
+        {
             Name = _newCatName,
             CategoryType = CashFlowType.Expense
         };
@@ -103,34 +105,37 @@ public class CashFlowCategoriesControllerTests : IDisposable
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsDefault()
     {
-        CashFlowCategory newCategory = new() { 
+        CashFlowCategory newCategory = new()
+        {
             Name = _defaultCatName,
             CategoryType = CashFlowType.Expense
         };
         IActionResult result = await _controller.Create(newCategory);
 
-        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowNewCategoryWithSameNameAsExistingUserCategory()
     {
-        CashFlowCategory newCategory = new() { 
+        CashFlowCategory newCategory = new()
+        {
             Name = _userCatName,
             CategoryType = CashFlowType.Expense
         };
 
         IActionResult result = await _controller.Create(newCategory);
 
-        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);    
+        ConflictObjectResult conflictResult = Assert.IsType<ConflictObjectResult>(result);
         Assert.Equal(ConflictMessage, conflictResult.Value);
     }
 
     [Fact]
     public async Task Create_DoesNotAllowCategoryWithSameNameDifferentCasing()
     {
-        CashFlowCategory newCategory = new() { 
+        CashFlowCategory newCategory = new()
+        {
             Name = _defaultCatName.ToLower(),
             CategoryType = CashFlowType.Expense
         };

@@ -22,7 +22,7 @@ public class CashFlowCategoriesController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] CashFlowType? cashFlowType = null)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IQueryable<CashFlowCategory> query = _context.CashFlowCategories
@@ -40,14 +40,14 @@ public class CashFlowCategoriesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CashFlowCategory category)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
-        if (string.IsNullOrWhiteSpace(category.Name)) 
+        if (string.IsNullOrWhiteSpace(category.Name))
             return BadRequest(NameRequiredMessage);
 
         var exists = await _context.CashFlowCategories
-            .AnyAsync(c => EF.Functions.ILike(c.Name, category.Name) && 
+            .AnyAsync(c => EF.Functions.ILike(c.Name, category.Name) &&
                             (c.UserId == userId || c.UserId == null) &&
                             c.CategoryType == category.CategoryType);
         if (exists)
@@ -64,23 +64,23 @@ public class CashFlowCategoriesController : ControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] CashFlowCategory updatedCategory)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
-        if (string.IsNullOrWhiteSpace(updatedCategory.Name)) 
+        if (string.IsNullOrWhiteSpace(updatedCategory.Name))
             return BadRequest(NameRequiredMessage);
 
         CashFlowCategory? category = await _context.CashFlowCategories
-            .FirstOrDefaultAsync(category => category.Id == id && 
+            .FirstOrDefaultAsync(category => category.Id == id &&
                                 category.UserId == userId);
 
-        if (category == null) 
+        if (category == null)
             return NotFound();
 
         category.Name = updatedCategory.Name;
         category.CategoryType = updatedCategory.CategoryType;
         category.UpdatedAt = DateTime.UtcNow;
-        
+
         _context.CashFlowCategories.Update(category);
 
         await _context.SaveChangesAsync();
@@ -92,13 +92,13 @@ public class CashFlowCategoriesController : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         CashFlowCategory? category = await _context.CashFlowCategories
             .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
 
-        if (category == null) 
+        if (category == null)
             return NotFound();
 
         _context.CashFlowCategories.Remove(category);

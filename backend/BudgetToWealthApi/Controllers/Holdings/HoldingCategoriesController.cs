@@ -22,7 +22,7 @@ public class HoldingCategoriesController : ControllerBase
     public async Task<IActionResult> Get()
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IQueryable<HoldingCategory> query = _context.HoldingCategories
@@ -37,10 +37,10 @@ public class HoldingCategoriesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] HoldingCategory category)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
-        if (string.IsNullOrWhiteSpace(category.Name)) 
+        if (string.IsNullOrWhiteSpace(category.Name))
             return BadRequest(NameRequiredMessage);
 
         var exists = await _context.HoldingCategories
@@ -59,21 +59,21 @@ public class HoldingCategoriesController : ControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] HoldingCategory updatedCategory)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
-        if (string.IsNullOrWhiteSpace(updatedCategory.Name)) 
+        if (string.IsNullOrWhiteSpace(updatedCategory.Name))
             return BadRequest(NameRequiredMessage);
 
         HoldingCategory? category = await _context.HoldingCategories
             .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
 
-        if (category == null) 
+        if (category == null)
             return NotFound();
 
         category.Name = updatedCategory.Name;
         category.UpdatedAt = DateTime.UtcNow;
-        
+
         _context.HoldingCategories.Update(category);
 
         await _context.SaveChangesAsync();
@@ -85,13 +85,13 @@ public class HoldingCategoriesController : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         HoldingCategory? category = await _context.HoldingCategories
             .FirstOrDefaultAsync(category => category.Id == id && category.UserId == userId);
 
-        if (category == null) 
+        if (category == null)
             return NotFound();
 
         _context.HoldingCategories.Remove(category);

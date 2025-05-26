@@ -22,7 +22,7 @@ public class HoldingsController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] HoldingType? type = null, [FromQuery] Guid? holdingCategoryId = null)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IQueryable<Holding> query = _context.Holdings.Where(holding => holding.UserId == userId);
@@ -42,16 +42,16 @@ public class HoldingsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Holding newHolding)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IActionResult? validationResult = await ValidateHolding(newHolding, userId);
         if (validationResult != null)
             return validationResult;
 
-        var exists = await _context.Holdings.AnyAsync(holding => holding.UserId == userId && 
-                                                           EF.Functions.ILike(holding.Name, newHolding.Name) && 
-                                                           holding.Type == newHolding.Type && 
+        var exists = await _context.Holdings.AnyAsync(holding => holding.UserId == userId &&
+                                                           EF.Functions.ILike(holding.Name, newHolding.Name) &&
+                                                           holding.Type == newHolding.Type &&
                                                            holding.HoldingCategoryId == newHolding.HoldingCategoryId);
         if (exists)
             return Conflict(ConflictMessage);
@@ -67,7 +67,7 @@ public class HoldingsController : ControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] Holding updatedHolding)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         IActionResult? validationResult = await ValidateHolding(updatedHolding, userId);
@@ -76,14 +76,14 @@ public class HoldingsController : ControllerBase
 
         Holding? holding = await _context.Holdings
             .FirstOrDefaultAsync(holding => holding.Id == id && holding.UserId == userId);
-        if (holding == null) 
+        if (holding == null)
             return NotFound();
 
         holding.Name = updatedHolding.Name;
         holding.Type = updatedHolding.Type;
         holding.HoldingCategoryId = updatedHolding.HoldingCategoryId;
         holding.UpdatedAt = DateTime.UtcNow;
-        
+
         _context.Holdings.Update(holding);
 
         await _context.SaveChangesAsync();
@@ -95,13 +95,13 @@ public class HoldingsController : ControllerBase
     public async Task<IActionResult> Delete(Guid id)
     {
         string? userId = User.GetUserId();
-        if (userId == null) 
+        if (userId == null)
             return Unauthorized();
 
         Holding? holding = await _context.Holdings
             .FirstOrDefaultAsync(holding => holding.Id == id && holding.UserId == userId);
 
-        if (holding == null) 
+        if (holding == null)
             return NotFound();
 
         _context.Holdings.Remove(holding);
@@ -112,14 +112,14 @@ public class HoldingsController : ControllerBase
 
     private async Task<IActionResult?> ValidateHolding(Holding newHolding, string userId)
     {
-        if (string.IsNullOrWhiteSpace(newHolding.Name)) 
+        if (string.IsNullOrWhiteSpace(newHolding.Name))
             return BadRequest(NameRequiredMessage);
 
         if (newHolding.HoldingCategoryId == Guid.Empty)
             return BadRequest("HoldingCategoryId is required.");
 
         bool categoryExistsForUser = await _context.HoldingCategories
-            .AnyAsync(holding => holding.Id == newHolding.HoldingCategoryId && 
+            .AnyAsync(holding => holding.Id == newHolding.HoldingCategoryId &&
                       (holding.UserId == userId || holding.UserId == null));
         if (!categoryExistsForUser)
             return BadRequest("Invalid or unauthorized HoldingCategoryId.");

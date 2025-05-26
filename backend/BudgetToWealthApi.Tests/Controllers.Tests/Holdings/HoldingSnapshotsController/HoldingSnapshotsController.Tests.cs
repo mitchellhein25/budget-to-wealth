@@ -75,13 +75,13 @@ public class HoldingSnapshotsControllerTests : IDisposable
         Assert.Contains(HoldingSnapshots, snapshot => snapshot.Balance == _testObjects.TestHoldingSnapshotHolding1User1A.Balance);
         Assert.Equal(3, HoldingSnapshots.Count());
     }
-    
+
     [Fact]
     public async Task Get_FilterByHolding()
     {
         OkObjectResult? result = await _controller.Get(holdingId: _testObjects.TestUser1Holding1.Id) as OkObjectResult;
         IEnumerable<HoldingSnapshot> HoldingSnapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
-        Assert.Contains(HoldingSnapshots, snapshot => snapshot.Balance  == _testObjects.TestHoldingSnapshotHolding1User1A.Balance);
+        Assert.Contains(HoldingSnapshots, snapshot => snapshot.Balance == _testObjects.TestHoldingSnapshotHolding1User1A.Balance);
         Assert.Equal(2, HoldingSnapshots.Count());
     }
 
@@ -89,7 +89,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenHoldingIdIsEmpty()
     {
         HoldingSnapshot newHoldingSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = Guid.Empty
@@ -105,7 +105,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Create_ReturnsBadRequest_WhenHoldingDoesNotExistForUser()
     {
         HoldingSnapshot newHoldingSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = _testObjects.TestUser2Holding1.Id
@@ -121,7 +121,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Create_ReturnsCreatedAtAction_WhenHoldingSnapshotIsValid()
     {
         HoldingSnapshot newHoldingSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = _testObjects.TestUser1Holding1.Id
@@ -138,7 +138,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Update_ReturnsNotFound_WhenHoldingDoesNotExist()
     {
         HoldingSnapshot updatedHoldingSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = _testObjects.TestUser1Holding1.Id
@@ -151,7 +151,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Update_ReturnsBadRequest_WhenValidationFails()
     {
         HoldingSnapshot updatedHoldingSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = Guid.Empty
@@ -167,7 +167,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Update_ReturnsOk_WhenHoldingIsUpdatedSuccessfully()
     {
         HoldingSnapshot updatedHoldingSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = _testObjects.TestUser1Holding1.Id
@@ -195,7 +195,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task Delete_ReturnsNoContent_WhenHoldingSnapshotIsDeletedSuccessfully()
     {
         HoldingSnapshot newSnapshotToDelete = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = _testObjects.TestUser1Holding1.Id,
@@ -242,7 +242,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
     public async Task CreateAndUpdateDates(string action)
     {
         HoldingSnapshot newOrUpdatedSnapshot = new()
-        {   
+        {
             Balance = 124,
             Date = new DateOnly(2025, 12, 12),
             HoldingId = _testObjects.TestUser1Holding1.Id
