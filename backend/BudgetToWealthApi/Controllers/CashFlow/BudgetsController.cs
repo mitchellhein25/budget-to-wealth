@@ -90,6 +90,7 @@ public class BudgetsController : ControllerBase
 		existingbudget.Amount = updatedBudget.Amount;
 		existingbudget.CategoryId = updatedBudget.CategoryId;
 		existingbudget.UpdatedAt = DateTime.UtcNow;
+		existingbudget.EndDate = updatedBudget.EndDate;
 
 		_context.Budgets.Update(existingbudget);
 		await _context.SaveChangesAsync();

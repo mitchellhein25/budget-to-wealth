@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +10,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthentication(options =>
@@ -24,13 +24,14 @@ builder.Services.AddAuthentication(options =>
 });
 
 string? connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING") 
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+                            ?? builder.Configuration.GetConnectionString("DefaultConnection");
 if (connectionString != null && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://")))
-{
     connectionString = DbStringService.ConvertPostgresUrlToConnectionString(connectionString);
-}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
     options.UseNpgsql(connectionString));
+    
+builder.Services.AddScoped<RecurringCashFlowEntriesService>();
 
 builder.Services.AddCors(options =>
 {
@@ -57,10 +58,23 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+builder.Services.AddHangfire(config => 
+                             config.UsePostgreSqlStorage(c => 
+                             c.UseNpgsqlConnection(connectionString)));
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
+  
+app.UseHangfireDashboard();
+
+RecurringJob.AddOrUpdate<RecurringCashFlowEntriesService>(
+    "generate-recurring-cashflow-entries",
+    service => service.ProcessRecurringEntries(),
+    Cron.Hourly,
+    new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc }
+);
 
 app.UseCors("AllowLocalhost3000");
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
