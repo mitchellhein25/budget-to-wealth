@@ -1,5 +1,5 @@
 public enum HoldingType
 {
-  Asset,
-  Debt
+    Asset,
+    Debt
 }

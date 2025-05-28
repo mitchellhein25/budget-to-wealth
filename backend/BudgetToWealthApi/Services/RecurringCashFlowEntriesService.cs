@@ -13,8 +13,8 @@ public class RecurringCashFlowEntriesService
     public async Task<ProcessingResult> ProcessRecurringEntries()
     {
         _today = DateOnly.FromDateTime(DateTime.UtcNow);
-        ProcessingResult result = new ProcessingResult 
-        { 
+        ProcessingResult result = new ProcessingResult
+        {
             ProcessedDate = _today,
             Success = true
         };
@@ -24,12 +24,12 @@ public class RecurringCashFlowEntriesService
             List<CashFlowEntry> recurringEntriesNotAlreadyCreated = await GetRecurrencesNotAlreadyCreated(allRecurringEntries);
             List<CashFlowEntry> recurringEntriesToCreateToday = recurringEntriesNotAlreadyCreated.Where(ShouldCreateEntryForToday)
             .ToList();
-            
+
             if (!recurringEntriesToCreateToday.Any())
                 return result;
 
             List<CashFlowEntry> newEntries = CreateEntriesFromEntries(recurringEntriesToCreateToday);
-            
+
             _context.CashFlowEntries.AddRange(newEntries);
             await _context.SaveChangesAsync();
 
@@ -48,7 +48,7 @@ public class RecurringCashFlowEntriesService
     private async Task<List<CashFlowEntry>> GetActiveRecurringEntries()
     {
         return await _context.CashFlowEntries
-            .Where(entry => entry.RecurrenceFrequency != null && 
+            .Where(entry => entry.RecurrenceFrequency != null &&
                        (entry.RecurrenceEndDate == null || entry.RecurrenceEndDate >= _today) &&
                         entry.Date <= _today)
             .ToListAsync();
@@ -59,10 +59,10 @@ public class RecurringCashFlowEntriesService
         if (!allRecurringEntries.Any())
             return new List<CashFlowEntry>();
 
-        List<string> userIds = allRecurringEntries.Select(e => e.UserId).Distinct().ToList();
+        List<string> userIds = allRecurringEntries.Select(entry => entry.UserId ?? "").Distinct().ToList();
 
         List<CashFlowEntry> existingEntriesToday = await _context.CashFlowEntries
-            .Where(e => e.Date == _today && userIds.Contains(e.UserId))
+            .Where(entry => entry.Date == _today && userIds.Contains(entry.UserId ?? ""))
             .ToListAsync();
 
         List<CashFlowEntry> filteredEntries = allRecurringEntries
@@ -74,7 +74,7 @@ public class RecurringCashFlowEntriesService
 
     private bool ShouldCreateEntryForToday(CashFlowEntry recurrence)
     {
-        return recurrence.RecurrenceFrequency 
+        return recurrence.RecurrenceFrequency
         switch
         {
             RecurrenceFrequency.Weekly => IsWeeklyRecurrenceDate(recurrence.Date),
@@ -100,9 +100,9 @@ public class RecurringCashFlowEntriesService
     {
         int expectedDay = CalculateMonthlyRecurrenceDay(recurrenceDate);
         DateOnly expectedDate = new DateOnly(_today.Year, _today.Month, expectedDay);
-        
-        return _today == expectedDate && 
-               ((_today.Year > recurrenceDate.Year) || 
+
+        return _today == expectedDate &&
+               ((_today.Year > recurrenceDate.Year) ||
                 (_today.Year == recurrenceDate.Year && _today.Month > recurrenceDate.Month));
     }
 
@@ -110,10 +110,10 @@ public class RecurringCashFlowEntriesService
     {
         int daysInCurrentMonth = DateTime.DaysInMonth(_today.Year, _today.Month);
         int daysInRecurrenceMonth = DateTime.DaysInMonth(recurrenceDate.Year, recurrenceDate.Month);
-        
+
         if (recurrenceDate.Day == daysInRecurrenceMonth)
             return daysInCurrentMonth;
-        
+
         return Math.Min(recurrenceDate.Day, daysInCurrentMonth);
     }
 

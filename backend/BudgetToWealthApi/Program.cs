@@ -23,14 +23,14 @@ builder.Services.AddAuthentication(options =>
     options.Audience = "https://budget-to-wealth-api";
 });
 
-string? connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING") 
+string? connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING")
                             ?? builder.Configuration.GetConnectionString("DefaultConnection");
 if (connectionString != null && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://")))
     connectionString = DbStringService.ConvertPostgresUrlToConnectionString(connectionString);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
-    
+
 builder.Services.AddScoped<RecurringCashFlowEntriesService>();
 
 builder.Services.AddCors(options =>
@@ -58,13 +58,13 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-builder.Services.AddHangfire(config => 
-                             config.UsePostgreSqlStorage(c => 
+builder.Services.AddHangfire(config =>
+                             config.UsePostgreSqlStorage(c =>
                              c.UseNpgsqlConnection(connectionString)));
 builder.Services.AddHangfireServer();
 
 var app = builder.Build();
-  
+
 app.UseHangfireDashboard();
 
 RecurringJob.AddOrUpdate<RecurringCashFlowEntriesService>(

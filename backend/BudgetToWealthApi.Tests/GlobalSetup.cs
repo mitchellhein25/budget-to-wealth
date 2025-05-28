@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 public static class DatabaseSetup
 {
     private static readonly string _connectionString = 
-        "Host=localhost;Port=5432;Database=budget_to_wealth_development;";
+        "Host=localhost;Port=5432;Database=budget_to_wealth_testing;";
     
     private static readonly object _lock = new object();
     private static bool _databaseInitialized = false;

@@ -1,5 +1,5 @@
 public enum CashFlowType
 {
-  Expense,
-  Income
+    Expense,
+    Income
 }
