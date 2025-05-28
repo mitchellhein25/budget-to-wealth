@@ -72,7 +72,6 @@ public class CashFlowEntryControllerTestObjects
     Category = DefaultCategoryExpense,
     Date = DateOnly.Parse("2023-04-12"),
     Description = "Test description 1",
-    IsRecurring = false,
     UserId = _user1Id
   };
 
@@ -84,7 +83,6 @@ public class CashFlowEntryControllerTestObjects
     Category = TestUser2CategoryExpense,
     Date = DateOnly.Parse("2023-02-01"),
     Description = "Test description 2",
-    IsRecurring = false,
     UserId = _user2Id
   };
 
@@ -96,7 +94,6 @@ public class CashFlowEntryControllerTestObjects
     Category = TestUser1CategoryExpense,
     Date = DateOnly.Parse("2023-05-15"),
     Description = "Test description 3",
-    IsRecurring = false,
     UserId = _user1Id
   };
 
@@ -108,7 +105,6 @@ public class CashFlowEntryControllerTestObjects
     Category = TestUser2CategoryExpense,
     Date = DateOnly.Parse("2023-05-15"),
     Description = "Test description 4",
-    IsRecurring = false,
     UserId = _user2Id
   };
   public CashFlowEntry TestCashFlowEntry5 => new()
@@ -119,7 +115,6 @@ public class CashFlowEntryControllerTestObjects
     Category = DefaultCategoryIncome,
     Date = DateOnly.Parse("2023-04-12"),
     Description = "Test description 1",
-    IsRecurring = false,
     UserId = _user1Id
   };
 
@@ -131,7 +126,6 @@ public class CashFlowEntryControllerTestObjects
     Category = TestUser2CategoryIncome,
     Date = DateOnly.Parse("2023-02-01"),
     Description = "Test description 2",
-    IsRecurring = false,
     UserId = _user2Id
   };
 
@@ -143,7 +137,6 @@ public class CashFlowEntryControllerTestObjects
     Category = TestUser1CategoryIncome,
     Date = DateOnly.Parse("2023-05-15"),
     Description = "Test description 3",
-    IsRecurring = false,
     UserId = _user1Id
   };
 
@@ -155,7 +148,6 @@ public class CashFlowEntryControllerTestObjects
     Category = TestUser2CategoryIncome,
     Date = DateOnly.Parse("2023-05-15"),
     Description = "Test description 4",
-    IsRecurring = false,
     UserId = _user2Id
   };
 }

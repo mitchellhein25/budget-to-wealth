@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-class RecurringCashFlowEntriesService
+public class RecurringCashFlowEntriesService
 {
     private readonly ApplicationDbContext _context;
     private DateOnly _today;
@@ -13,7 +13,11 @@ class RecurringCashFlowEntriesService
     public async Task<ProcessingResult> ProcessRecurringEntries()
     {
         _today = DateOnly.FromDateTime(DateTime.UtcNow);
-        ProcessingResult result = new ProcessingResult { ProcessedDate = _today };
+        ProcessingResult result = new ProcessingResult 
+        { 
+            ProcessedDate = _today,
+            Success = true
+        };
         try
         {
             List<CashFlowEntry> allRecurringEntries = await GetActiveRecurringEntries();
