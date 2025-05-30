@@ -13,7 +13,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const session: SessionData | null = await auth0.getSession();
   return (
     <html lang="en">
-      <body className="bg-black">
+      <body className="bg-bg-primary-light dark:bg-bg-primary-dark text-fg-primary-light dark:text-fg-primary-dark">
         <header>
           <NavBar session={session} />
         </header>

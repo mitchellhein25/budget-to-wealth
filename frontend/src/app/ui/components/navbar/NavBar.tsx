@@ -1,40 +1,66 @@
+'use client'
+
 import React from 'react'
+import { usePathname } from 'next/navigation'
 import { SessionData } from "@auth0/nextjs-auth0/types";
 
 export default function NavBar({ session }: { session: SessionData | null }) {
+  const pathname = usePathname()
+  
+  const navItems = [
+    { href: '/cashflow', label: 'Cashflow' },
+    { href: '/net-worth', label: 'Net Worth' },
+    { href: '/dashboards', label: 'Dashboards' }
+  ]
   return (
-    <nav className="flex items-center justify-between gap-6 px-6 py-4 border-b border-gray-600">
+    <nav className="flex items-center justify-between gap-6 px-6 py-4 bg -nav-bg-light dark:bg-nav-bg-dark border-b border-nav-border-light dark:border-nav-border-dark ">
         <div></div> 
         
         <div className="flex items-center gap-6">
-            <div className="bg-yellow-400 text-black px-4 py-2 rounded text-sm font-medium">
-            <a href="/cashflow" className="text-gray-800">Cashflow</a>
-            </div>
-            <div>
-            <a href="/net-worth" className="text-gray-100 hover:text-gray-300">Net Worth</a>
-            </div>
-            <div>
-            <a href="/dashboards" className="text-gray-100 hover:text-gray-300">Dashboards</a>
-            </div>
+            {navItems.map((item) => {
+              const isActive = pathname === item.href
+              
+              return (
+                <div 
+                  key={item.href}
+                  className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+                    isActive 
+                      ? 'bg-nav-item-active-bg-light dark:bg-nav-item-active-bg-dark' 
+                      : ''
+                  }`}
+                >
+                  <a 
+                    href={item.href} 
+                    className={
+                      isActive
+                        ? 'text-nav-item-active-light dark:text-nav-item-active-dark'
+                        : 'text-nav-item-light dark:text-nav-item-dark hover:text-nav-item-hover-light dark:hover:text-nav-item-hover-dark transition-colors'
+                    }
+                  >
+                    {item.label}
+                  </a>
+                </div>
+              )
+            })}
         </div>
 
         {session ? (
             <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-                <div className="bg-blue-100 p-2 rounded-full"></div>
-                <span className="font-medium text-gray-100">
+                <div className=" p-2 rounded-full bg-primary-100-light dark:bg-primary-100-dark"></div>
+                <span className="font-medium text-text-primary-light dark:text-text-primary-dark">
                 {session.user.name ?? "User"}
                 </span>
             </div>
             <a href="/auth/logout">
-                <button className="text-red-500 font-bold hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition-colors">
+                <button className="font-medium rounded px-2 py-1 text-error-600-light dark:text-error-500-dark hover:text-error-700-light dark:hover:text-error-600-dark transition-colors">
                 Logout
                 </button>
             </a>
             </div>
         ) : (
             <a href="/auth/login">
-            <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition-colors">
+            <button className="inline-flex items-center px-4 py-2 rounded-md shadow-sm text-sm font-medium border border-transparent text-text-inverse-light dark:text-text-inverse-dark bg-button-primary-light dark:bg-button-primary-dark hover:bg-button-primary-hover-light dark:hover:bg-button-primary-hover-dark transition-colors">
                 Login/Sign Up
             </button>
             </a>
