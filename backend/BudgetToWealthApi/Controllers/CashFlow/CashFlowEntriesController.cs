@@ -10,10 +10,12 @@ using Microsoft.EntityFrameworkCore;
 public class CashFlowEntriesController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<CashFlowEntriesController> _logger;
 
-    public CashFlowEntriesController(ApplicationDbContext context)
+    public CashFlowEntriesController(ApplicationDbContext context, ILogger<CashFlowEntriesController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     [HttpGet]

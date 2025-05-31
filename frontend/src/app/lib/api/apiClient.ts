@@ -16,6 +16,7 @@ type FetchOptions = {
 
 export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<{ data: T; responseMessage: string, successful: boolean }> {
   const token = await getAccessToken();
+
   if (!token) 
     return { data: {} as T, responseMessage: "Not authorized.", successful: false };
 
@@ -26,7 +27,7 @@ export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<{ da
   const request: RequestInit = {
     method: fetchOptions.method,
     headers: headers,
-    cache: 'no-cache',
+    // cache: 'no-cache',
   };
   
   if (fetchOptions.body) {
