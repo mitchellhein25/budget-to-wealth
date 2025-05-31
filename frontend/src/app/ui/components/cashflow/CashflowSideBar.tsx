@@ -20,25 +20,16 @@ export default function CashflowSideBar() {
             const isActive = pathname.endsWith(item.href)
             
             return (
-            <div 
-                key={item.href}
-                className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-                isActive 
-                    ? 'bg-nav-item-active-bg-light dark:bg-nav-item-active-bg-dark' 
-                    : ''
-                }`}
-            >
-                <Link 
-                href={item.href}
-                className={
-                    isActive
-                    ? 'text-nav-item-active-light dark:text-nav-item-active-dark'
-                    : 'text-nav-item-light dark:text-nav-item-dark hover:text-nav-item-hover-light dark:hover:text-nav-item-hover-dark transition-colors'
-                }
-                >
-                {item.label}
-                </Link>
-            </div>
+              <Link 
+              href={item.href}
+              className={
+                  isActive
+                  ? 'btn btn-primary mx-5'
+                  : 'btn btn-ghost mx-5'
+              }
+              >
+              {item.label}
+              </Link>
             )
         })}
     </div>
