@@ -8,9 +8,9 @@ export default function NavBar({ session }: { session: SessionData | null }) {
   const pathname = usePathname()
 
   const basePath = pathname.split('/')[1] || pathname
-
+  
   const navItems = [
-    { href: `//${basePath}/income`, label: 'Cashflow' },
+    { href: '/cashflow/income', label: 'Cashflow' },
     { href: '/net-worth', label: 'Net Worth' },
     { href: '/dashboards', label: 'Dashboards' }
   ]
@@ -20,7 +20,7 @@ export default function NavBar({ session }: { session: SessionData | null }) {
 
       <div className="flex items-center gap-6">
         {navItems.map((item) => {
-          const isActive = item.href.startsWith(`//${basePath}`)
+          const isActive = item.href.startsWith(`/${basePath}`)
 
           return (
             <div
