@@ -1,24 +1,17 @@
+import { auth0 } from '@/app/lib/auth/auth0';
 import CashflowSideBar from '@/app/ui/components/cashflow/CashflowSideBar'
+import IncomeList from '@/app/ui/components/cashflow/income/IncomeList'
+import { SessionData } from '@auth0/nextjs-auth0/types';
 import React from 'react'
 
-export default function Income() {
+export default async function Income() {
+  const session: SessionData | null = await auth0.getSession();
   return (
     <div className="flex gap-6 p-6">
         <CashflowSideBar />
         <div className="flex-1 flex gap-6">
             <div className="flex-1 rounded-lg p-4">
-                <div className="space-y-3">
-                    {Array.from({ length: 12 }, (_, i) => (
-                        <div key={i} className="flex items-center justify-between py-2">
-                            <span className="text-gray-300">List Item</span>
-                            <div className="flex gap-2">
-                                <button className="text-yellow-400">✏️</button>
-                                <button className="text-red-400">🗑️</button>
-                                <button className="text-yellow-400">✅</button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <IncomeList isLoggedIn={session == null} />
 
                 <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-800">
                     <button className="text-gray-400">← Previous</button>

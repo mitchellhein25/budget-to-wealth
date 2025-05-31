@@ -3,14 +3,14 @@
 import React from 'react'
 import { usePathname } from 'next/navigation'
 import { SessionData } from "@auth0/nextjs-auth0/types";
+import Link from 'next/link';
 
 export default function NavBar({ session }: { session: SessionData | null }) {
   const pathname = usePathname()
+  const basePath = pathname.split('/')[1]
 
-  const basePath = pathname.split('/')[1] || pathname
-  
   const navItems = [
-    { href: '/cashflow/income', label: 'Cashflow' },
+    { href: '/cashflow/expenses', label: 'Cashflow' },
     { href: '/net-worth', label: 'Net Worth' },
     { href: '/dashboards', label: 'Dashboards' }
   ]
@@ -20,7 +20,7 @@ export default function NavBar({ session }: { session: SessionData | null }) {
 
       <div className="flex items-center gap-6">
         {navItems.map((item) => {
-          const isActive = item.href.startsWith(`/${basePath}`)
+          const isActive = basePath && item.href.startsWith(`/${basePath}`);
 
           return (
             <div
@@ -30,7 +30,7 @@ export default function NavBar({ session }: { session: SessionData | null }) {
                   : ''
                 }`}
             >
-              <a
+              <Link
                 href={item.href}
                 className={
                   isActive
@@ -39,7 +39,7 @@ export default function NavBar({ session }: { session: SessionData | null }) {
                 }
               >
                 {item.label}
-              </a>
+              </Link>
             </div>
           )
         })}

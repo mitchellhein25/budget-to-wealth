@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 export default function CashflowSideBar() {
   const pathname = usePathname()
@@ -9,8 +10,8 @@ export default function CashflowSideBar() {
   const basePath = pathname.split('/').slice(0, -1).join('/') || pathname
   
   const navItems = [
-    { href: `${basePath}/income`, label: 'Income' },
     { href: `${basePath}/expenses`, label: 'Expenses' },
+    { href: `${basePath}/income`, label: 'Income' },
     { href: `${basePath}/budget`, label: 'Budget' }
   ]
   return (
@@ -27,7 +28,7 @@ export default function CashflowSideBar() {
                     : ''
                 }`}
             >
-                <a 
+                <Link 
                 href={item.href}
                 className={
                     isActive
@@ -36,7 +37,7 @@ export default function CashflowSideBar() {
                 }
                 >
                 {item.label}
-                </a>
+                </Link>
             </div>
             )
         })}
