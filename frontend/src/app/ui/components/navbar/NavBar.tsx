@@ -24,6 +24,7 @@ export default function NavBar({ session }: { session: SessionData | null }) {
 
           return (
             <Link
+              key={item.href}
               href={item.href}
               className={
                 isActive
@@ -51,10 +52,12 @@ export default function NavBar({ session }: { session: SessionData | null }) {
           </a>
         </div>
       ) : (
-        <a href="/auth/login"
-          className="navbar-end btn btn-soft btn-error">
-            Login/Sign Up
-        </a>
+        <div className="navbar-end">
+          <a href="/auth/login"
+            className="btn btn-primary">
+              Login/Sign Up
+          </a>
+        </div>
       )}
     </nav>
   )

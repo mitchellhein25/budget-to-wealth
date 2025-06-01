@@ -21,11 +21,12 @@ export default function CashflowSideBar() {
             
             return (
               <Link 
+              key={item.href}
               href={item.href}
               className={
                   isActive
-                  ? 'btn btn-primary mx-5'
-                  : 'btn btn-ghost mx-5'
+                  ? 'btn btn-primary'
+                  : 'btn btn-ghost'
               }
               >
               {item.label}
