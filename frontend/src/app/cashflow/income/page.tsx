@@ -1,6 +1,7 @@
 import { auth0 } from '@/app/lib/auth/auth0';
 import CashflowSideBar from '@/app/ui/components/cashflow/CashflowSideBar'
 import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/IncomeCategoriesForm';
+import IncomeCategoriesList from '@/app/ui/components/cashflow/income/IncomeCategoriesList';
 import IncomeList from '@/app/ui/components/cashflow/income/IncomeList'
 import { SessionData } from '@auth0/nextjs-auth0/types';
 import React from 'react'
@@ -11,6 +12,7 @@ export default async function Income() {
     <div className="flex gap-6 p-6">
         <CashflowSideBar />
         <IncomeCategoriesForm />
+        <IncomeCategoriesList />
         {/* <div className="flex-1 flex gap-6">
             <div className="flex-1 rounded-lg p-4">
                 <IncomeList isLoggedIn={session != null} />
