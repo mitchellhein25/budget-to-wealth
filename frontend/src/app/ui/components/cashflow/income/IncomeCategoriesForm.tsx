@@ -17,7 +17,7 @@ export default function IncomeCategoriesForm() {
     async function handlePost(formData: FormData) {
         setName('');
         const nameValue = formData.get(nameField) as string;
-        const cashFlowEntry: CashFlowCategory = { name: nameValue,  entryType: CashFlowType.Income};
+        const cashFlowEntry: CashFlowCategory = { name: nameValue,  categoryType: CashFlowType.Income};
         const response = await postRequest<CashFlowCategory>(endpoint, cashFlowEntry);
         if (!response.successful) 
             setMessage("Failed to create income entry: " + response.responseMessage);

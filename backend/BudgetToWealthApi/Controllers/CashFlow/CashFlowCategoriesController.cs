@@ -36,8 +36,9 @@ public class CashFlowCategoriesController : ControllerBase
         return Ok(categories);
     }
 
+
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CashFlowCategory category)
+    public async Task<IActionResult> Create(CashFlowCategory category)
     {
         string? userId = User.GetUserId();
         if (userId == null)
@@ -57,11 +58,11 @@ public class CashFlowCategoriesController : ControllerBase
         _context.CashFlowCategories.Add(category);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
+        return StatusCode(StatusCodes.Status201Created, category);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] CashFlowCategory updatedCategory)
+    public async Task<IActionResult> Update(Guid id, CashFlowCategory updatedCategory)
     {
         string? userId = User.GetUserId();
         if (userId == null)

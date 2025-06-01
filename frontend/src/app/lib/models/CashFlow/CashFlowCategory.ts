@@ -1,6 +1,8 @@
+import { CashFlowType } from "./CashFlowType";
+
 export interface CashFlowCategory {
     id?: number;
     name: string;
-    entryType: CashFlowType;
+    categoryType: CashFlowType;
     userId?: string;
 }
