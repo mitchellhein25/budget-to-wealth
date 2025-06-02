@@ -6,42 +6,30 @@ import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import { Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 
-export default function IncomeCategoriesList() {
-    const [incomeCategories, setIncomeCategories] = useState<CashFlowCategory[]>([]);
-    const [isError, setIsError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [name, setName] = useState('');
-    const [message, setMessage] = useState<string | null>(null);
+interface IncomeCategoriesListProps {
+  categories: CashFlowCategory[],
+  onCategoryDeleted: () => void,
+  isLoading: boolean,
+  isError: boolean
+}
 
-    const nameField: string = "Name";
-    const endpoint: string = "CashFlowCategories?cashFlowType=Income";
+export default function IncomeCategoriesList(props: IncomeCategoriesListProps) {
+    const endpoint: string = "CashFlowCategories";
     const revalidatePath: string = "";
 
-    useEffect(() => {
-        fetchIncomeCategories();
-    }, []);
-
-    async function fetchIncomeCategories() {
-        const response = await getRequest<CashFlowCategory>(endpoint);
-        setIncomeCategories(response.data as CashFlowCategory[]);
-        if (!response.successful) {
-            setErrorMessage(response.responseMessage);
-            setIsError(true);
-        }
-    }
-
     async function handleDelete(id: number) {
-        await deleteRequest<CashFlowCategory>(endpoint, id, revalidatePath);
-        // setExpenseCategories(prev => prev.filter(cat => cat.id !== id));
-      };
+        const result = await deleteRequest<CashFlowCategory>(endpoint, id);
+        if (result.successful)
+            props.onCategoryDeleted();
+    };
 
-    if (isError) {
+    if (props.isError) {
         return (
-            <p className="alert alert-error alert-soft">Failed to load income categories: {errorMessage}</p>
+            <p className="alert alert-error alert-soft">Failed to load income categories.</p>
         );
     }
 
-    if (incomeCategories.length === 0) {
+    if (props.categories.length === 0) {
         return (
             <p className="alert alert-warning alert-soft">You haven’t added any income categories yet.</p>
         );
@@ -51,16 +39,16 @@ export default function IncomeCategoriesList() {
         <div className="space-y-4 flex flex-col justify-center">
             <h2 className="text-lg">Income Categories</h2>
             <ul className="list">
-                {incomeCategories.sort((a, b) => a.name.localeCompare(b.name)).map((item) => (
-                    <li key={item.id} className="list-row">
+                {props.categories.sort((a, b) => a.name.localeCompare(b.name)).map((category) => (
+                    <li key={category.id} className="list-row">
                         <div className="flex-1 mr-4">
-                            <span>{item.name}</span>
+                            <span>{category.name}</span>
                         </div>
                         <div className="flex space-x-2">
                             <>
                                 <button
                                     id="delete-button"
-                                    onClick={() => handleDelete(item.id as number)}
+                                    onClick={() => handleDelete(category.id as number)}
                                     className="p-1 text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-200"
                                     aria-label="Delete"
                                 >

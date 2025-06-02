@@ -39,8 +39,7 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
   }, []);
 
   async function handleDelete(id: number) {
-    await deleteRequest<ExpenseCategory>(endpoint, id, revalidatePath);
-    // setExpenseCategories(prev => prev.filter(cat => cat.id !== id));
+    await deleteRequest<ExpenseCategory>(endpoint, id);
   };
 
   async function handleEdit(expenseCategory: ExpenseCategory) {

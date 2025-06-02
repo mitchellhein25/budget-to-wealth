@@ -6,7 +6,11 @@ import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
 import Form from 'next/form';
 
-export default function IncomeCategoriesForm() {
+interface IncomeCategoriesFormProps {
+  onCategoryAdded: () => void;
+}
+
+export default function IncomeCategoriesForm({ onCategoryAdded }: IncomeCategoriesFormProps) {
   const [name, setName] = useState('');
   const [message, setMessage] = useState<string | null>(null);
 
@@ -20,9 +24,11 @@ export default function IncomeCategoriesForm() {
         const cashFlowEntry: CashFlowCategory = { name: nameValue,  categoryType: CashFlowType.Income};
         const response = await postRequest<CashFlowCategory>(endpoint, cashFlowEntry);
         if (!response.successful) 
-            setMessage("Failed to create income entry: " + response.responseMessage);
-        else 
-            setMessage("Income entry created successfully.");
+          setMessage("Failed to create income entry: " + response.responseMessage);
+        else {
+          setMessage("Income entry created successfully.");
+          onCategoryAdded();
+        }
     }
 
   return (
