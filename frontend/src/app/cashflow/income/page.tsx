@@ -10,7 +10,7 @@ import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/IncomeCate
 import IncomeCategoriesList from '@/app/ui/components/cashflow/income/IncomeCategoriesList';
 import React, { useEffect, useState } from 'react'
 
-export default function Income({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function Income() {
 	const [incomeCategories, setIncomeCategories] = useState<CashFlowCategory[]>([]);
 	const [editingIncomeCategory, setEditingIncomeCategory] = useState<CashFlowCategory | null>(null);
 	const [isError, setIsError] = useState(false);
@@ -20,7 +20,7 @@ export default function Income({ isLoggedIn }: { isLoggedIn: boolean }) {
 	async function handleSubmit(formData: FormData) {
 		const nameValue = formData.get("Name") as string;
 		const cashFlowEntry: CashFlowCategory = { name: nameValue, categoryType: CashFlowType.Income };
-		var response = null
+		let response = null
 		const idValue = formData.get("Id");
 		if (idValue)
 			response = await putRequest<CashFlowCategory>("CashFlowCategories", idValue as string, cashFlowEntry);
