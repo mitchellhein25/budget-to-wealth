@@ -1,61 +1,62 @@
-'use client'
+"use client"
 
-import React, { useState } from 'react'
-import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
-import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import Form from 'next/form';
+import React from "react"
+import Form from "next/form";
+import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
 
 interface IncomeCategoriesFormProps {
-  onCategoryAdded: () => void;
+  handleSubmit: (formData: FormData) => void;
+  editingIncomeCategory: CashFlowCategory | null;
+  onNameChange: (name: string) => void;
+  onReset: () => void;
+  message: string;
 }
 
-export default function IncomeCategoriesForm({ onCategoryAdded }: IncomeCategoriesFormProps) {
-  const [name, setName] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
-
-
-    const nameField: string = 'Name';
-    const endpoint: string = 'CashFlowCategories';
-
-    async function handlePost(formData: FormData) {
-        setName('');
-        const nameValue = formData.get(nameField) as string;
-        const cashFlowEntry: CashFlowCategory = { name: nameValue,  categoryType: CashFlowType.Income};
-        const response = await postRequest<CashFlowCategory>(endpoint, cashFlowEntry);
-        if (!response.successful) 
-          setMessage("Failed to create income entry: " + response.responseMessage);
-        else {
-          setMessage("Income entry created successfully.");
-          onCategoryAdded();
-        }
-    }
+export default function IncomeCategoriesForm(props: IncomeCategoriesFormProps) {
 
   return (
-    <Form action={handlePost} className="space-y-4 flex flex-col justify-center w-xs">
-      <h2 className="text-lg font-bold text-center">New Income Category</h2>
+    <Form action={props.handleSubmit} className="space-y-4 flex flex-col justify-center w-xs">
+      <h2 className="text-lg text-center">
+        {props.editingIncomeCategory?.id ? "Edit Income Category" : "New Income Category"}
+      </h2>
       <label htmlFor="Name" className="label">
         Name
       </label>
+      <input
+        id="Id"
+        name="Id"
+        readOnly
+        type="text"
+        value={props.editingIncomeCategory?.id ?? ''}
+        hidden={true}
+      />
       <input
         id="Name"
         name="Name"
         type="text"
         required
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={props.editingIncomeCategory?.name ?? ""}
+        onChange={(e) => props.onNameChange(e.target.value)}
         className="input w-full"
       />
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <button
           type="submit"
-          className="btn btn-secondary"
+          className="m-1 btn btn-primary min-w-25"
         >
-        Create
+          {props.editingIncomeCategory?.id ? "Update" : "Create"}
+        </button>
+        <button
+          type="reset"
+          onClick={props.onReset}
+          hidden={props.editingIncomeCategory == null || props.editingIncomeCategory.name == ""}
+          className="m-1 btn btn-secondary min-w-25"
+        >
+          Reset
         </button>
       </div>
-      {message && (
-        <p className="alert alert-error alert-soft">{message}</p>
+      {props.message && (
+        <p className="alert alert-error alert-soft">{props.message}</p>
       )}
     </Form>
   )

@@ -43,17 +43,17 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
   };
 
   async function handleEdit(expenseCategory: ExpenseCategory) {
-    const response = await putRequest<ExpenseCategory>(endpoint, expenseCategory.id as number, expenseCategory);
-    if (!response.successful) {
-      return;
-    } 
-    setExpenseCategories(prev => prev.map(cat => {
-      if (cat.id === expenseCategory.id) {
-        return { ...cat, name: expenseCategory.name };
-      } else {
-        return cat;
-      }
-    }));
+    // const response = await putRequest<ExpenseCategory>(endpoint, expenseCategory.id as number, expenseCategory);
+    // if (!response.successful) {
+    //   return;
+    // } 
+    // setExpenseCategories(prev => prev.map(cat => {
+    //   if (cat.id === expenseCategory.id) {
+    //     return { ...cat, name: expenseCategory.name };
+    //   } else {
+    //     return cat;
+    //   }
+    // }));
   }
   
   async function handlePost(formData: FormData) {
