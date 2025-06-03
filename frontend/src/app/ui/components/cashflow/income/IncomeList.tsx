@@ -1,7 +1,7 @@
 'use client'
 
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import { CashFlowEntry } from '@/app/lib/models/CashFlowEntry';
+import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import React, { useEffect, useState } from 'react'
 
 export default function IncomeList({ isLoggedIn }: { isLoggedIn: boolean }) {

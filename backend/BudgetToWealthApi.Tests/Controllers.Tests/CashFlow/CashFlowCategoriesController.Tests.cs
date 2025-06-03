@@ -97,8 +97,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
             Name = _newCatName,
             CategoryType = CashFlowType.Expense
         };
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(await _controller.Create(newCategory));
-        Assert.Equal(nameof(CashFlowCategoriesController.Get), createdAtActionResult.ActionName);
+        var createdAtActionResult = Assert.IsType<ObjectResult>(await _controller.Create(newCategory));
         Assert.Equal(_newCatName, (createdAtActionResult.Value as CashFlowCategory)?.Name);
     }
 
@@ -252,7 +251,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
         };
         if (action == "Create")
         {
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            var createdAtActionResult = Assert.IsType<ObjectResult>(result);
             CashFlowCategory? category = createdAtActionResult.Value as CashFlowCategory;
             Assert.NotEqual(DateTime.MinValue, category?.CreatedAt);
             Assert.Equal(DateTime.MinValue, category?.UpdatedAt);

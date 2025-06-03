@@ -8,6 +8,7 @@ import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
 import ListTemplate from "@/app/ui/components/list-template/ListTemplate";
 import FormTemplate from "@/app/ui/components/form-template/FormTemplate";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
+import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
 
 interface ExpenseCategoriesProps {
   isLoggedIn: boolean;
@@ -20,11 +21,12 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
   const [name, setName] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   
-  const nameField: string = 'Name';
-  const endpoint: string = 'ExpenseCategories';
+  const nameField: string = "Name";
+  const endpoint: string = "CashFlowCategories";
+  const revalidatePath: string = "";
 
   async function fetchExpenseCategories() {
-    const response = await getRequest<ExpenseCategory>(endpoint);
+    const response = await getRequest<ExpenseCategory>("CashFlowCategories?cashFlowType=Expense");
     setExpenseCategories(response.data as ExpenseCategory[]);
     if (!response.successful) {
       setErrorMessage(response.responseMessage);
@@ -38,34 +40,34 @@ export default function ExpenseCategories({ isLoggedIn }: ExpenseCategoriesProps
 
   async function handleDelete(id: number) {
     await deleteRequest<ExpenseCategory>(endpoint, id);
-    setExpenseCategories(prev => prev.filter(cat => cat.id !== id));
   };
 
   async function handleEdit(expenseCategory: ExpenseCategory) {
-    const response = await putRequest<ExpenseCategory>(endpoint, expenseCategory.id as number, expenseCategory);
-    if (!response.successful) {
-      return;
-    } 
-    setExpenseCategories(prev => prev.map(cat => {
-      if (cat.id === expenseCategory.id) {
-        return { ...cat, name: expenseCategory.name };
-      } else {
-        return cat;
-      }
-    }));
+    // const response = await putRequest<ExpenseCategory>(endpoint, expenseCategory.id as number, expenseCategory);
+    // if (!response.successful) {
+    //   return;
+    // } 
+    // setExpenseCategories(prev => prev.map(cat => {
+    //   if (cat.id === expenseCategory.id) {
+    //     return { ...cat, name: expenseCategory.name };
+    //   } else {
+    //     return cat;
+    //   }
+    // }));
   }
   
   async function handlePost(formData: FormData) {
     setName('');
     const name = formData.get(nameField) as string;
-    const expenseCategory: ExpenseCategory = { name };
-    const response = await postRequest<ExpenseCategory>(endpoint, expenseCategory);
-    if (!response.successful) 
-      setMessage("Failed to create expense category: " + response.responseMessage);
-    else {
-      setMessage("Expense category created successfully.");
-      setExpenseCategories([...expenseCategories, response.data as ExpenseCategory]);
-    }
+    // const entryType: CashFlowType = CashFlowType
+    // const cashFlowCategory: CashFlowCategory = { name, CashFlowType };
+    // const response = await postRequest<CashFlowCategory>(endpoint, cashFlowCategory);
+    // if (!response.successful) 
+    //   setMessage("Failed to create expense category: " + response.responseMessage);
+    // else {
+    //   setMessage("Expense category created successfully.");
+    //   setExpenseCategories([...expenseCategories, response.data as ExpenseCategory]);
+    // }
   }
 
   return (

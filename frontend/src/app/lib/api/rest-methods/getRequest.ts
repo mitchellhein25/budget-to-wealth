@@ -1,7 +1,7 @@
 'use server';
 import { fetchWithAuth, HttpMethod } from '@/app/lib/api/apiClient';
 
-export async function getRequest<T>(endpoint: string): Promise<{data: T[], responseMessage: string, successful: boolean}> {
+export async function getRequest<T>(endpoint: string): Promise<{data: T[] | null, responseMessage: string, successful: boolean}> {
   return await fetchWithAuth<T[]>(
     {
       endpoint: endpoint,

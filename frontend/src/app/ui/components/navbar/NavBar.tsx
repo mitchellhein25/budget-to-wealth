@@ -15,54 +15,49 @@ export default function NavBar({ session }: { session: SessionData | null }) {
     { href: '/dashboards', label: 'Dashboards' }
   ]
   return (
-    <nav className="flex items-center justify-between gap-6 px-6 py-4 bg-nav-bg-light dark:bg-nav-bg-dark border-b border-nav-border-light dark:border-nav-border-dark ">
-      <div></div>
+    <nav className="navbar">
+      <div className="navbar-start"></div>
 
-      <div className="flex items-center gap-6">
+      <div className="navbar-center">
         {navItems.map((item) => {
           const isActive = basePath && item.href.startsWith(`/${basePath}`);
 
           return (
-            <div
+            <Link
               key={item.href}
-              className={`px-4 py-2 rounded text-sm font-medium transition-colors ${isActive
-                  ? 'bg-nav-item-active-bg-light dark:bg-nav-item-active-bg-dark'
-                  : ''
-                }`}
+              href={item.href}
+              className={
+                isActive
+                  ? 'btn btn-primary mx-5'
+                  : 'btn btn-ghost mx-5'
+              }
             >
-              <Link
-                href={item.href}
-                className={
-                  isActive
-                    ? 'text-nav-item-active-light dark:text-nav-item-active-dark'
-                    : 'text-nav-item-light dark:text-nav-item-dark hover:text-nav-item-hover-light dark:hover:text-nav-item-hover-dark transition-colors'
-                }
-              >
-                {item.label}
-              </Link>
-            </div>
+              {item.label}
+            </Link>
           )
         })}
       </div>
 
       {session ? (
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="p-2 rounded-full bg-primary-100-light dark:bg-primary-100-dark"></div>
-            <span className="font-medium text-text-primary-light dark:text-text-primary-dark">
+        <div className="navbar-end">
+          <div className="flex mx-10">
+            <div className="p-3 rounded-full bg-base-content mx-2"></div>
+            <span className="text-base-content mx-2">
               {session.user.name ?? "User"}
             </span>
           </div>
           <a href="/auth/logout"
-            className="font-medium rounded px-2 py-1 text-error-600-light dark:text-error-500-dark hover:text-error-700-light dark:hover:text-error-600-dark transition-colors">
+            className="btn btn-soft btn-error">
               Logout
           </a>
         </div>
       ) : (
-        <a href="/auth/login"
-          className="inline-flex items-center px-4 py-2 rounded-md shadow-sm text-sm font-medium border border-transparent text-text-inverse-light dark:text-text-inverse-dark bg-button-primary-light dark:bg-button-primary-dark hover:bg-button-primary-hover-light dark:hover:bg-button-primary-hover-dark transition-colors">
-            Login/Sign Up
-        </a>
+        <div className="navbar-end">
+          <a href="/auth/login"
+            className="btn btn-primary">
+              Login/Sign Up
+          </a>
+        </div>
       )}
     </nav>
   )

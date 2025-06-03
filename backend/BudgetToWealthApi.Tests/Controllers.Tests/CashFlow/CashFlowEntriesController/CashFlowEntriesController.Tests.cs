@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 public class CashFlowEntriesControllerTests : IDisposable
 {
@@ -15,7 +17,8 @@ public class CashFlowEntriesControllerTests : IDisposable
     {
         _context = DatabaseSetup.GetDbContext();
         _transaction = DatabaseSetup.GetTransaction(_context);
-        _controller = new CashFlowEntriesController(_context);
+        var loggerMock = new Mock<ILogger<CashFlowEntriesController>>();
+        _controller = new CashFlowEntriesController(_context, loggerMock.Object);
         SetupTestData();
         SetupUserContext(_user1Id);
     }
