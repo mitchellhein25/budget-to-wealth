@@ -1,5 +1,5 @@
 import { auth0 } from "@/app/lib/auth/auth0";
-import ExpenseCategories from "../ui/components/expense-categories/ExpenseCategories";
+// import ExpenseCategories from "../ui/components/expense-categories/ExpenseCategories";
 
 export default async function ExpenseCategoriesPage() {
   const session = await auth0.getSession();
@@ -11,8 +11,9 @@ export default async function ExpenseCategoriesPage() {
       </div>
     );
   }
-  const isLoggedIn = session != null && session.user != null;
-  return (
-    <ExpenseCategories isLoggedIn={isLoggedIn} /> 
-  );
+  // const isLoggedIn = session != null && session.user != null;
+  // return (
+    // <ExpenseCategories isLoggedIn={isLoggedIn} /> 
+  // );
+  return <div></div>
 }

@@ -4,7 +4,7 @@ import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import React, { useEffect, useState } from 'react'
 
-export default function IncomeList({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function IncomeList() {
     const [incomeEntries, setIncomeEntries] = useState<CashFlowEntry[]>([]);
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');

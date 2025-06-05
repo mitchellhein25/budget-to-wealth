@@ -1,10 +1,8 @@
 'use client'
 
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import { Pencil, Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
 
 interface IncomeCategoriesListProps {
 	categories: CashFlowCategory[],
@@ -16,7 +14,6 @@ interface IncomeCategoriesListProps {
 
 export default function IncomeCategoriesList(props: IncomeCategoriesListProps) {
 	const endpoint: string = "CashFlowCategories";
-	const revalidatePath: string = "";
 
 	async function handleDelete(id: number) {
 		const result = await deleteRequest<CashFlowCategory>(endpoint, id);
