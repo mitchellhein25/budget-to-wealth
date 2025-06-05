@@ -5,9 +5,8 @@ import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
 import { putRequest } from '@/app/lib/api/rest-methods/putRequest';
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import CashflowSideBar from '@/app/ui/components/cashflow/CashflowSideBar'
-import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/IncomeCategoriesForm';
-import IncomeCategoriesList from '@/app/ui/components/cashflow/income/IncomeCategoriesList';
+import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/iIncome-categories/income-categories-form/IncomeCategoriesForm';
+import IncomeCategoriesList from '@/app/ui/components/cashflow/income/iIncome-categories/IncomeCategoriesList';
 import React, { useEffect, useState } from 'react'
 
 export default function IncomeCategories() {
@@ -15,7 +14,8 @@ export default function IncomeCategories() {
 	const [editingIncomeCategory, setEditingIncomeCategory] = useState<CashFlowCategory | null>(null);
 	const [isError, setIsError] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [message, setMessage] = useState<string>("");
+	const [infoMessage, setInfoMessage] = useState<string>("");
+	const [errorMessage, setErrorMessage] = useState<string>("");
 
 	async function handleSubmit(formData: FormData) {
 		const nameValue = formData.get("Name") as string;
@@ -26,13 +26,13 @@ export default function IncomeCategories() {
 			response = await putRequest<CashFlowCategory>("CashFlowCategories", idValue as string, cashFlowEntry);
 		else
 			response = await postRequest<CashFlowCategory>("CashFlowCategories", cashFlowEntry);
-		const actionVerb: string = idValue == null ? "create" : "update";
+		const actionVerb: string = !idValue ? "create" : "update";
 		if (!response.successful)
-			setMessage(`Failed to ${actionVerb} income category: "` + response.responseMessage);
+			setErrorMessage(`Failed to ${actionVerb} income category: "` + response.responseMessage);
 		else {
-			setMessage(`Income category ${actionVerb}d successfully.`);
 			fetchIncomeCategories();
 			setEditingIncomeCategory(null)
+			setInfoMessage(`Income category ${actionVerb}d successfully.`);
 		}
 	}
 
@@ -41,6 +41,8 @@ export default function IncomeCategories() {
 	}
 
 	async function fetchIncomeCategories() {
+		setInfoMessage("");
+		setErrorMessage("");
 		setIsLoading(true);
 		const response = await getRequest<CashFlowCategory>("CashFlowCategories?cashFlowType=Income");
 		setIncomeCategories(response.data as CashFlowCategory[]);
@@ -48,6 +50,12 @@ export default function IncomeCategories() {
 			setIsError(true);
 		}
 		setIsLoading(false);
+	}
+
+	function onReset() {
+		setEditingIncomeCategory(null)
+		setInfoMessage("");
+		setErrorMessage("");
 	}
 
 	useEffect(() => {
@@ -59,13 +67,13 @@ export default function IncomeCategories() {
 
 	return (
 		<div className="flex gap-6 p-6">
-			<CashflowSideBar />
 			<IncomeCategoriesForm
 				handleSubmit={handleSubmit}
 				editingIncomeCategory={editingIncomeCategory}
 				onNameChange={(name: string) => setEditingIncomeCategory(prev => prev ? { ...prev, name } : { name, categoryType: CashFlowType.Income })}
-				onReset={() => setEditingIncomeCategory(null)}
-				message={message}
+				onReset={onReset}
+				errorMessage={errorMessage}
+				infoMessage={infoMessage}
 			/>
 			<IncomeCategoriesList
 				categories={incomeCategories}
