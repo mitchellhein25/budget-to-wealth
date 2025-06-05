@@ -1,3 +1,6 @@
+import { CashFlowType } from "./CashFlowType";
+import { RecurrenceFrequency } from "./RecurrenceFrequency";
+
 export interface CashFlowEntry {
     id?: number;
     amount: number;
