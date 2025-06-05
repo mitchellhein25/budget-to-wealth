@@ -10,7 +10,7 @@ import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/IncomeCate
 import IncomeCategoriesList from '@/app/ui/components/cashflow/income/IncomeCategoriesList';
 import React, { useEffect, useState } from 'react'
 
-export default function page() {
+export default function IncomeCategories() {
   const [incomeCategories, setIncomeCategories] = useState<CashFlowCategory[]>([]);
 	const [editingIncomeCategory, setEditingIncomeCategory] = useState<CashFlowCategory | null>(null);
 	const [isError, setIsError] = useState(false);
