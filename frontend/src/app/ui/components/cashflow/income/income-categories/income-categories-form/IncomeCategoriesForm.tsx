@@ -20,10 +20,11 @@ export default function IncomeCategoriesForm(props: IncomeCategoriesFormProps) {
 
   const formHeader: string = props.editingIncomeCategory?.id ? "Edit Income Category" : "New Income Category";
 
-  const inputs: React.ReactElement = <IncomeCategoriesInputs 
-    editingIncomeCategory={props.editingIncomeCategory}
-    onNameChange={props.onNameChange}
-  />;
+  const inputs: React.ReactElement = 
+    <IncomeCategoriesInputs 
+      editingIncomeCategory={props.editingIncomeCategory}
+      onNameChange={props.onNameChange}
+    />;
 
     const buttons: React.ReactElement = (
       <>

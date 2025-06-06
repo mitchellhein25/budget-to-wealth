@@ -5,8 +5,8 @@ import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
 import { putRequest } from '@/app/lib/api/rest-methods/putRequest';
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/iIncome-categories/income-categories-form/IncomeCategoriesForm';
-import IncomeCategoriesList from '@/app/ui/components/cashflow/income/iIncome-categories/IncomeCategoriesList';
+import IncomeCategoriesForm from '@/app/ui/components/cashflow/income/income-categories/income-categories-form/IncomeCategoriesForm';
+import IncomeCategoriesList from '@/app/ui/components/cashflow/income/income-categories/IncomeCategoriesList';
 import React, { useEffect, useState } from 'react'
 
 export default function IncomeCategories() {

@@ -1,23 +1,28 @@
-import React from 'react'
-import FormTemplate from '../../FormTemplate';
-import UpdateCreateButton from '../../buttons/UpdateCreateButton';
-import ResetButton from '../../buttons/ResetButton';
+import React, { ChangeEventHandler } from 'react'
+import FormTemplate from '../../../../FormTemplate';
+import UpdateCreateButton from '../../../../buttons/UpdateCreateButton';
+import ResetButton from '../../../../buttons/ResetButton';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
+import IncomeEntriesInputs from './IncomeEntriesInputs';
 
-interface IncomesFormProps {
+interface IncomeEntriesFormProps {
   handleSubmit: (formData: FormData) => void;
   editingIncomeEntry: CashFlowEntry | null;
-  onIncomeEntryChange: (incomeEntry: CashFlowEntry) => void;
+  onChange: ChangeEventHandler<HTMLInputElement>;
   onReset: () => void;
   infoMessage: string;
   errorMessage: string;
 }
 
-export default function IncomesForm(props : IncomesFormProps) {
+export default function IncomeEntriesForm(props : IncomeEntriesFormProps) {
 
   const formHeader: string = props.editingIncomeEntry?.id ? "Edit Income Entry" : "New Income Entry";
 
-  const inputs: React.ReactElement = <></>;
+  const inputs: React.ReactElement = 
+    <IncomeEntriesInputs
+      editingIncomeEntry={props.editingIncomeEntry}
+      onChange={props.onChange}
+    />;
 
     const buttons: React.ReactElement = (
       <>
