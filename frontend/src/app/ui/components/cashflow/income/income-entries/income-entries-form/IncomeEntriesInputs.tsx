@@ -1,21 +1,22 @@
-import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
+import { IncomeEntryFormData } from '@/app/cashflow/income/page';
 import InputFieldSetTemplate from '@/app/ui/components/InputFieldSetTemplate';
 import React from 'react'
 
 interface IncomeEntriesInputsProps {
-  editingIncomeEntry: CashFlowEntry | null;
+  editingFormData: IncomeEntryFormData;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
+  
   return (
     <>
       <input
-        id="Id"
-        name="Id"
+        id="income-id"
+        name="income-id"
         readOnly
         type="text"
-        value={props.editingIncomeEntry?.id ?? ''}
+        value={props.editingFormData?.id ?? ''}
         hidden={true}
       />
       <InputFieldSetTemplate 
@@ -27,10 +28,10 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
             name="income-amount"
             type="text"
             required
-            value={props.editingIncomeEntry?.amount ?? ""}
+            value={props.editingFormData?.amount ?? ""}
             onChange={props.onChange}
-            className="input w-full" 
             placeholder="0.00" 
+            className="input m-0 w-full" 
           />}
       />
       <InputFieldSetTemplate 
@@ -42,7 +43,7 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
             name="income-date"
             type="date"
             required
-            value={props.editingIncomeEntry?.date ?? ""}
+            value={props.editingFormData?.date ?? ""}
             onChange={props.onChange}
             className="input w-full" 
           />}
@@ -65,9 +66,9 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
           <input 
             id="income-description" 
             name="income-description"
-            type="date"
+            type="text"
             required
-            value={props.editingIncomeEntry?.description ?? ""}
+            value={props.editingFormData?.description ?? ""}
             onChange={props.onChange}
             className="input w-full" 
           />}

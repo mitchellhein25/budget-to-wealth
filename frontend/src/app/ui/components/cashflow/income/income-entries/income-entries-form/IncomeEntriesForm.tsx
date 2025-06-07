@@ -4,10 +4,11 @@ import UpdateCreateButton from '../../../../buttons/UpdateCreateButton';
 import ResetButton from '../../../../buttons/ResetButton';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import IncomeEntriesInputs from './IncomeEntriesInputs';
+import { IncomeEntryFormData } from '@/app/cashflow/income/page';
 
 interface IncomeEntriesFormProps {
   handleSubmit: (formData: FormData) => void;
-  editingIncomeEntry: CashFlowEntry | null;
+  editingFormData: IncomeEntryFormData;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onReset: () => void;
   infoMessage: string;
@@ -16,17 +17,17 @@ interface IncomeEntriesFormProps {
 
 export default function IncomeEntriesForm(props : IncomeEntriesFormProps) {
 
-  const formHeader: string = props.editingIncomeEntry?.id ? "Edit Income Entry" : "New Income Entry";
+  const formHeader: string = props.editingFormData?.id ? "Edit Income Entry" : "New Income Entry";
 
   const inputs: React.ReactElement = 
     <IncomeEntriesInputs
-      editingIncomeEntry={props.editingIncomeEntry}
+      editingFormData={props.editingFormData}
       onChange={props.onChange}
     />;
 
     const buttons: React.ReactElement = (
       <>
-        <UpdateCreateButton isUpdateState={props.editingIncomeEntry?.id != null} />
+        <UpdateCreateButton isUpdateState={props.editingFormData?.id != null} />
         <ResetButton 
           onClick={props.onReset}
           isHidden={true}
