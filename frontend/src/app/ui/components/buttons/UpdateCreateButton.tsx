@@ -2,15 +2,17 @@ import React from 'react'
 
 type UpdateCreateButtonProps = {
   isUpdateState: boolean;
+  isDisabled: boolean;
 };
 
-export default function UpdateCreateButton({ isUpdateState }: UpdateCreateButtonProps) {
+export default function UpdateCreateButton(props: UpdateCreateButtonProps) {
   return (
     <button
       type="submit"
+      disabled={props.isDisabled}
       className="m-1 btn btn-primary min-w-25"
     >
-      {isUpdateState ? "Update" : "Create"}
+      {props.isUpdateState ? "Update" : "Create"}
     </button>
   )
 }

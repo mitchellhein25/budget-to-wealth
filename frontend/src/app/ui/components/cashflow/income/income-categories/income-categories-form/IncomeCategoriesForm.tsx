@@ -28,7 +28,10 @@ export default function IncomeCategoriesForm(props: IncomeCategoriesFormProps) {
 
     const buttons: React.ReactElement = (
       <>
-        <UpdateCreateButton isUpdateState={props.editingIncomeCategory?.id != null} />
+        <UpdateCreateButton 
+          isUpdateState={props.editingIncomeCategory?.id != null} 
+          isDisabled={false}
+        />
         <ResetButton 
           onClick={props.onReset}
           isHidden={props.editingIncomeCategory == null || props.editingIncomeCategory.name == ""}

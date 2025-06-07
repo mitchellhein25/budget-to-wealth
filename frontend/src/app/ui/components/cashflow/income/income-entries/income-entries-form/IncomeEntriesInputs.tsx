@@ -3,7 +3,7 @@ import InputFieldSetTemplate from '@/app/ui/components/InputFieldSetTemplate';
 import React from 'react'
 
 interface IncomeEntriesInputsProps {
-  editingFormData: IncomeEntryFormData;
+  editingFormData: Partial<IncomeEntryFormData>;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
@@ -27,7 +27,6 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
             id="income-amount" 
             name="income-amount"
             type="text"
-            required
             value={props.editingFormData?.amount ?? ""}
             onChange={props.onChange}
             placeholder="0.00" 
@@ -42,8 +41,7 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
             id="income-date" 
             name="income-date"
             type="date"
-            required
-            value={props.editingFormData?.date ?? ""}
+            value={props.editingFormData?.date?.toString() ?? ""}
             onChange={props.onChange}
             className="input w-full" 
           />}
@@ -67,7 +65,6 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
             id="income-description" 
             name="income-description"
             type="text"
-            required
             value={props.editingFormData?.description ?? ""}
             onChange={props.onChange}
             className="input w-full" 

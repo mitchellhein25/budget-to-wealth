@@ -8,11 +8,13 @@ import { IncomeEntryFormData } from '@/app/cashflow/income/page';
 
 interface IncomeEntriesFormProps {
   handleSubmit: (formData: FormData) => void;
-  editingFormData: IncomeEntryFormData;
+  editingFormData: Partial<IncomeEntryFormData>;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onReset: () => void;
   infoMessage: string;
   errorMessage: string;
+  isLoading: boolean;
+  isSubmitting: boolean;
 }
 
 export default function IncomeEntriesForm(props : IncomeEntriesFormProps) {
@@ -27,7 +29,10 @@ export default function IncomeEntriesForm(props : IncomeEntriesFormProps) {
 
     const buttons: React.ReactElement = (
       <>
-        <UpdateCreateButton isUpdateState={props.editingFormData?.id != null} />
+        <UpdateCreateButton 
+          isUpdateState={props.editingFormData?.id != null} 
+          isDisabled={props.isLoading || props.isSubmitting}
+        />
         <ResetButton 
           onClick={props.onReset}
           isHidden={true}
