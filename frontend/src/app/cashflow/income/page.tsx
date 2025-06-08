@@ -10,6 +10,7 @@ import IncomeEntriesForm from '@/app/ui/components/cashflow/income/income-entrie
 import { z } from 'zod';
 import React, { useCallback, useEffect, useState } from 'react'
 
+const numberRegex = /^\d+(\.\d{0,2})?$/;
 
 const incomeEntryFormSchema = z.object({
 	id: z.string().uuid().optional(),
@@ -17,7 +18,6 @@ const incomeEntryFormSchema = z.object({
 		.refine(
 			(val) => {
 				const cleaned = val.replace(/[,\s]/g, '');
-				const numberRegex = /^\d+(\.\d{1,2})?$/;
 				return numberRegex.test(cleaned);
 			},
 			{ message: "Amount must be a valid currency format (e.g., 100.50)" }
@@ -34,7 +34,7 @@ const incomeEntryFormSchema = z.object({
 			return val.replace(/[,\s]/g, '');
 		}),
 	date: z.date({ message: "Date field is required." }),
-	// categoryId: z.string().trim().min(1, { message: "Category field is required" }),
+	categoryId: z.string().trim().min(1, { message: "Category field is required" }),
 	description: z.string().trim().optional(),
 });
 
@@ -73,20 +73,24 @@ export default function Income() {
 		clearMessage();
 	}, [clearMessage]);
 
+	const getValidationResult = (formData: FormData) => {
+		const rawData = {
+			id: formData.get("income-id") as string || undefined,
+			amount: formData.get("income-amount") as string,
+			date: new Date(formData.get("income-date") as string),
+			categoryId: formData.get("income-category") as string,
+			description: formData.get("income-description") as string || "",
+		};
+
+		return incomeEntryFormSchema.safeParse(rawData);
+	}
+
 	const transformFormDataToEntry = (formData: FormData): { entry: CashFlowEntry | null; errors: string[] } => {
 		try {
-			const rawData = {
-				id: formData.get("income-id") as string || undefined,
-				amount: formData.get("income-amount") as string,
-				date: new Date(formData.get("income-date") as string),
-				// categoryId: formData.get("income-category") as string,
-				description: formData.get("income-description") as string || "",
-			};
-
-			const validationResult = incomeEntryFormSchema.safeParse(rawData);
+			const validationResult = getValidationResult(formData);
 			if (!validationResult.success) {
 				const errors = validationResult.error.errors.map(err => err.message);
-				return { entry: null, errors };
+				return { entry: null, errors: [errors[0]] };
 			}
 
 			const validatedData = validationResult.data;
@@ -153,10 +157,33 @@ export default function Income() {
 	}, []);
 
 	const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = event.target;
+		let { name, value } = event.target;
 		const fieldName = name.replace("income-", "");
+		if (fieldName === "amount")
+		{
+			value = value.replace(/[^\d.]/g, '');
+		
+			const decimalCount = (value.match(/\./g) || []).length;
+			if (decimalCount > 1) {
+				return; 
+			}
+			
+			const decimalIndex = value.indexOf('.');
+			if (decimalIndex !== -1 && value.length - decimalIndex > 3) {
+				value = value.substring(0, decimalIndex + 3);
+			}
+			
+			if (value.length > 1 && value[0] === '0' && value[1] !== '.') {
+				value = value.substring(1);
+			}
+			
+			if (value !== '' && !numberRegex.test(value)) {
+				return;
+			}
+		} 
 		setEditingFormData((prev) => ({ ...prev, [fieldName]: value }));
 	}, []);
+
 	const fetchIncomeEntries = useCallback(async () => {
 		try {
 			setIsLoading(true);

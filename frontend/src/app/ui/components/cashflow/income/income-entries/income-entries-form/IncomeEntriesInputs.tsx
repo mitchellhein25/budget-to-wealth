@@ -4,7 +4,7 @@ import React from 'react'
 
 interface IncomeEntriesInputsProps {
   editingFormData: Partial<IncomeEntryFormData>;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onChange: React.ChangeEventHandler;
 }
 
 export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
@@ -50,12 +50,20 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
         label="Category" 
         isRequired={true}
         inputChild={
-          <select defaultValue="Pick a category" className="select">
-            <option disabled={true}>Pick a category</option>
-            <option>Chrome</option>
-            <option>FireFox</option>
-            <option>Safari</option>
-          </select>}
+          <select 
+            name="income-category"
+            value={props.editingFormData.categoryId || ""} 
+            onChange={props.onChange}
+            className="select"
+          >
+            <option value="" disabled>Pick a category</option>
+            {incomeCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        }
       />
       <InputFieldSetTemplate 
         label="Description" 
