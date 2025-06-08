@@ -56,7 +56,7 @@ public class CashFlowEntriesController : ControllerBase
         _context.CashFlowEntries.Add(cashFlowEntry);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = cashFlowEntry.Id }, cashFlowEntry);
+        return StatusCode(StatusCodes.Status201Created, cashFlowEntry);
     }
 
     [HttpPut("{id}")]

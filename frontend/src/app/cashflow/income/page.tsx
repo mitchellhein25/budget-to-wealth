@@ -60,7 +60,7 @@ export default function Income() {
 	const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
 
 	const clearMessage = useCallback(() => {
-		setTimeout(() => setMessage({ type: null, text: '' }), 5000);
+		// setTimeout(() => setMessage({ type: null, text: '' }), 5000);
 	}, []);
 
 	const setInfoMessage = useCallback((text: string) => {
@@ -78,7 +78,7 @@ export default function Income() {
 			id: formData.get("income-id") as string || undefined,
 			amount: formData.get("income-amount") as string,
 			date: new Date(formData.get("income-date") as string),
-			categoryId: formData.get("income-category") as string,
+			categoryId: formData.get("income-categoryId") as string || "",
 			description: formData.get("income-description") as string || "",
 		};
 
@@ -102,8 +102,8 @@ export default function Income() {
 
 			const entry: CashFlowEntry = {
 				amount: amountInCents,
-				date: validatedData.date.toDateString(),
-				categoryId: "",
+				date: validatedData.date.toISOString().split('T')[0],
+				categoryId: validatedData.categoryId,
 				description: validatedData.description || "",
 				entryType: CashFlowType.Income
 			};

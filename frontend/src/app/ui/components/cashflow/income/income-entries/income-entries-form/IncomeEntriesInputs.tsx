@@ -1,6 +1,10 @@
+'use client';
+
 import { IncomeEntryFormData } from '@/app/cashflow/income/page';
+import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
+import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/ui/components/InputFieldSetTemplate';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface IncomeEntriesInputsProps {
   editingFormData: Partial<IncomeEntryFormData>;
@@ -8,7 +12,22 @@ interface IncomeEntriesInputsProps {
 }
 
 export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
+  const [incomeCategories, setIncomeCategories] = useState<CashFlowCategory[]>([]);
   
+  async function fetchIncomeCategories() {
+    // setInfoMessage("");
+    // setErrorMessage("");
+    // setIsLoading(true);
+    const response = await getRequest<CashFlowCategory>("CashFlowCategories?cashFlowType=Income");
+    if (response.successful) {
+      setIncomeCategories(response.data as CashFlowCategory[]);
+    }
+  }
+
+  useEffect(() => {
+    fetchIncomeCategories();
+  }, []);
+
   return (
     <>
       <input
@@ -51,7 +70,7 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
         isRequired={true}
         inputChild={
           <select 
-            name="income-category"
+            name="income-categoryId"
             value={props.editingFormData.categoryId || ""} 
             onChange={props.onChange}
             className="select"
