@@ -1,60 +1,87 @@
 'use client'
 
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
+import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
-import React, { useEffect, useState } from 'react'
+import { Pencil, Trash2 } from 'lucide-react';
 
-export default function IncomeEntriesList() {
-    const [incomeEntries, setIncomeEntries] = useState<CashFlowEntry[]>([]);
-    const [isError, setIsError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+interface IncomeEntriesListProps {
+	entries: CashFlowEntry[],
+	onEntryDeleted: () => void,
+	onEntryIsEditing: (entry: CashFlowEntry) => void,
+	isLoading: boolean,
+	isError: boolean
+}
 
-    async function fetchIncomeEntries() {
-        const response = await getRequest<CashFlowEntry>("CashFlowEntries?entryType=income");
-        setIncomeEntries(response.data as CashFlowEntry[]);
-        if (!response.successful) {
-          setErrorMessage(response.responseMessage);
-          setIsError(true);
-        }
-      }
-    
-      useEffect(() => {
-        fetchIncomeEntries();
-      }, []);
+export default function IncomeEntriesList(props: IncomeEntriesListProps) {
+	const endpoint: string = "CashFlowEntries";
+	console.log("entries: ", props.entries);
+	const formatCurrency = (cents: number): string => {
+		return new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: 'USD'
+		}).format(cents / 100);
+	};
 
-    if (isError) {
-        return (
-        <div className="p-5 rounded-xl bg-red-100/60 dark:bg-red-900/30 border border-red-300 dark:border-red-600 text-red-800 dark:text-red-300 shadow-sm">
-            <h2 className="text-lg font-semibold">Failed to load income entries.</h2>
-            <p className="text-sm mt-1">{errorMessage}</p>
-        </div>
-        );
-    }
+	async function handleDelete(id: number) {
+		const result = await deleteRequest<CashFlowEntry>(endpoint, id);
+		if (result.successful)
+			props.onEntryDeleted();
+	};
 
-    if (incomeEntries.length === 0) {
-        return (
-        <div className="p-5 rounded-xl bg-yellow-100/60 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-600 text-yellow-800 dark:text-yellow-300 shadow-sm">
-            <h2 className="text-lg font-semibold">No income entries found</h2>
-            <p className="text-sm mt-1">You haven’t added any income entries yet.</p>
-        </div>
-        );
-    }
+	if (props.isError) {
+		return (
+			<p className="alert alert-error alert-soft">Failed to load income entries.</p>
+		);
+	}
 
-    return (
-        <div className="space-y-3">
-            {incomeEntries.map((incomeEntry) => (
-                <div key={incomeEntry.id} className="flex items-center justify-between py-2">
-                    <span className="text-gray-300">{incomeEntry.categoryId}</span>
-                    <span className="text-gray-300">{incomeEntry.amount}</span>
-                    <span className="text-gray-300">{incomeEntry.date}</span>
-                    <span className="text-gray-300">{incomeEntry.description}</span>
-                    <div className="flex gap-2">
-                        <button className="text-yellow-400">✏️</button>
-                        <button className="text-red-400">🗑️</button>
-                        <button className="text-yellow-400">✅</button>
-                    </div>
-                </div>
-            ))}
-        </div>
-    )
+	if (props.entries.length === 0) {
+		return (
+			<p className="alert alert-warning alert-soft">You haven’t added any income entries yet.</p>
+		);
+	}
+
+	return (
+		<div className="space-y-4 flex flex-col justify-center">
+			<h2 className="text-lg text-center">Income Entries</h2>
+			<ul className="list">
+				{props.entries.sort((a, b) => a.date.localeCompare(b.date)).map((entry) => (
+					<li key={entry.id} className="list-row">
+						<div className="flex-1 mr-4">
+							<span>{formatCurrency(entry.amount)}</span>
+						</div>
+						<div className="flex-1 mr-4">
+							<span>{entry.date}</span>
+						</div>
+						<div className="flex-1 mr-4">
+							<span>{entry.category?.name}</span>
+						</div>
+						<div className="flex-1 mr-4">
+							<span>{entry.description}</span>
+						</div>
+						<div></div>
+						<div className="flex space-x-2">
+							<>
+								<button
+									id="edit-button"
+									onClick={() => props.onEntryIsEditing(entry)}
+									className="p-1 hover:text-primary"
+									aria-label="Edit"
+								>
+									<Pencil size={16} />
+								</button>
+								<button
+									id="delete-button"
+									onClick={() => handleDelete(entry.id as number)}
+									className="p-1 hover:text-error"
+									aria-label="Delete"
+								>
+									<Trash2 size={16} />
+								</button>
+							</>
+						</div>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
 }

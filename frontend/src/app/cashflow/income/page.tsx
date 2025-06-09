@@ -9,6 +9,7 @@ import CashflowSideBar from '@/app/ui/components/cashflow/CashflowSideBar'
 import IncomeEntriesForm from '@/app/ui/components/cashflow/income/income-entries/income-entries-form/IncomeEntriesForm'
 import { z } from 'zod';
 import React, { useCallback, useEffect, useState } from 'react'
+import IncomeEntriesList from '@/app/ui/components/cashflow/income/income-entries/IncomeEntriesList';
 
 const numberRegex = /^\d+(\.\d{0,2})?$/;
 
@@ -151,8 +152,14 @@ export default function Income() {
 		}
 	}, []);
 
-	const onEntryIsEditing = useCallback((formData: IncomeEntryFormData) => {
-		setEditingFormData(formData);
+	const onEntryIsEditing = useCallback((cashFlowEntry: CashFlowEntry) => {
+		setEditingFormData({
+			id: cashFlowEntry.id?.toString(),
+			amount: (cashFlowEntry.amount / 100).toFixed(2),
+			date: new Date(cashFlowEntry.date),
+			categoryId: cashFlowEntry.categoryId,
+			description: cashFlowEntry.description ?? "",
+		});
 		setMessage({ type: null, text: '' });
 	}, []);
 
@@ -226,6 +233,13 @@ export default function Income() {
 				infoMessage={message.type === 'info' ? message.text : ''}
 				isLoading={isLoading}
 				isSubmitting={isSubmitting}
+			/>
+			<IncomeEntriesList
+				entries={incomeEntries}
+				onEntryDeleted={fetchIncomeEntries}
+				isLoading={isLoading}
+				isError={message.type === 'error'}
+				onEntryIsEditing={onEntryIsEditing}
 			/>
 		</div>
 	)
