@@ -60,7 +60,11 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
             id="income-date" 
             name="income-date"
             type="date"
-            value={props.editingFormData?.date?.toString() ?? ""}
+            value={
+              props.editingFormData?.date
+                ? new Date(props.editingFormData.date).toISOString().slice(0, 10)
+                : ""
+            }
             onChange={props.onChange}
             className="input w-full" 
           />}

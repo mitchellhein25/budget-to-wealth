@@ -7,9 +7,10 @@ import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
 import CashflowSideBar from '@/app/ui/components/cashflow/CashflowSideBar'
 import IncomeEntriesForm from '@/app/ui/components/cashflow/income/income-entries/income-entries-form/IncomeEntriesForm'
-import { z } from 'zod';
-import React, { useCallback, useEffect, useState } from 'react'
 import IncomeEntriesList from '@/app/ui/components/cashflow/income/income-entries/IncomeEntriesList';
+import React, { useCallback, useEffect, useState } from 'react'
+import { DateRange, DayPicker } from "react-day-picker";
+import { z } from 'zod';
 
 const numberRegex = /^\d+(\.\d{0,2})?$/;
 
@@ -53,7 +54,15 @@ const convertDollarsToCents = (dollarAmount: string): number | null => {
 	return Math.round(parsed * 100);
 };
 
+const getMonthRange = (date: Date) => {
+	return {
+		from: new Date(date.getFullYear(), date.getMonth(), 1),
+		to: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+	};
+};
+
 export default function Income() {
+	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
 	const [incomeEntries, setIncomeEntries] = useState<CashFlowEntry[]>([]);
 	const [editingFormData, setEditingFormData] = useState<Partial<IncomeEntryFormData>>({});
 	const [isLoading, setIsLoading] = useState(false);
@@ -108,7 +117,7 @@ export default function Income() {
 				description: validatedData.description || "",
 				entryType: CashFlowType.Income
 			};
-			
+
 			return { entry, errors: [] };
 		} catch (error) {
 			return { entry: null, errors: ["An unexpected validation error occurred"] };
@@ -166,28 +175,27 @@ export default function Income() {
 	const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		let { name, value } = event.target;
 		const fieldName = name.replace("income-", "");
-		if (fieldName === "amount")
-		{
+		if (fieldName === "amount") {
 			value = value.replace(/[^\d.]/g, '');
-		
+
 			const decimalCount = (value.match(/\./g) || []).length;
 			if (decimalCount > 1) {
-				return; 
+				return;
 			}
-			
+
 			const decimalIndex = value.indexOf('.');
 			if (decimalIndex !== -1 && value.length - decimalIndex > 3) {
 				value = value.substring(0, decimalIndex + 3);
 			}
-			
+
 			if (value.length > 1 && value[0] === '0' && value[1] !== '.') {
 				value = value.substring(1);
 			}
-			
+
 			if (value !== '' && !numberRegex.test(value)) {
 				return;
 			}
-		} 
+		}
 		setEditingFormData((prev) => ({ ...prev, [fieldName]: value }));
 	}, []);
 
@@ -222,25 +230,52 @@ export default function Income() {
 	}, []);
 
 	return (
-		<div className="flex gap-6 p-6">
+		<div className="flex gap-6 p-6 h-full min-h-screen">
 			<CashflowSideBar />
-			<IncomeEntriesForm
-				handleSubmit={handleSubmit}
-				editingFormData={editingFormData}
-				onChange={onChange}
-				onReset={onReset}
-				errorMessage={message.type === 'error' ? message.text : ''}
-				infoMessage={message.type === 'info' ? message.text : ''}
-				isLoading={isLoading}
-				isSubmitting={isSubmitting}
-			/>
-			<IncomeEntriesList
-				entries={incomeEntries}
-				onEntryDeleted={fetchIncomeEntries}
-				isLoading={isLoading}
-				isError={message.type === 'error'}
-				onEntryIsEditing={onEntryIsEditing}
-			/>
+			<div className="flex flex-1 gap-6">
+				<div className="flex-shrink-0">
+					<IncomeEntriesForm
+						handleSubmit={handleSubmit}
+						editingFormData={editingFormData}
+						onChange={onChange}
+						onReset={onReset}
+						errorMessage={message.type === 'error' ? message.text : ''}
+						infoMessage={message.type === 'info' ? message.text : ''}
+						isLoading={isLoading}
+						isSubmitting={isSubmitting}
+					/>
+				</div>
+				<div className="flex flex-1 flex-col gap-2">
+					<div className="flex flex-col items-center space-y-2">
+						<label className="text-lg text-center">
+							Select Date Range
+						</label>
+						<button popoverTarget="rdp-popover" className="input input-border flex justify-center w-fit">
+							{`${dateRange.from?.toLocaleDateString()} - ${dateRange.to?.toLocaleDateString()}`}
+						</button>
+						<div popover="auto" id="rdp-popover" className="dropdown flex justify-center">
+							<DayPicker
+								className="react-day-picker"
+								mode="range"
+								selected={dateRange}
+								onSelect={setDateRange}
+								required={true}
+								classNames={{
+									today: 'text-primary',
+									selected: '',
+								}}
+							/>
+						</div>
+					</div>
+					<IncomeEntriesList
+						entries={incomeEntries}
+						onEntryDeleted={fetchIncomeEntries}
+						isLoading={isLoading}
+						isError={message.type === 'error'}
+						onEntryIsEditing={onEntryIsEditing}
+					/>
+				</div>
+			</div>
 		</div>
 	)
 }
