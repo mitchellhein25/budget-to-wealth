@@ -1,18 +1,20 @@
 'use client';
 
-import { IncomeEntryFormData } from '@/app/cashflow/income/page';
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/ui/components/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
+import { CashFlowEntryFormData } from '../../../cashflow-helpers/CashFlowEntryFormData';
 
 interface IncomeEntriesInputsProps {
-  editingFormData: Partial<IncomeEntryFormData>;
+  editingFormData: Partial<CashFlowEntryFormData>;
   onChange: React.ChangeEventHandler;
 }
 
 export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
   const [incomeCategories, setIncomeCategories] = useState<CashFlowCategory[]>([]);
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   async function fetchIncomeCategories() {
     // setInfoMessage("");

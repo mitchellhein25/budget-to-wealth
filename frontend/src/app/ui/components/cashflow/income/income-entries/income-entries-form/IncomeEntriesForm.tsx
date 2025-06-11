@@ -2,13 +2,12 @@ import React, { ChangeEventHandler } from 'react'
 import FormTemplate from '../../../../FormTemplate';
 import UpdateCreateButton from '../../../../buttons/UpdateCreateButton';
 import ResetButton from '../../../../buttons/ResetButton';
-import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import IncomeEntriesInputs from './IncomeEntriesInputs';
-import { IncomeEntryFormData } from '@/app/cashflow/income/page';
+import { CashFlowEntryFormData } from '../../../cashflow-helpers/CashFlowEntryFormData';
 
 interface IncomeEntriesFormProps {
   handleSubmit: (formData: FormData) => void;
-  editingFormData: Partial<IncomeEntryFormData>;
+  editingFormData: Partial<CashFlowEntryFormData>;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onReset: () => void;
   infoMessage: string;

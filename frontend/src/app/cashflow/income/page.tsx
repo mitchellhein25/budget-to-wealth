@@ -1,70 +1,21 @@
 'use client';
 
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
-import { putRequest } from '@/app/lib/api/rest-methods/putRequest';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
+import { CashFlowEntryFormData } from '@/app/ui/components/cashflow/cashflow-helpers/CashFlowEntryFormData';
+import { getMonthRange, MessageState, numberRegex } from '@/app/ui/components/cashflow/cashflow-helpers/CashFlowUtils';
+import { handleCashFlowFormSubmit } from '@/app/ui/components/cashflow/cashflow-helpers/handleCashFlowFormSubmit';
 import CashflowSideBar from '@/app/ui/components/cashflow/CashflowSideBar'
 import IncomeEntriesForm from '@/app/ui/components/cashflow/income/income-entries/income-entries-form/IncomeEntriesForm'
 import IncomeEntriesList from '@/app/ui/components/cashflow/income/income-entries/IncomeEntriesList';
 import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange, DayPicker } from "react-day-picker";
-import { z } from 'zod';
-
-const numberRegex = /^\d+(\.\d{0,2})?$/;
-
-const incomeEntryFormSchema = z.object({
-	id: z.string().uuid().optional(),
-	amount: z.string().trim().min(1, { message: "Amount field is required." })
-		.refine(
-			(val) => {
-				const cleaned = val.replace(/[,\s]/g, '');
-				return numberRegex.test(cleaned);
-			},
-			{ message: "Amount must be a valid currency format (e.g., 100.50)" }
-		)
-		.refine(
-			(val) => {
-				const cleaned = val.replace(/[,\s]/g, '');
-				const parsed = parseFloat(cleaned);
-				return parsed > 0;
-			},
-			{ message: "Amount must be greater than 0" }
-		)
-		.transform((val) => {
-			return val.replace(/[,\s]/g, '');
-		}),
-	date: z.date({ message: "Date field is required." }),
-	categoryId: z.string().trim().min(1, { message: "Category field is required" }),
-	description: z.string().trim().optional(),
-});
-
-export type IncomeEntryFormData = z.infer<typeof incomeEntryFormSchema>;
-
-type MessageState = {
-	type: 'info' | 'error' | null;
-	text: string;
-};
-
-const convertDollarsToCents = (dollarAmount: string): number | null => {
-	const parsed = Number.parseFloat(dollarAmount);
-	if (isNaN(parsed))
-		return null;
-	return Math.round(parsed * 100);
-};
-
-const getMonthRange = (date: Date) => {
-	return {
-		from: new Date(date.getFullYear(), date.getMonth(), 1),
-		to: new Date(date.getFullYear(), date.getMonth() + 1, 0),
-	};
-};
 
 export default function Income() {
 	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
 	const [incomeEntries, setIncomeEntries] = useState<CashFlowEntry[]>([]);
-	const [editingFormData, setEditingFormData] = useState<Partial<IncomeEntryFormData>>({});
+	const [editingFormData, setEditingFormData] = useState<Partial<CashFlowEntryFormData>>({});
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
@@ -83,83 +34,16 @@ export default function Income() {
 		clearMessage();
 	}, [clearMessage]);
 
-	const getValidationResult = (formData: FormData) => {
-		const rawData = {
-			id: formData.get("income-id") as string || undefined,
-			amount: formData.get("income-amount") as string,
-			date: new Date(formData.get("income-date") as string),
-			categoryId: formData.get("income-categoryId") as string || "",
-			description: formData.get("income-description") as string || "",
-		};
-
-		return incomeEntryFormSchema.safeParse(rawData);
-	}
-
-	const transformFormDataToEntry = (formData: FormData): { entry: CashFlowEntry | null; errors: string[] } => {
-		try {
-			const validationResult = getValidationResult(formData);
-			if (!validationResult.success) {
-				const errors = validationResult.error.errors.map(err => err.message);
-				return { entry: null, errors: [errors[0]] };
-			}
-
-			const validatedData = validationResult.data;
-			const amountInCents = convertDollarsToCents(validatedData.amount);
-
-			if (amountInCents === null) {
-				return { entry: null, errors: ["Invalid amount format"] };
-			}
-
-			const entry: CashFlowEntry = {
-				amount: amountInCents,
-				date: validatedData.date.toISOString().split('T')[0],
-				categoryId: validatedData.categoryId,
-				description: validatedData.description || "",
-				entryType: CashFlowType.Income
-			};
-
-			return { entry, errors: [] };
-		} catch (error) {
-			return { entry: null, errors: ["An unexpected validation error occurred"] };
-		}
-	};
-
-	const handleSubmit = useCallback(async (formData: FormData) => {
-		try {
-			setIsSubmitting(true);
-			setMessage({ type: null, text: '' });
-
-			const { entry: cashFlowEntry, errors } = transformFormDataToEntry(formData);
-			if (!cashFlowEntry || errors.length > 0) {
-				setErrorMessage(errors.join(', '));
-				return;
-			}
-
-			const idValue = formData.get("income-id") as string;
-			const isEditing = Boolean(idValue);
-
-			const response = isEditing
-				? await putRequest<CashFlowEntry>("CashFlowEntries", idValue, cashFlowEntry)
-				: await postRequest<CashFlowEntry>("CashFlowEntries", cashFlowEntry);
-
-			if (!response.successful) {
-				const action = isEditing ? "update" : "create";
-				setErrorMessage(`Failed to ${action} income entry: ${response.responseMessage}`);
-				return;
-			}
-
-			await fetchIncomeEntries();
-			setEditingFormData({});
-			const action = isEditing ? "updated" : "created";
-			setInfoMessage(`Income entry ${action} successfully.`);
-
-		} catch (error) {
-			setErrorMessage("An unexpected error occurred. Please try again.");
-			console.error("Submit error:", error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	}, []);
+	const handleSubmit = (formData: FormData) => handleCashFlowFormSubmit(
+		formData,
+		setIsSubmitting,
+		setMessage,
+		setErrorMessage,
+		setInfoMessage,
+		fetchIncomeEntries,
+		setEditingFormData,
+		CashFlowType.Income
+	);
 
 	const onEntryIsEditing = useCallback((cashFlowEntry: CashFlowEntry) => {
 		setEditingFormData({
