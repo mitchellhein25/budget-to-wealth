@@ -3,7 +3,7 @@
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import { Pencil, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface IncomeEntriesListProps {
 	entries: CashFlowEntry[],
@@ -143,10 +143,9 @@ export default function IncomeEntriesList(props: IncomeEntriesListProps) {
 								const shouldShowEllipsis = prevPage && pageNumber !== prevPage + 1;
 
 								return (
-									<>
+									<React.Fragment key={pageNumber}>
 										{shouldShowEllipsis && <span className="px-2">...</span>}
 										<button
-											key={pageNumber}
 											onClick={() => handlePageChange(pageNumber)}
 											className={`btn btn-square ${
 												currentPage === pageNumber ? 'btn-primary' : 'btn-outline'
@@ -154,7 +153,7 @@ export default function IncomeEntriesList(props: IncomeEntriesListProps) {
 										>
 											{pageNumber}
 										</button>
-									</>
+									</React.Fragment>
 								);
 							})}
 					</div>
