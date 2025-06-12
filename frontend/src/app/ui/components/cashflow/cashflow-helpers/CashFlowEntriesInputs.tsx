@@ -15,8 +15,8 @@ interface CashFlowEntriesInputsProps {
 
 export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isError, setIsError] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const cashFlowTypeLower = props.cashFlowType.toLowerCase();
   
   async function fetchCategories() {

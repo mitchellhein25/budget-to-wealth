@@ -7,9 +7,9 @@ export const cashFlowFormOnChange = (
   setEditingFormData: React.Dispatch<React.SetStateAction<Partial<CashFlowEntryFormData>>>, 
   cashFlowType: CashFlowType
 ) => {
-  let { name, value } = event.target;
+  let { value } = event.target;
   const cashFlowTypeString: string = cashFlowType.toString().toLocaleLowerCase();
-  const fieldName = name.replace(`${cashFlowTypeString}-`, "");
+  const fieldName = event.target.name.replace(`${cashFlowTypeString}-`, "");
   if (fieldName === "amount") {
     const cleanedValue = cleanAmountInput(value);
     if (cleanedValue == null)

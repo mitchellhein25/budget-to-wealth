@@ -28,6 +28,10 @@ export const transformFormDataToEntry = (formData: FormData, cashFlowType: CashF
 
     return { entry, errors: [] };
   } catch (error) {
-    return { entry: null, errors: ["An unexpected validation error occurred"] };
+    let errorMessage = "An unexpected validation error occurred.";
+    if (error && typeof error === "object" && "message" in error) {
+      errorMessage += `\n${(error as { message: string }).message}`;
+    }
+    return { entry: null, errors: [errorMessage] };
   }
 };
