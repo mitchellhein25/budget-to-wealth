@@ -6,6 +6,11 @@ import { SessionData } from "@auth0/nextjs-auth0/types";
 import Link from 'next/link';
 
 export default function NavBar({ session }: { session: SessionData | null }) {
+  const isTokenExpired : boolean = session?.tokenSet?.expiresAt
+    ? session.tokenSet.expiresAt * 1000 < Date.now()
+    : false;
+
+  const isAuthenticated: boolean = (session ?? false) && !isTokenExpired;
   const pathname = usePathname()
   const basePath = pathname.split('/')[1]
 
@@ -38,12 +43,12 @@ export default function NavBar({ session }: { session: SessionData | null }) {
         })}
       </div>
 
-      {session ? (
+      {isAuthenticated ? (
         <div className="navbar-end">
           <div className="flex mx-10">
             <div className="p-3 rounded-full bg-base-content mx-2"></div>
             <span className="text-base-content mx-2">
-              {session.user.name ?? "User"}
+              {session?.user.name ?? "User"}
             </span>
           </div>
           <a href="/auth/logout"

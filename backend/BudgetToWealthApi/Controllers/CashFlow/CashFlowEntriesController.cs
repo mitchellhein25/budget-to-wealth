@@ -25,7 +25,9 @@ public class CashFlowEntriesController : ControllerBase
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<CashFlowEntry> query = _context.CashFlowEntries.Where(cashFlowEntry => cashFlowEntry.UserId == userId);
+        IQueryable<CashFlowEntry> query = _context.CashFlowEntries
+                                          .Include(e => e.Category)
+                                          .Where(cashFlowEntry => cashFlowEntry.UserId == userId);
 
         if (entryType != null)
             query = query.Where(cashFlowEntry => cashFlowEntry.EntryType == entryType);
@@ -56,7 +58,7 @@ public class CashFlowEntriesController : ControllerBase
         _context.CashFlowEntries.Add(cashFlowEntry);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = cashFlowEntry.Id }, cashFlowEntry);
+        return StatusCode(StatusCodes.Status201Created, cashFlowEntry);
     }
 
     [HttpPut("{id}")]
