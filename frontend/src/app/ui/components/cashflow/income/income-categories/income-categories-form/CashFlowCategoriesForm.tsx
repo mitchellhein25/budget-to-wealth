@@ -5,36 +5,38 @@ import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
 import FormTemplate from "../../../../FormTemplate";
 import UpdateCreateButton from "../../../../buttons/UpdateCreateButton";
 import ResetButton from "../../../../buttons/ResetButton";
-import IncomeCategoriesInputs from "./IncomeCategoriesInputs";
+import CashFlowCategoriesInputs from "./CashFlowCategoriesInputs";
+import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
 
-interface IncomeCategoriesFormProps {
+interface CashFlowCategoriesFormProps {
   handleSubmit: (formData: FormData) => void;
-  editingIncomeCategory: CashFlowCategory | null;
+  editingCashFlowCategory: CashFlowCategory | null;
   onNameChange: (name: string) => void;
   onReset: () => void;
   infoMessage: string;
   errorMessage: string;
+  cashFlowType: CashFlowType
 }
 
-export default function IncomeCategoriesForm(props: IncomeCategoriesFormProps) {
+export default function CashFlowCategoriesForm(props: CashFlowCategoriesFormProps) {
 
-  const formHeader: string = props.editingIncomeCategory?.id ? "Edit Income Category" : "New Income Category";
+  const formHeader: string = props.editingCashFlowCategory?.id ? `Edit ${props.cashFlowType} Category` : `New ${props.cashFlowType} Category`;
 
   const inputs: React.ReactElement = 
-    <IncomeCategoriesInputs 
-      editingIncomeCategory={props.editingIncomeCategory}
+    <CashFlowCategoriesInputs 
+      editingCashFlowCategory={props.editingCashFlowCategory}
       onNameChange={props.onNameChange}
     />;
 
     const buttons: React.ReactElement = (
       <>
         <UpdateCreateButton 
-          isUpdateState={props.editingIncomeCategory?.id != null} 
+          isUpdateState={props.editingCashFlowCategory?.id != null} 
           isDisabled={false}
         />
         <ResetButton 
           onClick={props.onReset}
-          isHidden={props.editingIncomeCategory == null || props.editingIncomeCategory.name == ""}
+          isHidden={props.editingCashFlowCategory == null || props.editingCashFlowCategory.name == ""}
         />
       </>
     )
