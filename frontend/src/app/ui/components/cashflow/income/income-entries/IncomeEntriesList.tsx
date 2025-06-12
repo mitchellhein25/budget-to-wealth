@@ -4,26 +4,24 @@ import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import { Pencil, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
+import { formatCurrency } from '../../cashflow-helpers/CashFlowUtils';
+import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
+import TablePagination from '../../../TablePagination';
 
-interface IncomeEntriesListProps {
+interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
 	onEntryDeleted: () => void,
 	onEntryIsEditing: (entry: CashFlowEntry) => void,
 	isLoading: boolean,
-	isError: boolean
+	isError: boolean,
+	cashFlowType: CashFlowType,
 }
 
-export default function IncomeEntriesList(props: IncomeEntriesListProps) {
+export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [itemsPerPage] = useState(5);
 	const endpoint: string = "CashFlowEntries";
-	
-	const formatCurrency = (cents: number): string => {
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD'
-		}).format(cents / 100);
-	};
+	const cashFlowTypeLowerCase: string = props.cashFlowType.toLowerCase();
 
 	const indexOfLastItem = currentPage * itemsPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -57,19 +55,23 @@ export default function IncomeEntriesList(props: IncomeEntriesListProps) {
 
 	if (props.isError) {
 		return (
-			<p className="alert alert-error alert-soft">Failed to load income entries.</p>
+			<p className="alert alert-error alert-soft">Failed to load {cashFlowTypeLowerCase} entries.</p>
 		);
 	}
-
+	if (props.isLoading) {
+		return (
+			<p className="alert alert-info alert-soft">Loading {cashFlowTypeLowerCase} entries...</p>
+		);
+	}
 	if (props.entries.length === 0) {
 		return (
-			<p className="alert alert-warning alert-soft">You haven’t added any income entries yet.</p>
+			<p className="alert alert-warning alert-soft">You haven’t added any {cashFlowTypeLowerCase} entries yet.</p>
 		);
 	}
 
 	return (
 		<div className="space-y-4 flex flex-col justify-center">
-			<h2 className="text-lg text-center">Income Entries</h2>
+			<h2 className="text-lg text-center">{props.cashFlowType} Entries</h2>
 			<table className="table w-full">
 				<thead>
 					<tr>
@@ -117,56 +119,13 @@ export default function IncomeEntriesList(props: IncomeEntriesListProps) {
 					))}
 				</tbody>
 			</table>
-			{totalPages > 1 && (
-				<div className="flex justify-center items-center space-x-2 mt-4">
-					<button
-						onClick={handlePrevious}
-						disabled={currentPage === 1}
-						className="btn btn-outline"
-					>
-						Previous
-					</button>
-
-					<div className="flex space-x-1">
-						{Array.from({ length: totalPages }, (_, i) => i + 1)
-							.filter((pageNumber) => {
-								if (pageNumber === 1 || pageNumber === totalPages) return true;
-								if (
-									pageNumber >= currentPage - 2 &&
-									pageNumber <= currentPage + 2
-								)
-									return true;
-								return false;
-							})
-							.map((pageNumber, index, filteredPages) => {
-								const prevPage = filteredPages[index - 1];
-								const shouldShowEllipsis = prevPage && pageNumber !== prevPage + 1;
-
-								return (
-									<React.Fragment key={pageNumber}>
-										{shouldShowEllipsis && <span className="px-2">...</span>}
-										<button
-											onClick={() => handlePageChange(pageNumber)}
-											className={`btn btn-square ${
-												currentPage === pageNumber ? 'btn-primary' : 'btn-outline'
-											}`}
-										>
-											{pageNumber}
-										</button>
-									</React.Fragment>
-								);
-							})}
-					</div>
-
-					<button
-						onClick={handleNext}
-						disabled={currentPage === totalPages}
-						className="btn btn-outline"
-					>
-						Next
-					</button>
-				</div>
-			)}		
-		</div>
+			<TablePagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				handlePageChange={handlePageChange}
+				handlePrevious={handlePrevious}
+				handleNext={handleNext}
+			/>
+			</div>
 	);
 }

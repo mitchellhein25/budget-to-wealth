@@ -4,37 +4,40 @@ import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/ui/components/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
-import { CashFlowEntryFormData } from '../../../cashflow-helpers/CashFlowEntryFormData';
+import { CashFlowEntryFormData } from './CashFlowEntryFormData';
+import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
 
-interface IncomeEntriesInputsProps {
+interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
   onChange: React.ChangeEventHandler;
+  cashFlowType: CashFlowType;
 }
 
-export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
-  const [incomeCategories, setIncomeCategories] = useState<CashFlowCategory[]>([]);
+export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
+  const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const cashFlowTypeLower = props.cashFlowType.toLowerCase();
   
-  async function fetchIncomeCategories() {
+  async function fetchCategories() {
     // setInfoMessage("");
     // setErrorMessage("");
     // setIsLoading(true);
-    const response = await getRequest<CashFlowCategory>("CashFlowCategories?cashFlowType=Income");
+    const response = await getRequest<CashFlowCategory>(`CashFlowCategories?cashFlowType=${props.cashFlowType}`);
     if (response.successful) {
-      setIncomeCategories(response.data as CashFlowCategory[]);
+      setCategories(response.data as CashFlowCategory[]);
     }
   }
 
   useEffect(() => {
-    fetchIncomeCategories();
+    fetchCategories();
   }, []);
 
   return (
     <>
       <input
-        id="income-id"
-        name="income-id"
+        id={`${cashFlowTypeLower}-id`}
+        name={`${cashFlowTypeLower}-id`}
         readOnly
         type="text"
         value={props.editingFormData?.id ?? ''}
@@ -44,9 +47,9 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
         label="Amount" 
         isRequired={true}
         inputChild={
-          <input 
-            id="income-amount" 
-            name="income-amount"
+          <input
+            id={`${cashFlowTypeLower}-amount`}
+            name={`${cashFlowTypeLower}-amount`}
             type="text"
             value={props.editingFormData?.amount ?? ""}
             onChange={props.onChange}
@@ -58,9 +61,9 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
         label="Date" 
         isRequired={true}
         inputChild={
-          <input 
-            id="income-date" 
-            name="income-date"
+          <input
+            id={`${cashFlowTypeLower}-date`}
+            name={`${cashFlowTypeLower}-date`}
             type="date"
             value={
               props.editingFormData?.date
@@ -75,14 +78,14 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
         label="Category" 
         isRequired={true}
         inputChild={
-          <select 
-            name="income-categoryId"
-            value={props.editingFormData.categoryId || ""} 
+          <select
+            name={`${cashFlowTypeLower}-categoryId`}
+            value={props.editingFormData.categoryId || ""}
             onChange={props.onChange}
             className="select"
           >
             <option value="" disabled>Pick a category</option>
-            {incomeCategories.map((category) => (
+            {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -94,9 +97,9 @@ export default function IncomeEntriesInputs(props: IncomeEntriesInputsProps) {
         label="Description" 
         isRequired={false}
         inputChild={
-          <input 
-            id="income-description" 
-            name="income-description"
+          <input
+            id={`${cashFlowTypeLower}-description`}
+            name={`${cashFlowTypeLower}-description`}
             type="text"
             value={props.editingFormData?.description ?? ""}
             onChange={props.onChange}

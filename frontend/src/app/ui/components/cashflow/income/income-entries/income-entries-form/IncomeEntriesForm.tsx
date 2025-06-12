@@ -2,8 +2,9 @@ import React, { ChangeEventHandler } from 'react'
 import FormTemplate from '../../../../FormTemplate';
 import UpdateCreateButton from '../../../../buttons/UpdateCreateButton';
 import ResetButton from '../../../../buttons/ResetButton';
-import IncomeEntriesInputs from './IncomeEntriesInputs';
 import { CashFlowEntryFormData } from '../../../cashflow-helpers/CashFlowEntryFormData';
+import CashFlowEntriesInputs from '../../../cashflow-helpers/CashFlowEntriesInputs';
+import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
 
 interface IncomeEntriesFormProps {
   handleSubmit: (formData: FormData) => void;
@@ -21,9 +22,10 @@ export default function IncomeEntriesForm(props : IncomeEntriesFormProps) {
   const formHeader: string = props.editingFormData?.id ? "Edit Income Entry" : "New Income Entry";
 
   const inputs: React.ReactElement = 
-    <IncomeEntriesInputs
+    <CashFlowEntriesInputs
       editingFormData={props.editingFormData}
       onChange={props.onChange}
+      cashFlowType={CashFlowType.Income}
     />;
 
     const buttons: React.ReactElement = (
