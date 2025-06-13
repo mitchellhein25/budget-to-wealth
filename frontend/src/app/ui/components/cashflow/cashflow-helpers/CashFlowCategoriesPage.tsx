@@ -6,7 +6,7 @@ import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
 import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
 import CashflowSideBar from "../CashflowSideBar";
-import CashFlowCategoriesForm from "../income/income-categories/income-categories-form/CashFlowCategoriesForm";
+import CashFlowCategoriesForm from "./CashFlowCategoriesForm";
 
 type CashFlowCategoriesPageProps = {
   isLoggedIn: boolean;

@@ -2,9 +2,9 @@
 
 import React from "react"
 import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
-import FormTemplate from "../../../../FormTemplate";
-import UpdateCreateButton from "../../../../buttons/UpdateCreateButton";
-import ResetButton from "../../../../buttons/ResetButton";
+import FormTemplate from "../../FormTemplate";
+import UpdateCreateButton from "../../buttons/UpdateCreateButton";
+import ResetButton from "../../buttons/ResetButton";
 import CashFlowCategoriesInputs from "./CashFlowCategoriesInputs";
 import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
 

@@ -8,11 +8,11 @@ import CashFlowPage from '@/app/ui/components/cashflow/cashflow-helpers/CashFlow
 import { getMonthRange, MessageState } from '@/app/ui/components/cashflow/cashflow-helpers/CashFlowUtils';
 import { fetchCashFlowEntries } from '@/app/ui/components/cashflow/cashflow-helpers/fetchCashFlowEntries';
 import { handleCashFlowFormSubmit } from '@/app/ui/components/cashflow/cashflow-helpers/handleCashFlowFormSubmit';
-import IncomeEntriesForm from '@/app/ui/components/cashflow/income/income-entries/income-entries-form/IncomeEntriesForm'
 import CashFlowEntriesList from '@/app/ui/components/cashflow/cashflow-helpers/CashFlowEntriesList';
 import DatePicker from '@/app/ui/components/DatePicker';
 import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange } from "react-day-picker";
+import CashFlowEntriesForm from '@/app/ui/components/cashflow/cashflow-helpers/CashFlowEntriesForm';
 
 export default function Income() {
 	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
@@ -78,7 +78,7 @@ export default function Income() {
 	return (
 		<CashFlowPage
 			formComponent={
-				<IncomeEntriesForm
+				<CashFlowEntriesForm
 					handleSubmit={handleSubmit}
 					editingFormData={editingFormData}
 					onChange={(event) => cashFlowFormOnChange(event, setEditingFormData, CashFlowType.Income)}
@@ -87,6 +87,7 @@ export default function Income() {
 					infoMessage={message.type === 'info' ? message.text : ''}
 					isLoading={isLoading}
 					isSubmitting={isSubmitting}
+					cashFlowType={CashFlowType.Income}
 				/>
 			}
 			datePickerComponent={

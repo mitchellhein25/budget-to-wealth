@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SessionData } from "@auth0/nextjs-auth0/types";
 import { auth0 } from "./lib/auth/auth0";
-import NavBar from "./ui/components/navbar/NavBar";
+import NavBar from "./ui/components/NavBar";
 
 export const metadata: Metadata = {
   title: "Budget to Wealth",
