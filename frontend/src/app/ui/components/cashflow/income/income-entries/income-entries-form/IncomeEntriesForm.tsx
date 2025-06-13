@@ -6,7 +6,7 @@ import { CashFlowEntryFormData } from '../../../cashflow-helpers/CashFlowEntryFo
 import CashFlowEntriesInputs from '../../../cashflow-helpers/CashFlowEntriesInputs';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
 
-interface IncomeEntriesFormProps {
+interface CashFlowEntriesFormProps {
   handleSubmit: (formData: FormData) => void;
   editingFormData: Partial<CashFlowEntryFormData>;
   onChange: ChangeEventHandler<HTMLInputElement>;
@@ -17,7 +17,7 @@ interface IncomeEntriesFormProps {
   isSubmitting: boolean;
 }
 
-export default function IncomeEntriesForm(props : IncomeEntriesFormProps) {
+export default function CashFlowEntriesForm(props : CashFlowEntriesFormProps) {
 
   const formHeader: string = props.editingFormData?.id ? "Edit Income Entry" : "New Income Entry";
 

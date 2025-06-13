@@ -9,7 +9,7 @@ import { getMonthRange, MessageState } from '@/app/ui/components/cashflow/cashfl
 import { fetchCashFlowEntries } from '@/app/ui/components/cashflow/cashflow-helpers/fetchCashFlowEntries';
 import { handleCashFlowFormSubmit } from '@/app/ui/components/cashflow/cashflow-helpers/handleCashFlowFormSubmit';
 import IncomeEntriesForm from '@/app/ui/components/cashflow/income/income-entries/income-entries-form/IncomeEntriesForm'
-import IncomeEntriesList from '@/app/ui/components/cashflow/income/income-entries/IncomeEntriesList';
+import CashFlowEntriesList from '@/app/ui/components/cashflow/cashflow-helpers/CashFlowEntriesList';
 import DatePicker from '@/app/ui/components/DatePicker';
 import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange } from "react-day-picker";
@@ -96,7 +96,7 @@ export default function Income() {
 				/>
 			}
 			listComponent={
-				<IncomeEntriesList
+				<CashFlowEntriesList
 					entries={incomeEntries}
 					onEntryDeleted={fetchIncomeEntries}
 					isLoading={isLoading}
