@@ -1,7 +1,7 @@
 import { CashFlowEntry } from "@/app/lib/models/CashFlow/CashFlowEntry";
 import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
 import { getCashFlowValidationResult } from "./getCashFlowValidationResult";
-import { convertDollarsToCents } from "./CashFlowUtils";
+import { convertDollarsToCents } from "../../../CashFlowUtils";
 
 export const transformFormDataToEntry = (formData: FormData, cashFlowType: CashFlowType): { entry: CashFlowEntry | null; errors: string[] } => {
   try {

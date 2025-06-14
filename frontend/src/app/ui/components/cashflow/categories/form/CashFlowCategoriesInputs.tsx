@@ -1,12 +1,12 @@
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
 import React from 'react'
 
-interface IncomeCategoriesInputsProps {
-  editingIncomeCategory: CashFlowCategory | null;
+interface CashFlowCategoriesInputsProps {
+  editingCashFlowCategory: CashFlowCategory | null;
   onNameChange: (name: string) => void;
 }
 
-export default function IncomeCategoriesInputs(props : IncomeCategoriesInputsProps) {
+export default function CashFlowCategoriesInputs(props : CashFlowCategoriesInputsProps) {
   return (
     <>
       <input
@@ -14,7 +14,7 @@ export default function IncomeCategoriesInputs(props : IncomeCategoriesInputsPro
         name="Id"
         readOnly
         type="text"
-        value={props.editingIncomeCategory?.id ?? ''}
+        value={props.editingCashFlowCategory?.id ?? ''}
         hidden={true}
       />
       <label htmlFor="Name" className="label">
@@ -25,7 +25,7 @@ export default function IncomeCategoriesInputs(props : IncomeCategoriesInputsPro
         name="Name"
         type="text"
         required
-        value={props.editingIncomeCategory?.name ?? ""}
+        value={props.editingCashFlowCategory?.name ?? ""}
         onChange={(e) => props.onNameChange(e.target.value)}
         className="input w-full"
       />

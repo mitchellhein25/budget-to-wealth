@@ -1,6 +1,6 @@
 import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
 import { CashFlowEntryFormData } from "./CashFlowEntryFormData";
-import { cleanAmountInput } from "./CashFlowUtils";
+import { cleanAmountInput } from "../../../CashFlowUtils";
 
 export const cashFlowFormOnChange = (
   event: React.ChangeEvent<HTMLInputElement>, 

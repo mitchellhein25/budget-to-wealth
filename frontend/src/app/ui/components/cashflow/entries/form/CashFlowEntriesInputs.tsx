@@ -2,9 +2,9 @@
 
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
-import InputFieldSetTemplate from '@/app/ui/components/InputFieldSetTemplate';
+import InputFieldSetTemplate from '@/app/ui/components/form/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
-import { CashFlowEntryFormData } from './CashFlowEntryFormData';
+import { CashFlowEntryFormData } from './functions/CashFlowEntryFormData';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
 
 interface CashFlowEntriesInputsProps {
