@@ -2,11 +2,11 @@
 
 import React from "react"
 import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
-import FormTemplate from "../../FormTemplate";
-import UpdateCreateButton from "../../buttons/UpdateCreateButton";
-import ResetButton from "../../buttons/ResetButton";
-import CashFlowCategoriesInputs from "./CashFlowCategoriesInputs";
+import FormTemplate from "../../../form/FormTemplate";
+import UpdateCreateButton from "../../../buttons/UpdateCreateButton";
+import ResetButton from "../../../buttons/ResetButton";
 import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
+import CashFlowCategoriesInputs from "./CashFlowCategoriesInputs";
 
 interface CashFlowCategoriesFormProps {
   handleSubmit: (formData: FormData) => void;

@@ -4,9 +4,9 @@ import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
 import { Pencil, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import { formatCurrency } from './CashFlowUtils';
 import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import TablePagination from '../../TablePagination';
+import { formatCurrency } from '../../CashFlowUtils';
+import TablePagination from '../../../table/TablePagination';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],

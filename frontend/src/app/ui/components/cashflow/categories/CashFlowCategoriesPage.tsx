@@ -1,12 +1,12 @@
 import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
-import CashFlowCategoriesList from "./CashFlowCategoriesList";
+import CashFlowCategoriesList from "./list/CashFlowCategoriesList";
 import { useEffect, useState } from "react";
 import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
 import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
 import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
 import CashflowSideBar from "../CashflowSideBar";
-import CashFlowCategoriesForm from "./CashFlowCategoriesForm";
+import CashFlowCategoriesForm from "./form/CashFlowCategoriesForm";
 
 type CashFlowCategoriesPageProps = {
   isLoggedIn: boolean;
