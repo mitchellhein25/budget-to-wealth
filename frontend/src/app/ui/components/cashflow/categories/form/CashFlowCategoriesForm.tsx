@@ -43,6 +43,7 @@ export default function CashFlowCategoriesForm(props: CashFlowCategoriesFormProp
 
   return (
     <FormTemplate
+      formId={`${props.cashFlowType}-category-form`}
       handleSubmit={props.handleSubmit}
       formHeader={formHeader}
       inputs={inputs}

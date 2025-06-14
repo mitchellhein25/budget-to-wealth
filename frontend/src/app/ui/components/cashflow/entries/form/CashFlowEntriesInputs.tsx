@@ -79,6 +79,7 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
         isRequired={true}
         inputChild={
           <select
+            id={`${cashFlowTypeLower}-categoryId`}
             name={`${cashFlowTypeLower}-categoryId`}
             value={props.editingFormData.categoryId || ""}
             onChange={props.onChange}
