@@ -8,11 +8,16 @@ type FormTemplateProps = {
   infoMessage: string;
   inputs: React.ReactElement
   buttons: React.ReactElement
+  formId: string
 }
 
 export default function FormTemplate(props: FormTemplateProps) {
   return (
-    <Form action={props.handleSubmit} className="space-y-4 flex flex-col justify-center w-xs">
+    <Form 
+      action={props.handleSubmit} 
+      className="space-y-4 flex flex-col justify-center w-xs" 
+      id={props.formId}
+    >
       <h2 className="text-lg text-center">
         {props.formHeader}
       </h2>

@@ -50,6 +50,7 @@ export default function CashFlowEntriesForm(props : CashFlowEntriesFormProps) {
       buttons={buttons}
       infoMessage={props.infoMessage}
       errorMessage={props.errorMessage}
+      formId="cashflow-entries-form"
     />
   )
 }

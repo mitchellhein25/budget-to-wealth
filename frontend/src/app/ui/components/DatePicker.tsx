@@ -14,7 +14,7 @@ export default function DatePicker(props: DatePickerProps) {
       <label className="text-lg text-center">
         Select Date Range
       </label>
-      <button popoverTarget="rdp-popover" className="input input-border flex justify-center w-fit">
+      <button id="date-picker-button" popoverTarget="rdp-popover" className="input input-border flex justify-center w-fit">
         {`${dateRange.from?.toLocaleDateString()} - ${dateRange.to?.toLocaleDateString()}`}
       </button>
       <div popover="auto" id="rdp-popover" className="dropdown flex justify-center">
