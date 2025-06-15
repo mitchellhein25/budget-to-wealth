@@ -48,3 +48,11 @@ export const cleanAmountInput = (value: string): string | null => {
   }
   return value;
 }
+
+export const formatDate = (date: Date | undefined): string | undefined => {
+  return date?.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}

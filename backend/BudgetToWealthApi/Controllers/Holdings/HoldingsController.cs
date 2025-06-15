@@ -25,7 +25,9 @@ public class HoldingsController : ControllerBase
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<Holding> query = _context.Holdings.Where(holding => holding.UserId == userId);
+        IQueryable<Holding> query = _context.Holdings
+                                            .Include(holding => holding.HoldingCategory)
+                                            .Where(holding => holding.UserId == userId);
 
         if (type != null)
             query = query.Where(holding => holding.Type == type);

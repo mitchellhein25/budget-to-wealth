@@ -64,6 +64,7 @@ export default function CashFlowPage(props: CashFlowPageProps) {
 
 	const fetchEntries = async () => fetchCashFlowEntries(
 		props.cashFlowType,
+		dateRange,
 		setCashFlowEntries,
 		setIsLoading,
 		setMessage,
