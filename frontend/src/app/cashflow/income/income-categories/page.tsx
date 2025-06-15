@@ -1,6 +1,6 @@
 'use client'
 
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
+import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import CashFlowCategoriesPage from '@/app/ui/components/cashflow/categories/CashFlowCategoriesPage';
 import React from 'react'
 

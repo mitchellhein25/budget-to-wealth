@@ -1,10 +1,10 @@
 'use client'
 
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
+import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
 import { Pencil, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
+import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { formatCurrency } from '../../CashFlowUtils';
 import TablePagination from '../../../table/TablePagination';
 

@@ -1,8 +1,6 @@
+import { Category } from "../Category";
 import { CashFlowType } from "./CashFlowType";
 
-export interface CashFlowCategory {
-    id?: number;
-    name: string;
+export interface CashFlowCategory extends Category {
     categoryType: CashFlowType;
-    userId?: string;
 }

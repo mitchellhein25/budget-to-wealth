@@ -2,7 +2,7 @@ import React, { ChangeEventHandler } from 'react'
 import FormTemplate from '../../../form/FormTemplate';
 import UpdateCreateButton from '../../../buttons/UpdateCreateButton';
 import ResetButton from '../../../buttons/ResetButton';
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
+import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntryFormData } from './functions/CashFlowEntryFormData';
 import CashFlowEntriesInputs from './CashFlowEntriesInputs';
 

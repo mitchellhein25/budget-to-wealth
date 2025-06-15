@@ -1,4 +1,4 @@
-import { CashFlowCategory } from '@/app/lib/models/CashFlow/CashFlowCategory';
+import { CashFlowCategory } from '@/app/lib/models/cashflow/CashFlowCategory';
 import React from 'react'
 
 interface CashFlowCategoriesInputsProps {

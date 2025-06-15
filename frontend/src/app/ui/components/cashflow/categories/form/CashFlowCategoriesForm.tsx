@@ -1,11 +1,11 @@
 "use client"
 
 import React from "react"
-import { CashFlowCategory } from "@/app/lib/models/CashFlow/CashFlowCategory";
+import { CashFlowCategory } from "@/app/lib/models/cashflow/CashFlowCategory";
 import FormTemplate from "../../../form/FormTemplate";
 import UpdateCreateButton from "../../../buttons/UpdateCreateButton";
 import ResetButton from "../../../buttons/ResetButton";
-import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
+import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
 import CashFlowCategoriesInputs from "./CashFlowCategoriesInputs";
 
 interface CashFlowCategoriesFormProps {

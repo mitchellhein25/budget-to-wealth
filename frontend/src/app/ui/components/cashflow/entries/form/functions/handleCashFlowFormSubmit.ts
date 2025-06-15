@@ -1,7 +1,7 @@
 import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
-import { CashFlowEntry } from "@/app/lib/models/CashFlow/CashFlowEntry";
+import { CashFlowEntry } from "@/app/lib/models/cashflow/CashFlowEntry";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
-import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
+import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
 import { CashFlowEntryFormData } from "./CashFlowEntryFormData";
 import { transformFormDataToEntry } from "./transformFormDataToEntry";
 import { MessageState } from "../../../CashFlowUtils";

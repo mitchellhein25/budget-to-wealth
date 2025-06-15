@@ -1,5 +1,5 @@
-import { CashFlowEntry } from "@/app/lib/models/CashFlow/CashFlowEntry";
-import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
+import { CashFlowEntry } from "@/app/lib/models/cashflow/CashFlowEntry";
+import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
 import { getCashFlowValidationResult } from "./getCashFlowValidationResult";
 import { convertDollarsToCents } from "../../../CashFlowUtils";
 

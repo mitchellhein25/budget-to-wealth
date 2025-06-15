@@ -2,8 +2,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 import CashflowSideBar from './CashflowSideBar'
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
+import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
+import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
 import { handleCashFlowFormSubmit } from './entries/form/functions/handleCashFlowFormSubmit';
 import { getMonthRange, MessageState } from './CashFlowUtils';
 import { DateRange } from 'react-day-picker';

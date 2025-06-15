@@ -1,5 +1,5 @@
 import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
-import { CashFlowEntry } from "@/app/lib/models/CashFlow/CashFlowEntry";
+import { CashFlowEntry } from "@/app/lib/models/cashflow/CashFlowEntry";
 import { MessageState } from "../../CashFlowUtils";
 
 export const fetchCashFlowEntries = async (

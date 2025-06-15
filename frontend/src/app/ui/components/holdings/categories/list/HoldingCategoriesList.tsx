@@ -1,48 +1,45 @@
 'use client'
 
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { CashFlowCategory } from '@/app/lib/models/cashflow/CashFlowCategory';
-import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
+import { HoldingCategory } from '@/app/lib/models/net-worth/HoldingCategory';
 import { Pencil, Trash2 } from 'lucide-react';
 
-interface CashFlowCategoriesListProps {
-  categories: CashFlowCategory[],
+interface HoldingCategoriesListProps {
+  categories: HoldingCategory[],
   onCategoryDeleted: () => void,
-  onCategoryIsEditing: (category: CashFlowCategory) => void,
+  onCategoryIsEditing: (category: HoldingCategory) => void,
   isLoading: boolean,
   isError: boolean,
-  cashFlowType: CashFlowType
 }
 
-export default function CashFlowCategoriesList(props: CashFlowCategoriesListProps) {
-  const endpoint: string = "CashFlowCategories";
-  const cashFlowTypeLower = props.cashFlowType.toLowerCase();
+export default function HoldingCategoriesList(props: HoldingCategoriesListProps) {
+  const endpoint: string = "HoldingCategories";
 
   async function handleDelete(id: number) {
-    const result = await deleteRequest<CashFlowCategory>(endpoint, id);
+    const result = await deleteRequest<HoldingCategory>(endpoint, id);
     if (result.successful)
       props.onCategoryDeleted();
   };
 
   if (props.isError) {
     return (
-      <p className="alert alert-error alert-soft">Failed to load {cashFlowTypeLower} categories.</p>
+      <p className="alert alert-error alert-soft">Failed to load holding categories.</p>
     );
   }
 
   if (props.isLoading) {
-    return (<p className="alert alert-info alert-soft">Loading {cashFlowTypeLower} categories...</p>);
+    return (<p className="alert alert-info alert-soft">Loading holding categories...</p>);
   }
 
   if (props.categories.length === 0) {
     return (
-      <p className="alert alert-warning alert-soft">You haven’t added any {cashFlowTypeLower} categories yet.</p>
+      <p className="alert alert-warning alert-soft">You haven’t added any holding categories yet.</p>
     );
   }
 
   return (
     <div className="space-y-4 flex flex-col justify-center">
-      <h2 className="text-lg text-center">{props.cashFlowType} Categories</h2>
+      <h2 className="text-lg text-center">Holding Categories</h2>
       <ul className="list">
         {props.categories.sort((a, b) => a.name.localeCompare(b.name)).map((category) => (
           <li key={category.id} className="list-row">

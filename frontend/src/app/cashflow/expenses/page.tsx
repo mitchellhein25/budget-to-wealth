@@ -1,4 +1,4 @@
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType'
+import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType'
 import CashFlowPage from '@/app/ui/components/cashflow/CashFlowPage'
 import React from 'react'
 
