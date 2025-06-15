@@ -1,8 +1,12 @@
-import HoldingCategoriesPage from '@/app/ui/components/holdings/categories/HoldingCategoriesPage'
-import React from 'react'
+import CategoriesPage from '@/app/ui/components/categories/CategoriesPage'
 
 export default function HoldingCategories() {
   return (
-    <HoldingCategoriesPage isLoggedIn={true} />
+    <CategoriesPage 
+      isLoggedIn={true} 
+      categoryTypeName="Holding"
+      getEndpoint="HoldingCategories"
+      createUpdateDeletEndpoint="HoldingCategories"
+    />
   )
 }

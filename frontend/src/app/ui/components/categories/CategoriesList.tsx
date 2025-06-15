@@ -6,8 +6,8 @@ import { Pencil, Trash2 } from 'lucide-react';
 
 type CategoriesListProps<T extends Category> = {
   categories: T[],
-  categoryName: string,
-  endpoint: string
+  categoryTypeName: string,
+  deleteEndpoint: string
   onCategoryDeleted: () => void,
   onCategoryIsEditing: (category: T) => void,
   isLoading: boolean,
@@ -15,33 +15,33 @@ type CategoriesListProps<T extends Category> = {
 }
 
 export default function CategoriesList<T extends Category>(props: CategoriesListProps<T>) {
-  const categoryNameLower = props.categoryName.toLowerCase();
+  const categoryTypeNameLower = props.categoryTypeName.toLowerCase();
 
   async function handleDelete(id: number) {
-    const result = await deleteRequest<T>(props.endpoint, id);
+    const result = await deleteRequest<T>(props.deleteEndpoint, id);
     if (result.successful)
       props.onCategoryDeleted();
   };
 
   if (props.isError) {
     return (
-      <p className="alert alert-error alert-soft">Failed to load {categoryNameLower} categories.</p>
+      <p className="alert alert-error alert-soft">Failed to load {categoryTypeNameLower} categories.</p>
     );
   }
 
   if (props.isLoading) {
-    return (<p className="alert alert-info alert-soft">Loading {categoryNameLower} categories...</p>);
+    return (<p className="alert alert-info alert-soft">Loading {categoryTypeNameLower} categories...</p>);
   }
 
   if (props.categories.length === 0) {
     return (
-      <p className="alert alert-warning alert-soft">You haven’t added any {categoryNameLower} categories yet.</p>
+      <p className="alert alert-warning alert-soft">You haven’t added any {categoryTypeNameLower} categories yet.</p>
     );
   }
 
   return (
     <div className="space-y-4 flex flex-col justify-center">
-      <h2 className="text-lg text-center">{props.categoryName} Categories</h2>
+      <h2 className="text-lg text-center">{props.categoryTypeName} Categories</h2>
       <ul className="list">
         {props.categories.sort((a, b) => a.name.localeCompare(b.name)).map((category) => (
           <li key={category.id} className="list-row">
