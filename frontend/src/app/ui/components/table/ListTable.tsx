@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import TablePagination from './TablePagination';
 
 interface ListTableProps<T extends ListTableItem> {
@@ -34,6 +34,12 @@ export default function ListTable<T extends ListTableItem>(props: ListTableProps
 	const totalPages = Math.ceil(props.items.length / itemsPerPage);
   const titleLowerCase = props.title.toLowerCase();
 
+	useEffect(() => {
+		if (currentPage > totalPages && totalPages > 0) {
+			setCurrentPage(totalPages);
+		}
+	}, [currentPage, totalPages]);
+
 	const handlePageChange = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
 	};
@@ -64,7 +70,10 @@ export default function ListTable<T extends ListTableItem>(props: ListTableProps
 	
 	if (props.items.length === 0) {
 		return (
-			<p className="alert alert-warning alert-soft">You haven't added any {titleLowerCase} yet.</p>
+			<div className="space-y-4 flex flex-col justify-center">
+				<h2 className="text-lg text-center">{props.title}</h2>
+				<p className="alert alert-warning alert-soft">You haven't added any {titleLowerCase} yet.</p>
+			</div>
 		);
 	}
 

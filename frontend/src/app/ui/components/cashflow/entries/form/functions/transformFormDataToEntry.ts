@@ -7,7 +7,7 @@ export const transformFormDataToEntry = (formData: FormData, cashFlowType: CashF
   try {
     const validationResult = getCashFlowValidationResult(formData, cashFlowType);
     if (!validationResult.success) {
-      const errors = validationResult.error.errors.map(err => err.message);
+      const errors = validationResult.error.errors.map((err: { message: string }) => err.message);
       return { entry: null, errors: [errors[0]] };
     }
 

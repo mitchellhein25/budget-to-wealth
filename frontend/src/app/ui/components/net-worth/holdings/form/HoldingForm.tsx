@@ -2,31 +2,28 @@ import React, { ChangeEventHandler } from 'react'
 import FormTemplate from '../../../form/FormTemplate';
 import UpdateCreateButton from '../../../buttons/UpdateCreateButton';
 import ResetButton from '../../../buttons/ResetButton';
-import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
-import CashFlowEntriesInputs from './CashFlowEntriesInputs';
-import { CashFlowEntryFormData } from './CashFlowEntryFormData';
+import { HoldingFormData } from './HoldingFormData';
+import HoldingInputs from './HoldingInputs';
 
-interface CashFlowEntriesFormProps {
+interface HoldingFormProps {
   handleSubmit: (formData: FormData) => void;
-  editingFormData: Partial<CashFlowEntryFormData>;
+  editingFormData: Partial<HoldingFormData>;
   onChange: ChangeEventHandler<HTMLInputElement>;
   onReset: () => void;
   infoMessage: string;
   errorMessage: string;
   isLoading: boolean;
   isSubmitting: boolean;
-  cashFlowType: CashFlowType;
 }
 
-export default function CashFlowEntriesForm(props : CashFlowEntriesFormProps) {
+export default function HoldingForm(props : HoldingFormProps) {
 
-  const formHeader: string = props.editingFormData?.id ? `Edit ${props.cashFlowType} Entry` : `New ${props.cashFlowType} Entry`;
+  const formHeader: string = props.editingFormData?.id ? `Edit Holding` : `New Holding`;
 
   const inputs: React.ReactElement = 
-    <CashFlowEntriesInputs
+    <HoldingInputs
       editingFormData={props.editingFormData}
       onChange={props.onChange}
-      cashFlowType={props.cashFlowType}
     />;
 
     const buttons: React.ReactElement = (
@@ -50,7 +47,7 @@ export default function CashFlowEntriesForm(props : CashFlowEntriesFormProps) {
       buttons={buttons}
       infoMessage={props.infoMessage}
       errorMessage={props.errorMessage}
-      formId="cashflow-entries-form"
+      formId="holding-form"
     />
   )
 }

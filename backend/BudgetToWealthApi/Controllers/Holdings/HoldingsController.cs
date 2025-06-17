@@ -62,7 +62,7 @@ public class HoldingsController : ControllerBase
         _context.Holdings.Add(newHolding);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = newHolding.Id }, newHolding);
+        return StatusCode(StatusCodes.Status201Created, newHolding);
     }
 
     [HttpPut("{id}")]
