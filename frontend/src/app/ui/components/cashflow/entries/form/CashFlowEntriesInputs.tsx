@@ -4,8 +4,8 @@ import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/lib/models/cashflow/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/ui/components/form/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
-import { CashFlowEntryFormData } from './functions/CashFlowEntryFormData';
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
+import { CashFlowEntryFormData } from './CashFlowEntryFormData';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
