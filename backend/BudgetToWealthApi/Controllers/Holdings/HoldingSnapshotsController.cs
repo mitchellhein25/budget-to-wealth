@@ -24,7 +24,10 @@ public class HoldingSnapshotsController : ControllerBase
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<HoldingSnapshot> query = _context.HoldingSnapshots.Where(snapshot => snapshot.UserId == userId);
+        IQueryable<HoldingSnapshot> query = _context.HoldingSnapshots
+                                                    .Include(snapshot => snapshot.Holding)
+                                                    .Include(snapshot => snapshot.Holding!.HoldingCategory)
+                                                    .Where(snapshot => snapshot.UserId == userId);
 
         if (holdingId != null)
             query = query.Where(snapshot => snapshot.HoldingId == holdingId);
@@ -61,7 +64,7 @@ public class HoldingSnapshotsController : ControllerBase
         _context.HoldingSnapshots.Add(newHoldingSnapshot);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = newHoldingSnapshot.Id }, newHoldingSnapshot);
+        return StatusCode(StatusCodes.Status201Created, newHoldingSnapshot);
     }
 
     [HttpPut("{id}")]

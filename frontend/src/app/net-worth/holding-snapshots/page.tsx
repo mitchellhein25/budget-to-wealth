@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { holdingFormOnChange } from '@/app/ui/components/net-worth/holdings/form/functions/holdingFormOnChange';
 import { useList } from '@/app/ui/hooks/useFormList';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 import { formatDate, getMonthRange } from '@/app/ui/components/cashflow/CashFlowUtils';
 import { DateRange } from 'react-day-picker';
-import { HoldingSnapshotFormData } from '@/app/ui/components/net-worth/holding-snapshots/HoldingSnapshotFormData';
-import { transformFormDataToHoldingSnapshot } from '@/app/ui/components/net-worth/holding-snapshots/functions/transformFormDataToHoldingSnapshot';
-import HoldingSnapshotForm from '@/app/ui/components/net-worth/holding-snapshots/HoldingSnapshotForm';
-import { holdingSnapshotFormOnChange } from '@/app/ui/components/net-worth/holding-snapshots/functions/holdingSnapshotFormOnChange';
+import { HoldingSnapshotFormData } from '@/app/ui/components/net-worth/holding-snapshots/form/HoldingSnapshotFormData';
+import { transformFormDataToHoldingSnapshot } from '@/app/ui/components/net-worth/holding-snapshots/form/functions/transformFormDataToHoldingSnapshot';
+import HoldingSnapshotForm from '@/app/ui/components/net-worth/holding-snapshots/form/HoldingSnapshotForm';
+import { holdingSnapshotFormOnChange } from '@/app/ui/components/net-worth/holding-snapshots/form/functions/holdingSnapshotFormOnChange';
+import HoldingSnapshotsList from '@/app/ui/components/net-worth/holding-snapshots/list/HoldingSnapshotsList';
+import DatePicker from '@/app/ui/components/DatePicker';
 
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
@@ -26,8 +27,8 @@ export default function HoldingSnapshotsPage() {
 		setInfoMessage,
 		fetchItems,
 		setEditingFormData,
-		"holdings",
-		"Holdings"
+		"holding snapshot",
+		"HoldingSnapshots"
 	);
 
 	const onHoldingSnapshotIsEditing = (holdingSnapshot: HoldingSnapshot) => {
@@ -35,7 +36,7 @@ export default function HoldingSnapshotsPage() {
 			id: holdingSnapshot.id?.toString(),
 			holdingId: holdingSnapshot.holdingId,
 			date: new Date(holdingSnapshot.date),
-			balance: holdingSnapshot.balance.toString(),
+			balance: (holdingSnapshot.balance / 100).toFixed(2),
 		});
 		setMessage({ type: null, text: '' });
 	};
@@ -65,13 +66,17 @@ export default function HoldingSnapshotsPage() {
           />
         </div>
         <div className="flex flex-1 flex-col gap-2">
-          {/* <HoldingsList
-            holdings={items}
+          <DatePicker
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+          />
+          <HoldingSnapshotsList
+            snapshots={items}
+            isError={message.type === 'error'}
             isLoading={isLoading}
-            message={message}
-            onHoldingDeleted={fetchItems}
-            onHoldingIsEditing={onHoldingIsEditing}
-          /> */}
+            onSnapshotDeleted={fetchItems}
+            onSnapshotIsEditing={onHoldingSnapshotIsEditing}
+          />
         </div>
       </div>
     </div>

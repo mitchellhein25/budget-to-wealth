@@ -1,7 +1,7 @@
 import React, { ChangeEventHandler } from 'react'
-import FormTemplate from '../../form/FormTemplate';
-import UpdateCreateButton from '../../buttons/UpdateCreateButton';
-import ResetButton from '../../buttons/ResetButton';
+import FormTemplate from '../../../form/FormTemplate';
+import UpdateCreateButton from '../../../buttons/UpdateCreateButton';
+import ResetButton from '../../../buttons/ResetButton';
 import { HoldingSnapshotFormData } from './HoldingSnapshotFormData';
 import HoldingSnapshotInputs from './HoldingSnapshotInputs';
 

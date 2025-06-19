@@ -15,7 +15,7 @@ export const handleFormSubmit = async <T, U>(
   itemEndpoint: string
 ) => {
   const itemNameString: string = itemName.toString().toLocaleLowerCase();
-  const itemNameNoSpaces: string = itemName.replace(/\s+/g, '').toLocaleLowerCase();
+  const itemNameNoSpaces: string = itemName.replace(/\s+/g, '-').toLocaleLowerCase();
   try {
     setIsSubmitting(true);
     setMessage({ type: null, text: '' });
