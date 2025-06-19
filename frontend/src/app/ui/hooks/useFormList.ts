@@ -14,13 +14,13 @@ export const useList = <T>(
     setTimeout(() => setMessage({ type: null, text: '' }), 1000 * 10);
   }, []);
 
-  const setInfoMessage = useCallback((text: string) => {
-    setMessage({ type: 'info', text });
+  const setInfoMessage = useCallback((text: string, type: 'form' | 'list') => {
+    setMessage({ type: `${type}-info`, text });
     clearMessage();
   }, [clearMessage]);
 
-  const setErrorMessage = useCallback((text: string) => {
-    setMessage({ type: 'error', text });
+  const setErrorMessage = useCallback((text: string, type: 'form' | 'list') => {
+    setMessage({ type: `${type}-error`, text });
     clearMessage();
   }, [clearMessage]);
 
@@ -30,12 +30,12 @@ export const useList = <T>(
       setMessage({ type: null, text: '' });
       const response = await getRequest<T>(fetchEndpoint);
       if (!response.successful) {
-        setErrorMessage(`Failed to load ${itemName}. Please try again.`);
+        setErrorMessage(`Failed to load ${itemName}. Please try again.`, 'list');
         return;
       }
       setItems(response.data as T[]);
     } catch (error) {
-      setErrorMessage(`An error occurred while loading holdings.`);
+      setErrorMessage(`An error occurred while loading ${itemName}. Please try again.`, 'list');
       console.error("Fetch error:", error);
     } finally {
       setIsLoading(false);

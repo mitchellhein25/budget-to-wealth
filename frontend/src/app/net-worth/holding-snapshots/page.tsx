@@ -59,8 +59,8 @@ export default function HoldingSnapshotsPage() {
             editingFormData={editingFormData}
             onChange={(event) => holdingSnapshotFormOnChange(event, setEditingFormData)}
             onReset={onReset}
-            errorMessage={message.type === 'error' ? message.text : ''}
-            infoMessage={message.type === 'info' ? message.text : ''}
+            errorMessage={message.type === 'form-error' ? message.text : ''}
+            infoMessage={message.type === 'form-info' ? message.text : ''}
             isLoading={isLoading}
             isSubmitting={isSubmitting}
           />
@@ -72,7 +72,7 @@ export default function HoldingSnapshotsPage() {
           />
           <HoldingSnapshotsList
             snapshots={items}
-            isError={message.type === 'error'}
+            isError={message.type === 'list-error'}
             isLoading={isLoading}
             onSnapshotDeleted={fetchItems}
             onSnapshotIsEditing={onHoldingSnapshotIsEditing}

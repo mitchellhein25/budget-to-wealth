@@ -72,8 +72,8 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             editingFormData={editingFormData}
             onChange={(event) => cashFlowFormOnChange(event, setEditingFormData, props.cashFlowType)}
             onReset={onReset}
-            errorMessage={message.type === 'error' ? message.text : ''}
-            infoMessage={message.type === 'info' ? message.text : ''}
+            errorMessage={message.type === 'form-error' ? message.text : ''}
+            infoMessage={message.type === 'form-info' ? message.text : ''}
             isLoading={isLoading}
             isSubmitting={isSubmitting}
             cashFlowType={props.cashFlowType}
@@ -88,7 +88,7 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             entries={items}
             onEntryDeleted={fetchItems}
             isLoading={isLoading}
-            isError={message.type === 'error'}
+            isError={message.type === 'list-error'}
             onEntryIsEditing={onEntryIsEditing}
             cashFlowType={props.cashFlowType}
           />

@@ -69,7 +69,7 @@ export default function HoldingsList(props: HoldingsListProps) {
       bodyRow={tableBodyRow}
       headerRow={tableHeaderRow}
       isLoading={props.isLoading}
-      isError={props.message.type === 'error'}
+      isError={props.message.type === 'list-error'}
       title="Holdings"
     />
   )

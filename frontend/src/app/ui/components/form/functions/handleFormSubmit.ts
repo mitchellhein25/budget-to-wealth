@@ -7,8 +7,8 @@ export const handleFormSubmit = async <T, U>(
   transformFormDataToItem: (formData: FormData) => { item: T, errors: string[] },
   setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
   setMessage: React.Dispatch<React.SetStateAction<MessageState>>,
-  setErrorMessage: (message: string) => void,
-  setInfoMessage: (message: string) => void,
+  setErrorMessage: (message: string, type: 'form' | 'list') => void,
+  setInfoMessage: (message: string, type: 'form' | 'list') => void,
   fetchItems: () => Promise<void>,
   setEditingFormData: React.Dispatch<React.SetStateAction<Partial<U>>>,
   itemName: string,
@@ -22,7 +22,7 @@ export const handleFormSubmit = async <T, U>(
 
     const { item, errors } = transformFormDataToItem(formData);
     if (!item || errors.length > 0) {
-      setErrorMessage(errors.join(', '));
+      setErrorMessage(errors.join(', '), 'form');
       return;
     }
 
@@ -35,17 +35,17 @@ export const handleFormSubmit = async <T, U>(
 
     if (!response.successful) {
       const action = isEditing ? "update" : "create";
-      setErrorMessage(`Failed to ${action} ${itemNameString}: ${response.responseMessage}`);
+      setErrorMessage(`Failed to ${action} ${itemNameString}: ${response.responseMessage}`, 'form');
       return;
     }
 
     await fetchItems();
     setEditingFormData({});
     const action = isEditing ? "updated" : "created";
-    setInfoMessage(`${itemNameString} ${action} successfully.`);
+    setInfoMessage(`${itemNameString} ${action} successfully.`, 'form');
 
   } catch (error) {
-    setErrorMessage("An unexpected error occurred. Please try again.");
+    setErrorMessage("An unexpected error occurred. Please try again.", 'form');
     console.error("Submit error:", error);
   } finally {
     setIsSubmitting(false);
