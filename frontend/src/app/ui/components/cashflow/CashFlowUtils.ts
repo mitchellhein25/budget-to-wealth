@@ -26,7 +26,7 @@ export const getMonthRange = (date: Date) => {
   };
 };
 
-export const cleanAmountInput = (value: string): string | null => {
+export const cleanCurrencyInput = (value: string): string | null => {
   value = value.replace(/[^\d.]/g, '');
 
   const decimalCount = (value.match(/\./g) || []).length;

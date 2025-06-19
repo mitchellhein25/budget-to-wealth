@@ -18,7 +18,7 @@ public class HoldingSnapshotsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null)
+    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
     {
         string? userId = User.GetUserId();
         if (userId == null)
@@ -28,6 +28,12 @@ public class HoldingSnapshotsController : ControllerBase
 
         if (holdingId != null)
             query = query.Where(snapshot => snapshot.HoldingId == holdingId);
+
+        if (startDate.HasValue)
+            query = query.Where(snapshot => snapshot.Date >= startDate);
+
+        if (endDate.HasValue)
+            query = query.Where(snapshot => snapshot.Date <= endDate);
 
         List<HoldingSnapshot> snapshots = await query.ToListAsync();
 

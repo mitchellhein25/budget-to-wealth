@@ -4,18 +4,16 @@ import React, { useEffect, useState } from 'react'
 import CashflowSideBar from './CashflowSideBar'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
-import { formatDate, getMonthRange, MessageState } from './CashFlowUtils';
+import { formatDate, getMonthRange } from './CashFlowUtils';
 import { DateRange } from 'react-day-picker';
 import CashFlowEntriesList from './entries/list/CashFlowEntriesList';
 import DatePicker from '../DatePicker';
 import CashFlowEntriesForm from './entries/form/CashFlowEntriesForm';
 import { cashFlowFormOnChange } from './entries/form/functions/cashFlowFormOnChange';
 import { CashFlowEntryFormData } from './entries/form/CashFlowEntryFormData';
-import { handleCashFlowFormSubmit } from './entries/form/functions/handleCashFlowFormSubmit';
 import { useList } from '../../hooks/useFormList';
 import { handleFormSubmit } from '../form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
-import { propagateServerField } from 'next/dist/server/lib/render-server';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
