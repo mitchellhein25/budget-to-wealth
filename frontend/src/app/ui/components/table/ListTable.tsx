@@ -10,7 +10,7 @@ interface ListTableProps<T extends ListTableItem> {
   isLoading: boolean;
 }
 
-export type ListTableItem = { [key: string]: any } & (
+export type ListTableItem = { [key: string]: string | number | Date } & (
   | { name: string }
   | { date: string }
 );
@@ -28,7 +28,7 @@ export default function ListTable<T extends ListTableItem>(props: ListTableProps
 			const dateB = new Date(b.date);
 			return dateA.getTime() - dateB.getTime();
 		}
-		return a?.name?.localeCompare(b?.name ?? '') ?? 0;
+		return (a?.name as string)?.localeCompare(b?.name as string ?? '') ?? 0;
 	});
 	const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
 	const totalPages = Math.ceil(props.items.length / itemsPerPage);
@@ -72,7 +72,7 @@ export default function ListTable<T extends ListTableItem>(props: ListTableProps
 		return (
 			<div className="space-y-4 flex flex-col justify-center">
 				<h2 className="text-lg text-center">{props.title}</h2>
-				<p className="alert alert-warning alert-soft">You haven't added any {titleLowerCase} yet.</p>
+				<p className="alert alert-warning alert-soft">You haven&apos;t added any {titleLowerCase} yet.</p>
 			</div>
 		);
 	}

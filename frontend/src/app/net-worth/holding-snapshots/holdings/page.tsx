@@ -55,8 +55,8 @@ export default function HoldingsPage() {
             editingFormData={editingFormData}
             onChange={(event) => holdingFormOnChange(event, setEditingFormData)}
             onReset={onReset}
-            errorMessage={message.type === 'error' ? message.text : ''}
-            infoMessage={message.type === 'info' ? message.text : ''}
+            errorMessage={message.type === 'form-error' ? message.text : ''}
+            infoMessage={message.type === 'form-info' ? message.text : ''}
             isLoading={isLoading}
             isSubmitting={isSubmitting}
           />
