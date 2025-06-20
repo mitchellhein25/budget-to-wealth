@@ -129,8 +129,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
 
         var result = await _controller.Create(newHoldingSnapshot);
 
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        Assert.Equal(nameof(HoldingSnapshotsController.Get), createdAtActionResult.ActionName);
+        var createdAtActionResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(newHoldingSnapshot, createdAtActionResult.Value);
     }
 
@@ -255,8 +254,8 @@ public class HoldingSnapshotsControllerTests : IDisposable
         };
         if (action == "Create")
         {
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            HoldingSnapshot? snapshot = createdAtActionResult.Value as HoldingSnapshot;
+            var createdAtActionResult = Assert.IsType<ObjectResult>(result);
+            HoldingSnapshot? snapshot = Assert.IsType<HoldingSnapshot>(createdAtActionResult.Value);
             Assert.NotEqual(DateTime.MinValue, snapshot?.CreatedAt);
             Assert.Equal(DateTime.MinValue, snapshot?.UpdatedAt);
         }

@@ -3,7 +3,7 @@
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/lib/models/cashflow/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/ui/components/form/InputFieldSetTemplate';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntryFormData } from './CashFlowEntryFormData';
 
@@ -19,7 +19,7 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
   // const [isLoading, setIsLoading] = useState(false);
   const cashFlowTypeLower = props.cashFlowType.toLowerCase();
   
-  async function fetchCategories() {
+  const fetchCategories = useCallback(async () => {
     // setInfoMessage("");
     // setErrorMessage("");
     // setIsLoading(true);
@@ -27,11 +27,11 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
     if (response.successful) {
       setCategories(response.data as CashFlowCategory[]);
     }
-  }
+  }, [props.cashFlowType]);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   return (
     <>

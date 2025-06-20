@@ -255,8 +255,7 @@ public class CashFlowEntriesControllerTests : IDisposable
 
         var result = await _controller.Create(newCashFlowEntry);
 
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        Assert.Equal(nameof(CashFlowEntriesController.Get), createdAtActionResult.ActionName);
+        var createdAtActionResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(newCashFlowEntry, createdAtActionResult.Value);
     }
 
@@ -390,8 +389,8 @@ public class CashFlowEntriesControllerTests : IDisposable
         };
         if (action == "Create")
         {
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            CashFlowEntry? expense = createdAtActionResult.Value as CashFlowEntry;
+            var createdAtActionResult = Assert.IsType<ObjectResult>(result);
+            CashFlowEntry? expense = Assert.IsType<CashFlowEntry>(createdAtActionResult.Value);
             Assert.NotEqual(DateTime.MinValue, expense?.CreatedAt);
             Assert.Equal(DateTime.MinValue, expense?.UpdatedAt);
         }

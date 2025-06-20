@@ -169,8 +169,7 @@ public class HoldingsControllerTests : IDisposable
 
         var result = await _controller.Create(newHolding);
 
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        Assert.Equal(nameof(HoldingsController.Get), createdAtActionResult.ActionName);
+        var createdAtActionResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(newHolding, createdAtActionResult.Value);
     }
 
@@ -295,8 +294,8 @@ public class HoldingsControllerTests : IDisposable
         };
         if (action == "Create")
         {
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Holding? holding = createdAtActionResult.Value as Holding;
+            var createdAtActionResult = Assert.IsType<ObjectResult>(result);
+            Holding? holding = Assert.IsType<Holding>(createdAtActionResult.Value);
             Assert.NotEqual(DateTime.MinValue, holding?.CreatedAt);
             Assert.Equal(DateTime.MinValue, holding?.UpdatedAt);
         }

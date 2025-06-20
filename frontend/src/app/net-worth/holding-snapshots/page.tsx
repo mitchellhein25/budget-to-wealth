@@ -48,7 +48,7 @@ export default function HoldingSnapshotsPage() {
 
 	useEffect(() => {
 		fetchItems();
-	}, []);
+	}, [fetchItems]);
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">

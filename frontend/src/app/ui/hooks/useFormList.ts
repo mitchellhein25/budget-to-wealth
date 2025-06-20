@@ -12,7 +12,7 @@ export const useList = <T>(
 
   const clearMessage = useCallback(() => {
     setTimeout(() => setMessage({ type: null, text: '' }), 1000 * 10);
-  }, []);
+  }, [setMessage]);
 
   const setInfoMessage = useCallback((text: string, type: 'form' | 'list') => {
     setMessage({ type: `${type}-info`, text });
@@ -40,7 +40,7 @@ export const useList = <T>(
     } finally {
       setIsLoading(false);
     }
-  }, [setErrorMessage]);
+  }, [fetchEndpoint, itemName, setErrorMessage]);
 
   return {
     items,

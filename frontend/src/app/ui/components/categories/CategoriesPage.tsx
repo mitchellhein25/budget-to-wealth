@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
 import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
@@ -61,7 +61,7 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
     setEditingCategory(category);
   }
 
-  async function fetchCategories() {
+  const fetchCategories = useCallback(async () => {
     setIsLoading(true);
     const response = await getRequest<T>(props.getEndpoint);
     setCategories(response.data as T[]);
@@ -69,11 +69,11 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
       setIsError(true);
     }
     setIsLoading(false);
-  }
+  }, [props.getEndpoint]);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   if (!props.isLoggedIn)
     return <p>Please log in to manage {categoryTypeNameLower} categories.</p>;

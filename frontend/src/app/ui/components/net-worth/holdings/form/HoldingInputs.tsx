@@ -4,8 +4,8 @@ import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import InputFieldSetTemplate from '@/app/ui/components/form/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
 import { HoldingFormData } from './HoldingFormData';
-import { HoldingCategory } from '@/app/lib/models/net-worth/HoldingCategory';
 import { HoldingType } from '@/app/lib/models/net-worth/HoldingType';
+import { Category } from '@/app/lib/models/Category';
 
 interface HoldingInputsProps {
   editingFormData: Partial<HoldingFormData>;
@@ -13,7 +13,7 @@ interface HoldingInputsProps {
 }
 
 export default function HoldingInputs(props: HoldingInputsProps) {
-  const [categories, setCategories] = useState<HoldingCategory[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   // const [isError, setIsError] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   
@@ -21,9 +21,9 @@ export default function HoldingInputs(props: HoldingInputsProps) {
     // setInfoMessage("");
     // setErrorMessage("");
     // setIsLoading(true);
-    const response = await getRequest<HoldingCategory>(`HoldingCategories`);
+    const response = await getRequest<Category>(`Categories`);
     if (response.successful) {
-      setCategories(response.data as HoldingCategory[]);
+      setCategories(response.data as Category[]);
     }
   }
 
