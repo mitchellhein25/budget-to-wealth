@@ -18,16 +18,25 @@ public class HoldingSnapshotsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null)
+    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
     {
         string? userId = User.GetUserId();
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<HoldingSnapshot> query = _context.HoldingSnapshots.Where(snapshot => snapshot.UserId == userId);
+        IQueryable<HoldingSnapshot> query = _context.HoldingSnapshots
+                                                    .Include(snapshot => snapshot.Holding)
+                                                    .Include(snapshot => snapshot.Holding!.HoldingCategory)
+                                                    .Where(snapshot => snapshot.UserId == userId);
 
         if (holdingId != null)
             query = query.Where(snapshot => snapshot.HoldingId == holdingId);
+
+        if (startDate.HasValue)
+            query = query.Where(snapshot => snapshot.Date >= startDate);
+
+        if (endDate.HasValue)
+            query = query.Where(snapshot => snapshot.Date <= endDate);
 
         List<HoldingSnapshot> snapshots = await query.ToListAsync();
 
@@ -55,7 +64,7 @@ public class HoldingSnapshotsController : ControllerBase
         _context.HoldingSnapshots.Add(newHoldingSnapshot);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = newHoldingSnapshot.Id }, newHoldingSnapshot);
+        return StatusCode(StatusCodes.Status201Created, newHoldingSnapshot);
     }
 
     [HttpPut("{id}")]

@@ -1,14 +1,12 @@
-'use client'
-
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import CashFlowCategoriesPage from '@/app/ui/components/cashflow/categories/CashFlowCategoriesPage';
-import React from 'react'
+import CategoriesPage from '@/app/ui/components/categories/CategoriesPage';
 
 export default function ExpenseCategories() {
   return (
-    <CashFlowCategoriesPage 
+    <CategoriesPage 
       isLoggedIn={true} 
-      cashFlowType={CashFlowType.Expense} 
+      categoryTypeName="Expense"
+      getEndpoint="CashFlowCategories?cashFlowType=Expense"
+      createUpdateDeletEndpoint="CashFlowCategories"
     />
   )	
 }

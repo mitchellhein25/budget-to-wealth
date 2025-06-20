@@ -25,7 +25,9 @@ public class HoldingsController : ControllerBase
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<Holding> query = _context.Holdings.Where(holding => holding.UserId == userId);
+        IQueryable<Holding> query = _context.Holdings
+                                            .Include(holding => holding.HoldingCategory)
+                                            .Where(holding => holding.UserId == userId);
 
         if (type != null)
             query = query.Where(holding => holding.Type == type);
@@ -60,7 +62,7 @@ public class HoldingsController : ControllerBase
         _context.Holdings.Add(newHolding);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = newHolding.Id }, newHolding);
+        return StatusCode(StatusCodes.Status201Created, newHolding);
     }
 
     [HttpPut("{id}")]

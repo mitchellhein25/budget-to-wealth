@@ -1,18 +1,19 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CashflowSideBar from './CashflowSideBar'
-import { CashFlowType } from '@/app/lib/models/CashFlow/CashFlowType';
-import { CashFlowEntry } from '@/app/lib/models/CashFlow/CashFlowEntry';
-import { handleCashFlowFormSubmit } from './entries/form/functions/handleCashFlowFormSubmit';
-import { getMonthRange, MessageState } from './CashFlowUtils';
+import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
+import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
+import { formatDate, getMonthRange } from './CashFlowUtils';
 import { DateRange } from 'react-day-picker';
 import CashFlowEntriesList from './entries/list/CashFlowEntriesList';
 import DatePicker from '../DatePicker';
 import CashFlowEntriesForm from './entries/form/CashFlowEntriesForm';
 import { cashFlowFormOnChange } from './entries/form/functions/cashFlowFormOnChange';
-import { CashFlowEntryFormData } from './entries/form/functions/CashFlowEntryFormData';
-import { fetchCashFlowEntries } from './entries/list/fetchCashFlowEntries';
+import { CashFlowEntryFormData } from './entries/form/CashFlowEntryFormData';
+import { useList } from '../../hooks/useFormList';
+import { handleFormSubmit } from '../form/functions/handleFormSubmit';
+import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
@@ -20,35 +21,25 @@ type CashFlowPageProps = {
 
 export default function CashFlowPage(props: CashFlowPageProps) {
 	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
-	const [cashFlowEntries, setCashFlowEntries] = useState<CashFlowEntry[]>([]);
+
+	const fetchEndpoint = `CashFlowEntries?entryType=${props.cashFlowType}&startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`;
+	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<CashFlowEntry>(fetchEndpoint, `${props.cashFlowType} entries`);
+
 	const [editingFormData, setEditingFormData] = useState<Partial<CashFlowEntryFormData>>({});
-	const [isLoading, setIsLoading] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
 
-	const clearMessage = useCallback(() => {
-		setTimeout(() => setMessage({ type: null, text: '' }), 1000 * 10);
-	}, []);
-
-	const setInfoMessage = useCallback((text: string) => {
-		setMessage({ type: 'info', text });
-		clearMessage();
-	}, [clearMessage]);
-
-	const setErrorMessage = useCallback((text: string) => {
-		setMessage({ type: 'error', text });
-		clearMessage();
-	}, [clearMessage]);
-
-	const handleSubmit = (formData: FormData) => handleCashFlowFormSubmit(
-		formData,
-		setIsSubmitting,
-		setMessage,
-		setErrorMessage,
-		setInfoMessage,
-		fetchEntries,
-		setEditingFormData,
-		props.cashFlowType
+	const handleSubmit = (formData: FormData) => 
+		handleFormSubmit<CashFlowEntry | null, CashFlowEntryFormData>(
+			formData,
+			(formData) => transformFormDataToEntry(formData, props.cashFlowType),
+			setIsSubmitting,
+			setMessage,
+			setErrorMessage,
+			setInfoMessage,
+			fetchItems,
+			setEditingFormData,
+			props.cashFlowType,
+			"CashFlowEntries"
 	);
 
 	const onEntryIsEditing = (cashFlowEntry: CashFlowEntry) => {
@@ -62,22 +53,14 @@ export default function CashFlowPage(props: CashFlowPageProps) {
 		setMessage({ type: null, text: '' });
 	};
 
-	const fetchEntries = async () => fetchCashFlowEntries(
-		props.cashFlowType,
-		setCashFlowEntries,
-		setIsLoading,
-		setMessage,
-		setErrorMessage
-	);
-
 	const onReset = () => {
 		setEditingFormData({});
 		setMessage({ type: null, text: '' });
 	};
 
 	useEffect(() => {
-		fetchEntries();
-	}, []);
+		fetchItems();
+	}, [fetchItems]);
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
@@ -89,8 +72,8 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             editingFormData={editingFormData}
             onChange={(event) => cashFlowFormOnChange(event, setEditingFormData, props.cashFlowType)}
             onReset={onReset}
-            errorMessage={message.type === 'error' ? message.text : ''}
-            infoMessage={message.type === 'info' ? message.text : ''}
+            errorMessage={message.type === 'form-error' ? message.text : ''}
+            infoMessage={message.type === 'form-info' ? message.text : ''}
             isLoading={isLoading}
             isSubmitting={isSubmitting}
             cashFlowType={props.cashFlowType}
@@ -102,10 +85,10 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             setDateRange={setDateRange}
           />
           <CashFlowEntriesList
-            entries={cashFlowEntries}
-            onEntryDeleted={fetchEntries}
+            entries={items}
+            onEntryDeleted={fetchItems}
             isLoading={isLoading}
-            isError={message.type === 'error'}
+            isError={message.type === 'list-error'}
             onEntryIsEditing={onEntryIsEditing}
             cashFlowType={props.cashFlowType}
           />

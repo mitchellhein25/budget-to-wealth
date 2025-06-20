@@ -1,6 +1,6 @@
-import { CashFlowType } from "@/app/lib/models/CashFlow/CashFlowType";
-import { CashFlowEntryFormData } from "./CashFlowEntryFormData";
-import { cleanAmountInput } from "../../../CashFlowUtils";
+import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
+import { cleanCurrencyInput } from "../../../CashFlowUtils";
+import { CashFlowEntryFormData } from "../CashFlowEntryFormData";
 
 export const cashFlowFormOnChange = (
   event: React.ChangeEvent<HTMLInputElement>, 
@@ -11,7 +11,7 @@ export const cashFlowFormOnChange = (
   const cashFlowTypeString: string = cashFlowType.toString().toLocaleLowerCase();
   const fieldName = event.target.name.replace(`${cashFlowTypeString}-`, "");
   if (fieldName === "amount") {
-    const cleanedValue = cleanAmountInput(value);
+    const cleanedValue = cleanCurrencyInput(value);
     if (cleanedValue == null)
       return;
     value = cleanedValue;

@@ -1,7 +1,7 @@
 export const numberRegex = /^\d+(\.\d{0,2})?$/;
 
 export type MessageState = {
-  type: 'info' | 'error' | null;
+  type: 'form-info' | 'form-error' | 'list-info' | 'list-error' | null;
   text: string;
 };
 
@@ -26,7 +26,7 @@ export const getMonthRange = (date: Date) => {
   };
 };
 
-export const cleanAmountInput = (value: string): string | null => {
+export const cleanCurrencyInput = (value: string): string | null => {
   value = value.replace(/[^\d.]/g, '');
 
   const decimalCount = (value.match(/\./g) || []).length;
@@ -47,4 +47,12 @@ export const cleanAmountInput = (value: string): string | null => {
     return null;
   }
   return value;
+}
+
+export const formatDate = (date: Date | undefined): string | undefined => {
+  return date?.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 }
