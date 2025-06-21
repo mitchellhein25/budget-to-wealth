@@ -1,9 +1,11 @@
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 import { BudgetFormData } from '@/app/ui/components/cashflow/budgets/BudgetFormData';
+import BudgetsForm from '@/app/ui/components/cashflow/budgets/BudgetsForm';
 import { transformFormDataToBudget } from '@/app/ui/components/cashflow/budgets/transformFormDataToBudget';
 import { convertDollarsToCents, formatDate, getMonthRange } from '@/app/ui/components/cashflow/CashFlowUtils';
 import { CashFlowEntryFormData } from '@/app/ui/components/cashflow/entries/form/CashFlowEntryFormData';
 import { transformFormDataToEntry } from '@/app/ui/components/cashflow/entries/form/functions/transformFormDataToEntry';
+import DatePicker from '@/app/ui/components/DatePicker';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { useList } from '@/app/ui/hooks/useFormList';
 import React, { useEffect, useState } from 'react'
@@ -54,6 +56,34 @@ export default function BudgetsPage() {
 	}, [fetchItems]);
 
   return (
-    
+    <div className="flex gap-6 p-6 h-full min-h-screen">
+      <div className="flex flex-1 gap-6">
+        <div className="flex-shrink-0">
+          <BudgetsForm
+            handleSubmit={handleSubmit}
+            editingFormData={editingFormData}
+            onChange={onChange}
+            onReset={onReset}
+            errorMessage={message.type === 'form-error' ? message.text : ''}
+            infoMessage={message.type === 'form-info' ? message.text : ''}
+            isLoading={isLoading}
+            isSubmitting={isSubmitting}
+          />
+        </div>
+        <div className="flex flex-1 flex-col gap-2">
+          <DatePicker
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+          />
+          <BudgetsList
+            budgets={items}
+            onBudgetDeleted={fetchItems}
+            isLoading={isLoading}
+            isError={message.type === 'list-error'}
+            onBudgetIsEditing={onBudgetIsEditing}
+          />
+        </div>
+      </div>
+    </div>
   )
 }
