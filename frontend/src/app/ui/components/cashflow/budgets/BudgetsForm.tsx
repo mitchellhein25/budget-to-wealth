@@ -3,6 +3,7 @@ import FormTemplate from '@/app/ui/components/form/FormTemplate';
 import UpdateCreateButton from '@/app/ui/components/buttons/UpdateCreateButton';
 import ResetButton from '@/app/ui/components/buttons/ResetButton';
 import { BudgetFormData } from './BudgetFormData';
+import BudgetInputs from './BudgetInputs';
 
 type BudgetsFormProps = {
   handleSubmit: (formData: FormData) => void;

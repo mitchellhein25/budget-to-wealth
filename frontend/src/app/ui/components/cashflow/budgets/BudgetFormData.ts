@@ -3,7 +3,6 @@ import { numberRegex } from "../CashFlowUtils";
 
 export const budgetFormSchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().trim().min(1, { message: "Name field is required." }),
   amount: z.string().trim().min(1, { message: "Amount field is required." })
     .refine(
       (val) => {

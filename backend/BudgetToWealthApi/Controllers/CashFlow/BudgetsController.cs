@@ -131,6 +131,15 @@ public class BudgetsController : ControllerBase
         if (!categoryExistsForUser)
             return BadRequest("Invalid or unauthorized CategoryId.");
 
+        if (budget.Category == null)
+        {
+            CashFlowCategory? category = await _context.CashFlowCategories
+                .FirstOrDefaultAsync(category => category.Id == budget.CategoryId &&
+                      (category.UserId == userId || category.UserId == null));
+            if (category != null)
+                budget.Category = category;
+        }
+
         if (budget.Category?.CategoryType != CashFlowType.Expense)
             return BadRequest("Budgets can only be entered for Expense categories.");
 

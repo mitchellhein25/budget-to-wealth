@@ -1,10 +1,10 @@
+'use client';
+
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 import { BudgetFormData } from '@/app/ui/components/cashflow/budgets/BudgetFormData';
 import BudgetsForm from '@/app/ui/components/cashflow/budgets/BudgetsForm';
 import { transformFormDataToBudget } from '@/app/ui/components/cashflow/budgets/transformFormDataToBudget';
-import { convertDollarsToCents, formatDate, getMonthRange } from '@/app/ui/components/cashflow/CashFlowUtils';
-import { CashFlowEntryFormData } from '@/app/ui/components/cashflow/entries/form/CashFlowEntryFormData';
-import { transformFormDataToEntry } from '@/app/ui/components/cashflow/entries/form/functions/transformFormDataToEntry';
+import { cleanCurrencyInput, formatDate, getMonthRange } from '@/app/ui/components/cashflow/CashFlowUtils';
 import DatePicker from '@/app/ui/components/DatePicker';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { useList } from '@/app/ui/hooks/useFormList';
@@ -19,8 +19,18 @@ export default function BudgetsPage() {
 	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { value } = event.target;
-    setEditingFormData(prev => prev ? { ...prev, value } : { event.target.name: value } as BudgetFormData)
+    let { value, name } = event.target;
+    let fieldName = name.replace('budget-', '');
+    if (fieldName === "amount") {
+      const cleanedValue = cleanCurrencyInput(value);
+      if (cleanedValue == null)
+        return;
+      value = cleanedValue;
+    }
+    setEditingFormData(
+        prev => prev ? 
+        { ...prev, [fieldName]: value } : 
+        { [fieldName]: value } as BudgetFormData)
   }
 
   const handleSubmit = (formData: FormData) => 
@@ -75,13 +85,13 @@ export default function BudgetsPage() {
             dateRange={dateRange}
             setDateRange={setDateRange}
           />
-          <BudgetsList
+          {/* <BudgetsList
             budgets={items}
             onBudgetDeleted={fetchItems}
             isLoading={isLoading}
             isError={message.type === 'list-error'}
             onBudgetIsEditing={onBudgetIsEditing}
-          />
+          /> */}
         </div>
       </div>
     </div>
