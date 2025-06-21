@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { MessageState } from '@/app/ui/components/cashflow/CashFlowUtils';
+import { Budget } from '@/app/lib/models/cashflow/Budget';
 
 export const useList = <T>(
   fetchEndpoint: string,
@@ -33,7 +34,13 @@ export const useList = <T>(
         setErrorMessage(`Failed to load ${itemName}. Please try again.`, 'list');
         return;
       }
-      setItems(response.data as T[]);
+      if (itemName === "Budgets") {
+        const budgets = response.data as Budget[];
+        budgets.forEach(budget => budget.name = budget.category?.name ?? "");
+        setItems(budgets as T[]);
+      }
+      else
+        setItems(response.data as T[]);
     } catch (error) {
       setErrorMessage(`An error occurred while loading ${itemName}. Please try again.`, 'list');
       console.error("Fetch error:", error);

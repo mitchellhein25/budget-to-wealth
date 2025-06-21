@@ -23,7 +23,9 @@ public class BudgetsController : ControllerBase
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<Budget> query = _context.Budgets.Where(budget => budget.UserId == userId);
+        IQueryable<Budget> query = _context.Budgets
+                                           .Include(budget => budget.Category)
+                                           .Where(budget => budget.UserId == userId);
 
         if (categoryId != null)
             query = query.Where(budget => budget.CategoryId == categoryId);

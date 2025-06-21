@@ -3,6 +3,7 @@
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 import { BudgetFormData } from '@/app/ui/components/cashflow/budgets/BudgetFormData';
 import BudgetsForm from '@/app/ui/components/cashflow/budgets/BudgetsForm';
+import BudgetsList from '@/app/ui/components/cashflow/budgets/BudgetsList';
 import { transformFormDataToBudget } from '@/app/ui/components/cashflow/budgets/transformFormDataToBudget';
 import { cleanCurrencyInput, formatDate, getMonthRange } from '@/app/ui/components/cashflow/CashFlowUtils';
 import DatePicker from '@/app/ui/components/DatePicker';
@@ -85,13 +86,14 @@ export default function BudgetsPage() {
             dateRange={dateRange}
             setDateRange={setDateRange}
           />
-          {/* <BudgetsList
+          <BudgetsList
             budgets={items}
             onBudgetDeleted={fetchItems}
             isLoading={isLoading}
             isError={message.type === 'list-error'}
             onBudgetIsEditing={onBudgetIsEditing}
-          /> */}
+            dateRange={dateRange}
+          />
         </div>
       </div>
     </div>

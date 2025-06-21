@@ -25,7 +25,8 @@ export const transformFormDataToBudget = (formData: FormData): { item: Budget | 
 
     const item: Budget = {
       amount: amountInCents,
-      categoryId: validatedData.categoryId
+      categoryId: validatedData.categoryId,
+      name: "",
     };
 
     return { item, errors: [] };
