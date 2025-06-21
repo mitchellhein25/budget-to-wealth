@@ -67,7 +67,7 @@ public class BudgetsController : ControllerBase
         _context.Budgets.Add(newBudget);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = newBudget.Id }, newBudget);
+        return StatusCode(StatusCodes.Status201Created, newBudget);
     }
 
     [HttpPut("{id}")]
