@@ -23,7 +23,9 @@ public class BudgetsController : ControllerBase
         if (userId == null)
             return Unauthorized();
 
-        IQueryable<Budget> query = _context.Budgets.Where(budget => budget.UserId == userId);
+        IQueryable<Budget> query = _context.Budgets
+                                           .Include(budget => budget.Category)
+                                           .Where(budget => budget.UserId == userId);
 
         if (categoryId != null)
             query = query.Where(budget => budget.CategoryId == categoryId);
@@ -67,7 +69,7 @@ public class BudgetsController : ControllerBase
         _context.Budgets.Add(newBudget);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = newBudget.Id }, newBudget);
+        return StatusCode(StatusCodes.Status201Created, newBudget);
     }
 
     [HttpPut("{id}")]
@@ -130,6 +132,15 @@ public class BudgetsController : ControllerBase
                       (category.UserId == userId || category.UserId == null));
         if (!categoryExistsForUser)
             return BadRequest("Invalid or unauthorized CategoryId.");
+
+        if (budget.Category == null)
+        {
+            CashFlowCategory? category = await _context.CashFlowCategories
+                .FirstOrDefaultAsync(category => category.Id == budget.CategoryId &&
+                      (category.UserId == userId || category.UserId == null));
+            if (category != null)
+                budget.Category = category;
+        }
 
         if (budget.Category?.CategoryType != CashFlowType.Expense)
             return BadRequest("Budgets can only be entered for Expense categories.");

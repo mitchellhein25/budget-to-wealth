@@ -227,9 +227,8 @@ public class BudgetsControllerTests : IDisposable
 
         var result = await _controller.Create(newBudget);
 
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        Assert.Equal(nameof(BudgetsController.Get), createdAtActionResult.ActionName);
-        Assert.Equal(newBudget, createdAtActionResult.Value);
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(newBudget, objectResult.Value);
     }
 
     [Fact]
@@ -244,8 +243,8 @@ public class BudgetsControllerTests : IDisposable
 
         var result = await _controller.Create(newBudget);
 
-        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-        Budget createdBudget = _context.Budgets.First(budget => budget.Amount == 11223 && budget.CategoryId == _testObjects.TestUser1CategoryExpense.Id);
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Budget createdBudget = objectResult.Value as Budget;
         Assert.NotEqual(DateOnly.MinValue, createdBudget.StartDate);
         Assert.Equal(DateOnly.FromDateTime(DateTime.Now), createdBudget.StartDate);
     }
@@ -409,8 +408,8 @@ public class BudgetsControllerTests : IDisposable
         };
         if (action == "Create")
         {
-            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Budget? budget = createdAtActionResult.Value as Budget;
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Budget? budget = objectResult.Value as Budget;
             Assert.NotEqual(DateTime.MinValue, budget?.CreatedAt);
             Assert.Equal(DateTime.MinValue, budget?.UpdatedAt);
         }

@@ -42,7 +42,7 @@ export const handleFormSubmit = async <T, U>(
     await fetchItems();
     setEditingFormData({});
     const action = isEditing ? "updated" : "created";
-    setInfoMessage(`${itemNameString} ${action} successfully.`, 'form');
+    setInfoMessage(`${itemName} ${action} successfully.`, 'form');
 
   } catch (error) {
     setErrorMessage("An unexpected error occurred. Please try again.", 'form');
