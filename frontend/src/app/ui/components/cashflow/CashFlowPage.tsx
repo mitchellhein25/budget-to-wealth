@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import CashflowSideBar from './CashflowSideBar'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
 import { formatDate, getMonthRange } from './CashFlowUtils';
@@ -14,6 +13,7 @@ import { CashFlowEntryFormData } from './entries/form/CashFlowEntryFormData';
 import { useList } from '../../hooks/useFormList';
 import { handleFormSubmit } from '../form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
+import CashFlowSideBar from './entries/CashFlowSideBar';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
@@ -64,7 +64,7 @@ export default function CashFlowPage(props: CashFlowPageProps) {
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
-      <CashflowSideBar />
+      <CashFlowSideBar />
       <div className="flex flex-1 gap-6">
         <div className="flex-shrink-0">
           <CashFlowEntriesForm

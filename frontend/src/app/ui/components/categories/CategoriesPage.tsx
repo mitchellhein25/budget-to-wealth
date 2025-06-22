@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
 import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
-import CashflowSideBar from "../cashflow/CashflowSideBar";
+import CashflowSideBar from "../SideBar";
 import CategoriesList from "./CategoriesList";
 import CategoriesForm from "./CategoriesForm";
 import { Category } from "@/app/lib/models/Category";
