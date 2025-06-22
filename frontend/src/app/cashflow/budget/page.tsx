@@ -20,18 +20,18 @@ export default function BudgetsPage() {
 	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-    let { value, name } = event.target;
-    let fieldName = name.replace('budget-', '');
+    const { value, name } = event.target;
+    const fieldName = name.replace('budget-', '');
+    let cleanedValue: string | null = value;
     if (fieldName === "amount") {
-      const cleanedValue = cleanCurrencyInput(value);
+      cleanedValue = cleanCurrencyInput(value);
       if (cleanedValue == null)
         return;
-      value = cleanedValue;
     }
     setEditingFormData(
         prev => prev ? 
-        { ...prev, [fieldName]: value } : 
-        { [fieldName]: value } as BudgetFormData)
+        { ...prev, [fieldName]: cleanedValue } : 
+        { [fieldName]: cleanedValue } as BudgetFormData)
   }
 
   const handleSubmit = (formData: FormData) => 

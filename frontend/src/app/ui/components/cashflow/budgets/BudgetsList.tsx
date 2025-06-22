@@ -33,7 +33,7 @@ export default function BudgetsList(props: BudgetsListProps) {
     if (response.successful) {
       setExpenses(response.data as CashFlowEntry[]);
     }
-  }, []);
+  }, [props.dateRange]);
 
   useEffect(() => {
     fetchExpenses();
