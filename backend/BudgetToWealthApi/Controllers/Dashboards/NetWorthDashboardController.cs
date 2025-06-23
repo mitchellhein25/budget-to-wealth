@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +17,10 @@ public class NetWorthDashboardController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
+    public async Task<IActionResult> Get(
+        [FromQuery] DateOnly? startDate = null,
+        [FromQuery] DateOnly? endDate = null,
+        [FromQuery] IntervalType? interval = null)
     {
         string? userId = User.GetUserId();
         if (string.IsNullOrEmpty(userId))
@@ -37,6 +39,16 @@ public class NetWorthDashboardController : ControllerBase
         Dictionary<Guid, long> holdingBalances = InitializeHoldingBalancesBeforeStartDate(allSnapshots, effectiveStartDate);
 
         NetWorthDashboard dashboard = CreateNetWorthDashboard(allSnapshots, effectiveStartDate, effectiveEndDate, holdingBalances);
+
+        if (interval == null)
+            interval = CalculateInterval(dashboard, interval);
+
+        dashboard.Entries = dashboard.Entries
+            .Where(e => e.Date.DayNumber % (int)interval == 0)
+            .ToList();
+
+        if (dashboard.Entries.Count > 100)
+            dashboard.Entries = dashboard.Entries.Take(100).ToList();
 
         return Ok(dashboard);
     }
@@ -84,5 +96,14 @@ public class NetWorthDashboardController : ControllerBase
             dashboard.Entries.Add(entry);
         }
         return dashboard;
+    }
+
+    private IntervalType CalculateInterval(NetWorthDashboard dashboard, IntervalType? interval)
+    {
+        if (dashboard.Entries.Count > 365 * 2)
+            return IntervalType.Yearly;
+        if (dashboard.Entries.Count > 30 * 2)
+            return IntervalType.Monthly;
+        return IntervalType.Daily;
     }
 }
