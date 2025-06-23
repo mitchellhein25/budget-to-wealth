@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
-import { formatDate, getMonthRange } from './CashFlowUtils';
+import { formatDate, getMonthRange } from '../Utils';
 import { DateRange } from 'react-day-picker';
 import CashFlowEntriesList from './entries/list/CashFlowEntriesList';
 import DatePicker from '../DatePicker';

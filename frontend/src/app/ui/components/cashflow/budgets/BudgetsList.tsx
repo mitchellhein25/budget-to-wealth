@@ -3,7 +3,7 @@
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { Pencil, Trash2, Equal, ArrowUp, ArrowDown } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { formatCurrency, formatDate } from '../CashFlowUtils';
+import { formatCurrency, formatDate } from '../../Utils';
 import ListTable from '@/app/ui/components/table/ListTable';
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 import { DateRange } from 'react-day-picker';

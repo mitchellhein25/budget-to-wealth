@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,35 +21,68 @@ public class NetWorthDashboardController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
     {
         string? userId = User.GetUserId();
-        if (userId == null)
+        if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
-        IQueryable<HoldingSnapshot> query = _context.HoldingSnapshots
-            .Where(snapshot => snapshot.UserId == userId);
+        List<HoldingSnapshot> allSnapshots = await _context.HoldingSnapshots
+            .Include(snapshot => snapshot.Holding)
+            .Where(snapshot => snapshot.UserId == userId)
+            .ToListAsync();
+        if (!allSnapshots.Any())
+            return Ok(new NetWorthDashboard { Entries = new List<NetWorthDashboardEntry>() });
 
-        if (startDate.HasValue)
-            query = query.Where(category => category.Date >= startDate);
+        DateOnly effectiveStartDate = startDate ?? allSnapshots.Min(s => s.Date);
+        DateOnly effectiveEndDate = endDate ?? allSnapshots.Max(s => s.Date);
 
-        if (endDate.HasValue)
-            query = query.Where(category => category.Date <= endDate);
+        Dictionary<Guid, long> holdingBalances = InitializeHoldingBalancesBeforeStartDate(allSnapshots, effectiveStartDate);
 
-        List<HoldingSnapshot> snapshots = await query.ToListAsync();
+        NetWorthDashboard dashboard = CreateNetWorthDashboard(allSnapshots, effectiveStartDate, effectiveEndDate, holdingBalances);
 
+        return Ok(dashboard);
+    }
+
+    private Dictionary<Guid, long> InitializeHoldingBalancesBeforeStartDate(List<HoldingSnapshot> allSnapshots, DateOnly startDate)
+    {
+        Dictionary<Guid, long> holdingBalances = new Dictionary<Guid, long>();
+
+        IEnumerable<Guid> userHoldingIds = allSnapshots.Select(s => s.HoldingId).Distinct();
+        foreach (Guid holdingId in userHoldingIds)
+        {
+            HoldingSnapshot? lastSnapshot = allSnapshots
+                .Where(s => s.HoldingId == holdingId && s.Date < startDate)
+                .OrderByDescending(s => s.Date)
+                .FirstOrDefault();
+            holdingBalances[holdingId] = lastSnapshot?.Balance ?? 0;
+        }
+        return holdingBalances;
+    }
+
+    private NetWorthDashboard CreateNetWorthDashboard(List<HoldingSnapshot> allSnapshots, DateOnly effectiveStartDate, DateOnly effectiveEndDate, Dictionary<Guid, long> holdingBalances)
+    {
         NetWorthDashboard dashboard = new NetWorthDashboard();
 
-        List<DateOnly> dates = snapshots.Select(snapshot => snapshot.Date).Distinct().ToList();
-        foreach (DateOnly date in dates)
+        for (DateOnly date = effectiveStartDate; date <= effectiveEndDate; date = date.AddDays(1))
         {
             NetWorthDashboardEntry entry = new NetWorthDashboardEntry();
             entry.Date = date;
-            entry.AssetValueInCents = snapshots.Where(snapshot => snapshot.Date == date && snapshot?.Holding?.Type == HoldingType.Asset)
-                                               .Sum(snapshot => snapshot.Balance);
-            entry.DebtValueInCents = snapshots.Where(snapshot => snapshot.Date == date && snapshot?.Holding?.Type == HoldingType.Debt)
-                                              .Sum(snapshot => snapshot.Balance);
+
+            List<HoldingSnapshot> snapshotsForDate = allSnapshots.Where(s => s.Date == date).ToList();
+            foreach (HoldingSnapshot? snapshot in snapshotsForDate)
+                holdingBalances[snapshot.HoldingId] = snapshot.Balance;
+
+            List<Holding> userHoldings = allSnapshots.Select(s => s.Holding!).Distinct().ToList();
+
+            entry.AssetValueInCents = userHoldings
+                .Where(h => h.Type == HoldingType.Asset)
+                .Sum(h => holdingBalances.GetValueOrDefault(h.Id, 0));
+
+            entry.DebtValueInCents = userHoldings
+                .Where(h => h.Type == HoldingType.Debt)
+                .Sum(h => holdingBalances.GetValueOrDefault(h.Id, 0));
+
             entry.NetWorthInCents = entry.AssetValueInCents - entry.DebtValueInCents;
             dashboard.Entries.Add(entry);
         }
-
-        return Ok(dashboard);
+        return dashboard;
     }
 }

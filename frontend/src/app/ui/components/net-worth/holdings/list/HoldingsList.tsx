@@ -1,6 +1,6 @@
 import { Holding } from '@/app/lib/models/net-worth/Holding';
 import React from 'react'
-import { MessageState } from '../../../cashflow/CashFlowUtils';
+import { MessageState } from '../../../Utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import ListTable from '../../../table/ListTable';
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';

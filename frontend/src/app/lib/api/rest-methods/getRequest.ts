@@ -9,3 +9,12 @@ export async function getRequest<T>(endpoint: string): Promise<{data: T[] | null
     }
   );
 }
+
+export async function getRequestSingle<T>(endpoint: string): Promise<{data: T | null, responseMessage: string, successful: boolean}> {
+  return await fetchWithAuth<T>(
+    {
+      endpoint: endpoint,
+      method: HttpMethod.GET,
+    }
+  );
+}

@@ -5,7 +5,7 @@ import { BudgetFormData } from '@/app/ui/components/cashflow/budgets/BudgetFormD
 import BudgetsForm from '@/app/ui/components/cashflow/budgets/BudgetsForm';
 import BudgetsList from '@/app/ui/components/cashflow/budgets/BudgetsList';
 import { transformFormDataToBudget } from '@/app/ui/components/cashflow/budgets/transformFormDataToBudget';
-import { cleanCurrencyInput, formatDate, getMonthRange } from '@/app/ui/components/cashflow/CashFlowUtils';
+import { cleanCurrencyInput, formatDate, getMonthRange } from '@/app/ui/components/Utils';
 import DatePicker from '@/app/ui/components/DatePicker';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { useList } from '@/app/ui/hooks/useFormList';

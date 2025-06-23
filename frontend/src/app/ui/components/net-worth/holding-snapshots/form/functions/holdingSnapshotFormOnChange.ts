@@ -1,4 +1,4 @@
-import { cleanCurrencyInput } from "../../../../cashflow/CashFlowUtils";
+import { cleanCurrencyInput } from "../../../../Utils";
 import { HoldingSnapshotFormData } from "../HoldingSnapshotFormData";
 
 export const holdingSnapshotFormOnChange = (

@@ -3,7 +3,7 @@
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
-import { formatCurrency } from '../../../cashflow/CashFlowUtils';
+import { formatCurrency } from '../../../Utils';
 import ListTable from '../../../table/ListTable';
 import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 

@@ -1,6 +1,6 @@
 import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
-import { MessageState } from "../../cashflow/CashFlowUtils";
+import { MessageState } from "../../Utils";
 
 export const handleFormSubmit = async <T, U>(
   formData: FormData, 

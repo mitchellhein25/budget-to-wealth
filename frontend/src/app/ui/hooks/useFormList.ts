@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import { MessageState } from '@/app/ui/components/cashflow/CashFlowUtils';
+import { MessageState } from '@/app/ui/components/Utils';
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 
 export const useList = <T>(
