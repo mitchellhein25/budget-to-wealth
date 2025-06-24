@@ -43,9 +43,7 @@ public class NetWorthDashboardController : ControllerBase
         if (interval == null)
             interval = CalculateInterval(dashboard, interval);
 
-        dashboard.Entries = dashboard.Entries
-            .Where(e => e.Date.DayNumber % (int)interval == 0)
-            .ToList();
+        dashboard.Entries = FilterEntriesByInterval(dashboard.Entries, interval.Value);
 
         if (dashboard.Entries.Count > 100)
             dashboard.Entries = dashboard.Entries.Take(100).ToList();
@@ -105,5 +103,16 @@ public class NetWorthDashboardController : ControllerBase
         if (dashboard.Entries.Count > 30 * 2)
             return IntervalType.Monthly;
         return IntervalType.Daily;
+    }
+
+    private List<NetWorthDashboardEntry> FilterEntriesByInterval(List<NetWorthDashboardEntry> entries, IntervalType interval)
+    {
+        return interval switch
+        {
+            IntervalType.Daily => entries,
+            IntervalType.Monthly => entries.Where(e => e.Date.Day == 1).ToList(),
+            IntervalType.Yearly => entries.Where(e => e.Date.Day == 1 && e.Date.Month == 1).ToList(),
+            _ => entries
+        };
     }
 }

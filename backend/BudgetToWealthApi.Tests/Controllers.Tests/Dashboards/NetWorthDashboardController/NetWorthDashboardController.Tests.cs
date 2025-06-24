@@ -100,7 +100,7 @@ public class NetWorthDashboardControllerTests : IDisposable
         OkObjectResult? result = await _controller.Get() as OkObjectResult;
         NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
 
-        Assert.Equal(6, netWorthDashboard.Entries.Count());
+        Assert.Equal(7, netWorthDashboard.Entries.Count());
     }
     
     [Fact]
@@ -184,7 +184,7 @@ public class NetWorthDashboardControllerTests : IDisposable
         Assert.Equal(10000, early2024Entry.DebtValueInCents);
         Assert.Equal(5000 - 10000, early2024Entry.NetWorthInCents);
         
-        AssertNetWorthDashboardEntryValues(netWorthDashboard, 1, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
+        AssertNetWorthDashboardEntryValues(netWorthDashboard, 2, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
     }
 
     [Fact]
