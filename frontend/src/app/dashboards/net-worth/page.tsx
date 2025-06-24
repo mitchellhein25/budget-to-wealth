@@ -29,20 +29,6 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Chart.js Line Chart',
-    },
-  },
-};
-
 export default function NetWorthDashboard() {
   const [netWorthDashboard, setNetWorthDashboard] = useState<NetWorthDashboardData | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
@@ -112,6 +98,20 @@ export default function NetWorthDashboard() {
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
         }
       ],
+    };
+    
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        },
+        title: {
+          display: true,
+          text: 'Chart.js Line Chart',
+        },
+      },
     };
 
     return (
