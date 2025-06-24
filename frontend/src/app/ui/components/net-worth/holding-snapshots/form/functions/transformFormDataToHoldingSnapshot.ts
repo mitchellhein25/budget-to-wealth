@@ -1,6 +1,6 @@
 import { getHoldingSnapshotValidationResult } from "./getHoldingSnapshotValidationResult";
 import { HoldingSnapshot } from "@/app/lib/models/net-worth/HoldingSnapshot";
-import { convertDollarsToCents } from "../../../../cashflow/CashFlowUtils";
+import { convertDollarsToCents } from "../../../../Utils";
 
 export const transformFormDataToHoldingSnapshot = (formData: FormData): { item: HoldingSnapshot | null; errors: string[] } => {
   try {

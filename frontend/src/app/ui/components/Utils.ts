@@ -19,10 +19,17 @@ export const formatCurrency = (cents: number): string => {
   }).format(cents / 100);
 };
 
-export const getMonthRange = (date: Date) => {
+export const getCurrentMonthRange = (date: Date) => {
   return {
     from: new Date(date.getFullYear(), date.getMonth(), 1),
     to: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+  };
+};
+
+export const getCurrentYearRange = (date: Date) => {
+  return {
+    from: new Date(date.getFullYear(), 0, 1),
+    to: new Date(date.getFullYear(), 11, 31),
   };
 };
 

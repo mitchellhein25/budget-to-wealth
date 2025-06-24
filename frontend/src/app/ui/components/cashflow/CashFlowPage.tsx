@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import CashflowSideBar from './CashflowSideBar'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
-import { formatDate, getMonthRange } from './CashFlowUtils';
+import { formatDate, getCurrentMonthRange } from '../Utils';
 import { DateRange } from 'react-day-picker';
 import CashFlowEntriesList from './entries/list/CashFlowEntriesList';
 import DatePicker from '../DatePicker';
@@ -14,13 +13,14 @@ import { CashFlowEntryFormData } from './entries/form/CashFlowEntryFormData';
 import { useList } from '../../hooks/useFormList';
 import { handleFormSubmit } from '../form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
+import CashFlowSideBar from './entries/CashFlowSideBar';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
 }
 
 export default function CashFlowPage(props: CashFlowPageProps) {
-	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
+	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
 
 	const fetchEndpoint = `CashFlowEntries?entryType=${props.cashFlowType}&startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`;
 	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<CashFlowEntry>(fetchEndpoint, `${props.cashFlowType} entries`);
@@ -64,7 +64,7 @@ export default function CashFlowPage(props: CashFlowPageProps) {
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
-      <CashflowSideBar />
+      <CashFlowSideBar />
       <div className="flex flex-1 gap-6">
         <div className="flex-shrink-0">
           <CashFlowEntriesForm

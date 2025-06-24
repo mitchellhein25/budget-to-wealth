@@ -1,5 +1,5 @@
 import z from "zod";
-import { numberRegex } from "../../../cashflow/CashFlowUtils";
+import { numberRegex } from "../../../Utils";
 
 export const cashFlowEntryFormSchema = z.object({
   id: z.string().uuid().optional(),

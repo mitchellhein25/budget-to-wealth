@@ -1,5 +1,5 @@
 import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
-import { cleanCurrencyInput } from "../../../CashFlowUtils";
+import { cleanCurrencyInput } from "../../../../Utils";
 import { CashFlowEntryFormData } from "../CashFlowEntryFormData";
 
 export const cashFlowFormOnChange = (

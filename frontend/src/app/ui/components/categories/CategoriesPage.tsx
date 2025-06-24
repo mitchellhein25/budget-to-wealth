@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
 import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
 import { getRequest } from "@/app/lib/api/rest-methods/getRequest";
-import CashflowSideBar from "../cashflow/CashflowSideBar";
 import CategoriesList from "./CategoriesList";
 import CategoriesForm from "./CategoriesForm";
 import { Category } from "@/app/lib/models/Category";
@@ -80,7 +79,6 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
 
   return (
     <div className="flex gap-6 p-6">
-      <CashflowSideBar />
       <CategoriesForm
         handleSubmit={handleSubmit}
         editingCategory={editingCategory}
