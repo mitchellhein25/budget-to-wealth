@@ -2,6 +2,12 @@
 
 import DashboardSideBar from '@/app/ui/components/dashboards/DashboardSideBar'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Line } from 'react-chartjs-2';
+import { NetWorthDashboardData } from '@/app/lib/models/dashboards/NetWorthDashboard';
+import { formatDate, getCurrentYearRange } from '@/app/ui/components/Utils';
+import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
+import { DateRange } from 'react-day-picker';
+import DatePicker from '@/app/ui/components/DatePicker';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,10 +18,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { NetWorthDashboardData } from '@/app/lib/models/dashboards/NetWorthDashboard';
-import { formatCurrency } from '@/app/ui/components/Utils';
-import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 
 ChartJS.register(
   CategoryScale,
@@ -43,6 +45,7 @@ export const options = {
 
 export default function NetWorthDashboard() {
   const [netWorthDashboard, setNetWorthDashboard] = useState<NetWorthDashboardData | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -50,7 +53,7 @@ export default function NetWorthDashboard() {
     setIsLoading(true);
     setIsError(false);
     try {
-      const response = await getRequestSingle<NetWorthDashboardData>('NetWorthDashboard');
+      const response = await getRequestSingle<NetWorthDashboardData>(`NetWorthDashboard?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`);
       if (!response.successful) {
         setIsError(true);
       }
@@ -61,14 +64,13 @@ export default function NetWorthDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dateRange]);
 
   useEffect(() => {
     getNetWorthDashboard();
   }, [getNetWorthDashboard]);
 
   const renderContent = () => {
-    console.log(netWorthDashboard);
     if (isError) {
       return (
         <p className="alert alert-error alert-soft">Failed to load Net Worth Dashboard.</p>
@@ -113,8 +115,10 @@ export default function NetWorthDashboard() {
     };
 
     return (
-      <div className="flex-1 flex flex-col h-3/4 w-full">
-        <Line options={options} data={data} />
+      <div className="flex-1 flex flex-col">
+        <div className="h-3/4 w-full">
+          <Line options={options} data={data} />
+        </div>
       </div>
     );
   };
@@ -122,7 +126,13 @@ export default function NetWorthDashboard() {
   return (
     <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
       <DashboardSideBar />
-      {renderContent()}
+      <div className="flex flex-1 flex-col gap-2">
+        <DatePicker
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
+        {renderContent()}
+      </div>
     </div>
   )
 }

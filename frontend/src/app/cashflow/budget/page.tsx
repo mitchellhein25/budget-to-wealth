@@ -5,7 +5,7 @@ import { BudgetFormData } from '@/app/ui/components/cashflow/budgets/BudgetFormD
 import BudgetsForm from '@/app/ui/components/cashflow/budgets/BudgetsForm';
 import BudgetsList from '@/app/ui/components/cashflow/budgets/BudgetsList';
 import { transformFormDataToBudget } from '@/app/ui/components/cashflow/budgets/transformFormDataToBudget';
-import { cleanCurrencyInput, formatDate, getMonthRange } from '@/app/ui/components/Utils';
+import { cleanCurrencyInput, formatDate, getCurrentMonthRange } from '@/app/ui/components/Utils';
 import DatePicker from '@/app/ui/components/DatePicker';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { useList } from '@/app/ui/hooks/useFormList';
@@ -14,7 +14,7 @@ import { DateRange } from 'react-day-picker';
 
 export default function BudgetsPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
+	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const fetchEndpoint = `Budgets?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`;
 	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<Budget>(fetchEndpoint, "Budgets");
 	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});

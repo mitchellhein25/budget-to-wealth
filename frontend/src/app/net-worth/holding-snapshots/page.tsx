@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useList } from '@/app/ui/hooks/useFormList';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
-import { formatDate, getMonthRange } from '@/app/ui/components/Utils';
+import { formatDate, getCurrentMonthRange } from '@/app/ui/components/Utils';
 import { DateRange } from 'react-day-picker';
 import { HoldingSnapshotFormData } from '@/app/ui/components/net-worth/holding-snapshots/form/HoldingSnapshotFormData';
 import { transformFormDataToHoldingSnapshot } from '@/app/ui/components/net-worth/holding-snapshots/form/functions/transformFormDataToHoldingSnapshot';
@@ -14,7 +14,7 @@ import HoldingSnapshotsList from '@/app/ui/components/net-worth/holding-snapshot
 import DatePicker from '@/app/ui/components/DatePicker';
 
 export default function HoldingSnapshotsPage() {
-	const [dateRange, setDateRange] = useState<DateRange>(getMonthRange(new Date()));
+	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<HoldingSnapshot>(`HoldingSnapshots?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`, "holding snapshots");
 	const [editingFormData, setEditingFormData] = useState<Partial<HoldingSnapshotFormData>>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
