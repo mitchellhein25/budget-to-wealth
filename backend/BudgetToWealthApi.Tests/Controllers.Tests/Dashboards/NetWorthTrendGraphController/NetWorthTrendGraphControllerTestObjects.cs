@@ -1,4 +1,4 @@
-public class NetWorthDashboardControllerTestObjects
+public class NetWorthTrendGraphControllerTestObjects
 {
   private readonly string _user1Id = "auth0|user1";
   private readonly string _user2Id = "auth0|user2";
@@ -15,7 +15,7 @@ public class NetWorthDashboardControllerTestObjects
   public Holding TestUser2Asset { get; }
   public Holding TestUser2Debt { get; }
 
-  public NetWorthDashboardControllerTestObjects(ApplicationDbContext _context)
+  public NetWorthTrendGraphControllerTestObjects(ApplicationDbContext _context)
   {
     _context.HoldingCategories.Add(
         new HoldingCategory

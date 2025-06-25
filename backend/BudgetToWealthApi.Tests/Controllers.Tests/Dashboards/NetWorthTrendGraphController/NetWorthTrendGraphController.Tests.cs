@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 
-public class NetWorthDashboardControllerTests : IDisposable
+public class NetWorthTrendGraphControllerTests : IDisposable
 {
     private readonly string _user1Id = "auth0|user1";
-    private NetWorthDashboardControllerTestObjects _testObjects;
+    private NetWorthTrendGraphControllerTestObjects _testObjects;
     private ApplicationDbContext _context;
-    private NetWorthDashboardController _controller;
+    private NetWorthTrendGraphController _controller;
     private readonly IDbContextTransaction _transaction;
-    public NetWorthDashboardControllerTests()
+    public NetWorthTrendGraphControllerTests()
     {
         _context = DatabaseSetup.GetDbContext();
         _transaction = DatabaseSetup.GetTransaction(_context);
-        _controller = new NetWorthDashboardController(_context);
+        _controller = new NetWorthTrendGraphController(_context);
         SetupTestData();
         SetupUserContext(_user1Id);
     }
@@ -75,9 +75,9 @@ public class NetWorthDashboardControllerTests : IDisposable
         _context.Dispose();
     }
 
-    private void AssertNetWorthDashboardEntryValues(NetWorthDashboard netWorthDashboard, int index, long assetValueInCents, long debtValueInCents)
+    private void AssertNetWorthTrendGraphEntryValues(NetWorthTrendGraph netWorthTrendGraph, int index, long assetValueInCents, long debtValueInCents)
     {
-        var entry = netWorthDashboard.Entries[index];
+        var entry = netWorthTrendGraph.Entries[index];
         Assert.Equal(assetValueInCents, entry.AssetValueInCents);
         Assert.Equal(debtValueInCents, entry.DebtValueInCents);
         Assert.Equal(assetValueInCents - debtValueInCents, entry.NetWorthInCents);
@@ -89,18 +89,18 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2022, 3, 1);
         DateOnly endDate = new(2025, 6, 30);
         OkObjectResult? result = await _controller.Get(startDate, endDate, IntervalType.Monthly) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(40, netWorthDashboard.Entries.Count());
+        Assert.Equal(40, netWorthTrendGraph.Entries.Count());
     }
 
     [Fact]
     public async Task Get_WithNoDateRange_UsesAllAvailableData()
     {
         OkObjectResult? result = await _controller.Get() as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(7, netWorthDashboard.Entries.Count());
+        Assert.Equal(7, netWorthTrendGraph.Entries.Count());
     }
     
     [Fact]
@@ -109,10 +109,10 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2010, 1, 1);
         DateOnly endDate = new(2010, 1, 31);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthDashboard.Entries.Count());
-        Assert.All(netWorthDashboard.Entries, entry => 
+        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
+        Assert.All(netWorthTrendGraph.Entries, entry => 
         {
             Assert.Equal(0, entry.AssetValueInCents);
             Assert.Equal(0, entry.DebtValueInCents);
@@ -126,12 +126,12 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2025, 3, 1);
         DateOnly endDate = new(2025, 3, 31);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthDashboard.Entries.Count());
+        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        AssertNetWorthDashboardEntryValues(netWorthDashboard, 10, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
-        AssertNetWorthDashboardEntryValues(netWorthDashboard, 15, _testObjects.TestUser1AssetTotal2025_03_15, _testObjects.TestUser1DebtTotal2025_03_15);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 10, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 15, _testObjects.TestUser1AssetTotal2025_03_15, _testObjects.TestUser1DebtTotal2025_03_15);
     }
 
     [Fact]
@@ -140,13 +140,13 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2025, 4, 1);
         DateOnly endDate = new(2025, 4, 30);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthDashboard.Entries.Count());
+        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        AssertNetWorthDashboardEntryValues(netWorthDashboard, 25, _testObjects.TestUser1AssetTotal2025_04_25, _testObjects.TestUser1DebtTotal2025_04_25);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 25, _testObjects.TestUser1AssetTotal2025_04_25, _testObjects.TestUser1DebtTotal2025_04_25);
         
-        var beforeGapEntry = netWorthDashboard.Entries.First(e => e.Date == new DateOnly(2025, 4, 19));
+        var beforeGapEntry = netWorthTrendGraph.Entries.First(e => e.Date == new DateOnly(2025, 4, 19));
         Assert.Equal(_testObjects.TestUser1AssetTotal2025_03_15, beforeGapEntry.AssetValueInCents);
         Assert.Equal(_testObjects.TestUser1DebtTotal2025_03_15, beforeGapEntry.DebtValueInCents);
     }
@@ -157,11 +157,11 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2025, 12, 1);
         DateOnly endDate = new(2025, 12, 31);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthDashboard.Entries.Count());
+        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        Assert.All(netWorthDashboard.Entries, entry => 
+        Assert.All(netWorthTrendGraph.Entries, entry => 
         {
             Assert.Equal(_testObjects.TestUser1AssetTotal2025_06_15, entry.AssetValueInCents);
             Assert.Equal(_testObjects.TestUser1DebtTotal2025_06_15, entry.DebtValueInCents);
@@ -175,16 +175,16 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2024, 12, 1);
         DateOnly endDate = new(2025, 2, 28);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(3, netWorthDashboard.Entries.Count());
+        Assert.Equal(3, netWorthTrendGraph.Entries.Count());
         
-        var early2024Entry = netWorthDashboard.Entries.First();
+        var early2024Entry = netWorthTrendGraph.Entries.First();
         Assert.Equal(5000, early2024Entry.AssetValueInCents);
         Assert.Equal(10000, early2024Entry.DebtValueInCents);
         Assert.Equal(5000 - 10000, early2024Entry.NetWorthInCents);
         
-        AssertNetWorthDashboardEntryValues(netWorthDashboard, 2, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 2, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
     }
 
     [Fact]
@@ -193,11 +193,11 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2025, 5, 4);
         DateOnly endDate = new(2025, 5, 4);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Single(netWorthDashboard.Entries);
+        Assert.Single(netWorthTrendGraph.Entries);
         
-        AssertNetWorthDashboardEntryValues(netWorthDashboard, 0, _testObjects.TestUser1AssetTotal2025_05_04, _testObjects.TestUser1DebtTotal2025_05_04);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 0, _testObjects.TestUser1AssetTotal2025_05_04, _testObjects.TestUser1DebtTotal2025_05_04);
     }
 
     [Fact]
@@ -206,11 +206,11 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2020, 1, 1);
         DateOnly endDate = new(2020, 1, 31);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthDashboard.Entries.Count());
+        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        var veryOldEntry = netWorthDashboard.Entries.First(e => e.Date == new DateOnly(2020, 1, 1));
+        var veryOldEntry = netWorthTrendGraph.Entries.First(e => e.Date == new DateOnly(2020, 1, 1));
         Assert.Equal(5000, veryOldEntry.AssetValueInCents);
         Assert.Equal(0, veryOldEntry.DebtValueInCents);
         Assert.Equal(5000, veryOldEntry.NetWorthInCents);
@@ -222,11 +222,9 @@ public class NetWorthDashboardControllerTests : IDisposable
         DateOnly startDate = new(2019, 1, 1);
         DateOnly endDate = new(2019, 1, 31);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
-        NetWorthDashboard netWorthDashboard = Assert.IsAssignableFrom<NetWorthDashboard>(result!.Value);
-
-        Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthDashboard.Entries.Count());
+        NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
         
-        Assert.All(netWorthDashboard.Entries, entry => 
+        Assert.All(netWorthTrendGraph.Entries, entry => 
         {
             Assert.Equal(0, entry.AssetValueInCents);
             Assert.Equal(0, entry.DebtValueInCents);

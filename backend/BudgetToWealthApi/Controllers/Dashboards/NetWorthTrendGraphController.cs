@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-public class NetWorthDashboardController : ControllerBase
+public class NetWorthTrendGraphController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
 
-    public NetWorthDashboardController(ApplicationDbContext context)
+    public NetWorthTrendGraphController(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -31,24 +31,24 @@ public class NetWorthDashboardController : ControllerBase
             .Where(snapshot => snapshot.UserId == userId)
             .ToListAsync();
         if (!allSnapshots.Any())
-            return Ok(new NetWorthDashboard { Entries = new List<NetWorthDashboardEntry>() });
+            return Ok(new NetWorthTrendGraph { Entries = new List<NetWorthTrendGraphEntry>() });
 
         DateOnly effectiveStartDate = startDate ?? allSnapshots.Min(s => s.Date);
         DateOnly effectiveEndDate = endDate ?? allSnapshots.Max(s => s.Date);
 
         Dictionary<Guid, long> holdingBalances = InitializeHoldingBalancesBeforeStartDate(allSnapshots, effectiveStartDate);
 
-        NetWorthDashboard dashboard = CreateNetWorthDashboard(allSnapshots, effectiveStartDate, effectiveEndDate, holdingBalances);
+        NetWorthTrendGraph trendGraph = CreateNetWorthTrendGraph(allSnapshots, effectiveStartDate, effectiveEndDate, holdingBalances);
 
         if (interval == null)
-            interval = CalculateInterval(dashboard, interval);
+            interval = CalculateInterval(trendGraph, interval);
 
-        dashboard.Entries = FilterEntriesByInterval(dashboard.Entries, interval.Value);
+        trendGraph.Entries = FilterEntriesByInterval(trendGraph.Entries, interval.Value);
 
-        if (dashboard.Entries.Count > 100)
-            dashboard.Entries = dashboard.Entries.Take(100).ToList();
+        if (trendGraph.Entries.Count > 100)
+            trendGraph.Entries = trendGraph.Entries.Take(100).ToList();
 
-        return Ok(dashboard);
+        return Ok(trendGraph);
     }
 
     private Dictionary<Guid, long> InitializeHoldingBalancesBeforeStartDate(List<HoldingSnapshot> allSnapshots, DateOnly startDate)
@@ -67,13 +67,13 @@ public class NetWorthDashboardController : ControllerBase
         return holdingBalances;
     }
 
-    private NetWorthDashboard CreateNetWorthDashboard(List<HoldingSnapshot> allSnapshots, DateOnly effectiveStartDate, DateOnly effectiveEndDate, Dictionary<Guid, long> holdingBalances)
+    private NetWorthTrendGraph CreateNetWorthTrendGraph(List<HoldingSnapshot> allSnapshots, DateOnly effectiveStartDate, DateOnly effectiveEndDate, Dictionary<Guid, long> holdingBalances)
     {
-        NetWorthDashboard dashboard = new NetWorthDashboard();
+        NetWorthTrendGraph trendGraph = new NetWorthTrendGraph();
 
         for (DateOnly date = effectiveStartDate; date <= effectiveEndDate; date = date.AddDays(1))
         {
-            NetWorthDashboardEntry entry = new NetWorthDashboardEntry();
+            NetWorthTrendGraphEntry entry = new NetWorthTrendGraphEntry();
             entry.Date = date;
 
             List<HoldingSnapshot> snapshotsForDate = allSnapshots.Where(s => s.Date == date).ToList();
@@ -91,21 +91,21 @@ public class NetWorthDashboardController : ControllerBase
                 .Sum(h => holdingBalances.GetValueOrDefault(h.Id, 0));
 
             entry.NetWorthInCents = entry.AssetValueInCents - entry.DebtValueInCents;
-            dashboard.Entries.Add(entry);
+            trendGraph.Entries.Add(entry);
         }
-        return dashboard;
+        return trendGraph;
     }
 
-    private IntervalType CalculateInterval(NetWorthDashboard dashboard, IntervalType? interval)
+    private IntervalType CalculateInterval(NetWorthTrendGraph trendGraph, IntervalType? interval)
     {
-        if (dashboard.Entries.Count > 365 * 2)
+        if (trendGraph.Entries.Count > 365 * 2)
             return IntervalType.Yearly;
-        if (dashboard.Entries.Count > 30 * 2)
+        if (trendGraph.Entries.Count > 30 * 2)
             return IntervalType.Monthly;
         return IntervalType.Daily;
     }
 
-    private List<NetWorthDashboardEntry> FilterEntriesByInterval(List<NetWorthDashboardEntry> entries, IntervalType interval)
+    private List<NetWorthTrendGraphEntry> FilterEntriesByInterval(List<NetWorthTrendGraphEntry> entries, IntervalType interval)
     {
         return interval switch
         {

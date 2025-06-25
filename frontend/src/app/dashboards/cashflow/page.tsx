@@ -6,40 +6,16 @@ import { formatDate, getCurrentYearRange } from '@/app/ui/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 import { DateRange } from 'react-day-picker';
 import DatePicker from '@/app/ui/components/DatePicker';
-import { Chart } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip,
-  LineController,
-  BarController,
-} from 'chart.js';
 import { CashFlowTrendGraphData } from '@/app/lib/models/dashboards/CashFlowTrendGraphData';
+import TrendGraph, { TrendGraphDataset } from '@/app/ui/components/dashboards/TrendGraph';
 
-ChartJS.register(
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip,
-  LineController,
-  BarController,
-);
-
-export default function CashFlowDashboard() {
+export default function CashFlowTrendGraph() {
   const [cashFlowTrendGraph, setCashFlowTrendGraph] = useState<CashFlowTrendGraphData | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
-  const getCashFlowDashboard = useCallback(async () => {
+  const getCashFlowTrendGraph = useCallback(async () => {
     setIsLoading(true);
     setIsError(false);
     try {
@@ -57,19 +33,19 @@ export default function CashFlowDashboard() {
   }, [dateRange]);
 
   useEffect(() => {
-    getCashFlowDashboard();
-  }, [getCashFlowDashboard]);
+    getCashFlowTrendGraph();
+  }, [getCashFlowTrendGraph]);
 
   const renderContent = () => {
     if (isError) {
       return (
-        <p className="alert alert-error alert-soft">Failed to load CashFlow Dashboard.</p>
+        <p className="alert alert-error alert-soft">Failed to load CashFlow Trend Graph.</p>
       );
     }
   
     if (isLoading) {
       return (
-        <p className="alert alert-info alert-soft">Loading CashFlow Dashboard...</p>
+        <p className="alert alert-info alert-soft">Loading CashFlow Trend Graph...</p>
       );
     }
 
@@ -79,10 +55,7 @@ export default function CashFlowDashboard() {
       );
     }
 
-    const labels = cashFlowTrendGraph.entries.map(entry => formatDate(new Date(entry.date), true));
-    const data = {
-      labels,
-      datasets: [
+    const datasets: TrendGraphDataset[] = [
         {
           type: 'bar' as const,
           label: 'Income',
@@ -104,29 +77,14 @@ export default function CashFlowDashboard() {
           borderColor: 'rgb(59, 130, 246)',
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
         }
-      ],
-    };
-    
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'top' as const,
-        },
-        title: {
-          display: true,
-          text: 'Chart.js Line Chart',
-        },
-      }
-    };
+    ];
 
     return (
-      <div className="flex-1 flex flex-col">
-        <div className="h-3/4 w-full">
-          <Chart type="line" options={options} data={data} />
-        </div>
-      </div>
+      <TrendGraph 
+        title="CashFlow" 
+        labels={cashFlowTrendGraph.entries.map(entry => formatDate(new Date(entry.date), true) ?? '')} 
+        datasets={datasets} 
+      />
     );
   };
 
