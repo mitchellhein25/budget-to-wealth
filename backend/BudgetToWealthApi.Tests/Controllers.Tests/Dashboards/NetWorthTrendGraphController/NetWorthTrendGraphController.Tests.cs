@@ -23,27 +23,27 @@ public class NetWorthTrendGraphControllerTests : IDisposable
     {
         _testObjects = new(_context);
 
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1_Early);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset2User1_GapStart);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset3User1_Evening);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset4User1_VeryOld);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1_Mid);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset2User1_GapEnd);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1_Late);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1_Early);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1_Mid);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1_Late);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt2User1_Future);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt2User1_GapEnd);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt3User1);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt4User1);
         _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1);
         _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset2User1);
         _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset3User1);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset4User1);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1_2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset2User1_2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset3User1_2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1_3);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset2User1_3);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAsset1User1_4);
+
         _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1);
         _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt2User1);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotAssetUser2);
-        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebtUser2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt3User1);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt4User1);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1_2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt2User1_2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt3User1_2);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1_3);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt2User1_3);
+        _context.HoldingSnapshots.Add(_testObjects.TestHoldingSnapshotDebt1User1_4);
 
         _context.SaveChanges();
     }
@@ -130,8 +130,8 @@ public class NetWorthTrendGraphControllerTests : IDisposable
 
         Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 10, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
-        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 15, _testObjects.TestUser1AssetTotal2025_03_15, _testObjects.TestUser1DebtTotal2025_03_15);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 10, _testObjects.TestUser1AssetTotal2025_02_01, _testObjects.TestUser1DebtTotal2025_02_01);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 15, _testObjects.TestUser1AssetTotal2025_04_01, _testObjects.TestUser1DebtTotal2025_04_01);
     }
 
     [Fact]
@@ -144,11 +144,9 @@ public class NetWorthTrendGraphControllerTests : IDisposable
 
         Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 25, _testObjects.TestUser1AssetTotal2025_04_25, _testObjects.TestUser1DebtTotal2025_04_25);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 5, _testObjects.TestUser1AssetTotal2025_04_01, _testObjects.TestUser1DebtTotal2025_04_01);
         
-        var beforeGapEntry = netWorthTrendGraph.Entries.First(e => e.Date == new DateOnly(2025, 4, 19));
-        Assert.Equal(_testObjects.TestUser1AssetTotal2025_03_15, beforeGapEntry.AssetValueInCents);
-        Assert.Equal(_testObjects.TestUser1DebtTotal2025_03_15, beforeGapEntry.DebtValueInCents);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 25, _testObjects.TestUser1AssetTotal2025_05_01, _testObjects.TestUser1DebtTotal2025_05_01);
     }
 
     [Fact]
@@ -163,9 +161,9 @@ public class NetWorthTrendGraphControllerTests : IDisposable
         
         Assert.All(netWorthTrendGraph.Entries, entry => 
         {
-            Assert.Equal(_testObjects.TestUser1AssetTotal2025_06_15, entry.AssetValueInCents);
-            Assert.Equal(_testObjects.TestUser1DebtTotal2025_06_15, entry.DebtValueInCents);
-            Assert.Equal(_testObjects.TestUser1AssetTotal2025_06_15 - _testObjects.TestUser1DebtTotal2025_06_15, entry.NetWorthInCents);
+            Assert.Equal(_testObjects.TestUser1AssetTotal2025_07_01, entry.AssetValueInCents);
+            Assert.Equal(_testObjects.TestUser1DebtTotal2025_07_01, entry.DebtValueInCents);
+            Assert.Equal(_testObjects.TestUser1AssetTotal2025_07_01 - _testObjects.TestUser1DebtTotal2025_07_01, entry.NetWorthInCents);
         });
     }
 
@@ -179,25 +177,20 @@ public class NetWorthTrendGraphControllerTests : IDisposable
 
         Assert.Equal(3, netWorthTrendGraph.Entries.Count());
         
-        var early2024Entry = netWorthTrendGraph.Entries.First();
-        Assert.Equal(5000, early2024Entry.AssetValueInCents);
-        Assert.Equal(10000, early2024Entry.DebtValueInCents);
-        Assert.Equal(5000 - 10000, early2024Entry.NetWorthInCents);
-        
-        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 2, _testObjects.TestUser1AssetTotal2025_03_10, _testObjects.TestUser1DebtTotal2025_03_10);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 3, _testObjects.TestUser1AssetTotal2025_02_01, _testObjects.TestUser1DebtTotal2025_02_01);
     }
 
     [Fact]
     public async Task Get_SingleDayDateRange_ReturnsCorrectEntryValues()
     {
-        DateOnly startDate = new(2025, 5, 4);
-        DateOnly endDate = new(2025, 5, 4);
+        DateOnly startDate = new(2025, 5, 1);
+        DateOnly endDate = new(2025, 5, 1);
         OkObjectResult? result = await _controller.Get(startDate, endDate) as OkObjectResult;
         NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
         Assert.Single(netWorthTrendGraph.Entries);
         
-        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 0, _testObjects.TestUser1AssetTotal2025_05_04, _testObjects.TestUser1DebtTotal2025_05_04);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 0, _testObjects.TestUser1AssetTotal2025_05_01, _testObjects.TestUser1DebtTotal2025_05_01);
     }
 
     [Fact]
@@ -210,10 +203,7 @@ public class NetWorthTrendGraphControllerTests : IDisposable
 
         Assert.Equal(endDate.DayNumber - startDate.DayNumber + 1, netWorthTrendGraph.Entries.Count());
         
-        var veryOldEntry = netWorthTrendGraph.Entries.First(e => e.Date == new DateOnly(2020, 1, 1));
-        Assert.Equal(5000, veryOldEntry.AssetValueInCents);
-        Assert.Equal(0, veryOldEntry.DebtValueInCents);
-        Assert.Equal(5000, veryOldEntry.NetWorthInCents);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 0, _testObjects.TestUser1AssetTotal2020_01_01, _testObjects.TestUser1DebtTotal2020_01_01);
     }
 
     [Fact]
