@@ -5,6 +5,7 @@ using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using BudgetToWealthApi.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<RecurringCashFlowEntriesService>();
+// builder.Services.AddScoped<TrendsService>();
 
 builder.Services.AddCors(options =>
 {
