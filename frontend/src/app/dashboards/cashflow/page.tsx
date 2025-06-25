@@ -2,35 +2,39 @@
 
 import DashboardSideBar from '@/app/ui/components/dashboards/DashboardSideBar'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Line } from 'react-chartjs-2';
 import { formatDate, getCurrentYearRange } from '@/app/ui/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 import { DateRange } from 'react-day-picker';
 import DatePicker from '@/app/ui/components/DatePicker';
+import { Chart } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  CategoryScale,
   LinearScale,
+  CategoryScale,
+  BarElement,
   PointElement,
   LineElement,
-  Title,
-  Tooltip,
   Legend,
+  Tooltip,
+  LineController,
+  BarController,
 } from 'chart.js';
-import { TrendGraphData } from '@/app/lib/models/dashboards/TrendGraphData';
+import { CashFlowTrendGraphData } from '@/app/lib/models/dashboards/CashFlowTrendGraphData';
 
 ChartJS.register(
-  CategoryScale,
   LinearScale,
+  CategoryScale,
+  BarElement,
   PointElement,
   LineElement,
-  Title,
+  Legend,
   Tooltip,
-  Legend
+  LineController,
+  BarController,
 );
 
 export default function CashFlowDashboard() {
-  const [cashFlowTrendGraph, setCashFlowTrendGraph] = useState<TrendGraphData | null>(null);
+  const [cashFlowTrendGraph, setCashFlowTrendGraph] = useState<CashFlowTrendGraphData | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -39,11 +43,11 @@ export default function CashFlowDashboard() {
     setIsLoading(true);
     setIsError(false);
     try {
-      const response = await getRequestSingle<TrendGraphData>(`CashFlowTrendGraph?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`);
+      const response = await getRequestSingle<CashFlowTrendGraphData>(`CashFlowTrendGraph?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`);
       if (!response.successful) {
         setIsError(true);
       }
-      setCashFlowTrendGraph(response.data as TrendGraphData);
+      setCashFlowTrendGraph(response.data as CashFlowTrendGraphData);
     } catch (error) {
       setIsError(true);
       console.error('Error fetching net worth dashboard:', error);
@@ -75,25 +79,28 @@ export default function CashFlowDashboard() {
       );
     }
 
-    const labels = cashFlowTrendGraph.entries.map(entry => entry.date);
+    const labels = cashFlowTrendGraph.entries.map(entry => formatDate(new Date(entry.date), true));
     const data = {
       labels,
       datasets: [
         {
+          type: 'bar' as const,
           label: 'Income',
-          data: cashFlowTrendGraph.entries.map(entry => entry.positiveValue / 100),
+          data: cashFlowTrendGraph.entries.map(entry => entry.incomeInCents / 100),
           borderColor: 'rgb(34, 197, 94)',
           backgroundColor: 'rgba(34, 197, 94, 0.5)',
         },
         {
+          type: 'bar' as const,
           label: 'Expenses',
-          data: cashFlowTrendGraph.entries.map(entry => entry.negativeValue / 100),
+          data: cashFlowTrendGraph.entries.map(entry => entry.expensesInCents / 100),
           borderColor: 'rgb(239, 68, 68)',
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
         },
         {
+          type: 'line' as const,
           label: 'Net Cash Flow',
-          data: cashFlowTrendGraph.entries.map(entry => entry.netValue / 100),
+          data: cashFlowTrendGraph.entries.map(entry => entry.netCashFlowInCents / 100),
           borderColor: 'rgb(59, 130, 246)',
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
         }
@@ -111,13 +118,13 @@ export default function CashFlowDashboard() {
           display: true,
           text: 'Chart.js Line Chart',
         },
-      },
+      }
     };
 
     return (
       <div className="flex-1 flex flex-col">
         <div className="h-3/4 w-full">
-          <Line options={options} data={data} />
+          <Chart type="line" options={options} data={data} />
         </div>
       </div>
     );

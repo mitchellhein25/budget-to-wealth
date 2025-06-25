@@ -2,7 +2,7 @@
 
 import DashboardSideBar from '@/app/ui/components/dashboards/DashboardSideBar'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Line } from 'react-chartjs-2';
+import { Chart } from 'react-chartjs-2';
 import { NetWorthDashboardData } from '@/app/lib/models/dashboards/NetWorthDashboard';
 import { formatDate, getCurrentYearRange } from '@/app/ui/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
@@ -10,23 +10,27 @@ import { DateRange } from 'react-day-picker';
 import DatePicker from '@/app/ui/components/DatePicker';
 import {
   Chart as ChartJS,
-  CategoryScale,
   LinearScale,
+  CategoryScale,
+  BarElement,
   PointElement,
   LineElement,
-  Title,
-  Tooltip,
   Legend,
+  Tooltip,
+  LineController,
+  BarController,
 } from 'chart.js';
 
 ChartJS.register(
-  CategoryScale,
   LinearScale,
+  CategoryScale,
+  BarElement,
   PointElement,
   LineElement,
-  Title,
+  Legend,
   Tooltip,
-  Legend
+  LineController,
+  BarController,
 );
 
 export default function NetWorthDashboard() {
@@ -80,26 +84,29 @@ export default function NetWorthDashboard() {
       labels,
       datasets: [
         {
+          type: 'line' as const,
           label: 'Assets',
           data: netWorthDashboard.entries.map(entry => entry.assetValueInCents / 100),
           borderColor: 'rgb(34, 197, 94)',
           backgroundColor: 'rgba(34, 197, 94, 0.5)',
         },
         {
+          type: 'line' as const,
           label: 'Debt',
           data: netWorthDashboard.entries.map(entry => entry.debtValueInCents / 100),
           borderColor: 'rgb(239, 68, 68)',
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
         },
         {
+          type: 'line' as const,
           label: 'Net Worth',
           data: netWorthDashboard.entries.map(entry => entry.netWorthInCents / 100),
           borderColor: 'rgb(59, 130, 246)',
-          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          backgroundColor: 'rgba(59, 130, 246)',
         }
       ],
     };
-    
+
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -117,7 +124,7 @@ export default function NetWorthDashboard() {
     return (
       <div className="flex-1 flex flex-col">
         <div className="h-3/4 w-full">
-          <Line options={options} data={data} />
+          <Chart type="line" options={options} data={data} />
         </div>
       </div>
     );
