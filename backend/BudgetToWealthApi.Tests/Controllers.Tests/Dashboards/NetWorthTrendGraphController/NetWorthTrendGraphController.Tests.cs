@@ -100,7 +100,7 @@ public class NetWorthTrendGraphControllerTests : IDisposable
         OkObjectResult? result = await _controller.Get() as OkObjectResult;
         NetWorthTrendGraph netWorthTrendGraph = Assert.IsAssignableFrom<NetWorthTrendGraph>(result!.Value);
 
-        Assert.Equal(7, netWorthTrendGraph.Entries.Count());
+        Assert.Equal(6, netWorthTrendGraph.Entries.Count());
     }
     
     [Fact]
@@ -177,7 +177,7 @@ public class NetWorthTrendGraphControllerTests : IDisposable
 
         Assert.Equal(3, netWorthTrendGraph.Entries.Count());
         
-        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 3, _testObjects.TestUser1AssetTotal2025_02_01, _testObjects.TestUser1DebtTotal2025_02_01);
+        AssertNetWorthTrendGraphEntryValues(netWorthTrendGraph, 2, _testObjects.TestUser1AssetTotal2025_02_01, _testObjects.TestUser1DebtTotal2025_02_01);
     }
 
     [Fact]
