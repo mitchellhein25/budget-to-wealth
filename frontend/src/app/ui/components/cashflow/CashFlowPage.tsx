@@ -14,6 +14,8 @@ import { useList } from '../../hooks/useFormList';
 import { handleFormSubmit } from '../form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
 import CashFlowSideBar from './entries/CashFlowSideBar';
+import { ImportResult } from '../data-import/ExcelImportTypes';
+import ExcelImport from '../data-import/ExcelImport';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
@@ -21,9 +23,18 @@ type CashFlowPageProps = {
 
 export default function CashFlowPage(props: CashFlowPageProps) {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+  const [showImport, setShowImport] = useState(false);
 
 	const fetchEndpoint = `CashFlowEntries?entryType=${props.cashFlowType}&startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`;
 	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<CashFlowEntry>(fetchEndpoint, `${props.cashFlowType} entries`);
+  
+
+  const handleImportComplete = (result: ImportResult) => {
+    if (result.success) {
+      fetchItems() 
+      setInfoMessage(`Successfully imported ${result.importedCount} expenses`, 'list')
+    }
+  }
 
 	const [editingFormData, setEditingFormData] = useState<Partial<CashFlowEntryFormData>>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,6 +102,11 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             isError={message.type === 'list-error'}
             onEntryIsEditing={onEntryIsEditing}
             cashFlowType={props.cashFlowType}
+          />
+          <ExcelImport
+            dataType="CashFlowEntry"
+            onImportComplete={handleImportComplete}
+            onCancel={() => setShowImport(false)}
           />
         </div>
       </div>
