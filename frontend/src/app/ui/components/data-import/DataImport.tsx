@@ -10,7 +10,7 @@ import { parseCsvFile } from './functions/parseCsvFile';
 import ImportPreview from './ImportPreview';
 import ImportTemplate from './ImportTemplate';
 
-export default function ExcelImport({ 
+export default function DataImport({ 
   dataType, 
   onImportComplete, 
   onCancel,
@@ -27,8 +27,7 @@ export default function ExcelImport({
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
-    // Only accept CSV files for security
-    if (selectedFile.type !== 'text/csv' && !selectedFile.name.endsWith('.csv')) {
+    if (selectedFile.type !== 'text/csv' && !selectedFile.name.toLowerCase().endsWith('.csv')) {
       setImportResult({
         success: false,
         message: 'Please select a CSV file (.csv). For Excel files, please save as CSV first.',

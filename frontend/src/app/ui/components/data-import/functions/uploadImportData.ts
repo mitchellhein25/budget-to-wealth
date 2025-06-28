@@ -1,4 +1,4 @@
-import { ImportDataType, ImportResult } from '../ExcelImportTypes';
+import { ImportDataType, ImportResult } from '../DataImportTypes';
 import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
 
 export async function uploadImportData(data: any[], dataType: ImportDataType): Promise<ImportResult> {

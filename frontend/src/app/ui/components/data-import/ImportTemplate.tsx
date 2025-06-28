@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImportDataType } from './ExcelImportTypes';
+import { ImportDataType } from './DataImportTypes';
 import { Download, X } from 'lucide-react';
 
 interface ImportTemplateProps {

@@ -1,4 +1,4 @@
-import { ImportDataType, CashFlowEntryImport, HoldingImport, HoldingSnapshotImport, BudgetImport } from '../ExcelImportTypes';
+import { ImportDataType, CashFlowEntryImport, HoldingImport, HoldingSnapshotImport, BudgetImport } from '../DataImportTypes';
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { HoldingType } from '@/app/lib/models/net-worth/HoldingType';
 

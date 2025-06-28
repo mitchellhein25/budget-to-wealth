@@ -14,8 +14,8 @@ import { useList } from '../../hooks/useFormList';
 import { handleFormSubmit } from '../form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
 import CashFlowSideBar from './entries/CashFlowSideBar';
-import { ImportResult } from '../data-import/ExcelImportTypes';
-import ExcelImport from '../data-import/ExcelImport';
+import { ImportResult } from '../data-import/DataImportTypes';
+import ExcelImport from '../data-import/DataImport';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;

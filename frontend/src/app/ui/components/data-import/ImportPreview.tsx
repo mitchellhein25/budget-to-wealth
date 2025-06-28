@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImportDataType } from './ExcelImportTypes';
+import { ImportDataType } from './DataImportTypes';
 import { formatCurrency, formatDate } from '../Utils';
 
 interface ImportPreviewProps {
