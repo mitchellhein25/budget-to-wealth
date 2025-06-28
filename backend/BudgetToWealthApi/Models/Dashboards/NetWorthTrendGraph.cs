@@ -1,9 +1,9 @@
-public class NetWorthDashboard
+public class NetWorthTrendGraph
 {
-    public List<NetWorthDashboardEntry> Entries { get; set; } = new List<NetWorthDashboardEntry>();
+    public List<NetWorthTrendGraphEntry> Entries { get; set; } = new List<NetWorthTrendGraphEntry>();
 }
 
-public class NetWorthDashboardEntry
+public class NetWorthTrendGraphEntry
 {
     public DateOnly Date { get; set; }
     public long AssetValueInCents { get; set; }

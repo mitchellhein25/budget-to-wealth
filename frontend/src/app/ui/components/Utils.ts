@@ -56,10 +56,10 @@ export const cleanCurrencyInput = (value: string): string | null => {
   return value;
 }
 
-export const formatDate = (date: Date | undefined): string | undefined => {
+export const formatDate = (date: Date | undefined, noDay: boolean = false): string | undefined => {
   return date?.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: noDay ? undefined : 'numeric'
   });
 }

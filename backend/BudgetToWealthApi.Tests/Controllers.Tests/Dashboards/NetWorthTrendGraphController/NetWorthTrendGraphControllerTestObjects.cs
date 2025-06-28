@@ -1,4 +1,4 @@
-public class NetWorthDashboardControllerTestObjects
+public class NetWorthTrendGraphControllerTestObjects
 {
   private readonly string _user1Id = "auth0|user1";
   private readonly string _user2Id = "auth0|user2";
@@ -15,7 +15,7 @@ public class NetWorthDashboardControllerTestObjects
   public Holding TestUser2Asset { get; }
   public Holding TestUser2Debt { get; }
 
-  public NetWorthDashboardControllerTestObjects(ApplicationDbContext _context)
+  public NetWorthTrendGraphControllerTestObjects(ApplicationDbContext _context)
   {
     _context.HoldingCategories.Add(
         new HoldingCategory
@@ -141,56 +141,60 @@ public class NetWorthDashboardControllerTestObjects
   }
 
   // User 1 Assets sorted by date
-  public HoldingSnapshot TestHoldingSnapshotAsset4User1_VeryOld => 
+  public HoldingSnapshot TestHoldingSnapshotAsset4User1 => 
     CreateHoldingSnapshot(TestUser1Asset4.Id, 5000, new DateOnly(2020, 1, 1), _user1Id);
-  public HoldingSnapshot TestHoldingSnapshotAsset1User1_Early => 
-    CreateHoldingSnapshot(TestUser1Asset.Id, 10000, new DateOnly(2025, 1, 5), _user1Id);
-  public HoldingSnapshot TestHoldingSnapshotAsset2User1_GapStart => 
-    CreateHoldingSnapshot(TestUser1Asset2.Id, 20000, new DateOnly(2025, 1, 10), _user1Id);
-  public long TestUser1AssetTotal2025_03_10 => 5000 + 10000 + 20000;
-  public HoldingSnapshot TestHoldingSnapshotAsset1User1_Mid => 
-    CreateHoldingSnapshot(TestUser1Asset.Id, 15000, new DateOnly(2025, 3, 15), _user1Id);
-  public long TestUser1AssetTotal2025_03_15 => 5000 + 15000 + 20000;
-  public HoldingSnapshot TestHoldingSnapshotAsset2User1_GapEnd => 
-    CreateHoldingSnapshot(TestUser1Asset2.Id, 30000, new DateOnly(2025, 4, 20), _user1Id);
-  public long TestUser1AssetTotal2025_04_25 => 5000 + 15000 + 30000;
-  public HoldingSnapshot TestHoldingSnapshotAsset3User1_Evening => 
-    CreateHoldingSnapshot(TestUser1Asset3.Id, 35000, new DateOnly(2025, 5, 1), _user1Id);
+  public long TestUser1AssetTotal2020_01_01 => 5000;
   public HoldingSnapshot TestHoldingSnapshotAsset1User1 => 
-    CreateHoldingSnapshot(TestUser1Asset.Id, 15000, new DateOnly(2025, 5, 3), _user1Id);
-  public long TestUser1AssetTotal2025_05_04 => 15000 + 30000 + 35000 + 5000;
+    CreateHoldingSnapshot(TestUser1Asset.Id, 10000, new DateOnly(2025, 1, 5), _user1Id);
   public HoldingSnapshot TestHoldingSnapshotAsset2User1 => 
-    CreateHoldingSnapshot(TestUser1Asset2.Id, 25000, new DateOnly(2025, 5, 12), _user1Id);
+    CreateHoldingSnapshot(TestUser1Asset2.Id, 20000, new DateOnly(2025, 1, 10), _user1Id);
+  public long TestUser1AssetTotal2025_02_01 => 5000 + 10000 + 20000;
+  public HoldingSnapshot TestHoldingSnapshotAsset1User1_2 => 
+    CreateHoldingSnapshot(TestUser1Asset.Id, 15000, new DateOnly(2025, 3, 15), _user1Id);
+  public long TestUser1AssetTotal2025_04_01 => 15000 + 20000 + 5000;
+  public HoldingSnapshot TestHoldingSnapshotAsset2User1_2 => 
+    CreateHoldingSnapshot(TestUser1Asset2.Id, 30000, new DateOnly(2025, 4, 20), _user1Id);
+  public long TestUser1AssetTotal2025_05_01 => 15000 + 30000 + 5000;
   public HoldingSnapshot TestHoldingSnapshotAsset3User1 => 
+    CreateHoldingSnapshot(TestUser1Asset3.Id, 35000, new DateOnly(2025, 5, 2), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotAsset1User1_3 => 
+    CreateHoldingSnapshot(TestUser1Asset.Id, 15000, new DateOnly(2025, 5, 3), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotAsset2User1_3 => 
+    CreateHoldingSnapshot(TestUser1Asset2.Id, 25000, new DateOnly(2025, 5, 12), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotAsset3User1_2 => 
     CreateHoldingSnapshot(TestUser1Asset3.Id, 35000, new DateOnly(2025, 5, 12), _user1Id);
-  public HoldingSnapshot TestHoldingSnapshotAsset1User1_Late => 
+  public long TestUser1AssetTotal2025_06_01 => 15000 + 25000 + 35000 + 5000;
+  public HoldingSnapshot TestHoldingSnapshotAsset1User1_4 => 
     CreateHoldingSnapshot(TestUser1Asset.Id, 20000, new DateOnly(2025, 6, 15), _user1Id);
-  public long TestUser1AssetTotal2025_06_15 => 20000 + 25000 + 35000 + 5000;
+  public long TestUser1AssetTotal2025_07_01 => 20000 + 25000 + 35000 + 5000;
 
   // User 1 Debts sorted by date
   public HoldingSnapshot TestHoldingSnapshotDebt4User1 => 
-    CreateHoldingSnapshot(TestUser1Debt4.Id, 10000, new DateOnly(2024, 5, 24), _user1Id);
-  public HoldingSnapshot TestHoldingSnapshotDebt1User1_Early => 
-    CreateHoldingSnapshot(TestUser1Debt.Id, 30000, new DateOnly(2025, 1, 5), _user1Id);
-  public long TestUser1DebtTotal2025_03_10 => 30000 + 10000;
-  public HoldingSnapshot TestHoldingSnapshotDebt1User1_Mid => 
-    CreateHoldingSnapshot(TestUser1Debt.Id, 25000, new DateOnly(2025, 3, 15), _user1Id);
-  public long TestUser1DebtTotal2025_03_15 => 25000 + 10000;
-  public HoldingSnapshot TestHoldingSnapshotDebt2User1_GapEnd => 
-    CreateHoldingSnapshot(TestUser1Debt2.Id, 25000, new DateOnly(2025, 4, 20), _user1Id);
-  public long TestUser1DebtTotal2025_04_25 => 25000 + 25000 + 10000;
-  public HoldingSnapshot TestHoldingSnapshotDebt3User1 => 
-    CreateHoldingSnapshot(TestUser1Debt3.Id, 12000, new DateOnly(2025, 5, 1), _user1Id);
-  public HoldingSnapshot TestHoldingSnapshotDebt2User1 => 
-    CreateHoldingSnapshot(TestUser1Debt2.Id, 10000, new DateOnly(2025, 5, 1), _user1Id);
+    CreateHoldingSnapshot(TestUser1Debt4.Id, 10000, new DateOnly(2020, 1, 1), _user1Id);
+  public long TestUser1DebtTotal2020_01_01 => 10000;
   public HoldingSnapshot TestHoldingSnapshotDebt1User1 => 
-    CreateHoldingSnapshot(TestUser1Debt.Id, 25000, new DateOnly(2025, 5, 3), _user1Id);
-  public long TestUser1DebtTotal2025_05_04 => 25000 + 10000 + 12000 + 10000;
-  public HoldingSnapshot TestHoldingSnapshotDebt1User1_Late => 
+    CreateHoldingSnapshot(TestUser1Debt.Id, 30000, new DateOnly(2025, 1, 5), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotDebt2User1 => 
+    CreateHoldingSnapshot(TestUser1Debt2.Id, 20000, new DateOnly(2025, 1, 10), _user1Id);
+  public long TestUser1DebtTotal2025_02_01 => 30000 + 20000 + 10000;
+  public HoldingSnapshot TestHoldingSnapshotDebt1User1_2 => 
+    CreateHoldingSnapshot(TestUser1Debt.Id, 25000, new DateOnly(2025, 3, 15), _user1Id);
+  public long TestUser1DebtTotal2025_04_01 => 25000 + 20000 + 10000;
+  public HoldingSnapshot TestHoldingSnapshotDebt2User1_2 => 
+    CreateHoldingSnapshot(TestUser1Debt2.Id, 25000, new DateOnly(2025, 4, 20), _user1Id);
+  public long TestUser1DebtTotal2025_05_01 => 25000 + 25000 + 10000;
+  public HoldingSnapshot TestHoldingSnapshotDebt3User1 => 
+    CreateHoldingSnapshot(TestUser1Debt3.Id, 12000, new DateOnly(2025, 5, 2), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotDebt2User1_3 => 
+    CreateHoldingSnapshot(TestUser1Debt2.Id, 10000, new DateOnly(2025, 5, 3), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotDebt1User1_3 => 
+    CreateHoldingSnapshot(TestUser1Debt.Id, 25000, new DateOnly(2025, 5, 12), _user1Id);
+  public HoldingSnapshot TestHoldingSnapshotDebt3User1_2 => 
+    CreateHoldingSnapshot(TestUser1Debt3.Id, 25000, new DateOnly(2025, 5, 12), _user1Id);
+  public long TestUser1DebtTotal2025_06_01 => 25000 + 10000 + 25000 + 10000;
+  public HoldingSnapshot TestHoldingSnapshotDebt1User1_4 => 
     CreateHoldingSnapshot(TestUser1Debt.Id, 20000, new DateOnly(2025, 6, 15), _user1Id);
-  public long TestUser1DebtTotal2025_06_15 => 20000 + 10000 + 12000 + 10000;
-  public HoldingSnapshot TestHoldingSnapshotDebt2User1_Future => 
-    CreateHoldingSnapshot(TestUser1Debt2.Id, 15000, new DateOnly(2026, 1, 1), _user1Id);
+  public long TestUser1DebtTotal2025_07_01 => 20000 + 10000 +25000 + 10000;
 
   // User 2 Snapshots
   public HoldingSnapshot TestHoldingSnapshotAssetUser2 => 
