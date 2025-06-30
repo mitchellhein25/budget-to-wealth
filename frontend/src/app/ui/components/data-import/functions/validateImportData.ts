@@ -1,6 +1,11 @@
+import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 import { cleanCurrencyInput } from '../../Utils';
-import { ImportDataType, ImportError } from '../DataImportTypes';
+import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportError } from '../DataImportTypes';
 import { getFieldsForImportType, ImportField } from './getFieldsForImportType';
+import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
+import { Holding } from '@/app/lib/models/net-worth/Holding';
+import { Budget } from '@/app/lib/models/cashflow/Budget';
+import { Category } from '@/app/lib/models/Category';
 
 interface ValidationResult {
   success: boolean;
@@ -8,20 +13,29 @@ interface ValidationResult {
   errors: ImportError[];
 }
 
-export function validateImportData(data: any[], dataType: string): ValidationResult {
+export function validateImportData(data: any[], dataType: ImportDataTypeStrings | undefined): ValidationResult {
   const errors: ImportError[] = [];
   const successRows: any[] = [];
+
+  if (!dataType) {
+    return {
+      success: false,
+      errors: [{ row: 0, message: 'Data type is required' }]
+    };
+  }
+
   const dataTypeFields = getFieldsForImportType(dataType);
 
   for (const [index, row] of data.entries()) {
     if (index === 0) 
       continue;
 
+    const rowIndex = index + 1;
     try {
       for (const importField of dataTypeFields.filter(field => field.required)) {
         if (!row[importField.name] || row[importField.name].toString().trim() === '') {
           errors.push({
-            row: index,
+            row: rowIndex,
             message: `${importField.name} is required`,
             field: importField.name
           });
@@ -34,7 +48,7 @@ export function validateImportData(data: any[], dataType: string): ValidationRes
         const amount = cleanCurrencyInput(row[numberField.name].toString());
         if (!amount) {
           errors.push({
-            row: index,
+            row: rowIndex,
             message: `${numberField.name} must be a valid currency value.`,
             field: numberField.name
           });
@@ -45,7 +59,7 @@ export function validateImportData(data: any[], dataType: string): ValidationRes
 
     } catch (error) {
       errors.push({
-        row: index,
+        row: rowIndex,
         message: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
     }

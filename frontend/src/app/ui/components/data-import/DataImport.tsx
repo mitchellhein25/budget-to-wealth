@@ -8,6 +8,7 @@ import { uploadImportData } from './functions/uploadImportData';
 import { parseCsvFile } from './functions/parseCsvFile';
 import ImportPreview from './ImportPreview';
 import ImportTemplate from './ImportTemplate';
+import { ImportDataType, ImportDataTypeStrings, ImportResult } from './DataImportTypes';
 
 export interface DataImportProps {
   onImportComplete?: (result: ImportResult) => void;
@@ -16,7 +17,7 @@ export interface DataImportProps {
 
 export default function DataImport(props: DataImportProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [selectedDataType, setSelectedDataType] = useState<string>();
+  const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [previewData, setPreviewData] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function DataImport(props: DataImportProps) {
   const [showTemplate, setShowTemplate] = useState(false);
 
   const handleDataTypeChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedDataType(event.target.value);
+    setSelectedDataType(event.target.value as ImportDataTypeStrings);
     setFile(null);
     setPreviewData([]);
     setShowPreview(false);
@@ -53,7 +54,6 @@ export default function DataImport(props: DataImportProps) {
     try {
       const rawData = await parseCsvFile(selectedFile);
       const validationResult = validateImportData(rawData, selectedDataType);
-      
       if (!validationResult.success) {
         setImportResult({
           success: false,
@@ -65,8 +65,7 @@ export default function DataImport(props: DataImportProps) {
         return;
       }
 
-      // Transform data to the correct format
-      const transformedData = transformImportData(validationResult.data || [], props.dataType);
+      const transformedData = transformImportData(validationResult.data as ImportDataType[], selectedDataType as ImportDataTypeStrings);
       setPreviewData(transformedData);
       setShowPreview(true);
 
