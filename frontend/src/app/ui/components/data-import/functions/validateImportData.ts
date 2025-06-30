@@ -1,4 +1,6 @@
+import { cleanCurrencyInput } from '../../Utils';
 import { ImportDataType, ImportError } from '../DataImportTypes';
+import { getFieldsForImportType, ImportField } from './getFieldsForImportType';
 
 interface ValidationResult {
   success: boolean;
@@ -6,46 +8,52 @@ interface ValidationResult {
   errors: ImportError[];
 }
 
-export function validateImportData(data: any[], dataType: ImportDataType): ValidationResult {
+export function validateImportData(data: any[], dataType: string): ValidationResult {
   const errors: ImportError[] = [];
-  const validatedData: any[] = [];
+  const successRows: any[] = [];
+  const dataTypeFields = getFieldsForImportType(dataType);
 
-  data.forEach((row, index) => {
-    const rowNumber = index + 2; // +2 because Excel is 1-indexed and we have headers
-    
+  for (const [index, row] of data.entries()) {
+    if (index === 0) 
+      continue;
+
     try {
-      for (const field of requiredFields) {
-        if (!row[field] || row[field].toString().trim() === '') {
+      for (const importField of dataTypeFields.filter(field => field.required)) {
+        if (!row[importField.name] || row[importField.name].toString().trim() === '') {
           errors.push({
-            row: rowNumber,
-            message: `${field} is required`,
-            field
+            row: index,
+            message: `${importField.name} is required`,
+            field: importField.name
           });
-          return;
+          continue;
         }
       }
-    
-      // Validate amount
-      const amount = parseFloat(row.amount.toString().replace(/[$,]/g, ''));
-      if (isNaN(amount) || amount <= 0) {
-        errors.push({
-          row: rowNumber,
-          message: 'Amount must be a positive number',
-          field: 'amount'
-        });
-        return;
+
+      const numberField = dataTypeFields.find(field => field.name === 'amount' || field.name === 'balance');
+      if (numberField?.required) {
+        const amount = cleanCurrencyInput(row[numberField.name].toString());
+        if (!amount) {
+          errors.push({
+            row: index,
+            message: `${numberField.name} must be a valid currency value.`,
+            field: numberField.name
+          });
+          continue;
+        }
       }
+      successRows.push(row);
+
     } catch (error) {
       errors.push({
-        row: rowNumber,
+        row: index,
         message: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
     }
-  });
+  }
 
   return {
     success: errors.length === 0,
-    data: validatedData,
+    data: successRows,
     errors
   };
 }

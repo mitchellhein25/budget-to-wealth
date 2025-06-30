@@ -1,4 +1,4 @@
-export async function parseCsvFile<T extends Record<string, unknown>>(file: File): Promise<T[]> {
+export async function parseCsvFile<T extends Record<string, string | number | boolean>>(file: File): Promise<T[]> {
   const csvContent = await readFileAsText(file);
   const lines = csvContent.split('\n').filter(line => line.trim() !== '');
 

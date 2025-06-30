@@ -16,6 +16,7 @@ import { transformFormDataToEntry } from './entries/form/functions/transformForm
 import CashFlowSideBar from './entries/CashFlowSideBar';
 import { ImportResult } from '../data-import/DataImportTypes';
 import ExcelImport from '../data-import/DataImport';
+import DataImport from '../data-import/DataImport';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
@@ -103,8 +104,7 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             onEntryIsEditing={onEntryIsEditing}
             cashFlowType={props.cashFlowType}
           />
-          <ExcelImport
-            dataType="CashFlowEntry"
+          <DataImport
             onImportComplete={handleImportComplete}
             onCancel={() => setShowImport(false)}
           />

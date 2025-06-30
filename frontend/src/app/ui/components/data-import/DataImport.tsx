@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback } from 'react';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, Loader2, FileText } from 'lucide-react';
-import { ExcelImportProps, ImportResult } from '../ExcelImport/ExcelImportTypes';
 import { validateImportData } from './functions/validateImportData';
 import { transformImportData } from './functions/transformImportData';
 import { uploadImportData } from './functions/uploadImportData';
@@ -10,18 +9,27 @@ import { parseCsvFile } from './functions/parseCsvFile';
 import ImportPreview from './ImportPreview';
 import ImportTemplate from './ImportTemplate';
 
-export default function DataImport({ 
-  dataType, 
-  onImportComplete, 
-  onCancel,
-  className = '' 
-}: ExcelImportProps) {
+export interface DataImportProps {
+  onImportComplete?: (result: ImportResult) => void;
+  onCancel?: () => void;
+}
+
+export default function DataImport(props: DataImportProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [selectedDataType, setSelectedDataType] = useState<string>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [showPreview, setShowPreview] = useState(false);
   const [showTemplate, setShowTemplate] = useState(false);
+
+  const handleDataTypeChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDataType(event.target.value);
+    setFile(null);
+    setPreviewData([]);
+    setShowPreview(false);
+    setImportResult(null);
+  }, []);
 
   const handleFileSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -43,11 +51,8 @@ export default function DataImport({
     setImportResult(null);
 
     try {
-      // Parse the CSV file
       const rawData = await parseCsvFile(selectedFile);
-      
-      // Validate the data
-      const validationResult = validateImportData(rawData, dataType);
+      const validationResult = validateImportData(rawData, selectedDataType);
       
       if (!validationResult.success) {
         setImportResult({
@@ -61,7 +66,7 @@ export default function DataImport({
       }
 
       // Transform data to the correct format
-      const transformedData = transformImportData(validationResult.data || [], dataType);
+      const transformedData = transformImportData(validationResult.data || [], props.dataType);
       setPreviewData(transformedData);
       setShowPreview(true);
 
@@ -76,7 +81,7 @@ export default function DataImport({
     } finally {
       setIsProcessing(false);
     }
-  }, [dataType]);
+  }, [props.dataType]);
 
   const handleImport = useCallback(async () => {
     if (!previewData.length) return;
@@ -85,11 +90,11 @@ export default function DataImport({
     setImportResult(null);
 
     try {
-      const result = await uploadImportData(previewData, dataType);
+      const result = await uploadImportData(previewData, props.dataType);
       setImportResult(result);
       
       if (result.success) {
-        onImportComplete?.(result);
+        props.onImportComplete?.(result);
         // Reset form after successful import
         setTimeout(() => {
           setFile(null);
@@ -109,30 +114,27 @@ export default function DataImport({
     } finally {
       setIsProcessing(false);
     }
-  }, [previewData, dataType, onImportComplete]);
+  }, [previewData, props.dataType, props.onImportComplete]);
 
   const handleCancel = useCallback(() => {
     setFile(null);
     setPreviewData([]);
     setShowPreview(false);
     setImportResult(null);
-    onCancel?.();
-  }, [onCancel]);
+    props.onCancel?.();
+  }, [props.onCancel]);
 
   const handleDownloadTemplate = useCallback(() => {
     setShowTemplate(true);
   }, []);
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 ${className}`}>
-      <div className="flex items-center justify-between mb-6">
+    <div className={`bg-white rounded-lg shadow-md p-6`}>
+      <div className="flex items-center justify-between mb-6">  
         <h2 className="text-xl font-semibold text-gray-900">
-          Import {dataType} Data
+          Import {selectedDataType} Data
         </h2>
-        <button
-          onClick={handleDownloadTemplate}
-          className="btn btn-outline btn-sm"
-        >
+        <button onClick={handleDownloadTemplate} className="btn btn-outline btn-sm">
           <FileText className="w-4 h-4 mr-2" />
           Download Template
         </button>
@@ -140,6 +142,23 @@ export default function DataImport({
 
       {!showPreview && !importResult && (
         <div className="space-y-4">
+          <div className="mb-4">
+            <label htmlFor="data-type-select" className="block text-sm font-medium text-gray-700 mb-2">
+              Select Import Type
+            </label>
+            <select
+              id="data-type-select"
+              value={selectedDataType}
+              onChange={handleDataTypeChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value={"CashFlow Entries"}>CashFlow Entries</option>
+              <option value={"Holding Snapshots"}>Holding Snapshots</option>
+              <option value={"Holdings"}>Holdings</option>
+              <option value={"Budgets"}>Budgets</option>
+              <option value={"Categories"}>Categories</option>
+            </select>
+          </div>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
             <input
               type="file"
@@ -185,7 +204,7 @@ export default function DataImport({
       {showPreview && (
         <ImportPreview
           data={previewData}
-          dataType={dataType}
+          dataType={props.dataType}
           onImport={handleImport}
           onCancel={handleCancel}
           isProcessing={isProcessing}
@@ -256,7 +275,7 @@ export default function DataImport({
 
       {showTemplate && (
         <ImportTemplate
-          dataType={dataType}
+          dataType={props.dataType}
           onClose={() => setShowTemplate(false)}
         />
       )}
