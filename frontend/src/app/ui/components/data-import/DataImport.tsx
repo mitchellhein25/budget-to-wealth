@@ -8,14 +8,9 @@ import { uploadImportData } from './functions/uploadImportData';
 import { parseCsvFile } from './functions/parseCsvFile';
 import ImportPreview from './ImportPreview';
 import ImportTemplate from './ImportTemplate';
-import { ImportDataType, ImportDataTypeStrings, ImportResult } from './DataImportTypes';
+import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult } from './DataImportTypes';
 
-export interface DataImportProps {
-  onImportComplete?: (result: ImportResult) => void;
-  onCancel?: () => void;
-}
-
-export default function DataImport(props: DataImportProps) {
+export default function DataImport() {
   const [file, setFile] = useState<File | null>(null);
   const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -80,7 +75,7 @@ export default function DataImport(props: DataImportProps) {
     } finally {
       setIsProcessing(false);
     }
-  }, [props.dataType]);
+  }, [selectedDataType]);
 
   const handleImport = useCallback(async () => {
     if (!previewData.length) return;
@@ -89,12 +84,10 @@ export default function DataImport(props: DataImportProps) {
     setImportResult(null);
 
     try {
-      const result = await uploadImportData(previewData, props.dataType);
+      const result = await uploadImportData(previewData, selectedDataType as ImportDataTypeStrings);
       setImportResult(result);
       
       if (result.success) {
-        props.onImportComplete?.(result);
-        // Reset form after successful import
         setTimeout(() => {
           setFile(null);
           setPreviewData([]);
@@ -113,15 +106,14 @@ export default function DataImport(props: DataImportProps) {
     } finally {
       setIsProcessing(false);
     }
-  }, [previewData, props.dataType, props.onImportComplete]);
+  }, [previewData, selectedDataType]);
 
   const handleCancel = useCallback(() => {
     setFile(null);
     setPreviewData([]);
     setShowPreview(false);
     setImportResult(null);
-    props.onCancel?.();
-  }, [props.onCancel]);
+  }, []);
 
   const handleDownloadTemplate = useCallback(() => {
     setShowTemplate(true);
@@ -151,11 +143,12 @@ export default function DataImport(props: DataImportProps) {
               onChange={handleDataTypeChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value={"CashFlow Entries"}>CashFlow Entries</option>
-              <option value={"Holding Snapshots"}>Holding Snapshots</option>
-              <option value={"Holdings"}>Holdings</option>
-              <option value={"Budgets"}>Budgets</option>
-              <option value={"Categories"}>Categories</option>
+              <option value={ImportDataTypeStringMappings.CashFlowEntries}>{ImportDataTypeStringMappings.CashFlowEntries}</option>
+              <option value={ImportDataTypeStringMappings.HoldingSnapshots}>{ImportDataTypeStringMappings.HoldingSnapshots}</option>
+              <option value={ImportDataTypeStringMappings.Holdings}>{ImportDataTypeStringMappings.Holdings}</option>
+              <option value={ImportDataTypeStringMappings.Budgets}>{ImportDataTypeStringMappings.Budgets}</option>
+              <option value={ImportDataTypeStringMappings.HoldingCategories}>{ImportDataTypeStringMappings.HoldingCategories}</option>
+              <option value={ImportDataTypeStringMappings.CashFlowCategories}>{ImportDataTypeStringMappings.CashFlowCategories}</option>
             </select>
           </div>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
@@ -203,7 +196,7 @@ export default function DataImport(props: DataImportProps) {
       {showPreview && (
         <ImportPreview
           data={previewData}
-          dataType={props.dataType}
+          dataTypeString={selectedDataType as ImportDataTypeStrings}
           onImport={handleImport}
           onCancel={handleCancel}
           isProcessing={isProcessing}
@@ -274,7 +267,7 @@ export default function DataImport(props: DataImportProps) {
 
       {showTemplate && (
         <ImportTemplate
-          dataType={props.dataType}
+          dataTypeString={selectedDataType as ImportDataTypeStrings}
           onClose={() => setShowTemplate(false)}
         />
       )}

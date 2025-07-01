@@ -1,12 +1,11 @@
-import { ImportDataType, ImportResult } from '../DataImportTypes';
+import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult } from '../DataImportTypes';
 import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
 
-export async function uploadImportData(data: any[], dataType: ImportDataType): Promise<ImportResult> {
+export async function uploadImportData(data: ImportDataType[], dataType: ImportDataTypeStrings): Promise<ImportResult> {
   const errors: any[] = [];
   let importedCount = 0;
 
   try {
-    // Process data in batches to avoid overwhelming the server
     const batchSize = 10;
     const batches = [];
     
@@ -69,16 +68,20 @@ export async function uploadImportData(data: any[], dataType: ImportDataType): P
   }
 }
 
-function getEndpointForDataType(dataType: ImportDataType): string {
+function getEndpointForDataType(dataType: ImportDataTypeStrings): string {
   switch (dataType) {
-    case 'CashFlowEntry':
-      return 'CashFlowEntries/import';
-    case 'Holding':
-      return 'Holdings/import';
-    case 'HoldingSnapshot':
-      return 'HoldingSnapshots/import';
-    case 'Budget':
-      return 'Budgets/import';
+    case ImportDataTypeStringMappings.CashFlowCategories:
+      return 'CashFlowCategories/Import';
+    case ImportDataTypeStringMappings.Budgets:
+      return 'Budgets/Import';
+    case ImportDataTypeStringMappings.CashFlowEntries:
+      return 'CashFlowEntries/Import';
+    case ImportDataTypeStringMappings.HoldingCategories:
+      return 'HoldingCategories/Import';
+    case ImportDataTypeStringMappings.Holdings:
+      return 'Holdings/Import';
+    case ImportDataTypeStringMappings.HoldingSnapshots:
+      return 'HoldingSnapshots/Import';
     default:
       throw new Error(`Unknown data type: ${dataType}`);
   }

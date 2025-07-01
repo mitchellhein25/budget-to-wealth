@@ -8,14 +8,15 @@ import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
 import { RecurrenceFrequency } from "@/app/lib/models/cashflow/RecurrenceFrequency";
 import { HoldingType } from "@/app/lib/models/net-worth/HoldingType";
 
-export type ImportDataType = CashFlowEntryImport | HoldingSnapshotImport | HoldingImport | BudgetImport | CategoryImport;
+export type ImportDataType = CashFlowEntryImport | HoldingSnapshotImport | HoldingImport | BudgetImport | HoldingCategoryImport | CashFlowCategoryImport;
 
 export const ImportDataTypeStringMappings = {
-  CashFlowEntries: "CashFlow Entries",
+    CashFlowEntries: "CashFlow Entries",
   HoldingSnapshots: "Holding Snapshots",
   Holdings: "Holdings",
   Budgets: "Budgets",
-  Categories: "Categories"
+  HoldingCategories: "Holding Categories",
+  CashFlowCategories: "Cash Flow Categories"
 } as const;
 
 export type ImportDataTypeStrings = (typeof ImportDataTypeStringMappings)[keyof typeof ImportDataTypeStringMappings];
@@ -23,10 +24,10 @@ export type ImportDataTypeStrings = (typeof ImportDataTypeStringMappings)[keyof 
 export type CashFlowEntryImport = {
   amount: number;
   date: string;
-  entryType: CashFlowType.Income.toString() | CashFlowType.Expense;
+  entryType: "Income" | "Expense";
   categoryName: string;
   description: string;
-  recurrenceFrequency: RecurrenceFrequency.Monthly | RecurrenceFrequency.Yearly;
+  recurrenceFrequency: "Daily" | "Weekly" | "Monthly" | "Yearly";
 }
 
 export type HoldingSnapshotImport = {
@@ -37,7 +38,7 @@ export type HoldingSnapshotImport = {
 
 export type HoldingImport = {
   name: string;
-  type: HoldingType;
+  type: "Asset" | "Debt";
   holdingCategoryName: string;
 }
 
@@ -47,9 +48,13 @@ export type BudgetImport = {
   name: string;
 }
 
-export type CategoryImport = {
+export type HoldingCategoryImport = {
   name: string;
-  type: "income" | "expense" | "holding";
+}
+
+export type CashFlowCategoryImport = {
+  name: string;
+  type: "Income" | "Expense";
 }
 
 export interface ImportError {

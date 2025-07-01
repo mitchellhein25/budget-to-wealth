@@ -1,54 +1,77 @@
 import React from 'react';
-import { ImportDataType } from './DataImportTypes';
+import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings } from './DataImportTypes';
 import { Download, X } from 'lucide-react';
 
 interface ImportTemplateProps {
-  dataType: ImportDataType;
+  dataTypeString: ImportDataTypeStrings;
   onClose: () => void;
 }
 
-export default function ImportTemplate({ dataType, onClose }: ImportTemplateProps) {
+export default function ImportTemplate(props: ImportTemplateProps) {
   const getTemplateData = () => {
-    switch (dataType) {
-      case 'CashFlowEntry':
+    switch (props.dataTypeString) {
+      case ImportDataTypeStringMappings.CashFlowEntries:
         return {
-          headers: ['amount', 'date', 'categoryName', 'description', 'entryType'],
+          headers: ['amount', 'date', 'categoryName', 'description', 'entryType', 'recurrenceFrequency'],
           sampleData: [
-            ['100.00', '2024-01-15', 'Groceries', 'Weekly grocery shopping', 'Expense'],
-            ['2500.00', '2024-01-15', 'Salary', 'Monthly salary', 'Income'],
-            ['50.00', '2024-01-16', 'Entertainment', 'Movie tickets', 'Expense']
+            ['100.00', '2024-01-15', 'Groceries', 'Weekly grocery shopping', 'Expense', 'Weekly'],
+            ['2500.00', '2024-01-15', 'Salary', 'Monthly salary', 'Income', 'Monthly'],
+            ['50.00', '2024-01-16', 'Entertainment', 'Movie tickets', 'Expense', 'Monthly']
           ],
-          description: 'Import cash flow entries with amount, date, category, description, and type (Income/Expense)'
+          description: 'Import cash flow entries with amount, date, category, description, type (Income/Expense), and recurrence frequency (Daily/Weekly/Monthly/Yearly)'
         };
-      case 'Holding':
+      case ImportDataTypeStringMappings.Holdings:
         return {
-          headers: ['name', 'type', 'categoryName'],
+          headers: ['name', 'type', 'holdingCategoryName'],
           sampleData: [
             ['Savings Account', 'Asset', 'Cash'],
             ['Credit Card', 'Debt', 'Credit'],
-            ['Investment Portfolio', 'Asset', 'Investments']
+            ['Investment Portfolio', 'Asset', 'Investments'],
+            ['Car Loan', 'Debt', 'Loans'],
+            ['Student Loan', 'Debt', 'Loans'],
+            ['Home Loan', 'Debt', 'Loans']
           ],
           description: 'Import holdings with name, type (Asset/Debt), and category'
         };
-      case 'HoldingSnapshot':
+      case ImportDataTypeStringMappings.HoldingSnapshots:
         return {
-          headers: ['holdingName', 'value', 'date'],
+          headers: ['holdingName', 'balance', 'date'],
           sampleData: [
             ['Savings Account', '5000.00', '2024-01-15'],
             ['Investment Portfolio', '25000.00', '2024-01-15'],
             ['Credit Card', '-1500.00', '2024-01-15']
           ],
-          description: 'Import holding snapshots with holding name, value, and date'
+          description: 'Import holding snapshots with holding name, balance, and date'
         };
-      case 'Budget':
+      case ImportDataTypeStringMappings.Budgets:
         return {
-          headers: ['amount', 'categoryName'],
+          headers: ['amount', 'categoryName', 'name'],
           sampleData: [
-            ['500.00', 'Groceries'],
-            ['200.00', 'Entertainment'],
-            ['1000.00', 'Transportation']
+            ['500.00', 'Groceries', 'Monthly Groceries'],
+            ['200.00', 'Entertainment', 'Monthly Entertainment'],
+            ['1000.00', 'Transportation', 'Monthly Transportation']
           ],
-          description: 'Import budgets with amount and category'
+          description: 'Import budgets with amount, category, and name'
+        };
+      case ImportDataTypeStringMappings.HoldingCategories:
+        return {
+          headers: ['name'],
+          sampleData: [
+            ['Cash'],
+            ['Credit'],
+            ['Investments']
+          ],
+          description: 'Import holding categories with name'
+        };
+      case ImportDataTypeStringMappings.CashFlowCategories:
+        return {
+          headers: ['name', 'type'],
+          sampleData: [
+            ['Groceries', 'Expense'],
+            ['Salary', 'Income'],
+            ['Entertainment', 'Expense']
+          ],
+          description: 'Import cash flow categories with name and type (Income/Expense)'
         };
       default:
         return { headers: [], sampleData: [], description: '' };
@@ -67,7 +90,7 @@ export default function ImportTemplate({ dataType, onClose }: ImportTemplateProp
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${dataType.toLowerCase()}_import_template.csv`;
+    a.download = `${props.dataTypeString.toLowerCase()}_import_template.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -79,10 +102,10 @@ export default function ImportTemplate({ dataType, onClose }: ImportTemplateProp
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-900">
-            Import Template - {dataType}
+            Import Template - {props.dataTypeString}
           </h2>
           <button
-            onClick={onClose}
+            onClick={props.onClose}
             className="text-gray-400 hover:text-gray-600"
           >
             <X className="w-5 h-5" />
@@ -152,7 +175,7 @@ export default function ImportTemplate({ dataType, onClose }: ImportTemplateProp
               Download Template
             </button>
             <button
-              onClick={onClose}
+              onClick={props.onClose}
               className="btn btn-outline"
             >
               Close

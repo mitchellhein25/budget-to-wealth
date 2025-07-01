@@ -1,48 +1,53 @@
 import React from 'react';
-import { ImportDataType } from './DataImportTypes';
+import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings } from './DataImportTypes';
 import { formatCurrency, formatDate } from '../Utils';
 
 interface ImportPreviewProps {
   data: any[];
-  dataType: ImportDataType;
+  dataTypeString: ImportDataTypeStrings;
   onImport: () => void;
   onCancel: () => void;
   isProcessing: boolean;
 }
 
-export default function ImportPreview({ 
-  data, 
-  dataType, 
-  onImport, 
-  onCancel, 
-  isProcessing 
-}: ImportPreviewProps) {
+export default function ImportPreview(props: ImportPreviewProps) {
   const getPreviewColumns = () => {
-    switch (dataType) {
-      case 'CashFlowEntry':
+    switch (props.dataTypeString) {
+      case ImportDataTypeStringMappings.CashFlowEntries:
         return [
-          { key: 'amount', label: 'Amount', formatter: (value: number) => formatCurrency(value / 100) },
+          { key: 'amount', label: 'Amount', formatter: (value: number) => formatCurrency(value * 100) },
           { key: 'date', label: 'Date', formatter: (value: string) => formatDate(new Date(value)) },
           { key: 'categoryName', label: 'Category' },
           { key: 'description', label: 'Description' },
-          { key: 'entryType', label: 'Type' }
+          { key: 'entryType', label: 'Type' },
+          { key: 'recurrenceFrequency', label: 'Recurrence Frequency' }
         ];
-      case 'Holding':
+      case ImportDataTypeStringMappings.Holdings:
         return [
           { key: 'name', label: 'Name' },
           { key: 'type', label: 'Type' },
-          { key: 'categoryName', label: 'Category' }
+          { key: 'holdingCategoryName', label: 'Category' }
         ];
-      case 'HoldingSnapshot':
+      case ImportDataTypeStringMappings.HoldingSnapshots:
         return [
           { key: 'holdingName', label: 'Holding' },
-          { key: 'value', label: 'Value', formatter: (value: number) => formatCurrency(value / 100) },
+          { key: 'balance', label: 'Balance', formatter: (value: number) => formatCurrency(value * 100) },
           { key: 'date', label: 'Date', formatter: (value: string) => formatDate(new Date(value)) }
         ];
-      case 'Budget':
+      case ImportDataTypeStringMappings.Budgets:
         return [
-          { key: 'amount', label: 'Amount', formatter: (value: number) => formatCurrency(value / 100) },
-          { key: 'categoryName', label: 'Category' }
+          { key: 'amount', label: 'Amount', formatter: (value: number) => formatCurrency(value * 100) },
+          { key: 'categoryName', label: 'Category' },
+          { key: 'name', label: 'Name' }
+        ];
+      case ImportDataTypeStringMappings.HoldingCategories:
+        return [
+          { key: 'name', label: 'Name' }
+        ];
+      case ImportDataTypeStringMappings.CashFlowCategories:
+        return [
+          { key: 'name', label: 'Name' },
+          { key: 'type', label: 'Type' }
         ];
       default:
         return [];
@@ -55,7 +60,7 @@ export default function ImportPreview({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900">
-          Preview ({data.length} items)
+          Preview ({props.data.length} items)
         </h3>
         <div className="text-sm text-gray-500">
           Review the data before importing
@@ -78,7 +83,7 @@ export default function ImportPreview({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {data.slice(0, 10).map((item, index) => (
+              {props.data.slice(0, 10).map((item, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   {columns.map((column) => (
                     <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -94,27 +99,27 @@ export default function ImportPreview({
           </table>
         </div>
         
-        {data.length > 10 && (
+        {props.data.length > 10 && (
           <div className="bg-gray-50 px-6 py-3 text-sm text-gray-500">
-            Showing first 10 of {data.length} items
+            Showing first 10 of {props.data.length} items
           </div>
         )}
       </div>
 
       <div className="flex gap-3">
         <button
-          onClick={onCancel}
+          onClick={props.onCancel}
           className="btn btn-outline"
-          disabled={isProcessing}
+          disabled={props.isProcessing}
         >
           Cancel
         </button>
         <button
-          onClick={onImport}
+          onClick={props.onImport}
           className="btn btn-primary"
-          disabled={isProcessing}
+          disabled={props.isProcessing}
         >
-          {isProcessing ? 'Importing...' : `Import ${data.length} Items`}
+          {props.isProcessing ? 'Importing...' : `Import ${props.data.length} Items`}
         </button>
       </div>
     </div>
