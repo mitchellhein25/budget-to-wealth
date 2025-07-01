@@ -9,10 +9,11 @@ import { parseCsvFile } from './functions/parseCsvFile';
 import ImportPreview from './ImportPreview';
 import ImportTemplate from './ImportTemplate';
 import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult } from './DataImportTypes';
+import InputFieldSetTemplate from '../form/InputFieldSetTemplate';
 
 export default function DataImport() {
   const [file, setFile] = useState<File | null>(null);
-  const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>();
+  const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>(ImportDataTypeStringMappings.CashFlowEntries);
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [previewData, setPreviewData] = useState<any[]>([]);
@@ -120,9 +121,9 @@ export default function DataImport() {
   }, []);
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6`}>
+    <div className={`p-6`}>
       <div className="flex items-center justify-between mb-6">  
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold">
           Import {selectedDataType} Data
         </h2>
         <button onClick={handleDownloadTemplate} className="btn btn-outline btn-sm">
@@ -133,6 +134,22 @@ export default function DataImport() {
 
       {!showPreview && !importResult && (
         <div className="space-y-4">
+          <InputFieldSetTemplate 
+            label="Import Type" 
+            isRequired={false}
+            inputChild={
+              <select
+                id="data-type-select"
+                value={selectedDataType}
+                onChange={handleDataTypeChange}
+                className="select"
+              >
+                {Object.values(ImportDataTypeStringMappings).map((dataType) => (
+                  <option key={dataType} value={dataType}>{dataType}</option>
+                ))}
+              </select>
+            }
+          />
           <div className="mb-4">
             <label htmlFor="data-type-select" className="block text-sm font-medium text-gray-700 mb-2">
               Select Import Type
