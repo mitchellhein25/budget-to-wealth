@@ -59,34 +59,31 @@ export default function ImportPreview(props: ImportPreviewProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium text-gray-900">
+        <h3 className="text-lg font-medium">
           Preview ({props.data.length} items)
         </h3>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm opacity-70">
           Review the data before importing
         </div>
       </div>
 
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="card bg-base-100 shadow-sm border">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="table w-full">
+            <thead>
               <tr>
                 {columns.map((column) => (
-                  <th
-                    key={column.key}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
+                  <th key={column.key}>
                     {column.label}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody>
               {props.data.slice(0, 10).map((item, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+                <tr key={index}>
                   {columns.map((column) => (
-                    <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td key={column.key}>
                       {column.formatter 
                         ? column.formatter(item[column.key] as never)
                         : item[column.key] || '-'
@@ -100,8 +97,10 @@ export default function ImportPreview(props: ImportPreviewProps) {
         </div>
         
         {props.data.length > 10 && (
-          <div className="bg-gray-50 px-6 py-3 text-sm text-gray-500">
-            Showing first 10 of {props.data.length} items
+          <div className="card-body pt-0">
+            <div className="alert alert-info alert-soft">
+              Showing first 10 of {props.data.length} items
+            </div>
           </div>
         )}
       </div>

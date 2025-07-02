@@ -121,7 +121,7 @@ export default function DataImport() {
   }, []);
 
   return (
-    <div className={`p-6`}>
+    <div className={`p-6 h-full flex flex-col`}>
       <div className="flex items-center justify-between mb-6">  
         <h2 className="text-xl font-semibold">
           Import {selectedDataType} Data
@@ -129,7 +129,7 @@ export default function DataImport() {
       </div>
 
       {!showPreview && !importResult && (
-        <div className="space-y-4">
+        <div className="space-y-4 flex-1 flex flex-col">
           <div className="flex flex-col space-y-4">
             <InputFieldSetTemplate 
               label="Import Type" 
@@ -154,8 +154,8 @@ export default function DataImport() {
               </button>
             </div>
           </div>
-          <div className="card bg-base-100 shadow-xl border-2 border-dashed border-base-300 hover:border-primary transition-colors">
-            <div className="card-body items-center text-center space-y-4">
+          <div className="card bg-base-100 shadow-xl border-2 border-dashed border-base-300 hover:border-primary transition-colors flex-1">
+            <div className="card-body items-center text-center space-y-4 justify-center min-h-0">
               <input
                 type="file"
                 accept=".csv"

@@ -9,7 +9,7 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
   switch (dataType) {
     case ImportDataTypeStringMappings.CashFlowEntries:
       return data.map((item: any) => ({
-        amount: convertDollarsToCents(cleanCurrencyInput(item.amount) || '0'),
+        amount: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
         date: item.date,
         categoryName: item.categoryName,
         description: item.description,
@@ -27,13 +27,13 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
     case ImportDataTypeStringMappings.HoldingSnapshots:
       return data.map((item: any) => ({
         holdingName: item.holdingName,
-        balance: convertDollarsToCents(cleanCurrencyInput(item.balance) || '0'),
+        balance: convertDollarsToCents(cleanCurrencyInput(item.balance.toString()) || '0'),
         date: item.date
       } as HoldingSnapshotImport));
 
     case ImportDataTypeStringMappings.Budgets:
       return data.map((item: any) => ({
-        amount: convertDollarsToCents(cleanCurrencyInput(item.amount) || '0'),
+        amount: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
         categoryName: item.categoryName,
         name: item.name
       } as BudgetImport));
