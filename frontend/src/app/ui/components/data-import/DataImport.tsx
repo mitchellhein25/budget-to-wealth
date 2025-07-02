@@ -126,85 +126,73 @@ export default function DataImport() {
         <h2 className="text-xl font-semibold">
           Import {selectedDataType} Data
         </h2>
-        <button onClick={handleDownloadTemplate} className="btn btn-outline btn-sm">
-          <FileText className="w-4 h-4 mr-2" />
-          Download Template
-        </button>
       </div>
 
       {!showPreview && !importResult && (
         <div className="space-y-4">
-          <InputFieldSetTemplate 
-            label="Import Type" 
-            isRequired={false}
-            inputChild={
-              <select
-                id="data-type-select"
-                value={selectedDataType}
-                onChange={handleDataTypeChange}
-                className="select"
-              >
-                {Object.values(ImportDataTypeStringMappings).map((dataType) => (
-                  <option key={dataType} value={dataType}>{dataType}</option>
-                ))}
-              </select>
-            }
-          />
-          <div className="mb-4">
-            <label htmlFor="data-type-select" className="block text-sm font-medium text-gray-700 mb-2">
-              Select Import Type
-            </label>
-            <select
-              id="data-type-select"
-              value={selectedDataType}
-              onChange={handleDataTypeChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value={ImportDataTypeStringMappings.CashFlowEntries}>{ImportDataTypeStringMappings.CashFlowEntries}</option>
-              <option value={ImportDataTypeStringMappings.HoldingSnapshots}>{ImportDataTypeStringMappings.HoldingSnapshots}</option>
-              <option value={ImportDataTypeStringMappings.Holdings}>{ImportDataTypeStringMappings.Holdings}</option>
-              <option value={ImportDataTypeStringMappings.Budgets}>{ImportDataTypeStringMappings.Budgets}</option>
-              <option value={ImportDataTypeStringMappings.HoldingCategories}>{ImportDataTypeStringMappings.HoldingCategories}</option>
-              <option value={ImportDataTypeStringMappings.CashFlowCategories}>{ImportDataTypeStringMappings.CashFlowCategories}</option>
-            </select>
-          </div>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileSelect}
-              className="hidden"
-              id="file-upload"
-              disabled={isProcessing}
+          <div className="flex flex-col space-y-4">
+            <InputFieldSetTemplate 
+              label="Import Type" 
+              isRequired={false}
+              inputChild={
+                <select
+                  id="data-type-select"
+                  value={selectedDataType}
+                  onChange={handleDataTypeChange}
+                  className="select"
+                >
+                  {Object.values(ImportDataTypeStringMappings).map((dataType) => (
+                    <option key={dataType} value={dataType}>{dataType}</option>
+                  ))}
+                </select>
+              }
             />
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer flex flex-col items-center"
-            >
-              <Upload className="w-12 h-12 text-gray-400 mb-4" />
-              <div className="text-lg font-medium text-gray-900 mb-2">
-                {isProcessing ? 'Processing file...' : 'Choose CSV file to import'}
-              </div>
-              <div className="text-sm text-gray-500 mb-4">
-                Supports .csv files only
-              </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-                <div className="font-medium mb-1">💡 Tip:</div>
-                <div>If you have an Excel file, save it as CSV first:</div>
-                <div className="text-xs mt-1">
-                  1. Open your Excel file<br/>
-                  2. Go to File → Save As<br/>
-                  3. Choose "CSV (Comma delimited)"<br/>
-                  4. Save and upload the .csv file
+            <div className="flex justify-start">
+              <button onClick={handleDownloadTemplate} className="btn btn-outline">
+                <FileText className="w-6 h-6 mr-2" />
+                Download Template
+              </button>
+            </div>
+          </div>
+          <div className="card bg-base-100 shadow-xl border-2 border-dashed border-base-300 hover:border-primary transition-colors">
+            <div className="card-body items-center text-center space-y-4">
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleFileSelect}
+                className="hidden"
+                id="file-upload"
+                disabled={isProcessing}
+              />
+              <label
+                htmlFor="file-upload"
+                className="cursor-pointer flex flex-col items-center"
+              >
+                <Upload className="w-12 h-12" />
+                <div className="text-lg">
+                  {isProcessing ? 'Processing file...' : 'Choose CSV file to import'}
                 </div>
-              </div>
-            </label>
+                <div className="text-sm">
+                  Supports .csv files only
+                </div>
+                <div className="bg-base-200 rounded-lg p-4 text-sm space-y-2">
+                  <div className="text-md">💡 Tip:</div>
+                  <div>If you have an Excel file, save it as CSV first:</div>
+                  <div className="text-xs">
+                    <div>1. Open your Excel file</div>
+                    <div>2. Go to File → Save As</div>
+                    <div>3. Choose "CSV (Comma delimited)"</div>
+                    <div>4. Save and upload the .csv file</div>
+                  </div>
+                </div>
+              </label>
+            </div>
           </div>
 
           {isProcessing && (
             <div className="flex items-center justify-center py-4">
-              <Loader2 className="w-6 h-6 animate-spin text-blue-600 mr-2" />
-              <span className="text-gray-600">Processing file...</span>
+              <Loader2 className="w-6 h-6 animate-spin text-primary mr-2" />
+              <span>Processing file...</span>
             </div>
           )}
         </div>
