@@ -24,7 +24,7 @@ export type ImportDataTypeStrings = (typeof ImportDataTypeStringMappings)[keyof 
 export type CashFlowEntryImport = {
   amount: number;
   date: string;
-  entryType: "Income" | "Expense";
+  categoryType: "Income" | "Expense";
   categoryName: string;
   description: string;
   recurrenceFrequency: "Daily" | "Weekly" | "Monthly" | "Yearly";
@@ -34,6 +34,8 @@ export type HoldingSnapshotImport = {
   holdingName: string;
   date: string;
   balance: number;
+  holdingCategory: string;
+  holdingType: "Asset" | "Debt";
 }
 
 export type HoldingImport = {
@@ -54,7 +56,7 @@ export type HoldingCategoryImport = {
 
 export type CashFlowCategoryImport = {
   name: string;
-  type: "Income" | "Expense";
+  categoryType: "Income" | "Expense";
 }
 
 export interface ImportError {

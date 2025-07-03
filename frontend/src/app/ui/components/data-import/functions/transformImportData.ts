@@ -13,7 +13,7 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
         date: item.date,
         categoryName: item.categoryName,
         description: item.description,
-        entryType: item.entryType,
+        categoryType: item.categoryType,
         recurrenceFrequency: item.recurrenceFrequency,
       } as CashFlowEntryImport));
 
@@ -28,7 +28,9 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
       return data.map((item: any) => ({
         holdingName: item.holdingName,
         balance: convertDollarsToCents(cleanCurrencyInput(item.balance.toString()) || '0'),
-        date: item.date
+        date: item.date,
+        holdingCategory: item.holdingCategory,
+        holdingType: item.holdingType
       } as HoldingSnapshotImport));
 
     case ImportDataTypeStringMappings.Budgets:
@@ -46,7 +48,7 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
     case ImportDataTypeStringMappings.CashFlowCategories:
       return data.map((item: any) => ({
         name: item.name,
-        type: item.type
+        categoryType: item.categoryType
       } as CashFlowCategoryImport));
 
     default:

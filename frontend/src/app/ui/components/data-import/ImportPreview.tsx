@@ -1,6 +1,5 @@
 import React from 'react';
-import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings } from './DataImportTypes';
-import { formatCurrency, formatDate } from '../Utils';
+import { ImportDataTypeStrings } from './DataImportTypes';
 
 interface ImportPreviewProps {
   data: any[];
@@ -11,50 +10,17 @@ interface ImportPreviewProps {
 }
 
 export default function ImportPreview(props: ImportPreviewProps) {
-  const getPreviewColumns = () => {
-    switch (props.dataTypeString) {
-      case ImportDataTypeStringMappings.CashFlowEntries:
-        return [
-          { key: 'amount', label: 'Amount', formatter: (value: number) => formatCurrency(value * 100) },
-          { key: 'date', label: 'Date', formatter: (value: string) => formatDate(new Date(value)) },
-          { key: 'categoryName', label: 'Category' },
-          { key: 'description', label: 'Description' },
-          { key: 'entryType', label: 'Type' },
-          { key: 'recurrenceFrequency', label: 'Recurrence Frequency' }
-        ];
-      case ImportDataTypeStringMappings.Holdings:
-        return [
-          { key: 'name', label: 'Name' },
-          { key: 'type', label: 'Type' },
-          { key: 'holdingCategoryName', label: 'Category' }
-        ];
-      case ImportDataTypeStringMappings.HoldingSnapshots:
-        return [
-          { key: 'holdingName', label: 'Holding' },
-          { key: 'balance', label: 'Balance', formatter: (value: number) => formatCurrency(value * 100) },
-          { key: 'date', label: 'Date', formatter: (value: string) => formatDate(new Date(value)) }
-        ];
-      case ImportDataTypeStringMappings.Budgets:
-        return [
-          { key: 'amount', label: 'Amount', formatter: (value: number) => formatCurrency(value * 100) },
-          { key: 'categoryName', label: 'Category' },
-          { key: 'name', label: 'Name' }
-        ];
-      case ImportDataTypeStringMappings.HoldingCategories:
-        return [
-          { key: 'name', label: 'Name' }
-        ];
-      case ImportDataTypeStringMappings.CashFlowCategories:
-        return [
-          { key: 'name', label: 'Name' },
-          { key: 'type', label: 'Type' }
-        ];
-      default:
-        return [];
-    }
+  const getColumns = () => {
+    if (props.data.length === 0) return [];
+    
+    const firstItem = props.data[0];
+    return Object.keys(firstItem).map(key => ({
+      key,
+      label: key
+    }));
   };
 
-  const columns = getPreviewColumns();
+  const columns = getColumns();
 
   return (
     <div className="space-y-4">
@@ -84,10 +50,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
                 <tr key={index}>
                   {columns.map((column) => (
                     <td key={column.key}>
-                      {column.formatter 
-                        ? column.formatter(item[column.key] as never)
-                        : item[column.key] || '-'
-                      }
+                      {item[column.key] || '-'}
                     </td>
                   ))}
                 </tr>
