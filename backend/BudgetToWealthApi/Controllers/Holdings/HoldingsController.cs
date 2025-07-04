@@ -112,6 +112,137 @@ public class HoldingsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("Import")]
+    public async Task<IActionResult> Import([FromBody] List<HoldingImport> holdings)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        if (holdings == null || !holdings.Any())
+            return BadRequest("No holdings provided for import.");
+
+        const int maxRecords = 100;
+        if (holdings.Count > maxRecords)
+        {
+            return BadRequest($"Cannot import more than {maxRecords} holdings at once. Please split your import into smaller batches.");
+        }
+
+        var results = new List<ImportResult>();
+        var importedCount = 0;
+        var errorCount = 0;
+
+        foreach (var holdingImport in holdings)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(holdingImport.Name))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Holding name cannot be empty.",
+                        Row = holdings.IndexOf(holdingImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(holdingImport.HoldingCategoryName))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Holding category name cannot be empty.",
+                        Row = holdings.IndexOf(holdingImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                // Find the category by name
+                var category = await _context.HoldingCategories
+                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, holdingImport.HoldingCategoryName) &&
+                                              (c.UserId == userId || c.UserId == null));
+                
+                if (category == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Holding category '{holdingImport.HoldingCategoryName}' not found.",
+                        Row = holdings.IndexOf(holdingImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                // Check if holding already exists
+                var exists = await _context.Holdings
+                    .AnyAsync(h => h.UserId == userId &&
+                                   EF.Functions.ILike(h.Name, holdingImport.Name) &&
+                                   h.Type == holdingImport.Type &&
+                                   h.HoldingCategoryId == category.Id);
+                
+                if (exists)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Holding '{holdingImport.Name}' already exists in category '{holdingImport.HoldingCategoryName}'.",
+                        Row = holdings.IndexOf(holdingImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var holding = new Holding
+                {
+                    Name = holdingImport.Name,
+                    Type = holdingImport.Type,
+                    HoldingCategoryId = category.Id,
+                    UserId = userId
+                };
+
+                _context.Holdings.Add(holding);
+                importedCount++;
+
+                results.Add(new ImportResult 
+                { 
+                    Success = true, 
+                    Message = $"Holding '{holdingImport.Name}' imported successfully.",
+                    Row = holdings.IndexOf(holdingImport) + 1
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ImportResult 
+                { 
+                    Success = false, 
+                    Message = $"Error importing holding: {ex.Message}",
+                    Row = holdings.IndexOf(holdingImport) + 1
+                });
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0)
+            await _context.SaveChangesAsync();
+
+        var response = new ImportResponse
+        {
+            Success = errorCount == 0,
+            Message = errorCount == 0 
+                ? $"Successfully imported {importedCount} holdings"
+                : $"Imported {importedCount} holdings with {errorCount} errors",
+            ImportedCount = importedCount,
+            ErrorCount = errorCount,
+            Results = results
+        };
+
+        return Ok(response);
+    }
+
     private async Task<IActionResult?> ValidateHolding(Holding newHolding, string userId)
     {
         if (string.IsNullOrWhiteSpace(newHolding.Name))
