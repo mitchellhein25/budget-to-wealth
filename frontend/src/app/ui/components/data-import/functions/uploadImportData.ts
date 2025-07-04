@@ -1,71 +1,61 @@
-import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult } from '../DataImportTypes';
+import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult, ImportItemResult } from '../DataImportTypes';
 import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
 
 export async function uploadImportData(data: ImportDataType[], dataType: ImportDataTypeStrings): Promise<ImportResult> {
-  const errors: any[] = [];
-  let importedCount = 0;
-
-  try {
-    const batchSize = 10;
-    const batches = [];
-    
-    for (let i = 0; i < data.length; i += batchSize) {
-      batches.push(data.slice(i, i + batchSize));
-    }
-
-    for (const batch of batches) {
-      const batchPromises = batch.map(async (item, index) => {
-        try {
-          const endpoint = getEndpointForDataType(dataType);
-          const response = await postRequest(endpoint, item);
-          
-          if (!response.successful) {
-            throw new Error(response.responseMessage || 'Upload failed');
-          }
-          
-          return { success: true };
-        } catch (error) {
-          return { 
-            success: false, 
-            error: error instanceof Error ? error.message : 'Unknown error',
-            row: index + 1
-          };
-        }
-      });
-
-      const batchResults = await Promise.all(batchPromises);
-      
-      batchResults.forEach(result => {
-        if (result.success) {
-          importedCount++;
-        } else {
-          errors.push({
-            row: result.row,
-            message: result.error
-          });
-        }
-      });
-    }
-
-    return {
-      success: errors.length === 0,
-      message: errors.length === 0 
-        ? `Successfully imported ${importedCount} items`
-        : `Imported ${importedCount} items with ${errors.length} errors`,
-      importedCount,
-      errorCount: errors.length,
-      errors
-    };
-
-  } catch (error) {
-    return {
-      success: false,
-      message: `Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      importedCount: 0,
-      errorCount: data.length,
-      errors: []
-    };
+  const batchSize = 100;
+  const batches = [];
+  for (let i = 0; i < data.length; i += batchSize) {
+    batches.push(data.slice(i, i + batchSize));
   }
+
+  let allResults: ImportItemResult[] = [];
+  let totalImportedCount = 0;
+  let totalErrorCount = 0;
+  let overallSuccess = true;
+  let overallMessage = '';
+
+  for (const [batchIndex, batch] of batches.entries()) {
+    const endpoint = getEndpointForDataType(dataType);
+    const response = await postRequest(endpoint, batch);
+
+    if (!response.successful || !response.data) {
+      // If the whole batch fails, mark all as failed
+      for (let i = 0; i < batch.length; i++) {
+        allResults.push({
+          success: false,
+          message: response.responseMessage || 'Upload failed',
+          row: batchIndex * batchSize + i + 1,
+        });
+      }
+      totalErrorCount += batch.length;
+      overallSuccess = false;
+      overallMessage = response.responseMessage || 'Upload failed';
+      continue;
+    }
+
+    const importResult = response.data as ImportResult;
+
+    importResult.results.forEach(r => {
+      allResults.push({
+        ...r,
+        row: r.row + batchIndex * batchSize,
+      });
+    });
+    totalImportedCount += importResult.importedCount;
+    totalErrorCount += importResult.errorCount;
+    if (!importResult.success) {
+      overallSuccess = false;
+      overallMessage = importResult.message;
+    }
+  }
+
+  return {
+    success: overallSuccess,
+    message: overallMessage || `Imported ${totalImportedCount} items with ${totalErrorCount} errors`,
+    importedCount: totalImportedCount,
+    errorCount: totalErrorCount,
+    results: allResults,
+  };
 }
 
 function getEndpointForDataType(dataType: ImportDataTypeStrings): string {

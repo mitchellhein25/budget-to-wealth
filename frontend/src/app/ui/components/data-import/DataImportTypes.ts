@@ -1,13 +1,3 @@
-import { Budget } from "@/app/lib/models/cashflow/Budget";
-import { CashFlowCategory } from "@/app/lib/models/cashflow/CashFlowCategory";
-import { CashFlowEntry } from "@/app/lib/models/cashflow/CashFlowEntry";
-import { Holding } from "@/app/lib/models/net-worth/Holding";
-import { HoldingSnapshot } from "@/app/lib/models/net-worth/HoldingSnapshot";
-import { Category } from "@/app/lib/models/Category";
-import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
-import { RecurrenceFrequency } from "@/app/lib/models/cashflow/RecurrenceFrequency";
-import { HoldingType } from "@/app/lib/models/net-worth/HoldingType";
-
 export type ImportDataType = CashFlowEntryImport | HoldingSnapshotImport | HoldingImport | BudgetImport | HoldingCategoryImport | CashFlowCategoryImport;
 
 export const ImportDataTypeStringMappings = {
@@ -59,10 +49,10 @@ export type CashFlowCategoryImport = {
   categoryType: "Income" | "Expense";
 }
 
-export interface ImportError {
-  row: number;
+export interface ImportItemResult {
+  success: boolean;
   message: string;
-  field?: string;
+  row: number;
 }
 
 export interface ImportResult {
@@ -70,7 +60,7 @@ export interface ImportResult {
   message: string;
   importedCount: number;
   errorCount: number;
-  errors: ImportError[];
+  results: ImportItemResult[];
 }
 
 export interface DataImportProps {

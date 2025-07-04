@@ -1,11 +1,6 @@
-import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 import { cleanCurrencyInput } from '../../Utils';
-import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportError } from '../DataImportTypes';
-import { getFieldsForImportType, ImportField } from './getFieldsForImportType';
-import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
-import { Holding } from '@/app/lib/models/net-worth/Holding';
-import { Budget } from '@/app/lib/models/cashflow/Budget';
-import { Category } from '@/app/lib/models/Category';
+import { ImportDataTypeStrings, ImportError } from '../DataImportTypes';
+import { getFieldsForImportType } from './getFieldsForImportType';
 
 interface ValidationResult {
   success: boolean;
