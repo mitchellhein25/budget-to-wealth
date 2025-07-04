@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -403,5 +404,231 @@ public class CashFlowEntriesControllerTests : IDisposable
             Assert.True(expense.UpdatedAt > expense.CreatedAt);
             Assert.True(expense.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
+    }
+
+    // Import test helper methods
+    private async Task<ImportResponse> ExecuteImportAndGetResponse(List<CashFlowEntryImport> entriesToImport)
+    {
+        var result = await _controller.Import(entriesToImport);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        return Assert.IsType<ImportResponse>(okResult.Value);
+    }
+
+    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    {
+        Assert.Equal(expectedSuccess, response.Success);
+        Assert.Equal(expectedImportedCount, response.ImportedCount);
+        Assert.Equal(expectedErrorCount, response.ErrorCount);
+        
+        if (expectedSuccess)
+        {
+            Assert.Contains($"Successfully imported {expectedImportedCount} entries", response.Message);
+        }
+        else
+        {
+            Assert.Contains($"Imported {expectedImportedCount} entries with {expectedErrorCount} errors", response.Message);
+        }
+    }
+
+    private async Task<List<CashFlowEntry>> GetSavedEntriesForImport(List<CashFlowEntryImport> entriesToImport)
+    {
+        var userEntries = await _context.CashFlowEntries
+            .Where(e => e.UserId == _user1Id)
+            .Include(e => e.Category)
+            .ToListAsync();
+        
+        return userEntries
+            .Where(e => entriesToImport.Any(ei => ei.AmountInCents == e.Amount && 
+                                                   ei.Date == e.Date && 
+                                                   ei.CategoryName == e.Category!.Name &&
+                                                   ei.CategoryType == e.Category.CategoryType))
+            .ToList();
+    }
+
+    private async Task ValidateSavedEntries(List<CashFlowEntryImport> entriesToImport, int expectedCount)
+    {
+        var savedEntries = await GetSavedEntriesForImport(entriesToImport);
+        Assert.Equal(expectedCount, savedEntries.Count);
+    }
+
+    private async Task ValidateBadRequestForImport(List<CashFlowEntryImport>? entries, string expectedMessage)
+    {
+        var result = await _controller.Import(entries);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Import_SuccessfullyImportsValidEntries()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, Description = "Test expense" },
+            new() { AmountInCents = 250000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income, Description = "Test income" },
+            new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 16), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 3, 0, true);
+        await ValidateSavedEntries(entriesToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenNoEntriesProvided()
+    {
+        await ValidateBadRequestForImport(null, "No entries provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenEmptyListProvided()
+    {
+        await ValidateBadRequestForImport(new List<CashFlowEntryImport>(), "No entries provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenTooManyEntriesProvided()
+    {
+        var entries = new List<CashFlowEntryImport>();
+        for (int i = 0; i < 101; i++)
+            entries.Add(new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 1).AddDays(i), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense });
+        
+        var result = await _controller.Import(entries);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Cannot import more than 100 entries at once", badRequestResult.Value.ToString());
+    }
+
+    [Fact]
+    public async Task Import_SkipsEntriesWithNegativeAmounts()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = -10000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 250000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedEntries(entriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsEntriesWithEmptyCategoryNames()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 15), CategoryName = "", CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 250000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedEntries(entriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsEntriesWithNonExistentCategories()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 15), CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 250000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedEntries(entriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_HandlesRecurrenceFrequency()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, RecurrenceFrequency = RecurrenceFrequency.Monthly },
+            new() { AmountInCents = 250000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income, RecurrenceFrequency = RecurrenceFrequency.Weekly }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 2, 0, true);
+        await ValidateSavedEntries(entriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_ProvidesDetailedResultsForEachEntry()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = -10000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 15), CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        var results = response.Results as List<ImportResult>;
+        Assert.Equal(3, results.Count);
+        
+        var successResult = results.First(r => r.Success);
+        Assert.Contains(_testObjects.TestUser1CategoryExpense.Name, successResult.Message);
+        Assert.Contains("imported successfully", successResult.Message);
+        
+        var negativeAmountResult = results.First(r => !r.Success && r.Message.Contains("must be positive"));
+        Assert.Equal(2, negativeAmountResult.Row);
+        
+        var categoryNotFoundResult = results.First(r => !r.Success && r.Message.Contains("not found"));
+        Assert.Equal(3, categoryNotFoundResult.Row);
+    }
+
+    [Fact]
+    public async Task Import_UnauthorizedUserCannotImport()
+    {
+        SetUserUnauthorized();
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense }
+        };
+        
+        var result = await _controller.Import(entriesToImport);
+        Assert.IsType<UnauthorizedResult>(result);
+        
+        var savedEntries = await GetSavedEntriesForImport(entriesToImport);
+        Assert.Empty(savedEntries);
+        
+        SetupUserContext(_user1Id);
+    }
+
+    [Fact]
+    public async Task Import_HandlesMixedValidAndInvalidEntries()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = 150000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = -10000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 15), CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 250000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income },
+            new() { AmountInCents = 50000, Date = new DateOnly(2025, 1, 15), CategoryName = "", CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 75000, Date = new DateOnly(2025, 1, 16), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 3, 3, false);
+        await ValidateSavedEntries(entriesToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_DoesNotSaveAnyEntriesWhenAllAreInvalid()
+    {
+        var entriesToImport = new List<CashFlowEntryImport>
+        {
+            new() { AmountInCents = -10000, Date = new DateOnly(2025, 1, 15), CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 100000, Date = new DateOnly(2025, 1, 15), CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense },
+            new() { AmountInCents = 50000, Date = new DateOnly(2025, 1, 15), CategoryName = "", CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(entriesToImport);
+        await ValidateImportResponse(response, 0, 3, false);
+        await ValidateSavedEntries(entriesToImport, 0);
     }
 }

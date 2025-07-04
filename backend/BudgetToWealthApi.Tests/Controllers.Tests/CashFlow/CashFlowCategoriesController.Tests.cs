@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class CashFlowCategoriesControllerTests : IDisposable
@@ -265,5 +266,247 @@ public class CashFlowCategoriesControllerTests : IDisposable
             Assert.True(category.UpdatedAt > category.CreatedAt);
             Assert.True(category.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
+    }
+
+    private async Task<ImportResponse> ExecuteImportAndGetResponse(List<CashFlowCategoryImport> categoriesToImport)
+    {
+        var result = await _controller.Import(categoriesToImport);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        return Assert.IsType<ImportResponse>(okResult.Value);
+    }
+
+    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    {
+        Assert.Equal(expectedSuccess, response.Success);
+        Assert.Equal(expectedImportedCount, response.ImportedCount);
+        Assert.Equal(expectedErrorCount, response.ErrorCount);
+        
+        if (expectedSuccess)
+        {
+            Assert.Contains($"Successfully imported {expectedImportedCount} categories", response.Message);
+        }
+        else
+        {
+            Assert.Contains($"Imported {expectedImportedCount} categories with {expectedErrorCount} errors", response.Message);
+        }
+    }
+
+    private async Task<List<CashFlowCategory>> GetSavedCategoriesForImport(List<CashFlowCategoryImport> categoriesToImport)
+    {
+        var userCategories = await _context.CashFlowCategories
+            .Where(c => c.UserId == _user1Id)
+            .ToListAsync();
+        
+        return userCategories
+            .Where(c => categoriesToImport.Any(ci => ci.Name == c.Name && ci.CategoryType == c.CategoryType))
+            .ToList();
+    }
+
+    private async Task ValidateSavedCategories(List<CashFlowCategoryImport> categoriesToImport, int expectedCount)
+    {
+        var savedCategories = await GetSavedCategoriesForImport(categoriesToImport);
+        Assert.Equal(expectedCount, savedCategories.Count);
+    }
+
+    private async Task ValidateBadRequestForImport(List<CashFlowCategoryImport>? categories, string expectedMessage)
+    {
+        var result = await _controller.Import(categories);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Import_SuccessfullyImportsValidCategories()
+    {
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}Import Category 1", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Import Category 2", CategoryType = CashFlowType.Income },
+            new() { Name = $"{_testPrefix}Import Category 3", CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 3, 0, true);
+        await ValidateSavedCategories(categoriesToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenNoCategoriesProvided()
+    {
+        await ValidateBadRequestForImport(null, "No categories provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenEmptyListProvided()
+    {
+        await ValidateBadRequestForImport(new List<CashFlowCategoryImport>(), "No categories provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenTooManyCategoriesProvided()
+    {
+        var categories = new List<CashFlowCategoryImport>();
+        for (int i = 0; i < 101; i++)
+            categories.Add(new() { Name = $"{_testPrefix}Category {i}", CategoryType = CashFlowType.Expense });
+        
+        var result = await _controller.Import(categories);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Cannot import more than 100 categories at once", badRequestResult.Value.ToString());
+    }
+
+    [Fact]
+    public async Task Import_SkipsCategoriesWithEmptyNames()
+    {
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}Valid Category", CategoryType = CashFlowType.Expense },
+            new() { Name = "", CategoryType = CashFlowType.Expense },
+            new() { Name = "   ", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Another Valid Category", CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 2, 2, false);
+        await ValidateSavedCategories(categoriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsCategoriesThatAlreadyExist()
+    {
+        await CreateTestCategory($"{_testPrefix}Existing Category", _user1Id);
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}New Category", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Existing Category", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Another New Category", CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedCategories(categoriesToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_SkipsCategoriesThatConflictWithDefaultCategories()
+    {
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}New Category", CategoryType = CashFlowType.Expense },
+            new() { Name = _defaultCatName, CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Another New Category", CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedCategories(categoriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_HandlesCaseInsensitiveNameConflicts()
+    {
+        await CreateTestCategory($"{_testPrefix}Existing Category", _user1Id);
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}New Category", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}EXISTING CATEGORY", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Another New Category", CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedCategories(categoriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_AllowsSameNameForDifferentTypes()
+    {
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}Same Name", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Same Name", CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 2, 0, true);
+        await ValidateSavedCategories(categoriesToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_ProvidesDetailedResultsForEachCategory()
+    {
+        await CreateTestCategory($"{_testPrefix}Existing Category", _user1Id);
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}New Category", CategoryType = CashFlowType.Expense },
+            new() { Name = "", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Existing Category", CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        var results = response.Results as List<ImportResult>;
+        Assert.Equal(3, results.Count);
+        
+        var successResult = results.First(r => r.Success);
+        Assert.Contains("New Category", successResult.Message);
+        Assert.Contains("imported successfully", successResult.Message);
+        
+        var emptyNameResult = results.First(r => !r.Success && r.Message.Contains("cannot be empty"));
+        Assert.Equal(2, emptyNameResult.Row);
+        
+        var conflictResult = results.First(r => !r.Success && r.Message.Contains("already exists"));
+        Assert.Equal(3, conflictResult.Row);
+    }
+
+    [Fact]
+    public async Task Import_UnauthorizedUserCannotImport()
+    {
+        SetUserUnauthorized();
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}Test Category", CategoryType = CashFlowType.Expense }
+        };
+        
+        var result = await _controller.Import(categoriesToImport);
+        Assert.IsType<UnauthorizedResult>(result);
+        
+        var savedCategories = await GetSavedCategoriesForImport(categoriesToImport);
+        Assert.Empty(savedCategories);
+        
+        SetupUserContext(_user1Id);
+    }
+
+    [Fact]
+    public async Task Import_HandlesMixedValidAndInvalidCategories()
+    {
+        await CreateTestCategory($"{_testPrefix}Existing Category", _user1Id);        
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = $"{_testPrefix}Valid Category 1", CategoryType = CashFlowType.Expense },
+            new() { Name = "", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Existing Category", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Valid Category 2", CategoryType = CashFlowType.Income },
+            new() { Name = "   ", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Valid Category 3", CategoryType = CashFlowType.Expense }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 3, 3, false);
+        await ValidateSavedCategories(categoriesToImport, 4);
+    }
+
+    [Fact]
+    public async Task Import_DoesNotSaveAnyCategoriesWhenAllAreInvalid()
+    {
+        await CreateTestCategory($"{_testPrefix}Existing Category", _user1Id);
+        var categoriesToImport = new List<CashFlowCategoryImport>
+        {
+            new() { Name = "", CategoryType = CashFlowType.Expense },
+            new() { Name = $"{_testPrefix}Existing Category", CategoryType = CashFlowType.Expense },
+            new() { Name = "   ", CategoryType = CashFlowType.Income }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(categoriesToImport);
+        await ValidateImportResponse(response, 0, 3, false);
+        await ValidateSavedCategories(categoriesToImport, 1);
     }
 }
