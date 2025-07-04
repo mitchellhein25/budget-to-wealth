@@ -181,7 +181,7 @@ public class HoldingCategoriesController : ControllerBase
         if (importedCount > 0)
             await _context.SaveChangesAsync();
 
-        var response = new
+        var response = new ImportResponse
         {
             Success = errorCount == 0,
             Message = errorCount == 0 
