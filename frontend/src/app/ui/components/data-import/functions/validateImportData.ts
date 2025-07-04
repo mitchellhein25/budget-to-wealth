@@ -27,9 +27,6 @@ export function validateImportData(data: any[], dataType: ImportDataTypeStrings 
   const dataTypeFields = getFieldsForImportType(dataType);
 
   for (const [index, row] of data.entries()) {
-    if (index === 0) 
-      continue;
-
     const rowIndex = index + 1;
     try {
       for (const importField of dataTypeFields.filter(field => field.required)) {

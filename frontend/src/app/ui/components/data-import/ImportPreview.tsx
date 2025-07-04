@@ -14,13 +14,17 @@ export default function ImportPreview(props: ImportPreviewProps) {
     if (props.data.length === 0) return [];
     
     const firstItem = props.data[0];
-    return Object.keys(firstItem).map(key => ({
+    const allKeys = Object.keys(firstItem);
+    const limitedKeys = allKeys.slice(0, 10);
+    
+    return limitedKeys.map(key => ({
       key,
       label: key
     }));
   };
 
   const columns = getColumns();
+  const totalColumns = props.data.length > 0 ? Object.keys(props.data[0]).length : 0;
 
   return (
     <div className="space-y-4">
@@ -46,26 +50,42 @@ export default function ImportPreview(props: ImportPreviewProps) {
               </tr>
             </thead>
             <tbody>
-              {props.data.slice(0, 10).map((item, index) => (
-                <tr key={index}>
-                  {columns.map((column) => (
-                    <td key={column.key}>
-                      {item[column.key] || '-'}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {props.data.length > 10 
+                ? props.data.slice(0, 10).map((item, index) => (
+                    <tr key={index}>
+                      {columns.map((column) => (
+                        <td key={column.key}>
+                          {item[column.key] || '-'}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                : props.data.map((item, index) => (
+                    <tr key={index}>
+                      {columns.map((column) => (
+                        <td key={column.key}>
+                          {item[column.key] || '-'}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+              }
             </tbody>
           </table>
         </div>
         
-        {props.data.length > 10 && (
-          <div className="card-body pt-0">
+        <div className="card-body pt-0 space-y-2">
+          {props.data.length > 10 && (
             <div className="alert alert-info alert-soft">
               Showing first 10 of {props.data.length} items
             </div>
-          </div>
-        )}
+          )}
+          {totalColumns > 10 && (
+            <div className="alert alert-info alert-soft">
+              Showing first 10 of {totalColumns} columns
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-3">
