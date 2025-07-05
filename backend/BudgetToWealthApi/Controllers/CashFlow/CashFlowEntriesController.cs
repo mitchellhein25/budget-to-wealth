@@ -157,7 +157,43 @@ public class CashFlowEntriesController : ControllerBase
                     continue;
                 }
 
-                // Find the category by name and type
+                if (entryImport.Date == default)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Date is required.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (entryImport.RecurrenceFrequency.HasValue && 
+                    !Enum.IsDefined(typeof(RecurrenceFrequency), entryImport.RecurrenceFrequency.Value))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Invalid recurrence frequency.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (!Enum.IsDefined(typeof(CashFlowType), entryImport.CategoryType))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Invalid category type.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
                 var category = await _context.CashFlowCategories
                     .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, entryImport.CategoryName) &&
                                               c.CategoryType == entryImport.CategoryType &&

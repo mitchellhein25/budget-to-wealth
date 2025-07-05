@@ -1,8 +1,8 @@
 export type CashFlowEntryImport = {
-  amount: number;
+  amountInCents: number;
   date: string;
-  categoryType: "Income" | "Expense";
   categoryName: string;
-  description: string;
-  recurrenceFrequency: "Daily" | "Weekly" | "Monthly" | "Yearly";
+  categoryType: "Income" | "Expense";
+  description?: string;
+  recurrenceFrequency?: "Daily" | "Weekly" | "Monthly" | "Yearly";
 } 

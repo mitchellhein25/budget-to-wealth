@@ -160,10 +160,20 @@ public class HoldingsController : ControllerBase
                     continue;
                 }
 
-                // Find the category by name
+                if (!Enum.IsDefined(typeof(HoldingType), holdingImport.Type))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Invalid holding type '{holdingImport.Type}'. Valid types are: {string.Join(", ", Enum.GetNames(typeof(HoldingType)))}.",
+                        Row = holdings.IndexOf(holdingImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
                 var category = await _context.HoldingCategories
-                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, holdingImport.HoldingCategoryName) &&
-                                              (c.UserId == userId || c.UserId == null));
+                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, holdingImport.HoldingCategoryName) && (c.UserId == userId || c.UserId == null));
                 
                 if (category == null)
                 {
@@ -177,7 +187,6 @@ public class HoldingsController : ControllerBase
                     continue;
                 }
 
-                // Check if holding already exists
                 var exists = await _context.Holdings
                     .AnyAsync(h => h.UserId == userId &&
                                    EF.Functions.ILike(h.Name, holdingImport.Name) &&

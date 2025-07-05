@@ -151,24 +151,64 @@ public class HoldingSnapshotsController : ControllerBase
                     continue;
                 }
 
-                // Find the holding by name
-                var holding = await _context.Holdings
-                    .FirstOrDefaultAsync(h => EF.Functions.ILike(h.Name, snapshotImport.HoldingName) &&
-                                              h.UserId == userId);
-                
-                if (holding == null)
+                if (string.IsNullOrWhiteSpace(snapshotImport.HoldingCategoryName))
                 {
                     results.Add(new ImportResult 
                     { 
                         Success = false, 
-                        Message = $"Holding '{snapshotImport.HoldingName}' not found.",
+                        Message = "Holding category name cannot be empty.",
                         Row = snapshots.IndexOf(snapshotImport) + 1
                     });
                     errorCount++;
                     continue;
                 }
 
-                // Check if snapshot already exists for this holding and date
+                if (!Enum.IsDefined(typeof(HoldingType), snapshotImport.HoldingType))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Invalid holding type '{snapshotImport.HoldingType}'. Valid types are: {string.Join(", ", Enum.GetNames(typeof(HoldingType)))}.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var category = await _context.HoldingCategories
+                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, snapshotImport.HoldingCategoryName) && 
+                                             (c.UserId == userId || c.UserId == null));
+                
+                if (category == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Holding category '{snapshotImport.HoldingCategoryName}' not found.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var holding = await _context.Holdings
+                    .FirstOrDefaultAsync(h => EF.Functions.ILike(h.Name, snapshotImport.HoldingName) &&
+                                             h.Type == snapshotImport.HoldingType &&
+                                             h.HoldingCategoryId == category.Id &&
+                                             h.UserId == userId);
+                
+                if (holding == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Holding '{snapshotImport.HoldingName}' of type '{snapshotImport.HoldingType}' in category '{snapshotImport.HoldingCategoryName}' not found.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
                 var exists = await _context.HoldingSnapshots
                     .AnyAsync(s => s.UserId == userId &&
                                    s.HoldingId == holding.Id &&

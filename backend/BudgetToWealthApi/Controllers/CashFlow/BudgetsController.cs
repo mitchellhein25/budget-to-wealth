@@ -167,22 +167,21 @@ public class BudgetsController : ControllerBase
                     continue;
                 }
 
-                if (budgetImport.CategoryType != CashFlowType.Expense)
+                if (string.IsNullOrWhiteSpace(budgetImport.Name))
                 {
                     results.Add(new ImportResult 
                     { 
                         Success = false, 
-                        Message = "Budgets can only be created for Expense categories.",
+                        Message = "Budget name cannot be empty.",
                         Row = budgets.IndexOf(budgetImport) + 1
                     });
                     errorCount++;
                     continue;
                 }
 
-                // Find the category by name and type
                 var category = await _context.CashFlowCategories
                     .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, budgetImport.CategoryName) &&
-                                              c.CategoryType == budgetImport.CategoryType &&
+                                              c.CategoryType == CashFlowType.Expense &&
                                               (c.UserId == userId || c.UserId == null));
                 
                 if (category == null)
@@ -190,7 +189,7 @@ public class BudgetsController : ControllerBase
                     results.Add(new ImportResult 
                     { 
                         Success = false, 
-                        Message = $"Category '{budgetImport.CategoryName}' not found for type {budgetImport.CategoryType}.",
+                        Message = $"Category '{budgetImport.CategoryName}' not found for Expense type.",
                         Row = budgets.IndexOf(budgetImport) + 1
                     });
                     errorCount++;
@@ -212,8 +211,8 @@ public class BudgetsController : ControllerBase
                 {
                     Amount = budgetImport.AmountInCents,
                     CategoryId = category.Id,
-                    StartDate = budgetImport.StartDate,
-                    EndDate = budgetImport.EndDate,
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    EndDate = null,
                     UserId = userId
                 };
 
@@ -223,7 +222,7 @@ public class BudgetsController : ControllerBase
                 results.Add(new ImportResult 
                 { 
                     Success = true, 
-                    Message = $"Budget for category '{budgetImport.CategoryName}' imported successfully.",
+                    Message = $"Budget '{budgetImport.Name}' for category '{budgetImport.CategoryName}' imported successfully.",
                     Row = budgets.IndexOf(budgetImport) + 1
                 });
             }

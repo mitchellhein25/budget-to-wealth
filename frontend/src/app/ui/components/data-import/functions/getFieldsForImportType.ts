@@ -25,7 +25,7 @@ export function getFieldsForImportType(dataType: string): ImportField[] {
       return [
         { name: "balance", type: "number", required: true },
         { name: "holdingName", type: "string", required: true },
-        { name: "holdingCategory", type: "string", required: true },
+        { name: "holdingCategoryName", type: "string", required: true },
         { name: "holdingType", type: "string", required: true },
         { name: "date", type: "string", required: true }
       ];

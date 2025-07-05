@@ -1,5 +1,5 @@
 export type BudgetImport = {
-  amount: number;
+  amountInCents: number;
   categoryName: string;
   name: string;
 } 

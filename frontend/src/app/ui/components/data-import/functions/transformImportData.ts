@@ -1,5 +1,3 @@
-import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
-import { HoldingType } from '@/app/lib/models/net-worth/HoldingType';
 import { BudgetImport } from '../../../../lib/models/data-import/BudgetImport';
 import { CashFlowCategoryImport } from '../../../../lib/models/data-import/CashFlowCategoryImport';
 import { CashFlowEntryImport } from '../../../../lib/models/data-import/CashFlowEntryImport';
@@ -10,14 +8,12 @@ import { ImportDataType } from '../../../../lib/models/data-import/ImportDataTyp
 import { ImportDataTypeStringMappings } from '../../../../lib/models/data-import/ImportDataTypeStringMappings';
 import { ImportDataTypeStrings } from '../../../../lib/models/data-import/ImportDataTypeStrings';
 import { cleanCurrencyInput, convertDollarsToCents } from '../../Utils';
-import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
-import { RecurrenceFrequency } from '@/app/lib/models/cashflow/RecurrenceFrequency';
 
 export function transformImportData(data: ImportDataType[], dataType: ImportDataTypeStrings): any[] { 
   switch (dataType) {
     case ImportDataTypeStringMappings.CashFlowEntries:
       return data.map((item: any) => ({
-        amount: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
+        amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
         date: item.date,
         categoryName: item.categoryName,
         description: item.description,
@@ -35,15 +31,15 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
     case ImportDataTypeStringMappings.HoldingSnapshots:
       return data.map((item: any) => ({
         holdingName: item.holdingName,
-        balance: convertDollarsToCents(cleanCurrencyInput(item.balance.toString()) || '0'),
         date: item.date,
-        holdingCategory: item.holdingCategory,
-        holdingType: item.holdingType
+        balanceInCents: convertDollarsToCents(cleanCurrencyInput(item.balance.toString()) || '0'),
+        holdingCategoryName: item.holdingCategoryName,
+        holdingType: item.holdingType as "Asset" | "Debt"
       } as HoldingSnapshotImport));
 
     case ImportDataTypeStringMappings.Budgets:
       return data.map((item: any) => ({
-        amount: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
+        amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
         categoryName: item.categoryName,
         name: item.name
       } as BudgetImport));

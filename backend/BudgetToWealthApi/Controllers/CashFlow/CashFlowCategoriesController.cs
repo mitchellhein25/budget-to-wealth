@@ -11,6 +11,7 @@ public class CashFlowCategoriesController : ControllerBase
 {
     private const string ConflictMessage = "Category already exists.";
     private const string NameRequiredMessage = "Category name cannot be empty.";
+    private const string CategoryTypeRequiredMessage = "Category type is required.";
     private readonly ApplicationDbContext _context;
 
     public CashFlowCategoriesController(ApplicationDbContext context)
@@ -47,6 +48,9 @@ public class CashFlowCategoriesController : ControllerBase
         if (string.IsNullOrWhiteSpace(category.Name))
             return BadRequest(NameRequiredMessage);
 
+        if (!Enum.IsDefined(typeof(CashFlowType), category.CategoryType))
+            return BadRequest(CategoryTypeRequiredMessage);
+
         var exists = await _context.CashFlowCategories
             .AnyAsync(c => EF.Functions.ILike(c.Name, category.Name) &&
                             (c.UserId == userId || c.UserId == null) &&
@@ -70,6 +74,9 @@ public class CashFlowCategoriesController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(updatedCategory.Name))
             return BadRequest(NameRequiredMessage);
+
+        if (!Enum.IsDefined(typeof(CashFlowType), updatedCategory.CategoryType))
+            return BadRequest(CategoryTypeRequiredMessage);
 
         CashFlowCategory? category = await _context.CashFlowCategories
             .FirstOrDefaultAsync(category => category.Id == id &&
@@ -138,6 +145,18 @@ public class CashFlowCategoriesController : ControllerBase
                     { 
                         Success = false, 
                         Message = "Category name cannot be empty.",
+                        Row = categories.IndexOf(categoryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (!Enum.IsDefined(typeof(CashFlowType), categoryImport.CategoryType))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Category type is required.",
                         Row = categories.IndexOf(categoryImport) + 1
                     });
                     errorCount++;

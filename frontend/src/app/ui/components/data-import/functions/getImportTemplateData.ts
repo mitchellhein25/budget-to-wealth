@@ -25,13 +25,13 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
       };
     case ImportDataTypeStringMappings.HoldingSnapshots:
       return {
-        headers: ['balance', 'holdingName', 'holdingCategory', 'holdingType', 'date'],
+        headers: ['balance', 'holdingName', 'holdingCategoryName', 'holdingType', 'date'],
         sampleData: [
           ['5000.00', 'Savings Account', 'Cash', 'Asset', '2024-01-15'],
           ['25000.00', 'Investment Portfolio', 'Investments', 'Asset', '2024-01-15'],
           ['-1500.00', 'Credit Card', 'Credit', 'Debt', '2024-01-15']
         ],
-        description: 'Import holding snapshots with balance, holding name, holding category, holding type (Asset/Debt), and date'
+        description: 'Import holding snapshots with balance, holding name, holding category name, holding type (Asset/Debt), and date'
       };
     case ImportDataTypeStringMappings.Holdings:
       return {
