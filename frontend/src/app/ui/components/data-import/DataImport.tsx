@@ -15,17 +15,15 @@ import { ImportResult } from '../../../lib/models/data-import/ImportResult';
 import InputFieldSetTemplate from '../form/InputFieldSetTemplate';
 
 export default function DataImport() {
-  const [file, setFile] = useState<File | null>(null);
   const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>(ImportDataTypeStringMappings.CashFlowEntries);
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
-  const [previewData, setPreviewData] = useState<any[]>([]);
+  const [previewData, setPreviewData] = useState<ImportDataType[]>([]);
   const [showPreview, setShowPreview] = useState(false);
   const [showTemplate, setShowTemplate] = useState(false);
 
   const handleDataTypeChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDataType(event.target.value as ImportDataTypeStrings);
-    setFile(null);
     setPreviewData([]);
     setShowPreview(false);
     setImportResult(null);
@@ -46,7 +44,6 @@ export default function DataImport() {
       return;
     }
 
-    setFile(selectedFile);
     setIsProcessing(true);
     setImportResult(null);
 
@@ -97,7 +94,6 @@ export default function DataImport() {
       
       if (result.success) {
         setTimeout(() => {
-          setFile(null);
           setPreviewData([]);
           setShowPreview(false);
           setImportResult(null);
@@ -117,7 +113,6 @@ export default function DataImport() {
   }, [previewData, selectedDataType]);
 
   const handleCancel = useCallback(() => {
-    setFile(null);
     setPreviewData([]);
     setShowPreview(false);
     setImportResult(null);
@@ -191,7 +186,7 @@ export default function DataImport() {
                   <div className="text-xs">
                     <div>1. Open your Excel file</div>
                     <div>2. Go to File → Save As</div>
-                    <div>3. Choose "CSV (Comma delimited)"</div>
+                    <div>3. Choose &quot;CSV (Comma delimited)&quot;</div>
                     <div>4. Save and upload the .csv file</div>
                   </div>
                 </div>

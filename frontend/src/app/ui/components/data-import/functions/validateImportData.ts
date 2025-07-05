@@ -3,15 +3,18 @@ import { ImportDataTypeStrings } from '../../../../lib/models/data-import/Import
 import { ImportError } from '../../../../lib/models/data-import/ImportError';
 import { getFieldsForImportType } from './getFieldsForImportType';
 
+// Type for raw CSV data
+type RawCsvData = Record<string, string | number | boolean>;
+
 interface ValidationResult {
   success: boolean;
-  data?: any[];
+  data?: RawCsvData[];
   errors: ImportError[];
 }
 
-export function validateImportData(data: any[], dataType: ImportDataTypeStrings | undefined): ValidationResult {
+export function validateImportData(data: RawCsvData[], dataType: ImportDataTypeStrings | undefined): ValidationResult {
   const errors: ImportError[] = [];
-  const successRows: any[] = [];
+  const successRows: RawCsvData[] = [];
 
   if (!dataType) {
     return {

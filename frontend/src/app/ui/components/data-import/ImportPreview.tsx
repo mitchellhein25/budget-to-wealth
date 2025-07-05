@@ -1,8 +1,9 @@
 import React from 'react';
 import { ImportDataTypeStrings } from '../../../lib/models/data-import/ImportDataTypeStrings';
+import { ImportDataType } from '../../../lib/models/data-import/ImportDataType';
 
 interface ImportPreviewProps {
-  data: any[];
+  data: ImportDataType[];
   dataTypeString: ImportDataTypeStrings;
   onImport: () => void;
   onCancel: () => void;
@@ -55,7 +56,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
                     <tr key={index}>
                       {columns.map((column) => (
                         <td key={column.key}>
-                          {item[column.key] || '-'}
+                          {item[column.key as keyof ImportDataType] || '-'}
                         </td>
                       ))}
                     </tr>
@@ -64,7 +65,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
                     <tr key={index}>
                       {columns.map((column) => (
                         <td key={column.key}>
-                          {item[column.key] || '-'}
+                          {item[column.key as keyof ImportDataType] || '-'}
                         </td>
                       ))}
                     </tr>

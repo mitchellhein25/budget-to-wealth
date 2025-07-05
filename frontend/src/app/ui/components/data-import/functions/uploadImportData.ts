@@ -12,7 +12,7 @@ export async function uploadImportData(data: ImportDataType[], dataType: ImportD
     batches.push(data.slice(i, i + batchSize));
   }
 
-  let allResults: ImportItemResult[] = [];
+  const allResults: ImportItemResult[] = [];
   let totalImportedCount = 0;
   let totalErrorCount = 0;
   let overallSuccess = true;
