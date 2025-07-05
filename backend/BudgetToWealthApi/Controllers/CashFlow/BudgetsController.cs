@@ -167,18 +167,6 @@ public class BudgetsController : ControllerBase
                     continue;
                 }
 
-                if (string.IsNullOrWhiteSpace(budgetImport.Name))
-                {
-                    results.Add(new ImportResult 
-                    { 
-                        Success = false, 
-                        Message = "Budget name cannot be empty.",
-                        Row = budgets.IndexOf(budgetImport) + 1
-                    });
-                    errorCount++;
-                    continue;
-                }
-
                 var category = await _context.CashFlowCategories
                     .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, budgetImport.CategoryName) &&
                                               c.CategoryType == CashFlowType.Expense &&
@@ -222,7 +210,7 @@ public class BudgetsController : ControllerBase
                 results.Add(new ImportResult 
                 { 
                     Success = true, 
-                    Message = $"Budget '{budgetImport.Name}' for category '{budgetImport.CategoryName}' imported successfully.",
+                    Message = $"Budget for category '{budgetImport.CategoryName}' imported successfully.",
                     Row = budgets.IndexOf(budgetImport) + 1
                 });
             }

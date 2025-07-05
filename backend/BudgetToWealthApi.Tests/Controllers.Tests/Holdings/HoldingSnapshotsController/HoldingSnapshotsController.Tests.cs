@@ -325,9 +325,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 15), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding2.Name, Date = new DateOnly(2025, 1, 15), BalanceInCents = 250000 },
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 20), BalanceInCents = 160000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 20), 
+                BalanceInCents = 160000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -352,7 +370,13 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshots = new List<HoldingSnapshotImport>();
         for (int i = 0; i < 101; i++)
-            snapshots.Add(new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 1).AddDays(i), BalanceInCents = 100000 });
+            snapshots.Add(new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 1).AddDays(i), 
+                BalanceInCents = 100000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            });
         
         var result = await _controller.Import(snapshots);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -364,10 +388,34 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 15), BalanceInCents = 150000 },
-            new() { HoldingName = "", Date = new DateOnly(2025, 1, 15), BalanceInCents = 150000 },
-            new() { HoldingName = "   ", Date = new DateOnly(2025, 1, 15), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding2.Name, Date = new DateOnly(2025, 1, 15), BalanceInCents = 250000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "   ", 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -380,9 +428,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 15), BalanceInCents = 150000 },
-            new() { HoldingName = "NonExistentHolding", Date = new DateOnly(2025, 1, 15), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding2.Name, Date = new DateOnly(2025, 1, 15), BalanceInCents = 250000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -395,9 +461,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = _testObjects.TestHoldingSnapshotHolding1User1A.Date, BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding2.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 250000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = _testObjects.TestHoldingSnapshotHolding1User1A.Date, 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -410,9 +494,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name.ToUpper(), Date = _testObjects.TestHoldingSnapshotHolding1User1A.Date, BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding2.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 250000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name.ToUpper(), 
+                Date = _testObjects.TestHoldingSnapshotHolding1User1A.Date, 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -425,9 +527,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 26), BalanceInCents = 160000 },
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 27), BalanceInCents = 170000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 26), 
+                BalanceInCents = 160000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 27), 
+                BalanceInCents = 170000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -440,9 +560,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = "", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = "NonExistentHolding", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -466,7 +604,13 @@ public class HoldingSnapshotsControllerTests : IDisposable
         SetUserUnauthorized();
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
         };
         
         var result = await _controller.Import(snapshotsToImport);
@@ -483,12 +627,48 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = "", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = "NonExistentHolding", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding2.Name, Date = new DateOnly(2025, 1, 25), BalanceInCents = 250000 },
-            new() { HoldingName = "   ", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = _testObjects.TestUser1Holding1.Name, Date = new DateOnly(2025, 1, 26), BalanceInCents = 160000 }
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            },
+            new() { 
+                HoldingName = "   ", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 26), 
+                BalanceInCents = 160000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);
@@ -501,9 +681,27 @@ public class HoldingSnapshotsControllerTests : IDisposable
     {
         var snapshotsToImport = new List<HoldingSnapshotImport>
         {
-            new() { HoldingName = "", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = "NonExistentHolding", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 },
-            new() { HoldingName = "   ", Date = new DateOnly(2025, 1, 25), BalanceInCents = 150000 }
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "   ", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
         };
         
         var response = await ExecuteImportAndGetResponse(snapshotsToImport);

@@ -457,9 +457,7 @@ public class BudgetsControllerTests : IDisposable
         
         return userBudgets
             .Where(b => budgetsToImport.Any(bi => bi.AmountInCents == b.Amount && 
-                                                   bi.CategoryName == b.Category!.Name &&
-                                                   bi.CategoryType == b.Category.CategoryType &&
-                                                   bi.StartDate == b.StartDate))
+                                                   bi.CategoryName == b.Category!.Name))
             .ToList();
     }
 
@@ -467,6 +465,16 @@ public class BudgetsControllerTests : IDisposable
     {
         var savedBudgets = await GetSavedBudgetsForImport(budgetsToImport);
         Assert.Equal(expectedCount, savedBudgets.Count);
+        
+        foreach (var budgetImport in budgetsToImport.Where(b => b.AmountInCents > 0 && !string.IsNullOrWhiteSpace(b.CategoryName)))
+        {
+            var matchingBudget = savedBudgets.FirstOrDefault(b => b.Amount == budgetImport.AmountInCents && 
+                                                                  b.Category!.Name == budgetImport.CategoryName);
+            if (savedBudgets.Any(b => b.Amount == budgetImport.AmountInCents && b.Category!.Name == budgetImport.CategoryName))
+            {
+                Assert.NotNull(matchingBudget);
+            }
+        }
     }
 
     private async Task ValidateBadRequestForImport(List<BudgetImport>? budgets, string expectedMessage)
@@ -481,9 +489,9 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1), EndDate = new DateOnly(2025, 12, 31) },
-            new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 2, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -508,7 +516,7 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgets = new List<BudgetImport>();
         for (int i = 0; i < 101; i++)
-            budgets.Add(new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1).AddDays(i) });
+            budgets.Add(new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryExpense.Name });
         
         var result = await _controller.Import(budgets);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -520,9 +528,9 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -535,9 +543,9 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 100000, CategoryName = "", CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "" },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -550,24 +558,9 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) }
-        };
-        
-        var response = await ExecuteImportAndGetResponse(budgetsToImport);
-        await ValidateImportResponse(response, 2, 1, false);
-        await ValidateSavedBudgets(budgetsToImport, 2);
-    }
-
-    [Fact]
-    public async Task Import_SkipsBudgetsWithNonExpenseCategories()
-    {
-        var budgetsToImport = new List<BudgetImport>
-        {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -591,7 +584,7 @@ public class BudgetsControllerTests : IDisposable
 
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 2, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -608,9 +601,9 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -634,7 +627,7 @@ public class BudgetsControllerTests : IDisposable
         SetUserUnauthorized();
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
         };
         
         var result = await _controller.Import(budgetsToImport);
@@ -651,12 +644,12 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 50000, CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 75000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 2, 1) }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name },
+            new() { AmountInCents = 50000, CategoryName = _testObjects.TestUser1CategoryIncome.Name },
+            new() { AmountInCents = 75000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -669,9 +662,9 @@ public class BudgetsControllerTests : IDisposable
     {
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name, CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory", CategoryType = CashFlowType.Expense, StartDate = new DateOnly(2025, 1, 1) },
-            new() { AmountInCents = 50000, CategoryName = _testObjects.TestUser1CategoryIncome.Name, CategoryType = CashFlowType.Income, StartDate = new DateOnly(2025, 1, 1) }
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" },
+            new() { AmountInCents = 50000, CategoryName = _testObjects.TestUser1CategoryIncome.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);

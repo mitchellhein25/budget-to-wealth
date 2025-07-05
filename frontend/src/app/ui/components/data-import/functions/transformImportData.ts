@@ -40,8 +40,7 @@ export function transformImportData(data: ImportDataType[], dataType: ImportData
     case ImportDataTypeStringMappings.Budgets:
       return data.map((item: any) => ({
         amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
-        categoryName: item.categoryName,
-        name: item.name
+        categoryName: item.categoryName
       } as BudgetImport));
 
     case ImportDataTypeStringMappings.HoldingCategories:
