@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
-import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings } from './DataImportTypes';
+import { ImportDataType } from '../../../lib/models/data-import/ImportDataType';
+import { ImportDataTypeStringMappings } from '../../../lib/models/data-import/ImportDataTypeStringMappings';
+import { ImportDataTypeStrings } from '../../../lib/models/data-import/ImportDataTypeStrings';
 import { Download, X } from 'lucide-react';
 import { getImportTemplateData } from './functions/getImportTemplateData';
 

@@ -578,7 +578,6 @@ public class BudgetsControllerTests : IDisposable
     [Fact]
     public async Task Import_HandlesActiveBudgetReplacement()
     {
-        // First, create an active budget for the category
         var activeBudget = new Budget
         {
             Amount = 100000,
@@ -599,7 +598,6 @@ public class BudgetsControllerTests : IDisposable
         await ValidateImportResponse(response, 1, 0, true);
         await ValidateSavedBudgets(budgetsToImport, 1);
 
-        // Verify the old active budget was ended
         var updatedActiveBudget = await _context.Budgets.FindAsync(activeBudget.Id);
         Assert.NotNull(updatedActiveBudget);
         Assert.NotNull(updatedActiveBudget.EndDate);

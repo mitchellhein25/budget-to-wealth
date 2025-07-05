@@ -1,4 +1,5 @@
-import { ImportDataTypeStringMappings, ImportDataTypeStrings } from "../DataImportTypes";
+import { ImportDataTypeStringMappings } from "../../../../lib/models/data-import/ImportDataTypeStringMappings";
+import { ImportDataTypeStrings } from "../../../../lib/models/data-import/ImportDataTypeStrings";
 
 export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => {
   switch (dataTypeString) {

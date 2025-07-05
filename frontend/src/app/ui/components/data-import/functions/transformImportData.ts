@@ -1,6 +1,14 @@
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { HoldingType } from '@/app/lib/models/net-worth/HoldingType';
-import { BudgetImport, CashFlowCategoryImport, CashFlowEntryImport, HoldingCategoryImport, HoldingImport, HoldingSnapshotImport, ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings } from '../DataImportTypes';
+import { BudgetImport } from '../../../../lib/models/data-import/BudgetImport';
+import { CashFlowCategoryImport } from '../../../../lib/models/data-import/CashFlowCategoryImport';
+import { CashFlowEntryImport } from '../../../../lib/models/data-import/CashFlowEntryImport';
+import { HoldingCategoryImport } from '../../../../lib/models/data-import/HoldingCategoryImport';
+import { HoldingImport } from '../../../../lib/models/data-import/HoldingImport';
+import { HoldingSnapshotImport } from '../../../../lib/models/data-import/HoldingSnapshotImport';
+import { ImportDataType } from '../../../../lib/models/data-import/ImportDataType';
+import { ImportDataTypeStringMappings } from '../../../../lib/models/data-import/ImportDataTypeStringMappings';
+import { ImportDataTypeStrings } from '../../../../lib/models/data-import/ImportDataTypeStrings';
 import { cleanCurrencyInput, convertDollarsToCents } from '../../Utils';
 import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 import { RecurrenceFrequency } from '@/app/lib/models/cashflow/RecurrenceFrequency';

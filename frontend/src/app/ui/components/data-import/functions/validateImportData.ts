@@ -1,5 +1,6 @@
 import { cleanCurrencyInput } from '../../Utils';
-import { ImportDataTypeStrings, ImportError } from '../DataImportTypes';
+import { ImportDataTypeStrings } from '../../../../lib/models/data-import/ImportDataTypeStrings';
+import { ImportError } from '../../../../lib/models/data-import/ImportError';
 import { getFieldsForImportType } from './getFieldsForImportType';
 
 interface ValidationResult {

@@ -8,7 +8,10 @@ import { uploadImportData } from './functions/uploadImportData';
 import { parseCsvFile } from './functions/parseCsvFile';
 import ImportPreview from './ImportPreview';
 import ImportTemplate from './ImportTemplate';
-import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult } from './DataImportTypes';
+import { ImportDataType } from '../../../lib/models/data-import/ImportDataType';
+import { ImportDataTypeStringMappings } from '../../../lib/models/data-import/ImportDataTypeStringMappings';
+import { ImportDataTypeStrings } from '../../../lib/models/data-import/ImportDataTypeStrings';
+import { ImportResult } from '../../../lib/models/data-import/ImportResult';
 import InputFieldSetTemplate from '../form/InputFieldSetTemplate';
 
 export default function DataImport() {

@@ -1,4 +1,8 @@
-import { ImportDataType, ImportDataTypeStringMappings, ImportDataTypeStrings, ImportResult, ImportItemResult } from '../DataImportTypes';
+import { ImportDataType } from '../../../../lib/models/data-import/ImportDataType';
+import { ImportDataTypeStringMappings } from '../../../../lib/models/data-import/ImportDataTypeStringMappings';
+import { ImportDataTypeStrings } from '../../../../lib/models/data-import/ImportDataTypeStrings';
+import { ImportResult } from '../../../../lib/models/data-import/ImportResult';
+import { ImportItemResult } from '../../../../lib/models/data-import/ImportItemResult';
 import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
 
 export async function uploadImportData(data: ImportDataType[], dataType: ImportDataTypeStrings): Promise<ImportResult> {

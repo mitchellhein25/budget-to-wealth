@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImportDataTypeStrings } from './DataImportTypes';
+import { ImportDataTypeStrings } from '../../../lib/models/data-import/ImportDataTypeStrings';
 
 interface ImportPreviewProps {
   data: any[];
