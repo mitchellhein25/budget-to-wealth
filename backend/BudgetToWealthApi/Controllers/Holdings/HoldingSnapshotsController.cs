@@ -115,6 +115,164 @@ public class HoldingSnapshotsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("Import")]
+    public async Task<IActionResult> Import([FromBody] List<HoldingSnapshotImport> snapshots)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        if (snapshots == null || !snapshots.Any())
+            return BadRequest("No snapshots provided for import.");
+
+        const int maxRecords = 100;
+        if (snapshots.Count > maxRecords)
+        {
+            return BadRequest($"Cannot import more than {maxRecords} snapshots at once. Please split your import into smaller batches.");
+        }
+
+        var results = new List<ImportResult>();
+        var importedCount = 0;
+        var errorCount = 0;
+
+        foreach (var snapshotImport in snapshots)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(snapshotImport.HoldingName))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Holding name cannot be empty.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(snapshotImport.HoldingCategoryName))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Holding category name cannot be empty.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (!Enum.IsDefined(typeof(HoldingType), snapshotImport.HoldingType))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Invalid holding type '{snapshotImport.HoldingType}'. Valid types are: {string.Join(", ", Enum.GetNames(typeof(HoldingType)))}.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var category = await _context.HoldingCategories
+                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, snapshotImport.HoldingCategoryName) && 
+                                             (c.UserId == userId || c.UserId == null));
+                
+                if (category == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Holding category '{snapshotImport.HoldingCategoryName}' not found.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var holding = await _context.Holdings
+                    .FirstOrDefaultAsync(h => EF.Functions.ILike(h.Name, snapshotImport.HoldingName) &&
+                                             h.Type == snapshotImport.HoldingType &&
+                                             h.HoldingCategoryId == category.Id &&
+                                             h.UserId == userId);
+                
+                if (holding == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Holding '{snapshotImport.HoldingName}' of type '{snapshotImport.HoldingType}' in category '{snapshotImport.HoldingCategoryName}' not found.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var exists = await _context.HoldingSnapshots
+                    .AnyAsync(s => s.UserId == userId &&
+                                   s.HoldingId == holding.Id &&
+                                   s.Date == snapshotImport.Date);
+                
+                if (exists)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Snapshot for holding '{snapshotImport.HoldingName}' on date {snapshotImport.Date} already exists.",
+                        Row = snapshots.IndexOf(snapshotImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var snapshot = new HoldingSnapshot
+                {
+                    HoldingId = holding.Id,
+                    Date = snapshotImport.Date,
+                    Balance = snapshotImport.BalanceInCents,
+                    UserId = userId
+                };
+
+                _context.HoldingSnapshots.Add(snapshot);
+                importedCount++;
+
+                results.Add(new ImportResult 
+                { 
+                    Success = true, 
+                    Message = $"Snapshot for holding '{snapshotImport.HoldingName}' imported successfully.",
+                    Row = snapshots.IndexOf(snapshotImport) + 1
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ImportResult 
+                { 
+                    Success = false, 
+                    Message = $"Error importing snapshot: {ex.Message}",
+                    Row = snapshots.IndexOf(snapshotImport) + 1
+                });
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0)
+            await _context.SaveChangesAsync();
+
+        var response = new ImportResponse
+        {
+            Success = errorCount == 0,
+            Message = errorCount == 0 
+                ? $"Successfully imported {importedCount} snapshots"
+                : $"Imported {importedCount} snapshots with {errorCount} errors",
+            ImportedCount = importedCount,
+            ErrorCount = errorCount,
+            Results = results
+        };
+
+        return Ok(response);
+    }
+
     private async Task<IActionResult?> ValidateHoldingSnapshot(HoldingSnapshot holdingSnapshot, string userId)
     {
         if (holdingSnapshot.HoldingId == Guid.Empty)

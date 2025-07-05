@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class HoldingsControllerTests : IDisposable
@@ -308,5 +309,260 @@ public class HoldingsControllerTests : IDisposable
             Assert.True(holding.UpdatedAt > holding.CreatedAt);
             Assert.True(holding.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
+    }
+
+    private async Task<ImportResponse> ExecuteImportAndGetResponse(List<HoldingImport> holdingsToImport)
+    {
+        var result = await _controller.Import(holdingsToImport);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        return Assert.IsType<ImportResponse>(okResult.Value);
+    }
+
+    private Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    {
+        Assert.Equal(expectedSuccess, response.Success);
+        Assert.Equal(expectedImportedCount, response.ImportedCount);
+        Assert.Equal(expectedErrorCount, response.ErrorCount);
+        
+        if (expectedSuccess)
+        {
+            Assert.Contains($"Successfully imported {expectedImportedCount} holdings", response.Message);
+        }
+        else
+        {
+            Assert.Contains($"Imported {expectedImportedCount} holdings with {expectedErrorCount} errors", response.Message);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task<List<Holding>> GetSavedHoldingsForImport(List<HoldingImport> holdingsToImport)
+    {
+        var userHoldings = await _context.Holdings
+            .Where(h => h.UserId == _user1Id)
+            .Include(h => h.HoldingCategory)
+            .ToListAsync();
+        
+        return userHoldings
+            .Where(h => holdingsToImport.Any(hi => hi.Name == h.Name && hi.Type == h.Type && hi.HoldingCategoryName == h.HoldingCategory!.Name))
+            .ToList();
+    }
+
+    private async Task ValidateSavedHoldings(List<HoldingImport> holdingsToImport, int expectedCount)
+    {
+        var savedHoldings = await GetSavedHoldingsForImport(holdingsToImport);
+        Assert.Equal(expectedCount, savedHoldings.Count);
+    }
+
+    private async Task ValidateBadRequestForImport(List<HoldingImport>? holdings, string expectedMessage)
+    {
+        var result = await _controller.Import(holdings);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Import_SuccessfullyImportsValidHoldings()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Test Import Holding 1", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Test Import Holding 2", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Test Import Holding 3", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.DefaultCategory.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 3, 0, true);
+        await ValidateSavedHoldings(holdingsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenNoHoldingsProvided()
+    {
+        await ValidateBadRequestForImport(null, "No holdings provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenEmptyListProvided()
+    {
+        await ValidateBadRequestForImport(new List<HoldingImport>(), "No holdings provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenTooManyHoldingsProvided()
+    {
+        var holdings = new List<HoldingImport>();
+        for (int i = 0; i < 101; i++)
+            holdings.Add(new() { Name = $"Test Holding {i}", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name });
+        
+        var result = await _controller.Import(holdings);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Cannot import more than 100 holdings at once", badRequestResult.Value.ToString());
+    }
+
+    [Fact]
+    public async Task Import_SkipsHoldingsWithEmptyNames()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Valid Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "   ", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Another Valid Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.DefaultCategory.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 2, 2, false);
+        await ValidateSavedHoldings(holdingsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsHoldingsWithEmptyCategoryNames()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Valid Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Invalid Holding", Type = HoldingType.Asset, HoldingCategoryName = "" },
+            new() { Name = "Another Valid Holding", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedHoldings(holdingsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsHoldingsWithNonExistentCategories()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Valid Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Invalid Holding", Type = HoldingType.Asset, HoldingCategoryName = "NonExistentCategory" },
+            new() { Name = "Another Valid Holding", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedHoldings(holdingsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsHoldingsThatAlreadyExist()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "New Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = _testObjects.TestHoldingAssetCat1User1.Name, Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Another New Holding", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedHoldings(holdingsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_HandlesCaseInsensitiveNameConflicts()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "New Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = _testObjects.TestHoldingAssetCat1User1.Name.ToUpper(), Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Another New Holding", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedHoldings(holdingsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_AllowsSameNameInDifferentCategories()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Same Name", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Same Name", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.DefaultCategory.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 2, 0, true);
+        await ValidateSavedHoldings(holdingsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_ProvidesDetailedResultsForEachHolding()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "New Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "NonExistent Category", Type = HoldingType.Asset, HoldingCategoryName = "NonExistentCategory" }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        var results = response.Results as List<ImportResult>;
+        Assert.Equal(3, results.Count);
+        
+        var successResult = results.First(r => r.Success);
+        Assert.Contains("New Holding", successResult.Message);
+        Assert.Contains("imported successfully", successResult.Message);
+        
+        var emptyNameResult = results.First(r => !r.Success && r.Message.Contains("cannot be empty"));
+        Assert.Equal(2, emptyNameResult.Row);
+        
+        var categoryNotFoundResult = results.First(r => !r.Success && r.Message.Contains("not found"));
+        Assert.Equal(3, categoryNotFoundResult.Row);
+    }
+
+    [Fact]
+    public async Task Import_UnauthorizedUserCannotImport()
+    {
+        SetUserUnauthorized();
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Test Holding", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name }
+        };
+        
+        var result = await _controller.Import(holdingsToImport);
+        Assert.IsType<UnauthorizedResult>(result);
+        
+        var savedHoldings = await GetSavedHoldingsForImport(holdingsToImport);
+        Assert.Empty(savedHoldings);
+        
+        SetupUserContext(_user1Id);
+    }
+
+    [Fact]
+    public async Task Import_HandlesMixedValidAndInvalidHoldings()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "Valid Holding 1", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "NonExistent Category", Type = HoldingType.Asset, HoldingCategoryName = "NonExistentCategory" },
+            new() { Name = "Valid Holding 2", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "   ", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "Valid Holding 3", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.DefaultCategory.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 3, 3, false);
+        await ValidateSavedHoldings(holdingsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_DoesNotSaveAnyHoldingsWhenAllAreInvalid()
+    {
+        var holdingsToImport = new List<HoldingImport>
+        {
+            new() { Name = "", Type = HoldingType.Asset, HoldingCategoryName = _testObjects.TestUser1Category.Name },
+            new() { Name = "NonExistent Category", Type = HoldingType.Asset, HoldingCategoryName = "NonExistentCategory" },
+            new() { Name = "   ", Type = HoldingType.Debt, HoldingCategoryName = _testObjects.TestUser1Category.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(holdingsToImport);
+        await ValidateImportResponse(response, 0, 3, false);
+        await ValidateSavedHoldings(holdingsToImport, 0);
     }
 }

@@ -80,7 +80,6 @@ public class HoldingCategoriesController : ControllerBase
         return Ok(category);
     }
 
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -98,5 +97,101 @@ public class HoldingCategoriesController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+    
+    [HttpPost("Import")]
+    public async Task<IActionResult> Import([FromBody] List<HoldingCategoryImport> categories)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        if (categories == null || !categories.Any())
+            return BadRequest("No categories provided for import.");
+
+        const int maxRecords = 100;
+        if (categories.Count > maxRecords)
+        {
+            return BadRequest($"Cannot import more than {maxRecords} categories at once. Please split your import into smaller batches.");
+        }
+
+        var results = new List<ImportResult>();
+        var importedCount = 0;
+        var errorCount = 0;
+
+        foreach (var categoryImport in categories)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(categoryImport.Name))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Category name cannot be empty.",
+                        Row = categories.IndexOf(categoryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var exists = await _context.HoldingCategories
+                    .AnyAsync(c => EF.Functions.ILike(c.Name, categoryImport.Name) && (c.UserId == userId || c.UserId == null));
+                
+                if (exists)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Category '{categoryImport.Name}' already exists.",
+                        Row = categories.IndexOf(categoryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var category = new HoldingCategory
+                {
+                    Name = categoryImport.Name,
+                    UserId = userId
+                };
+
+                _context.HoldingCategories.Add(category);
+                importedCount++;
+
+                results.Add(new ImportResult 
+                { 
+                    Success = true, 
+                    Message = $"Category '{categoryImport.Name}' imported successfully.",
+                    Row = categories.IndexOf(categoryImport) + 1
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ImportResult 
+                { 
+                    Success = false, 
+                    Message = $"Error importing category: {ex.Message}",
+                    Row = categories.IndexOf(categoryImport) + 1
+                });
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0)
+            await _context.SaveChangesAsync();
+
+        var response = new ImportResponse
+        {
+            Success = errorCount == 0,
+            Message = errorCount == 0 
+                ? $"Successfully imported {importedCount} categories"
+                : $"Imported {importedCount} categories with {errorCount} errors",
+            ImportedCount = importedCount,
+            ErrorCount = errorCount,
+            Results = results
+        };
+
+        return Ok(response);
     }
 }

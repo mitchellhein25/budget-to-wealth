@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 
 public class BudgetsControllerTests : IDisposable
 {
@@ -422,5 +423,252 @@ public class BudgetsControllerTests : IDisposable
             Assert.True(budget.UpdatedAt > budget.CreatedAt);
             Assert.True(budget.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
+    }
+
+    private async Task<ImportResponse> ExecuteImportAndGetResponse(List<BudgetImport> budgetsToImport)
+    {
+        var result = await _controller.Import(budgetsToImport);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        return Assert.IsType<ImportResponse>(okResult.Value);
+    }
+
+    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    {
+        Assert.Equal(expectedSuccess, response.Success);
+        Assert.Equal(expectedImportedCount, response.ImportedCount);
+        Assert.Equal(expectedErrorCount, response.ErrorCount);
+        
+        if (expectedSuccess)
+        {
+            Assert.Contains($"Successfully imported {expectedImportedCount} budgets", response.Message);
+        }
+        else
+        {
+            Assert.Contains($"Imported {expectedImportedCount} budgets with {expectedErrorCount} errors", response.Message);
+        }
+    }
+
+    private async Task<List<Budget>> GetSavedBudgetsForImport(List<BudgetImport> budgetsToImport)
+    {
+        var userBudgets = await _context.Budgets
+            .Where(b => b.UserId == _user1Id)
+            .Include(b => b.Category)
+            .ToListAsync();
+        
+        return userBudgets
+            .Where(b => budgetsToImport.Any(bi => bi.AmountInCents == b.Amount && 
+                                                   bi.CategoryName == b.Category!.Name))
+            .ToList();
+    }
+
+    private async Task ValidateSavedBudgets(List<BudgetImport> budgetsToImport, int expectedCount)
+    {
+        var savedBudgets = await GetSavedBudgetsForImport(budgetsToImport);
+        Assert.Equal(expectedCount, savedBudgets.Count);
+        
+        foreach (var budgetImport in budgetsToImport.Where(b => b.AmountInCents > 0 && !string.IsNullOrWhiteSpace(b.CategoryName)))
+        {
+            var matchingBudget = savedBudgets.FirstOrDefault(b => b.Amount == budgetImport.AmountInCents && 
+                                                                  b.Category!.Name == budgetImport.CategoryName);
+            if (savedBudgets.Any(b => b.Amount == budgetImport.AmountInCents && b.Category!.Name == budgetImport.CategoryName))
+            {
+                Assert.NotNull(matchingBudget);
+            }
+        }
+    }
+
+    private async Task ValidateBadRequestForImport(List<BudgetImport>? budgets, string expectedMessage)
+    {
+        var result = await _controller.Import(budgets);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Import_SuccessfullyImportsValidBudgets()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 3, 0, true);
+        await ValidateSavedBudgets(budgetsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenNoBudgetsProvided()
+    {
+        await ValidateBadRequestForImport(null, "No budgets provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenEmptyListProvided()
+    {
+        await ValidateBadRequestForImport(new List<BudgetImport>(), "No budgets provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenTooManyBudgetsProvided()
+    {
+        var budgets = new List<BudgetImport>();
+        for (int i = 0; i < 101; i++)
+            budgets.Add(new() { AmountInCents = 100000, CategoryName = _testObjects.TestUser1CategoryExpense.Name });
+        
+        var result = await _controller.Import(budgets);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Cannot import more than 100 budgets at once", badRequestResult.Value.ToString());
+    }
+
+    [Fact]
+    public async Task Import_SkipsBudgetsWithNegativeAmounts()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedBudgets(budgetsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsBudgetsWithEmptyCategoryNames()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "" },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedBudgets(budgetsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsBudgetsWithNonExistentCategories()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedBudgets(budgetsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_HandlesActiveBudgetReplacement()
+    {
+        var activeBudget = new Budget
+        {
+            Amount = 100000,
+            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            StartDate = new DateOnly(2025, 1, 1),
+            EndDate = null,
+            UserId = _user1Id
+        };
+        _context.Budgets.Add(activeBudget);
+        await _context.SaveChangesAsync();
+
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 1, 0, true);
+        await ValidateSavedBudgets(budgetsToImport, 1);
+
+        var updatedActiveBudget = await _context.Budgets.FindAsync(activeBudget.Id);
+        Assert.NotNull(updatedActiveBudget);
+        Assert.NotNull(updatedActiveBudget.EndDate);
+    }
+
+    [Fact]
+    public async Task Import_ProvidesDetailedResultsForEachBudget()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        var results = response.Results as List<ImportResult>;
+        Assert.Equal(3, results.Count);
+        
+        var successResult = results.First(r => r.Success);
+        Assert.Contains(_testObjects.TestUser1CategoryExpense.Name, successResult.Message);
+        Assert.Contains("imported successfully", successResult.Message);
+        
+        var negativeAmountResult = results.First(r => !r.Success && r.Message.Contains("must be positive"));
+        Assert.Equal(2, negativeAmountResult.Row);
+        
+        var categoryNotFoundResult = results.First(r => !r.Success && r.Message.Contains("not found"));
+        Assert.Equal(3, categoryNotFoundResult.Row);
+    }
+
+    [Fact]
+    public async Task Import_UnauthorizedUserCannotImport()
+    {
+        SetUserUnauthorized();
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
+        };
+        
+        var result = await _controller.Import(budgetsToImport);
+        Assert.IsType<UnauthorizedResult>(result);
+        
+        var savedBudgets = await GetSavedBudgetsForImport(budgetsToImport);
+        Assert.Empty(savedBudgets);
+        
+        SetupUserContext(_user1Id);
+    }
+
+    [Fact]
+    public async Task Import_HandlesMixedValidAndInvalidBudgets()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" },
+            new() { AmountInCents = 250000, CategoryName = _testObjects.DefaultCategoryExpense.Name },
+            new() { AmountInCents = 50000, CategoryName = _testObjects.TestUser1CategoryIncome.Name },
+            new() { AmountInCents = 75000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 3, 3, false);
+        await ValidateSavedBudgets(budgetsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_DoesNotSaveAnyBudgetsWhenAllAreInvalid()
+    {
+        var budgetsToImport = new List<BudgetImport>
+        {
+            new() { AmountInCents = -10000, CategoryName = _testObjects.TestUser1CategoryExpense.Name },
+            new() { AmountInCents = 100000, CategoryName = "NonExistentCategory" },
+            new() { AmountInCents = 50000, CategoryName = _testObjects.TestUser1CategoryIncome.Name }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(budgetsToImport);
+        await ValidateImportResponse(response, 0, 3, false);
+        await ValidateSavedBudgets(budgetsToImport, 0);
     }
 }

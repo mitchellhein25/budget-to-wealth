@@ -119,6 +119,130 @@ public class BudgetsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("Import")]
+    public async Task<IActionResult> Import([FromBody] List<BudgetImport> budgets)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        if (budgets == null || !budgets.Any())
+            return BadRequest("No budgets provided for import.");
+
+        const int maxRecords = 100;
+        if (budgets.Count > maxRecords)
+        {
+            return BadRequest($"Cannot import more than {maxRecords} budgets at once. Please split your import into smaller batches.");
+        }
+
+        var results = new List<ImportResult>();
+        var importedCount = 0;
+        var errorCount = 0;
+
+        foreach (var budgetImport in budgets)
+        {
+            try
+            {
+                if (budgetImport.AmountInCents < 0)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Amount must be positive.",
+                        Row = budgets.IndexOf(budgetImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(budgetImport.CategoryName))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Category name cannot be empty.",
+                        Row = budgets.IndexOf(budgetImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var category = await _context.CashFlowCategories
+                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, budgetImport.CategoryName) &&
+                                              c.CategoryType == CashFlowType.Expense &&
+                                              (c.UserId == userId || c.UserId == null));
+                
+                if (category == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Category '{budgetImport.CategoryName}' not found for Expense type.",
+                        Row = budgets.IndexOf(budgetImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var activeExistingBudget = await _context.Budgets
+                    .FirstOrDefaultAsync(b => b.CategoryId == category.Id && 
+                                              b.UserId == userId && 
+                                              b.EndDate == null);
+                
+                if (activeExistingBudget != null)
+                {
+                    activeExistingBudget.EndDate = DateOnly.FromDateTime(DateTime.Now);
+                    _context.Budgets.Update(activeExistingBudget);
+                }
+
+                var budget = new Budget
+                {
+                    Amount = budgetImport.AmountInCents,
+                    CategoryId = category.Id,
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    EndDate = null,
+                    UserId = userId
+                };
+
+                _context.Budgets.Add(budget);
+                importedCount++;
+
+                results.Add(new ImportResult 
+                { 
+                    Success = true, 
+                    Message = $"Budget for category '{budgetImport.CategoryName}' imported successfully.",
+                    Row = budgets.IndexOf(budgetImport) + 1
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ImportResult 
+                { 
+                    Success = false, 
+                    Message = $"Error importing budget: {ex.Message}",
+                    Row = budgets.IndexOf(budgetImport) + 1
+                });
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0)
+            await _context.SaveChangesAsync();
+
+        var response = new ImportResponse
+        {
+            Success = errorCount == 0,
+            Message = errorCount == 0 
+                ? $"Successfully imported {importedCount} budgets"
+                : $"Imported {importedCount} budgets with {errorCount} errors",
+            ImportedCount = importedCount,
+            ErrorCount = errorCount,
+            Results = results
+        };
+
+        return Ok(response);
+    }
+
     private async Task<IActionResult?> ValidateBudget(Budget budget, string userId)
     {
         if (budget.Amount < 0)

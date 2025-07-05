@@ -4,6 +4,7 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 import { SessionData } from "@auth0/nextjs-auth0/types";
 import Link from 'next/link';
+import { Import } from 'lucide-react';
 
 export default function NavBar({ session }: { session: SessionData | null }) {
   const isTokenExpired : boolean = session?.tokenSet?.expiresAt
@@ -45,6 +46,15 @@ export default function NavBar({ session }: { session: SessionData | null }) {
 
       {isAuthenticated ? (
         <div className="navbar-end">
+          {pathname !== '/import' && (
+          <Link
+            href="/import"
+            className={`btn btn-ghost btn-circle mx-2`}
+            title="Import Data"
+          >
+              <Import className="w-6 h-6" />
+            </Link>
+          )}
           <div className="flex mx-10">
             <div className="p-3 rounded-full bg-base-content mx-2"></div>
             <span className="text-base-content mx-2">

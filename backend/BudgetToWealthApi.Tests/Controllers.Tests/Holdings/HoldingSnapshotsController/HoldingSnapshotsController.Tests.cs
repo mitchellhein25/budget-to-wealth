@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 public class HoldingSnapshotsControllerTests : IDisposable
@@ -268,5 +269,443 @@ public class HoldingSnapshotsControllerTests : IDisposable
             Assert.True(snapshot.UpdatedAt > snapshot.CreatedAt);
             Assert.True(snapshot.UpdatedAt > DateTime.UtcNow.AddMinutes(-1));
         }
+    }
+
+    // Import test helper methods
+    private async Task<ImportResponse> ExecuteImportAndGetResponse(List<HoldingSnapshotImport> snapshotsToImport)
+    {
+        var result = await _controller.Import(snapshotsToImport);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        return Assert.IsType<ImportResponse>(okResult.Value);
+    }
+
+    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    {
+        Assert.Equal(expectedSuccess, response.Success);
+        Assert.Equal(expectedImportedCount, response.ImportedCount);
+        Assert.Equal(expectedErrorCount, response.ErrorCount);
+        
+        if (expectedSuccess)
+        {
+            Assert.Contains($"Successfully imported {expectedImportedCount} snapshots", response.Message);
+        }
+        else
+        {
+            Assert.Contains($"Imported {expectedImportedCount} snapshots with {expectedErrorCount} errors", response.Message);
+        }
+    }
+
+    private async Task<List<HoldingSnapshot>> GetSavedSnapshotsForImport(List<HoldingSnapshotImport> snapshotsToImport)
+    {
+        var userSnapshots = await _context.HoldingSnapshots
+            .Where(s => s.UserId == _user1Id)
+            .Include(s => s.Holding)
+            .ToListAsync();
+        
+        return userSnapshots
+            .Where(s => snapshotsToImport.Any(si => si.HoldingName == s.Holding!.Name && si.Date == s.Date))
+            .ToList();
+    }
+
+    private async Task ValidateSavedSnapshots(List<HoldingSnapshotImport> snapshotsToImport, int expectedCount)
+    {
+        var savedSnapshots = await GetSavedSnapshotsForImport(snapshotsToImport);
+        Assert.Equal(expectedCount, savedSnapshots.Count);
+    }
+
+    private async Task ValidateBadRequestForImport(List<HoldingSnapshotImport>? snapshots, string expectedMessage)
+    {
+        var result = await _controller.Import(snapshots);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task Import_SuccessfullyImportsValidSnapshots()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 20), 
+                BalanceInCents = 160000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 3, 0, true);
+        await ValidateSavedSnapshots(snapshotsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenNoSnapshotsProvided()
+    {
+        await ValidateBadRequestForImport(null, "No snapshots provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenEmptyListProvided()
+    {
+        await ValidateBadRequestForImport(new List<HoldingSnapshotImport>(), "No snapshots provided for import.");
+    }
+
+    [Fact]
+    public async Task Import_ReturnsBadRequestWhenTooManySnapshotsProvided()
+    {
+        var snapshots = new List<HoldingSnapshotImport>();
+        for (int i = 0; i < 101; i++)
+            snapshots.Add(new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 1).AddDays(i), 
+                BalanceInCents = 100000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            });
+        
+        var result = await _controller.Import(snapshots);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Cannot import more than 100 snapshots at once", badRequestResult.Value.ToString());
+    }
+
+    [Fact]
+    public async Task Import_SkipsSnapshotsWithEmptyHoldingNames()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "   ", 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 2, 2, false);
+        await ValidateSavedSnapshots(snapshotsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsSnapshotsWithNonExistentHoldings()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 15), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedSnapshots(snapshotsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_SkipsSnapshotsThatAlreadyExist()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = _testObjects.TestHoldingSnapshotHolding1User1A.Date, 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedSnapshots(snapshotsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_HandlesCaseInsensitiveHoldingNameConflicts()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name.ToUpper(), 
+                Date = _testObjects.TestHoldingSnapshotHolding1User1A.Date, 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 2, 1, false);
+        await ValidateSavedSnapshots(snapshotsToImport, 2);
+    }
+
+    [Fact]
+    public async Task Import_AllowsMultipleSnapshotsForSameHoldingOnDifferentDates()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 26), 
+                BalanceInCents = 160000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 27), 
+                BalanceInCents = 170000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 3, 0, true);
+        await ValidateSavedSnapshots(snapshotsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_ProvidesDetailedResultsForEachSnapshot()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        var results = response.Results as List<ImportResult>;
+        Assert.Equal(3, results.Count);
+        
+        var successResult = results.First(r => r.Success);
+        Assert.Contains(_testObjects.TestUser1Holding1.Name, successResult.Message);
+        Assert.Contains("imported successfully", successResult.Message);
+        
+        var emptyNameResult = results.First(r => !r.Success && r.Message.Contains("cannot be empty"));
+        Assert.Equal(2, emptyNameResult.Row);
+        
+        var notFoundResult = results.First(r => !r.Success && r.Message.Contains("not found"));
+        Assert.Equal(3, notFoundResult.Row);
+    }
+
+    [Fact]
+    public async Task Import_UnauthorizedUserCannotImport()
+    {
+        SetUserUnauthorized();
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
+        };
+        
+        var result = await _controller.Import(snapshotsToImport);
+        Assert.IsType<UnauthorizedResult>(result);
+        
+        var savedSnapshots = await GetSavedSnapshotsForImport(snapshotsToImport);
+        Assert.Empty(savedSnapshots);
+        
+        SetupUserContext(_user1Id);
+    }
+
+    [Fact]
+    public async Task Import_HandlesMixedValidAndInvalidSnapshots()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding2.Name, 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 250000,
+                HoldingCategoryName = _testObjects.TestUser1Category.Name,
+                HoldingType = _testObjects.TestUser1Holding2.Type
+            },
+            new() { 
+                HoldingName = "   ", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = _testObjects.TestUser1Holding1.Name, 
+                Date = new DateOnly(2025, 1, 26), 
+                BalanceInCents = 160000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 3, 3, false);
+        await ValidateSavedSnapshots(snapshotsToImport, 3);
+    }
+
+    [Fact]
+    public async Task Import_DoesNotSaveAnySnapshotsWhenAllAreInvalid()
+    {
+        var snapshotsToImport = new List<HoldingSnapshotImport>
+        {
+            new() { 
+                HoldingName = "", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "NonExistentHolding", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            },
+            new() { 
+                HoldingName = "   ", 
+                Date = new DateOnly(2025, 1, 25), 
+                BalanceInCents = 150000,
+                HoldingCategoryName = _testObjects.DefaultCategory.Name,
+                HoldingType = _testObjects.TestUser1Holding1.Type
+            }
+        };
+        
+        var response = await ExecuteImportAndGetResponse(snapshotsToImport);
+        await ValidateImportResponse(response, 0, 3, false);
+        await ValidateSavedSnapshots(snapshotsToImport, 0);
     }
 }

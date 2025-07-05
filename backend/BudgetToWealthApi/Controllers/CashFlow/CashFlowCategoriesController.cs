@@ -11,6 +11,7 @@ public class CashFlowCategoriesController : ControllerBase
 {
     private const string ConflictMessage = "Category already exists.";
     private const string NameRequiredMessage = "Category name cannot be empty.";
+    private const string CategoryTypeRequiredMessage = "Category type is required.";
     private readonly ApplicationDbContext _context;
 
     public CashFlowCategoriesController(ApplicationDbContext context)
@@ -47,6 +48,9 @@ public class CashFlowCategoriesController : ControllerBase
         if (string.IsNullOrWhiteSpace(category.Name))
             return BadRequest(NameRequiredMessage);
 
+        if (!Enum.IsDefined(typeof(CashFlowType), category.CategoryType))
+            return BadRequest(CategoryTypeRequiredMessage);
+
         var exists = await _context.CashFlowCategories
             .AnyAsync(c => EF.Functions.ILike(c.Name, category.Name) &&
                             (c.UserId == userId || c.UserId == null) &&
@@ -70,6 +74,9 @@ public class CashFlowCategoriesController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(updatedCategory.Name))
             return BadRequest(NameRequiredMessage);
+
+        if (!Enum.IsDefined(typeof(CashFlowType), updatedCategory.CategoryType))
+            return BadRequest(CategoryTypeRequiredMessage);
 
         CashFlowCategory? category = await _context.CashFlowCategories
             .FirstOrDefaultAsync(category => category.Id == id &&
@@ -106,5 +113,116 @@ public class CashFlowCategoriesController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    [HttpPost("Import")]
+    public async Task<IActionResult> Import([FromBody] List<CashFlowCategoryImport> categories)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        if (categories == null || !categories.Any())
+            return BadRequest("No categories provided for import.");
+
+        const int maxRecords = 100;
+        if (categories.Count > maxRecords)
+        {
+            return BadRequest($"Cannot import more than {maxRecords} categories at once. Please split your import into smaller batches.");
+        }
+
+        var results = new List<ImportResult>();
+        var importedCount = 0;
+        var errorCount = 0;
+
+        foreach (var categoryImport in categories)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(categoryImport.Name))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Category name cannot be empty.",
+                        Row = categories.IndexOf(categoryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (!Enum.IsDefined(typeof(CashFlowType), categoryImport.CategoryType))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Category type is required.",
+                        Row = categories.IndexOf(categoryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var exists = await _context.CashFlowCategories
+                    .AnyAsync(c => EF.Functions.ILike(c.Name, categoryImport.Name) &&
+                                    (c.UserId == userId || c.UserId == null) &&
+                                    c.CategoryType == categoryImport.CategoryType);
+                
+                if (exists)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Category '{categoryImport.Name}' already exists for type {categoryImport.CategoryType}.",
+                        Row = categories.IndexOf(categoryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var category = new CashFlowCategory
+                {
+                    Name = categoryImport.Name,
+                    CategoryType = categoryImport.CategoryType,
+                    UserId = userId
+                };
+
+                _context.CashFlowCategories.Add(category);
+                importedCount++;
+
+                results.Add(new ImportResult 
+                { 
+                    Success = true, 
+                    Message = $"Category '{categoryImport.Name}' imported successfully.",
+                    Row = categories.IndexOf(categoryImport) + 1
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ImportResult 
+                { 
+                    Success = false, 
+                    Message = $"Error importing category: {ex.Message}",
+                    Row = categories.IndexOf(categoryImport) + 1
+                });
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0)
+            await _context.SaveChangesAsync();
+
+        var response = new ImportResponse
+        {
+            Success = errorCount == 0,
+            Message = errorCount == 0 
+                ? $"Successfully imported {importedCount} categories"
+                : $"Imported {importedCount} categories with {errorCount} errors",
+            ImportedCount = importedCount,
+            ErrorCount = errorCount,
+            Results = results
+        };
+
+        return Ok(response);
     }
 }

@@ -109,6 +109,158 @@ public class CashFlowEntriesController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("Import")]
+    public async Task<IActionResult> Import([FromBody] List<CashFlowEntryImport> entries)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        if (entries == null || !entries.Any())
+            return BadRequest("No entries provided for import.");
+
+        const int maxRecords = 100;
+        if (entries.Count > maxRecords)
+        {
+            return BadRequest($"Cannot import more than {maxRecords} entries at once. Please split your import into smaller batches.");
+        }
+
+        var results = new List<ImportResult>();
+        var importedCount = 0;
+        var errorCount = 0;
+
+        foreach (var entryImport in entries)
+        {
+            try
+            {
+                if (entryImport.AmountInCents < 0)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Amount must be positive.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(entryImport.CategoryName))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Category name cannot be empty.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (entryImport.Date == default)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Date is required.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (entryImport.RecurrenceFrequency.HasValue && 
+                    !Enum.IsDefined(typeof(RecurrenceFrequency), entryImport.RecurrenceFrequency.Value))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Invalid recurrence frequency.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                if (!Enum.IsDefined(typeof(CashFlowType), entryImport.CategoryType))
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = "Invalid category type.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var category = await _context.CashFlowCategories
+                    .FirstOrDefaultAsync(c => EF.Functions.ILike(c.Name, entryImport.CategoryName) &&
+                                              c.CategoryType == entryImport.CategoryType &&
+                                              (c.UserId == userId || c.UserId == null));
+                
+                if (category == null)
+                {
+                    results.Add(new ImportResult 
+                    { 
+                        Success = false, 
+                        Message = $"Category '{entryImport.CategoryName}' not found for type {entryImport.CategoryType}.",
+                        Row = entries.IndexOf(entryImport) + 1
+                    });
+                    errorCount++;
+                    continue;
+                }
+
+                var entry = new CashFlowEntry
+                {
+                    Amount = entryImport.AmountInCents,
+                    Date = entryImport.Date,
+                    Description = entryImport.Description,
+                    CategoryId = category.Id,
+                    EntryType = entryImport.CategoryType,
+                    RecurrenceFrequency = entryImport.RecurrenceFrequency,
+                    UserId = userId
+                };
+
+                _context.CashFlowEntries.Add(entry);
+                importedCount++;
+
+                results.Add(new ImportResult 
+                { 
+                    Success = true, 
+                    Message = $"Entry for category '{entryImport.CategoryName}' imported successfully.",
+                    Row = entries.IndexOf(entryImport) + 1
+                });
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ImportResult 
+                { 
+                    Success = false, 
+                    Message = $"Error importing entry: {ex.Message}",
+                    Row = entries.IndexOf(entryImport) + 1
+                });
+                errorCount++;
+            }
+        }
+
+        if (importedCount > 0)
+            await _context.SaveChangesAsync();
+
+        var response = new ImportResponse
+        {
+            Success = errorCount == 0,
+            Message = errorCount == 0 
+                ? $"Successfully imported {importedCount} entries"
+                : $"Imported {importedCount} entries with {errorCount} errors",
+            ImportedCount = importedCount,
+            ErrorCount = errorCount,
+            Results = results
+        };
+
+        return Ok(response);
+    }
+
     private async Task<IActionResult?> ValidateCashFlowEntry(CashFlowEntry cashFlowEntry, string userId)
     {
         if (cashFlowEntry.Amount < 0)
