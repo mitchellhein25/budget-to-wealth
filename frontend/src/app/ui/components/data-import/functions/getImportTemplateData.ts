@@ -50,10 +50,10 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
       return {
         headers: ['name', 'categoryType'],
         sampleData: [
-          ['Groceries', 'Expense'],
+          ['Restaurants', 'Expense'],
           ['Salary', 'Income'],
           ['Entertainment', 'Expense'],
-          ['Transportation', 'Expense']
+          ['Television', 'Expense']
         ],
         description: 'Import cash flow categories with name and category type (Income/Expense)'
       };
