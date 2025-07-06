@@ -6,6 +6,8 @@ import InputFieldSetTemplate from '@/app/ui/components/form/InputFieldSetTemplat
 import React, { useCallback, useEffect, useState } from 'react'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntryFormData } from './CashFlowEntryFormData';
+import { Edit } from 'lucide-react';
+import Link from 'next/link';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
@@ -32,6 +34,17 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
+
+  // Determine the categories page URL based on cash flow type
+  const getCategoriesPageUrl = () => {
+    switch (props.cashFlowType) {
+      case CashFlowType.Income:
+        return '/cashflow/income/income-categories';
+      case CashFlowType.Expense:
+      default:
+        return '/cashflow/expenses/expense-categories';
+    }
+  };
 
   return (
     <>
@@ -78,20 +91,29 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
         label="Category" 
         isRequired={true}
         inputChild={
-          <select
-            id={`${cashFlowTypeLower}-categoryId`}
-            name={`${cashFlowTypeLower}-categoryId`}
-            value={props.editingFormData.categoryId || ""}
-            onChange={props.onChange}
-            className="select"
-          >
-            <option value="" disabled>Pick a category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            <select
+              id={`${cashFlowTypeLower}-categoryId`}
+              name={`${cashFlowTypeLower}-categoryId`}
+              value={props.editingFormData.categoryId || ""}
+              onChange={props.onChange}
+              className="select flex-1"
+            >
+              <option value="" disabled>Pick a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            <Link
+              href={getCategoriesPageUrl()}
+              className="btn btn-ghost btn-sm btn-circle"
+              title={`Edit ${props.cashFlowType} Categories`}
+            >
+              <Edit size={16} />
+            </Link>
+          </div>
         }
       />
       <InputFieldSetTemplate 

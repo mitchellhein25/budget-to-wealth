@@ -11,6 +11,7 @@ import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormS
 import { useList } from '@/app/ui/hooks/useFormList';
 import React, { useEffect, useState } from 'react'
 import { DateRange } from 'react-day-picker';
+import CashFlowSideBar from '@/app/ui/components/cashflow/entries/CashFlowSideBar';
 
 export default function BudgetsPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,6 +69,7 @@ export default function BudgetsPage() {
 
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
+      <CashFlowSideBar />
       <div className="flex flex-1 gap-6">
         <div className="flex-shrink-0">
           <BudgetsForm
