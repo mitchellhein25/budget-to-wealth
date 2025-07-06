@@ -5,8 +5,8 @@ export default function DashboardSideBar() {
   return (
     <SideBar 
       navItems={[
-        { href: `dashboards/net-worth`, label: 'Net Worth' },
-        { href: `dashboards/cashflow`, label: 'Cash Flow' }
+        { href: `/dashboards/net-worth`, label: 'Net Worth' },
+        { href: `/dashboards/cashflow`, label: 'Cash Flow' }
       ]}
     />
   )

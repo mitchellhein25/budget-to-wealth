@@ -13,20 +13,20 @@ export default function NavBar({ session }: { session: SessionData | null }) {
 
   const isAuthenticated: boolean = (session ?? false) && !isTokenExpired;
   const pathname = usePathname()
-  const basePath = pathname.split('/')[1]
 
   const navItems = [
     { href: '/cashflow/expenses', label: 'Cashflow' },
     { href: '/net-worth', label: 'Net Worth' },
     { href: '/dashboards', label: 'Dashboards' }
   ]
+  
   return (
     <nav className="navbar">
       <div className="navbar-start"></div>
 
       <div className="navbar-center">
         {navItems.map((item) => {
-          const isActive = basePath && item.href.startsWith(`/${basePath}`);
+          const isActive = pathname.startsWith(item.href);
 
           return (
             <Link
