@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { CashFlowEntryFormData } from './CashFlowEntryFormData';
 import { Edit } from 'lucide-react';
-import Link from 'next/link';
+import CategoriesDrawer from '@/app/ui/components/drawer/CategoriesDrawer';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
@@ -17,6 +17,7 @@ interface CashFlowEntriesInputsProps {
 
 export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   // const [isError, setIsError] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   const cashFlowTypeLower = props.cashFlowType.toLowerCase();
@@ -35,15 +36,16 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
     fetchCategories();
   }, [fetchCategories]);
 
-  // Determine the categories page URL based on cash flow type
-  const getCategoriesPageUrl = () => {
-    switch (props.cashFlowType) {
-      case CashFlowType.Income:
-        return '/cashflow/income/income-categories';
-      case CashFlowType.Expense:
-      default:
-        return '/cashflow/expenses/expense-categories';
-    }
+  const handleCategoriesUpdated = useCallback(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleOpenDrawer = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
   };
 
   return (
@@ -106,13 +108,14 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
                 </option>
               ))}
             </select>
-            <Link
-              href={getCategoriesPageUrl()}
+            <button
+              onClick={handleOpenDrawer}
               className="btn btn-ghost btn-sm btn-circle"
               title={`Edit ${props.cashFlowType} Categories`}
+              type="button"
             >
               <Edit size={16} />
-            </Link>
+            </button>
           </div>
         }
       />
@@ -128,6 +131,12 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
             onChange={props.onChange}
             className="input w-full" 
           />}
+      />
+      <CategoriesDrawer
+        isOpen={isDrawerOpen}
+        onClose={handleCloseDrawer}
+        categoryType={props.cashFlowType as 'Income' | 'Expense'}
+        onCategoriesUpdated={handleCategoriesUpdated}
       />
     </>
   )

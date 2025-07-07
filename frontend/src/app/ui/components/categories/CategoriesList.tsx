@@ -25,53 +25,58 @@ export default function CategoriesList<T extends Category>(props: CategoriesList
 
   if (props.isError) {
     return (
-      <p className="alert alert-error alert-soft">Failed to load {categoryTypeNameLower} categories.</p>
+      <div className="alert alert-error alert-sm">
+        <span>Failed to load {categoryTypeNameLower} categories.</span>
+      </div>
     );
   }
 
   if (props.isLoading) {
-    return (<p className="alert alert-info alert-soft">Loading {categoryTypeNameLower} categories...</p>);
+    return (
+      <div className="flex items-center justify-center py-4">
+        <div className="loading loading-spinner loading-md"></div>
+        <span className="ml-2">Loading {categoryTypeNameLower} categories...</span>
+      </div>
+    );
   }
 
   if (props.categories.length === 0) {
     return (
-      <p className="alert alert-warning alert-soft">You haven’t added any {categoryTypeNameLower} categories yet.</p>
+      <div className="text-center py-6 text-base-content/70">
+        <p>No {categoryTypeNameLower} categories found.</p>
+        <p className="text-sm mt-1">Create your first category above.</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-4 flex flex-col justify-center">
-      <h2 className="text-lg text-center">{props.categoryTypeName} Categories</h2>
-      <ul className="list">
+    <div className="space-y-3">
+      <h3 className="text-lg font-medium text-center">
+        {props.categoryTypeName} Categories
+      </h3>
+      <div className="space-y-2 max-h-60 overflow-y-auto">
         {props.categories.sort((a, b) => a.name.localeCompare(b.name)).map((category) => (
-          <li key={category.id} className="list-row">
-            <div className="flex-1 mr-4">
-              <span>{category.name}</span>
+          <div key={category.id} className="flex items-center justify-between p-3 bg-base-100 rounded-lg border border-base-300">
+            <span className="font-medium truncate">{category.name}</span>
+            <div className="flex gap-1 ml-2">
+              <button
+                onClick={() => props.onCategoryIsEditing(category)}
+                className="btn btn-ghost btn-xs btn-circle"
+                title="Edit category"
+              >
+                <Pencil size={14} />
+              </button>
+              <button
+                onClick={() => handleDelete(category.id as number)}
+                className="btn btn-ghost btn-xs btn-circle text-error hover:text-error"
+                title="Delete category"
+              >
+                <Trash2 size={14} />
+              </button>
             </div>
-            <div></div>
-            <div className="flex space-x-2">
-              <>
-                <button
-                  id="edit-button"
-                  onClick={() => props.onCategoryIsEditing(category)}
-                  className="p-1 hover:text-primary"
-                  aria-label="Edit"
-                >
-                  <Pencil size={16} />
-                </button>
-                <button
-                  id="delete-button"
-                  onClick={() => handleDelete(category.id as number)}
-                  className="p-1 hover:text-error"
-                  aria-label="Delete"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </>
-            </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
