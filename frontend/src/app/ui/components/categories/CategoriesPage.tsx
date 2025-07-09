@@ -15,8 +15,6 @@ type CategoriesPageProps = {
   categoryTypeName: string;
   getEndpoint: string;
   createUpdateDeletEndpoint: string;
-  onCategoriesUpdated?: () => void;
-  disableForm?: boolean;
 }
 
 export default function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
@@ -54,10 +52,7 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
     else {
       setMessage(`${props.categoryTypeName} category ${actionVerb}d successfully.`);
       fetchCategories();
-      setEditingCategory(null);
-      if (props.onCategoriesUpdated) {
-        props.onCategoriesUpdated();
-      }
+      setEditingCategory(null)
     }
   }
 
@@ -82,46 +77,6 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
   if (!props.isLoggedIn)
     return <p>Please log in to manage {categoryTypeNameLower} categories.</p>;
 
-  // If disableForm is true, render with better drawer layout
-  if (props.disableForm) {
-    return (
-      <div className="space-y-6">
-        {/* Form Section */}
-        <div className="bg-base-200 rounded-lg p-4">
-          <CategoriesForm
-            handleSubmit={handleSubmit}
-            editingCategory={editingCategory}
-            onNameChange={onChange}
-            onReset={() => setEditingCategory(null)}
-            infoMessage={isError ? "" : message}
-            errorMessage={isError ? message : ""}
-            categoryTypeName={props.categoryTypeName}
-            disableForm={true}
-          />
-        </div>
-
-        {/* Categories List */}
-        <div className="bg-base-200 rounded-lg p-4">
-          <CategoriesList
-            categories={categories}
-            onCategoryDeleted={() => {
-              fetchCategories();
-              if (props.onCategoriesUpdated) {
-                props.onCategoriesUpdated();
-              }
-            }}
-            onCategoryIsEditing={onCategoryIsEditing}
-            isLoading={isLoading}
-            isError={isError}
-            categoryTypeName={props.categoryTypeName}
-            deleteEndpoint={props.createUpdateDeletEndpoint}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Default rendering with form wrapper
   return (
     <div className="flex gap-6 p-6">
       <CategoriesForm
@@ -135,12 +90,7 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
       />
       <CategoriesList
         categories={categories}
-        onCategoryDeleted={() => {
-          fetchCategories();
-          if (props.onCategoriesUpdated) {
-            props.onCategoriesUpdated();
-          }
-        }}
+        onCategoryDeleted={fetchCategories}
         onCategoryIsEditing={onCategoryIsEditing}
         isLoading={isLoading}
         isError={isError}
