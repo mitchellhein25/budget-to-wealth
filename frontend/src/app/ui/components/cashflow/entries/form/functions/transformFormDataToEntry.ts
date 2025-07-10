@@ -23,8 +23,17 @@ export const transformFormDataToEntry = (formData: FormData, cashFlowType: CashF
       date: validatedData.date.toISOString().split('T')[0],
       categoryId: validatedData.categoryId,
       description: validatedData.description || "",
-      entryType: cashFlowType
+      entryType: cashFlowType,
     };
+
+    // Only add recurrence fields if they have values
+    if (validatedData.recurrenceFrequency) {
+      item.recurrenceFrequency = validatedData.recurrenceFrequency;
+    }
+    
+    if (validatedData.recurrenceEndDate) {
+      item.recurrenceEndDate = validatedData.recurrenceEndDate;
+    }
 
     return { item, errors: [] };
   } catch (error) {

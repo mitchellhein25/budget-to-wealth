@@ -1,5 +1,6 @@
 import z from "zod";
 import { numberRegex } from "../../../Utils";
+import { RecurrenceFrequency } from "@/app/lib/models/cashflow/RecurrenceFrequency";
 
 export const cashFlowEntryFormSchema = z.object({
   id: z.string().uuid().optional(),
@@ -25,6 +26,8 @@ export const cashFlowEntryFormSchema = z.object({
   date: z.date({ message: "Date field is required." }),
   categoryId: z.string().trim().min(1, { message: "Category field is required" }),
   description: z.string().trim().optional(),
+  recurrenceFrequency: z.nativeEnum(RecurrenceFrequency).optional(),
+  recurrenceEndDate: z.string().optional(),
 });
 
 export type CashFlowEntryFormData = z.infer<typeof cashFlowEntryFormSchema>;

@@ -27,12 +27,26 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		}
 	};
 
+	const getRecurrenceText = (entry: CashFlowEntry) => {
+		if (!entry.recurrenceFrequency) {
+			return '';
+		}
+		
+		let text = entry.recurrenceFrequency.toString();
+		if (entry.recurrenceEndDate) {
+			text += ` until ${new Date(entry.recurrenceEndDate).toLocaleDateString()}`;
+		}
+		
+		return text;
+	};
+
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-1/5">Date</th>
-			<th className="w-1/5">Amount</th>
-			<th className="w-3/10">Category</th>
-			<th className="w-3/10">Description</th>
+			<th className="w-1/6">Date</th>
+			<th className="w-1/6">Amount</th>
+			<th className="w-1/5">Category</th>
+			<th className="w-1/5">Description</th>
+			<th className="w-1/5">Recurrence</th>
 			<th></th>
 		</tr>
 	);
@@ -50,6 +64,9 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			</td>
 			<td className="flex-1">
 				{entry.description}
+			</td>
+			<td className="flex-1">
+				{getRecurrenceText(entry)}
 			</td>
 			<td className="flex space-x-2">
 				<button
