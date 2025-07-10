@@ -4,11 +4,12 @@ import CategoriesPage from '@/app/ui/components/categories/CategoriesPage';
 import { useParentPath } from '@/app/ui/hooks/useParentPath';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams, usePathname } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export default function ExpenseCategories() {
   const searchParams = useSearchParams();  
-  const returnUrl = searchParams.get('returnUrl') || useParentPath();
+  const parentPath = useParentPath();
+  const returnUrl = searchParams.get('returnUrl') || parentPath;
 
   return (
     <div className="p-6">

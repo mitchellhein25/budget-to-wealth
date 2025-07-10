@@ -16,8 +16,6 @@ type CategoriesListProps<T extends Category> = {
 }
 
 export default function CategoriesList<T extends Category>(props: CategoriesListProps<T>) {
-  const categoryTypeNameLower = props.categoryTypeName.toLowerCase();
-
   async function handleDelete(id: number) {
     const result = await deleteRequest<T>(props.deleteEndpoint, id);
     if (result.successful)
