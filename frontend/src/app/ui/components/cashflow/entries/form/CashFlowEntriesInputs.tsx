@@ -144,7 +144,7 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
             <option value="">No recurrence</option>
             {Object.values(RecurrenceFrequency).map((frequency) => (
               <option key={frequency} value={frequency}>
-                {frequency}
+                {frequency === RecurrenceFrequency.Every2Weeks ? 'Every 2 Weeks' : frequency}
               </option>
             ))}
           </select>

@@ -17,12 +17,12 @@ export const useList = <T>(
 
   const setInfoMessage = useCallback((text: string, type: 'form' | 'list') => {
     setMessage({ type: `${type}-info`, text });
-    clearMessage();
+    // clearMessage();
   }, [clearMessage]);
 
   const setErrorMessage = useCallback((text: string, type: 'form' | 'list') => {
     setMessage({ type: `${type}-error`, text });
-    clearMessage();
+    // clearMessage();
   }, [clearMessage]);
 
   const fetchItems = useCallback(async () => {

@@ -7,6 +7,7 @@ import React from 'react';
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { formatCurrency } from '../../../Utils';
 import ListTable from '../../../table/ListTable';
+import { RecurrenceFrequency } from '@/app/lib/models/cashflow/RecurrenceFrequency';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
@@ -18,7 +19,7 @@ interface CashFlowEntriesListProps {
 }
 
 export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
-
+	
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
 			const result = await deleteRequest<CashFlowEntry>("CashFlowEntries", id);
@@ -32,7 +33,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			return '';
 		}
 		
-		let text = entry.recurrenceFrequency.toString();
+		let text = entry.recurrenceFrequency === RecurrenceFrequency.Every2Weeks ? 'Every 2 Weeks' : entry.recurrenceFrequency.toString();
 		if (entry.recurrenceEndDate) {
 			text += ` until ${new Date(entry.recurrenceEndDate).toLocaleDateString()}`;
 		}
