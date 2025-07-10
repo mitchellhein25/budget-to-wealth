@@ -17,7 +17,7 @@ export type ListTableItem = { [key: string]: string | number | Date } & (
 
 export default function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 	const [currentPage, setCurrentPage] = useState(1);
-	const [itemsPerPage] = useState(5);
+	const [itemsPerPage] = useState(15);
 
 	const indexOfLastItem = currentPage * itemsPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage;

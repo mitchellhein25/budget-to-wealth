@@ -49,6 +49,8 @@ export default function CashFlowPage(props: CashFlowPageProps) {
 			date: new Date(cashFlowEntry.date),
 			categoryId: cashFlowEntry.categoryId,
 			description: cashFlowEntry.description ?? "",
+			recurrenceFrequency: cashFlowEntry.recurrenceFrequency,
+			recurrenceEndDate: cashFlowEntry.recurrenceEndDate,
 		});
 		setMessage({ type: null, text: '' });
 	};

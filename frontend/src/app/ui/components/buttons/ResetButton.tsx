@@ -2,7 +2,7 @@ import React from 'react'
 
 interface ResetButtonProps {
   onClick: () => void;
-  isHidden: boolean
+  isHidden: boolean;
 }
 
 export default function ResetButton(props : ResetButtonProps) {

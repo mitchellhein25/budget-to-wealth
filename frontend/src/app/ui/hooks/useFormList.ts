@@ -12,7 +12,7 @@ export const useList = <T>(
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
 
   const clearMessage = useCallback(() => {
-    setTimeout(() => setMessage({ type: null, text: '' }), 1000 * 10);
+    setTimeout(() => setMessage({ type: null, text: '' }), 1000 * 30);
   }, [setMessage]);
 
   const setInfoMessage = useCallback((text: string, type: 'form' | 'list') => {

@@ -14,7 +14,7 @@ export default function SideBar(props: SideBarProps) {
   return (
     <div className="flex flex-col items-center gap-6">
         {props.navItems.map((item) => {
-            const isActive = pathname.endsWith(item.href)
+            const isActive = pathname === item.href
             
             return (
               <Link 
