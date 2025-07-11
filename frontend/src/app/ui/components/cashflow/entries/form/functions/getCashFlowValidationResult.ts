@@ -9,6 +9,8 @@ export const getCashFlowValidationResult = (formData: FormData, cashFlowType: Ca
     date: new Date(formData.get(`${cashFlowTypeString}-date`) as string),
     categoryId: formData.get(`${cashFlowTypeString}-categoryId`) as string || "",
     description: formData.get(`${cashFlowTypeString}-description`) as string || "",
+    recurrenceFrequency: formData.get(`${cashFlowTypeString}-recurrenceFrequency`) as string || undefined,
+    recurrenceEndDate: formData.get(`${cashFlowTypeString}-recurrenceEndDate`) as string || undefined,
   };
 
   return cashFlowEntryFormSchema.safeParse(rawData);

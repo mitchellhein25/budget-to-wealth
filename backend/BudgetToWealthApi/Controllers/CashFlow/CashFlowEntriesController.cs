@@ -82,6 +82,8 @@ public class CashFlowEntriesController : ControllerBase
         existingCashFlowEntry.Description = updatedCashFlowEntry.Description;
         existingCashFlowEntry.Date = updatedCashFlowEntry.Date;
         existingCashFlowEntry.CategoryId = updatedCashFlowEntry.CategoryId;
+        existingCashFlowEntry.RecurrenceFrequency = updatedCashFlowEntry.RecurrenceFrequency;
+        existingCashFlowEntry.RecurrenceEndDate = updatedCashFlowEntry.RecurrenceEndDate;
         existingCashFlowEntry.UpdatedAt = DateTime.UtcNow;
 
         _context.CashFlowEntries.Update(existingCashFlowEntry);

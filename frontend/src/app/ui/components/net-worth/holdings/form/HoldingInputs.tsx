@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react'
 import { HoldingFormData } from './HoldingFormData';
 import { HoldingType } from '@/app/lib/models/net-worth/HoldingType';
 import { Category } from '@/app/lib/models/Category';
+import { Edit } from 'lucide-react';
+import Link from 'next/link';
 
 interface HoldingInputsProps {
   editingFormData: Partial<HoldingFormData>;
@@ -75,20 +77,29 @@ export default function HoldingInputs(props: HoldingInputsProps) {
         label="Category" 
         isRequired={true}
         inputChild={
-          <select
-            id={`holding-holdingCategoryId`}
-            name={`holding-holdingCategoryId`}
-            value={props.editingFormData.holdingCategoryId || ""}
-            onChange={props.onChange}
-            className="select"
-          >
-            <option value="" disabled>Pick a category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            <select
+              id={`holding-holdingCategoryId`}
+              name={`holding-holdingCategoryId`}
+              value={props.editingFormData.holdingCategoryId || ""}
+              onChange={props.onChange}
+              className="select flex-1"
+            >
+              <option value="" disabled>Pick a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            <Link
+              href="/net-worth/holdings/holding-categories"
+              className="btn btn-ghost btn-sm btn-circle"
+              title="Edit Holding Categories"
+            >
+              <Edit size={16} />
+            </Link>
+          </div>
         }
       />
     </>
