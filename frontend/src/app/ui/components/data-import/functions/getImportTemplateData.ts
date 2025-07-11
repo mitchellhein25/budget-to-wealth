@@ -15,11 +15,11 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
       };
     case ImportDataTypeStringMappings.Budgets:
       return {
-        headers: ['amount', 'categoryName', 'name'],
+        headers: ['amount', 'categoryName'],
         sampleData: [
-          ['500.00', 'Groceries', 'Monthly Groceries'],
-          ['200.00', 'Entertainment', 'Monthly Entertainment'],
-          ['1000.00', 'Transportation', 'Monthly Transportation']
+          ['500.00', 'Groceries'],
+          ['200.00', 'Entertainment'],
+          ['1000.00', 'Transportation']
         ],
         description: 'Import budgets with amount, category name, and budget name'
       };
