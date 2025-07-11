@@ -7,6 +7,7 @@ import React from 'react';
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { formatCurrency } from '../../../Utils';
 import ListTable from '../../../table/ListTable';
+import { RecurrenceFrequency } from '@/app/lib/models/cashflow/RecurrenceFrequency';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
@@ -18,7 +19,7 @@ interface CashFlowEntriesListProps {
 }
 
 export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
-
+	
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
 			const result = await deleteRequest<CashFlowEntry>("CashFlowEntries", id);
@@ -27,12 +28,26 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		}
 	};
 
+	const getRecurrenceText = (entry: CashFlowEntry) => {
+		if (!entry.recurrenceFrequency) {
+			return '';
+		}
+		
+		let text = entry.recurrenceFrequency === RecurrenceFrequency.Every2Weeks ? 'Every 2 Weeks' : entry.recurrenceFrequency.toString();
+		if (entry.recurrenceEndDate) {
+			text += ` until ${new Date(entry.recurrenceEndDate).toLocaleDateString()}`;
+		}
+		
+		return text;
+	};
+
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-1/5">Date</th>
-			<th className="w-1/5">Amount</th>
-			<th className="w-3/10">Category</th>
-			<th className="w-3/10">Description</th>
+			<th className="w-1/6">Date</th>
+			<th className="w-1/6">Amount</th>
+			<th className="w-1/5">Category</th>
+			<th className="w-1/5">Description</th>
+			<th className="w-1/5">Recurrence</th>
 			<th></th>
 		</tr>
 	);
@@ -50,6 +65,9 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			</td>
 			<td className="flex-1">
 				{entry.description}
+			</td>
+			<td className="flex-1">
+				{getRecurrenceText(entry)}
 			</td>
 			<td className="flex space-x-2">
 				<button

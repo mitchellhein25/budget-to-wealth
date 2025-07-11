@@ -9,8 +9,13 @@ import { holdingFormOnChange } from '@/app/ui/components/net-worth/holdings/form
 import { useList } from '@/app/ui/hooks/useFormList';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { transformFormDataToHolding } from '@/app/ui/components/net-worth/holdings/form/functions/transformFormDataToHolding';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { useParentPath } from '@/app/ui/hooks/useParentPath';
 
 export default function HoldingsPage() {
+  const parentPath = useParentPath();
+  
   const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<Holding>("Holdings", "holdings");
 	const [editingFormData, setEditingFormData] = useState<Partial<HoldingFormData>>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,28 +52,40 @@ export default function HoldingsPage() {
 	}, [fetchItems]);
   
   return (
-    <div className="flex gap-6 p-6 h-full min-h-screen">
-      <div className="flex flex-1 gap-6">
-        <div className="flex-shrink-0">
-          <HoldingForm
-            handleSubmit={handleSubmit}
-            editingFormData={editingFormData}
-            onChange={(event) => holdingFormOnChange(event, setEditingFormData)}
-            onReset={onReset}
-            errorMessage={message.type === 'form-error' ? message.text : ''}
-            infoMessage={message.type === 'form-info' ? message.text : ''}
-            isLoading={isLoading}
-            isSubmitting={isSubmitting}
-          />
-        </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <HoldingsList
-            holdings={items}
-            isLoading={isLoading}
-            message={message}
-            onHoldingDeleted={fetchItems}
-            onHoldingIsEditing={onHoldingIsEditing}
-          />
+    <div className="p-6">
+      <div className="mb-6">
+        <Link
+          href={parentPath}
+          className="btn btn-ghost btn-sm gap-2"
+        >
+          <ArrowLeft size={16} />
+          Back
+        </Link>
+      </div>
+      
+      <div className="flex gap-6 h-full min-h-screen">
+        <div className="flex flex-1 gap-6">
+          <div className="flex-shrink-0">
+            <HoldingForm
+              handleSubmit={handleSubmit}
+              editingFormData={editingFormData}
+              onChange={(event) => holdingFormOnChange(event, setEditingFormData)}
+              onReset={onReset}
+              errorMessage={message.type === 'form-error' ? message.text : ''}
+              infoMessage={message.type === 'form-info' ? message.text : ''}
+              isLoading={isLoading}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+          <div className="flex flex-1 flex-col gap-2">
+            <HoldingsList
+              holdings={items}
+              isLoading={isLoading}
+              message={message}
+              onHoldingDeleted={fetchItems}
+              onHoldingIsEditing={onHoldingIsEditing}
+            />
+          </div>
         </div>
       </div>
     </div>

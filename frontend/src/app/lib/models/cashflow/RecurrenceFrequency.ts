@@ -1,6 +1,5 @@
 export enum RecurrenceFrequency {
-  Daily = 'Daily',
   Weekly = 'Weekly',
-  Monthly = 'Monthly',
-  Yearly = 'Yearly'
+  Every2Weeks = 'Every2Weeks',
+  Monthly = 'Monthly'
 }
