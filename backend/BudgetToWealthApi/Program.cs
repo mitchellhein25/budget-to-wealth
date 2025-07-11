@@ -90,6 +90,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+if (app.Environment.IsProduction())
+{
+    app.UseForwardedHeaders();
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
