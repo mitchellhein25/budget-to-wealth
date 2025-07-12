@@ -9,7 +9,6 @@ import { ImportDataTypeStringMappings } from '../../../../lib/models/data-import
 import { ImportDataTypeStrings } from '../../../../lib/models/data-import/ImportDataTypeStrings';
 import { cleanCurrencyInput, convertDollarsToCents } from '../../Utils';
 
-// Type for raw CSV data
 type RawCsvData = Record<string, string | number>;
 
 export function transformImportData(data: RawCsvData[], dataType: ImportDataTypeStrings): ImportDataType[] { 
@@ -28,7 +27,8 @@ export function transformImportData(data: RawCsvData[], dataType: ImportDataType
       return data.map((item: RawCsvData) => ({
         name: item.name as string,
         type: item.type as "Asset" | "Debt",
-        holdingCategoryName: item.holdingCategoryName as string
+        holdingCategoryName: item.holdingCategoryName as string,
+        institution: item.institution as string
       } as HoldingImport));
 
     case ImportDataTypeStringMappings.HoldingSnapshots:
@@ -42,8 +42,8 @@ export function transformImportData(data: RawCsvData[], dataType: ImportDataType
 
     case ImportDataTypeStringMappings.Budgets:
       return data.map((item: RawCsvData) => ({
-        amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
-        categoryName: item.categoryName as string
+        categoryName: item.categoryName as string,
+        amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0')
       } as BudgetImport));
 
     case ImportDataTypeStringMappings.HoldingCategories:

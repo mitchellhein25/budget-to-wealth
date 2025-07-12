@@ -5,4 +5,5 @@ public class HoldingSnapshotImport
     public required long BalanceInCents { get; set; }
     public required string HoldingCategoryName { get; set; }
     public required HoldingType HoldingType { get; set; }
+    public string? HoldingInstitution { get; set; }
 } 

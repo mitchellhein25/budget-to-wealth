@@ -54,7 +54,8 @@ public class HoldingsController : ControllerBase
         var exists = await _context.Holdings.AnyAsync(holding => holding.UserId == userId &&
                                                            EF.Functions.ILike(holding.Name, newHolding.Name) &&
                                                            holding.Type == newHolding.Type &&
-                                                           holding.HoldingCategoryId == newHolding.HoldingCategoryId);
+                                                           holding.HoldingCategoryId == newHolding.HoldingCategoryId &&
+                                                           holding.Institution == newHolding.Institution);
         if (exists)
             return Conflict(ConflictMessage);
 
@@ -84,6 +85,7 @@ public class HoldingsController : ControllerBase
         holding.Name = updatedHolding.Name;
         holding.Type = updatedHolding.Type;
         holding.HoldingCategoryId = updatedHolding.HoldingCategoryId;
+        holding.Institution = updatedHolding.Institution;
         holding.UpdatedAt = DateTime.UtcNow;
 
         _context.Holdings.Update(holding);
@@ -191,7 +193,8 @@ public class HoldingsController : ControllerBase
                     .AnyAsync(h => h.UserId == userId &&
                                    EF.Functions.ILike(h.Name, holdingImport.Name) &&
                                    h.Type == holdingImport.Type &&
-                                   h.HoldingCategoryId == category.Id);
+                                   h.HoldingCategoryId == category.Id &&
+                                   h.Institution == holdingImport.Institution);
                 
                 if (exists)
                 {
@@ -210,6 +213,7 @@ public class HoldingsController : ControllerBase
                     Name = holdingImport.Name,
                     Type = holdingImport.Type,
                     HoldingCategoryId = category.Id,
+                    Institution = holdingImport.Institution,
                     UserId = userId
                 };
 

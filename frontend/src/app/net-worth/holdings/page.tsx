@@ -28,7 +28,7 @@ export default function HoldingsPage() {
 		setInfoMessage,
 		fetchItems,
 		setEditingFormData,
-		"holdings",
+		"holding",
 		"Holdings"
 	);
 
@@ -38,6 +38,7 @@ export default function HoldingsPage() {
 			name: holding.name,
 			type: holding.type,
 			holdingCategoryId: holding.holdingCategoryId,
+			institution: holding.institution
 		});
 		setMessage({ type: null, text: '' });
 	};

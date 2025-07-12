@@ -8,4 +8,5 @@ export type Holding = ListTableItem & {
   type: HoldingType;
   holdingCategoryId: string;
   holdingCategory?: Category;
+  institution?: string;
 }

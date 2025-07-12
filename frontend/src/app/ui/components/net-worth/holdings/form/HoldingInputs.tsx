@@ -23,7 +23,7 @@ export default function HoldingInputs(props: HoldingInputsProps) {
     // setInfoMessage("");
     // setErrorMessage("");
     // setIsLoading(true);
-    const response = await getRequest<Category>(`Categories`);
+    const response = await getRequest<Category>(`HoldingCategories`);
     if (response.successful) {
       setCategories(response.data as Category[]);
     }
@@ -100,6 +100,20 @@ export default function HoldingInputs(props: HoldingInputsProps) {
               <Edit size={16} />
             </Link>
           </div>
+        }
+      />
+      <InputFieldSetTemplate 
+        label="Institution" 
+        isRequired={false}
+        inputChild={
+          <input
+            id={`holding-institution`}
+            name={`holding-institution`}
+            type="text"
+            value={props.editingFormData.institution ?? ""}
+            onChange={props.onChange}
+            className="input m-0 w-full"
+          />
         }
       />
     </>

@@ -57,7 +57,7 @@ export default function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps)
               <option value="" disabled>Pick a holding</option>
               {holdings.map((holding) => (
                 <option key={holding.id} value={holding.id}>
-                  {`${holding.name} - ${holding.holdingCategory?.name} (${holding.type})`}
+                  {`${holding.name} ${holding.institution ? `- ${holding.institution}` : ''} - ${holding.holdingCategory?.name} (${holding.type})`}
                 </option>
               ))}
             </select>

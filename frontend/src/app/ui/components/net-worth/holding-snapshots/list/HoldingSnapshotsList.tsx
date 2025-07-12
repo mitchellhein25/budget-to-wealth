@@ -37,7 +37,7 @@ export default function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 	const tableBodyRow = (snapshot: HoldingSnapshot) => (
 		<tr key={snapshot.id}>
 			<td className="flex-1">
-				{snapshot.holding?.name} - {snapshot.holding?.holdingCategory?.name} ({snapshot.holding?.type})
+				{snapshot.holding?.name} - {snapshot.holding?.institution} - {snapshot.holding?.holdingCategory?.name} ({snapshot.holding?.type})
 			</td>
 			<td className="flex-1">
 				{snapshot.date.toLocaleLowerCase('en-US')}

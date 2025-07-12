@@ -16,6 +16,7 @@ export const transformFormDataToHolding = (formData: FormData): { item: Holding 
       name: validatedData.name,
       type: validatedData.type as HoldingType,
       holdingCategoryId: validatedData.holdingCategoryId as string,
+      institution: validatedData.institution
     };
 
     return { item, errors: [] };

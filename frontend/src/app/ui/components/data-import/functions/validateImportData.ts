@@ -29,7 +29,8 @@ export function validateImportData(data: RawCsvData[], dataType: ImportDataTypeS
     const rowIndex = index + 1;
     try {
       for (const importField of dataTypeFields.filter(field => field.required)) {
-        if (!row[importField.name] || row[importField.name].toString().trim() === '') {
+        const value = row[importField.name];
+        if (value === undefined || value === null || value.toString().trim() === '') {
           errors.push({
             row: rowIndex,
             message: `${importField.name} is required`,
@@ -42,7 +43,7 @@ export function validateImportData(data: RawCsvData[], dataType: ImportDataTypeS
       const numberField = dataTypeFields.find(field => field.name === 'amount' || field.name === 'balance');
       if (numberField?.required) {
         const amount = cleanCurrencyInput(row[numberField.name].toString());
-        if (!amount) {
+        if (amount === undefined || amount === null || amount.toString().trim() === '') {
           errors.push({
             row: rowIndex,
             message: `${numberField.name} must be a valid currency value.`,

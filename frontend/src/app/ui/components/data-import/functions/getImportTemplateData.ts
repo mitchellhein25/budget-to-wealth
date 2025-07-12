@@ -35,14 +35,14 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
       };
     case ImportDataTypeStringMappings.Holdings:
       return {
-        headers: ['name', 'type', 'holdingCategoryName'],
+        headers: ['name', 'type', 'holdingCategoryName', 'institution'],
         sampleData: [
-          ['Savings Account', 'Asset', 'Cash'],
-          ['Credit Card', 'Debt', 'Credit'],
-          ['Investment Portfolio', 'Asset', 'Investments'],
-          ['Car Loan', 'Debt', 'Loans'],
-          ['Student Loan', 'Debt', 'Loans'],
-          ['Home Loan', 'Debt', 'Loans']
+          ['Savings Account', 'Asset', 'Cash', 'Bank of America'],
+          ['Credit Card', 'Debt', 'Credit', 'American Express'],
+          ['Investment Portfolio', 'Asset', 'Investments', ''],
+          ['Car Loan', 'Debt', 'Loans', 'Chase'], 
+          ['Student Loan', 'Debt', 'Loans', ''], 
+          ['Home Loan', 'Debt', 'Loans', 'City National Bank']
         ],
         description: 'Import holdings with name, type (Asset/Debt), and holding category name'
       };

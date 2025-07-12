@@ -56,7 +56,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
                     <tr key={index}>
                       {columns.map((column) => (
                         <td key={column.key}>
-                          {item[column.key as keyof ImportDataType] || '-'}
+                          {item[column.key as keyof ImportDataType] ?? '-'}
                         </td>
                       ))}
                     </tr>
@@ -65,7 +65,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
                     <tr key={index}>
                       {columns.map((column) => (
                         <td key={column.key}>
-                          {item[column.key as keyof ImportDataType] || '-'}
+                          {item[column.key as keyof ImportDataType] ?? '-'}
                         </td>
                       ))}
                     </tr>

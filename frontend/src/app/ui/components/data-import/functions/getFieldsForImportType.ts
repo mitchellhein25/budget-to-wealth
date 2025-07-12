@@ -18,8 +18,7 @@ export function getFieldsForImportType(dataType: string): ImportField[] {
     case "Budgets":
       return [
         { name: "amount", type: "number", required: true },
-        { name: "categoryName", type: "string", required: true },
-        { name: "name", type: "string", required: true }
+        { name: "categoryName", type: "string", required: true }
       ];
     case "Holding Snapshots":
       return [
@@ -33,7 +32,8 @@ export function getFieldsForImportType(dataType: string): ImportField[] {
       return [
         { name: "name", type: "string", required: true },
         { name: "type", type: "string", required: true },
-        { name: "holdingCategoryName", type: "string", required: true }
+        { name: "holdingCategoryName", type: "string", required: true },
+        { name: "institution", type: "string", required: false }
       ];
     case "CashFlow Categories":
       return [

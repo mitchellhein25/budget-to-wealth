@@ -17,8 +17,9 @@ export default function HoldingsList(props: HoldingsListProps) {
   const tableHeaderRow = (
     <tr>
       <th className="w-1/5">Name</th>
+      <th className="w-1/5">Institution</th>
+      <th className="w-2/5">Category</th>
       <th className="w-1/5">Type</th>
-      <th className="w-3/10">Category</th>
       <th></th>
     </tr>
   );
@@ -27,6 +28,9 @@ export default function HoldingsList(props: HoldingsListProps) {
     <tr key={holding.id}>
       <td className="flex-1">
         {holding.name}
+      </td>
+      <td className="flex-1">
+        {holding.institution}
       </td>
       <td className="flex-1">
         {holding.holdingCategory?.name}
