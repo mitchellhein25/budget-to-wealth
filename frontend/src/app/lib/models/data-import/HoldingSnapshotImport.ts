@@ -4,4 +4,5 @@ export type HoldingSnapshotImport = {
   balanceInCents: number;
   holdingCategoryName: string;
   holdingType: "Asset" | "Debt";
+  holdingInstitution?: string;
 } 

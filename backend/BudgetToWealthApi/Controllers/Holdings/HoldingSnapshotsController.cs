@@ -195,15 +195,21 @@ public class HoldingSnapshotsController : ControllerBase
                     .FirstOrDefaultAsync(h => EF.Functions.ILike(h.Name, snapshotImport.HoldingName) &&
                                              h.Type == snapshotImport.HoldingType &&
                                              h.HoldingCategoryId == category.Id &&
-                                             h.Institution == snapshotImport.HoldingInstitution &&
-                                             h.UserId == userId);
+                                             h.UserId == userId &&
+                                             (string.IsNullOrWhiteSpace(snapshotImport.HoldingInstitution) 
+                                                 ? string.IsNullOrWhiteSpace(h.Institution)
+                                                 : !string.IsNullOrWhiteSpace(h.Institution) && 
+                                                   EF.Functions.ILike(h.Institution, snapshotImport.HoldingInstitution)));
                 
                 if (holding == null)
                 {
+                    var institutionInfo = !string.IsNullOrWhiteSpace(snapshotImport.HoldingInstitution) 
+                        ? $" in institution '{snapshotImport.HoldingInstitution}'" 
+                        : "";
                     results.Add(new ImportResult 
                     { 
                         Success = false, 
-                        Message = $"Holding '{snapshotImport.HoldingName}' of type '{snapshotImport.HoldingType}' in category '{snapshotImport.HoldingCategoryName}' in institution '{snapshotImport.HoldingInstitution}' not found.",
+                        Message = $"Holding '{snapshotImport.HoldingName}' of type '{snapshotImport.HoldingType}' in category '{snapshotImport.HoldingCategoryName}'{institutionInfo} not found.",
                         Row = snapshots.IndexOf(snapshotImport) + 1
                     });
                     errorCount++;

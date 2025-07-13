@@ -91,14 +91,6 @@ export default function DataImport() {
     try {
       const result = await uploadImportData(previewData, selectedDataType as ImportDataTypeStrings);
       setImportResult(result);
-      
-      if (result.success) {
-        setTimeout(() => {
-          setPreviewData([]);
-          setShowPreview(false);
-          setImportResult(null);
-        }, 3000);
-      }
     } catch (error) {
       setImportResult({
         success: false,

@@ -37,7 +37,8 @@ export function transformImportData(data: RawCsvData[], dataType: ImportDataType
         date: item.date as string,
         balanceInCents: convertDollarsToCents(cleanCurrencyInput(item.balance.toString()) || '0'),
         holdingCategoryName: item.holdingCategoryName as string,
-        holdingType: item.holdingType as "Asset" | "Debt"
+        holdingType: item.holdingType as "Asset" | "Debt",
+        holdingInstitution: item.holdingInstitution as string ?? ""
       } as HoldingSnapshotImport));
 
     case ImportDataTypeStringMappings.Budgets:
