@@ -3,7 +3,7 @@
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { Pencil, Trash2, Equal, ArrowUp, ArrowDown } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { formatCurrency, formatDate } from '../../Utils';
+import { convertCentsToDollars, formatDate } from '../../Utils';
 import ListTable from '@/app/ui/components/table/ListTable';
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 import { DateRange } from 'react-day-picker';
@@ -71,13 +71,13 @@ export default function BudgetsList(props: BudgetsListProps) {
 				{budget.category?.name}
 			</td>
 			<td className="flex-1">
-				{formatCurrency(budget.amount)}
-			</td>
-      <td className="flex-1">
-        {formatCurrency(getAmountSpentInCategory(budget.categoryId))}
-      </td>
-      <td className="flex-1">
-        {formatCurrency(getRemainingBudget(budget))}
+									{convertCentsToDollars(budget.amount)}
+				</td>
+				<td className="flex-1">
+					{convertCentsToDollars(getAmountSpentInCategory(budget.categoryId))}
+				</td>
+				<td className="flex-1">
+					{convertCentsToDollars(getRemainingBudget(budget))}
       </td>
       <td className={"flex-1 " + (getRemainingBudget(budget) == 0 ? "text-yellow-500" : getRemainingBudget(budget) > 0 ? "text-green-500" : "text-red-500")}>
         {getRemainingBudget(budget) == 0 ? <Equal size={22} /> : getRemainingBudget(budget) > 0 ? <ArrowDown size={22} /> : <ArrowUp size={22} />}

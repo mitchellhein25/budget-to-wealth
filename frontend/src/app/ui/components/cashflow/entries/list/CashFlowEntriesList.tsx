@@ -5,7 +5,7 @@ import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
 import { Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
-import { formatCurrency } from '../../../Utils';
+import { convertCentsToDollars } from '../../../Utils';
 import ListTable from '../../../table/ListTable';
 import { RecurrenceFrequency } from '@/app/lib/models/cashflow/RecurrenceFrequency';
 
@@ -58,7 +58,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 				{entry.date.toLocaleLowerCase('en-US')}
 			</td>
 			<td className="flex-1">
-				{formatCurrency(entry.amount)}
+										{convertCentsToDollars(entry.amount)}
 			</td>
 			<td className="flex-1">
 				{entry.category?.name}

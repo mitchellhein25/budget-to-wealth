@@ -7,6 +7,7 @@ import { HoldingSnapshotFormData } from './HoldingSnapshotFormData';
 import { Holding } from '@/app/lib/models/net-worth/Holding';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
+import { convertDateToISOString } from '../../../Utils';
 
 interface HoldingSnapshotInputsProps {
   editingFormData: Partial<HoldingSnapshotFormData>;
@@ -81,8 +82,8 @@ export default function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps)
             type="date"
             value={
               props.editingFormData?.date
-                ? new Date(props.editingFormData.date).toISOString().slice(0, 10)
-                : ""
+                ? convertDateToISOString(new Date(props.editingFormData.date))
+                : convertDateToISOString(new Date())
             }
             onChange={props.onChange}
             className="input m-0 w-full" 

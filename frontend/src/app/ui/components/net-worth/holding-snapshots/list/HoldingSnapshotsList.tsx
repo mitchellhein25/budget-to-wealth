@@ -3,7 +3,7 @@
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
-import { formatCurrency } from '../../../Utils';
+import { convertCentsToDollars } from '../../../Utils';
 import ListTable from '../../../table/ListTable';
 import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 
@@ -43,7 +43,7 @@ export default function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 				{snapshot.date.toLocaleLowerCase('en-US')}
 			</td>
 			<td className="flex-1">
-				{formatCurrency(snapshot.balance)}
+				{convertCentsToDollars(snapshot.balance)}
 			</td>
 			<td className="flex space-x-2">
 				<button

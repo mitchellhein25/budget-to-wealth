@@ -9,6 +9,7 @@ import { CashFlowEntryFormData } from './CashFlowEntryFormData';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { RecurrenceFrequency } from '@/app/lib/models/cashflow/RecurrenceFrequency';
+import { convertDateToISOString } from '../../../Utils';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
@@ -81,8 +82,8 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
             type="date"
             value={
               props.editingFormData?.date
-                ? new Date(props.editingFormData.date).toISOString().slice(0, 10)
-                : ""
+                ? convertDateToISOString(new Date(props.editingFormData.date))
+                : convertDateToISOString(new Date())
             }
             onChange={props.onChange}
             className="input w-full" 

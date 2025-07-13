@@ -12,7 +12,7 @@ export const convertDollarsToCents = (dollarAmount: string): number | null => {
   return Math.round(parsed * 100);
 };
 
-export const formatCurrency = (cents: number): string => {
+export const convertCentsToDollars = (cents: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD'
@@ -63,3 +63,6 @@ export const formatDate = (date: Date | undefined, noDay: boolean = false): stri
     day: noDay ? undefined : 'numeric'
   });
 }
+
+export const convertDateToISOString = (date: Date | undefined): string | undefined =>  
+  date?.toISOString().slice(0, 10);
