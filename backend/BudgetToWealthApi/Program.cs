@@ -71,7 +71,10 @@ builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    // Authorization = new[] { new HangfireAuthorizationFilter() }
+});
 
 RecurringJob.AddOrUpdate<RecurringCashFlowEntriesService>(
     "generate-recurring-cashflow-entries",
