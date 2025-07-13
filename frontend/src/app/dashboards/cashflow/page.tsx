@@ -4,7 +4,7 @@ import DashboardSideBar from '@/app/ui/components/dashboards/DashboardSideBar'
 import React, { useCallback, useEffect, useState } from 'react'
 import { formatDate, getCurrentYearRange } from '@/app/ui/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
-import { DateRange } from 'react-day-picker';
+import { DateRange } from '../../ui/components/DatePicker';
 import DatePicker from '@/app/ui/components/DatePicker';
 import { CashFlowTrendGraphData } from '@/app/lib/models/dashboards/CashFlowTrendGraphData';
 import TrendGraph, { TrendGraphDataset } from '@/app/ui/components/dashboards/TrendGraph';

@@ -5,7 +5,7 @@ import { useList } from '@/app/ui/hooks/useFormList';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
 import { formatDate, getCurrentMonthRange } from '@/app/ui/components/Utils';
-import { DateRange } from 'react-day-picker';
+import { DateRange } from '../ui/components/DatePicker';
 import { HoldingSnapshotFormData } from '@/app/ui/components/net-worth/holding-snapshots/form/HoldingSnapshotFormData';
 import { transformFormDataToHoldingSnapshot } from '@/app/ui/components/net-worth/holding-snapshots/form/functions/transformFormDataToHoldingSnapshot';
 import HoldingSnapshotForm from '@/app/ui/components/net-worth/holding-snapshots/form/HoldingSnapshotForm';

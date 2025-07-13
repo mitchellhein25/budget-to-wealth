@@ -58,7 +58,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 				{entry.date.toLocaleLowerCase('en-US')}
 			</td>
 			<td className="flex-1">
-										{convertCentsToDollars(entry.amount)}
+				{convertCentsToDollars(entry.amount)}
 			</td>
 			<td className="flex-1">
 				{entry.category?.name}

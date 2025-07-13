@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { convertCentsToDollars, formatDate } from '../../Utils';
 import ListTable from '@/app/ui/components/table/ListTable';
 import { Budget } from '@/app/lib/models/cashflow/Budget';
-import { DateRange } from 'react-day-picker';
+import { DateRange } from '../../DatePicker';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
 import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';

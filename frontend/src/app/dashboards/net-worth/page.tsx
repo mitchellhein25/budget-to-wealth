@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { NetWorthTrendGraphData } from '@/app/lib/models/dashboards/NetWorthTrendGraphData';
 import { formatDate, getCurrentYearRange } from '@/app/ui/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
-import { DateRange } from 'react-day-picker';
+import { DateRange } from '../../ui/components/DatePicker';
 import DatePicker from '@/app/ui/components/DatePicker';
 import TrendGraph, { TrendGraphDataset } from '@/app/ui/components/dashboards/TrendGraph';
 

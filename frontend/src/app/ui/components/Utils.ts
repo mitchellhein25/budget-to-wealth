@@ -64,5 +64,5 @@ export const formatDate = (date: Date | undefined, noDay: boolean = false): stri
   });
 }
 
-export const convertDateToISOString = (date: Date | undefined): string | undefined =>  
-  date?.toISOString().slice(0, 10);
+export const convertDateToISOString = (date: Date | undefined): string =>
+  date?.toISOString().slice(0, 10) ?? '';

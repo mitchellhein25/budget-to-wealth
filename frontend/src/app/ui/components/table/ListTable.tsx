@@ -26,7 +26,7 @@ export default function ListTable<T extends ListTableItem>(props: ListTableProps
 		if ('date' in a && 'date' in b) {
 			const dateA = new Date(a.date);
 			const dateB = new Date(b.date);
-			return dateA.getTime() - dateB.getTime();
+			return dateB.getTime() - dateA.getTime();
 		}
 		return (a?.name as string)?.localeCompare(b?.name as string ?? '') ?? 0;
 	});

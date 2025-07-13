@@ -10,7 +10,7 @@ import DatePicker from '@/app/ui/components/DatePicker';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { useList } from '@/app/ui/hooks/useFormList';
 import React, { useEffect, useState } from 'react'
-import { DateRange } from 'react-day-picker';
+import { DateRange } from '../../ui/components/DatePicker';
 import CashFlowSideBar from '@/app/ui/components/cashflow/entries/CashFlowSideBar';
 
 export default function BudgetsPage() {
