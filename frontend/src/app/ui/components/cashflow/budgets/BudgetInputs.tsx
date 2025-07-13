@@ -20,7 +20,7 @@ export default function BudgetInputs(props: BudgetInputsProps) {
   const fetchCategories = useCallback(async () => {
     const response = await getRequest<CashFlowCategory>(`CashFlowCategories?cashFlowType=${CashFlowType.Expense}`);
     if (response.successful) {
-      setCategories(response.data as CashFlowCategory[]);
+      setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
   }, []);
 

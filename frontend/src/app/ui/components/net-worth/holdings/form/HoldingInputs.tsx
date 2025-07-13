@@ -25,7 +25,7 @@ export default function HoldingInputs(props: HoldingInputsProps) {
     // setIsLoading(true);
     const response = await getRequest<Category>(`HoldingCategories`);
     if (response.successful) {
-      setCategories(response.data as Category[]);
+      setCategories((response.data as Category[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
   }
 

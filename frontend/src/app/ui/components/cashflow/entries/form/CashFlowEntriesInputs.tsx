@@ -30,7 +30,7 @@ export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps)
     // setIsLoading(true);
     const response = await getRequest<CashFlowCategory>(`CashFlowCategories?cashFlowType=${props.cashFlowType}`);
     if (response.successful) {
-      setCategories(response.data as CashFlowCategory[]);
+      setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
   }, [props.cashFlowType]);
 

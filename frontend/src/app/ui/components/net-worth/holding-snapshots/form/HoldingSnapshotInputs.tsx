@@ -25,7 +25,7 @@ export default function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps)
     // setIsLoading(true);
     const response = await getRequest<Holding>(`Holdings`);
     if (response.successful) {
-      setHoldings(response.data as Holding[]);
+      setHoldings((response.data as Holding[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
   }
 
