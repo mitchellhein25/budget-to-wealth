@@ -43,12 +43,6 @@ public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
         if (string.IsNullOrEmpty(expectedUsername) || string.IsNullOrEmpty(expectedPassword))
             return false;
 
-        // Debug logging
-        Console.WriteLine($"Hangfire Auth - Received: {username}:{password}");
-        Console.WriteLine($"Hangfire Auth - Expected: {expectedUsername}:{expectedPassword}");
-        Console.WriteLine($"Hangfire Auth - Username match: {username == expectedUsername}");
-        Console.WriteLine($"Hangfire Auth - Password match: {password == expectedPassword}");
-
         return username == expectedUsername && password == expectedPassword;
     }
 } 
