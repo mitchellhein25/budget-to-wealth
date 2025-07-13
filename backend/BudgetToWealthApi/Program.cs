@@ -73,7 +73,7 @@ var app = builder.Build();
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    // Authorization = new[] { new HangfireAuthorizationFilter() }
+    Authorization = new[] { new HangfireAuthorizationFilter() }
 });
 
 RecurringJob.AddOrUpdate<RecurringCashFlowEntriesService>(
