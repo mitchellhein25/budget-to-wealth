@@ -29,16 +29,10 @@ public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
         string username = parts[0];
         string password = parts[1];
 
-        // 1. Try config (covers appsettings and Hangfire__AuthUsername env vars)
         var config = httpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
-        string expectedUsername = config?["Hangfire:AuthUsername"];
-        string expectedPassword = config?["Hangfire:AuthPassword"];
-
-        // 2. If not set, try flat env vars
-        if (string.IsNullOrEmpty(expectedUsername))
-            expectedUsername = Environment.GetEnvironmentVariable("HANGFIRE_AUTH_USERNAME");
-        if (string.IsNullOrEmpty(expectedPassword))
-            expectedPassword = Environment.GetEnvironmentVariable("HANGFIRE_AUTH_PASSWORD");
+        
+        string expectedUsername = Environment.GetEnvironmentVariable("HANGFIRE_AUTH_USERNAME") ?? config?["Hangfire:AuthUsername"] ?? "admin";
+        string expectedPassword = Environment.GetEnvironmentVariable("HANGFIRE_AUTH_PASSWORD") ?? config?["Hangfire:AuthPassword"] ?? "admin";
 
         if (string.IsNullOrEmpty(expectedUsername) || string.IsNullOrEmpty(expectedPassword))
             return false;
