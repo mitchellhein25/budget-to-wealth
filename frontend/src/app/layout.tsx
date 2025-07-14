@@ -12,12 +12,16 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session: SessionData | null = await auth0.getSession();
   return (
-    <html lang="en">
-      <body>
-        <header>
-          <NavBar session={session} />
-        </header>
-        {children}
+    <html>
+      <body className="min-h-screen bg-base-100">
+        <div className="flex flex-col min-h-screen">
+          <header className="sticky top-0 z-50 bg-base-100/95 backdrop-blur-sm border-b border-base-300">
+            <NavBar session={session} />
+          </header>
+          <main className="flex-1">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

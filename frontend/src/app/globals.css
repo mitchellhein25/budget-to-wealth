@@ -7,3 +7,57 @@
   prefix: ;
   logs: true;
 }
+
+/* Professional styling enhancements */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Enhanced card styling */
+  .card {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .card:hover {
+    @apply shadow-md;
+  }
+  
+  /* Enhanced button styling */
+  .btn {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  /* Enhanced input styling */
+  .input {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .input:focus {
+    @apply ring-2 ring-primary/20;
+  }
+  
+  /* Enhanced table styling */
+  .table {
+    @apply text-sm;
+  }
+  
+  .table th {
+    @apply font-semibold text-base-content/70;
+  }
+  
+  /* Professional spacing utilities */
+  .section-padding {
+    @apply px-4 lg:px-8 py-6;
+  }
+  
+  .container-max {
+    @apply max-w-7xl mx-auto;
+  }
+}

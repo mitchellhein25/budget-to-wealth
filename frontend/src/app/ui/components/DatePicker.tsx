@@ -49,34 +49,51 @@ export default function DatePicker({ dateRange, setDateRange, className = "" }: 
   };
 
   return (
-    <div className={`flex flex-col items-center space-y-2 ${className}`}>
-      <label className="text-lg text-center">
-        Select Date Range
-      </label>
-      <div className="flex items-center gap-2">
-        <input
-          type="date"
-          value={fromInputValue}
-          onChange={handleFromChange}
-          className="input input-bordered"
-          placeholder="MM/DD/YYYY"
-        />
-        <span className="text-gray-500">to</span>
-        <input
-          type="date"
-          value={toInputValue}
-          onChange={handleToChange}
-          className="input input-bordered"
-          placeholder="MM/DD/YYYY"
-        />
-        <button
-          type="button"
-          onClick={handleSetRange}
-          disabled={!hasChanges()}
-          className={`btn ${hasChanges() ? 'btn-primary' : 'btn-disabled'}`}
-        >
-          Set Range
-        </button>
+    <div className={`card bg-base-100 shadow-sm ${className}`}>
+      <div className="card-body p-4">
+        <h3 className="card-title text-base mb-4">Date Range Filter</h3>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="form-control w-full sm:w-auto">
+            <label className="label">
+              <span className="label-text text-sm">From</span>
+            </label>
+            <input
+              type="date"
+              value={fromInputValue}
+              onChange={handleFromChange}
+              className="input input-bordered input-sm"
+              placeholder="MM/DD/YYYY"
+            />
+          </div>
+          <div className="flex items-center text-base-content/60">
+            <span className="text-sm">to</span>
+          </div>
+          <div className="form-control w-full sm:w-auto">
+            <label className="label">
+              <span className="label-text text-sm">To</span>
+            </label>
+            <input
+              type="date"
+              value={toInputValue}
+              onChange={handleToChange}
+              className="input input-bordered input-sm"
+              placeholder="MM/DD/YYYY"
+            />
+          </div>
+          <div className="form-control w-full sm:w-auto">
+            <label className="label">
+              <span className="label-text opacity-0">Action</span>
+            </label>
+            <button
+              type="button"
+              onClick={handleSetRange}
+              disabled={!hasChanges()}
+              className={`btn btn-sm ${hasChanges() ? 'btn-primary' : 'btn-disabled'}`}
+            >
+              Apply Filter
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

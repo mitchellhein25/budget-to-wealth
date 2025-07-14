@@ -1,36 +1,45 @@
-import React from 'react';
 import Form from 'next/form';
 
-type FormTemplateProps = {
-  handleSubmit: (formData: FormData) => void;
+export type FormTemplateProps = {
+  formId: string;
   formHeader: string;
-  errorMessage: string;
-  infoMessage: string;
-  inputs: React.ReactElement
-  buttons: React.ReactElement
-  formId: string
+  inputs: React.ReactNode;
+  buttons: React.ReactNode;
+  errorMessage?: string;
+  infoMessage?: string;
+  handleSubmit: (formData: FormData) => void;
 }
 
 export default function FormTemplate(props: FormTemplateProps) {
   return (
-    <Form 
-      action={props.handleSubmit} 
-      className="space-y-4 flex flex-col justify-center w-xs" 
-      id={props.formId}
-    >
-      <h2 className="text-lg text-center">
-        {props.formHeader}
-      </h2>
-        {props.inputs}
-      <div className="flex justify-center">
-        {props.buttons}
+    <div className="card bg-base-100 shadow-sm w-full max-w-md">
+      <div className="card-body p-6">
+        <h2 className="card-title text-lg mb-6 text-center">
+          {props.formHeader}
+        </h2>
+        <Form 
+          action={props.handleSubmit} 
+          className="space-y-4" 
+          id={props.formId}
+        >
+          <div className="space-y-4">
+            {props.inputs}
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 pt-4">
+            {props.buttons}
+          </div>
+          {props.errorMessage && (
+            <div className="alert alert-error">
+              <span>{props.errorMessage}</span>
+            </div>
+          )}
+          {props.infoMessage && (
+            <div className="alert alert-info">
+              <span>{props.infoMessage}</span>
+            </div>
+          )}
+        </Form>
       </div>
-      {props.errorMessage && (
-        <p className="alert alert-error alert-soft">{props.errorMessage}</p>
-      )}
-      {props.infoMessage && (
-        <p className="alert alert-info alert-soft">{props.infoMessage}</p>
-      )}
-    </Form>
+    </div>
   );
 }
