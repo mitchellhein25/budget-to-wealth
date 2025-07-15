@@ -1,0 +1,34 @@
+{
+  "name": "budget-to-wealth-fullstack",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run frontend:dev\" \"npm run backend:dev\"",
+    "lint": "cd frontend && npm run lint",
+    "test": "npm run frontend:test && npm run backend:test",
+    "build": "npm run frontend:build && npm run backend:build",
+    "start": "concurrently \"npm run frontend:start\" \"npm run backend:start\"",
+    "clean": "npm run frontend:clean && npm run backend:clean",
+    "install-all": "npm install && npm run frontend:install && npm run backend:restore",
+
+    "frontend:dev": "cd frontend && npm run dev",
+    "backend:dev": "cd backend/BudgetToWealthApi && dotnet run",
+    "frontend:test": "cd frontend && npm test",
+    "backend:test": "cd backend && dotnet test",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:build": "cd backend && dotnet build",
+    "frontend:start": "cd frontend && npm start",
+    "backend:start": "cd backend/BudgetToWealthApi && dotnet run --configuration Release",
+    "frontend:clean": "cd frontend && rm -rf node_modules .next",
+    "backend:clean": "cd backend && dotnet clean",
+    "frontend:install": "cd frontend && npm install",
+    "backend:restore": "cd backend && dotnet restore",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
