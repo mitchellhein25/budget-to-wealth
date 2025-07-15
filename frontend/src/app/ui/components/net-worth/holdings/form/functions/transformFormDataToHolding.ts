@@ -13,7 +13,6 @@ export const transformFormDataToHolding = (formData: FormData): { item: Holding 
     const validatedData = validationResult.data;
 
     const item: Holding = {
-      id: validatedData.id ? parseInt(validatedData.id) : 0,
       name: validatedData.name,
       type: validatedData.type as HoldingType,
       holdingCategoryId: validatedData.holdingCategoryId as string,

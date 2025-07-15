@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TablePagination from './TablePagination';
 
 export type ListTableItem = {
-  id: string | number;
+  id?: string | number;
 }
 
 export type ListTableProps<T extends ListTableItem> = {
