@@ -18,6 +18,7 @@ export const transformFormDataToHoldingSnapshot = (formData: FormData): { item: 
     }
 
     const item: HoldingSnapshot = {
+      id: validatedData.id ? parseInt(validatedData.id) : 0,
       holdingId: validatedData.holdingId as string,
       date: validatedData.date.toISOString().split('T')[0],
       balance: balanceInCents,

@@ -24,6 +24,7 @@ export const transformFormDataToBudget = (formData: FormData): { item: Budget | 
     }
 
     const item: Budget = {
+      id: validatedData.id ? parseInt(validatedData.id) : 0,
       amount: amountInCents,
       categoryId: validatedData.categoryId,
       name: "",

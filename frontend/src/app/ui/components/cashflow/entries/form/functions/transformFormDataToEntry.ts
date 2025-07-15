@@ -19,6 +19,7 @@ export const transformFormDataToEntry = (formData: FormData, cashFlowType: CashF
     }
 
     const item: CashFlowEntry = {
+      id: validatedData.id ? parseInt(validatedData.id) : 0,
       amount: amountInCents,
       date: validatedData.date.toISOString().split('T')[0],
       categoryId: validatedData.categoryId,
