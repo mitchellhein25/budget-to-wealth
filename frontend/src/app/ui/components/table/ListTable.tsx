@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import TablePagination from './TablePagination';
 
-export type ListTableItem = {
-  id?: string | number;
-}
+export type ListTableItem = { [key: string]: string | number | Date } & (
+  | { name: string }
+  | { date: string }
+);
 
 export type ListTableProps<T extends ListTableItem> = {
   title: string;
