@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import TablePagination from './TablePagination';
 
-export type ListTableItem = { [key: string]: string | number | Date } & (
+export type ListTableItem = (
   | { name: string }
   | { date: string }
 );
@@ -20,10 +20,26 @@ export default function ListTable<T extends ListTableItem>(props: ListTableProps
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = props.itemsPerPage || 10;
 
-	const totalPages = Math.ceil(props.items.length / itemsPerPage);
+	const sortedItems = useMemo(() => {
+		return [...props.items].sort((a, b) => {
+			if ('date' in a && 'date' in b) {
+				const dateA = new Date(a.date);
+				const dateB = new Date(b.date);
+				return dateB.getTime() - dateA.getTime();
+			}
+			
+			if ('name' in a && 'name' in b) {
+				return (a.name as string).localeCompare(b.name as string);
+			}
+			
+			return 0;
+		});
+	}, [props.items]);
+
+	const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
-	const currentItems = props.items.slice(startIndex, endIndex);
+	const currentItems = sortedItems.slice(startIndex, endIndex);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
