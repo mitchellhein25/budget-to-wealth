@@ -71,8 +71,22 @@ export default function NavBar({ session }: { session: SessionData | null }) {
           )}
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost gap-2">
-              <div className="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
-                <User className="w-4 h-4" />
+              <div className="avatar">
+                <div className="w-8 h-8 rounded-full">
+                  {session?.user?.picture ? (
+                    <Image
+                      src={session.user.picture}
+                      alt="Profile"
+                      width={32}
+                      height={32}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="bg-primary text-primary-content rounded-full w-full h-full flex items-center justify-center">
+                      <User className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
               </div>
               <span className="hidden sm:inline">{session?.user.name ?? "User"}</span>
             </div>
