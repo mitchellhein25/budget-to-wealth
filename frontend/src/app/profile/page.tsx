@@ -19,34 +19,32 @@ export default async function Profile() {
   }
 
   return (
-    <div className="section-padding container-max">
-      <div className="card bg-base-100 shadow-sm w-full max-w-md mx-auto">
-        <div className="card-body p-6">
-          <h2 className="card-title text-lg mb-6 text-center">Profile</h2>
-          
-          <div className="flex flex-col items-center space-y-4">
-            <div className="avatar">
-              <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                {session.user.picture ? (
-                  <Image
-                    src={session.user.picture}
-                    alt="Profile"
-                    width={96}
-                    height={96}
-                    className="rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="bg-primary text-primary-content rounded-full w-full h-full flex items-center justify-center">
-                    <User className="w-12 h-12" />
-                  </div>
-                )}
-              </div>
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="card bg-base-100 shadow-sm w-full max-w-xl">
+        <div className="card-body p-8 flex flex-col items-center space-y-6">
+          <div className="avatar">
+            <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+              {session.user.picture ? (
+                <Image
+                  src={session.user.picture}
+                  alt="Profile"
+                  width={128}
+                  height={128}
+                  className="rounded-full object-cover"
+                />
+              ) : (
+                <div className="bg-primary text-primary-content rounded-full w-full h-full flex items-center justify-center">
+                  <User className="w-16 h-16" />
+                </div>
+              )}
             </div>
-
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">{session.user.name}</h3>
-              <p className="text-base-content/70">{session.user.email}</p>
-            </div>
+          </div>
+          <div className="text-center space-y-4 w-full">
+            <h3 className="text-xl font-semibold">{session.user.name}</h3>
+            <p className="text-base-content/70">{session.user.email}</p>
+            <a href="/auth/logout" className="btn btn-error mx-auto">
+              Logout
+            </a>
           </div>
         </div>
       </div>
