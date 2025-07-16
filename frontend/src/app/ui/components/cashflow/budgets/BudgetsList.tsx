@@ -6,38 +6,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { convertCentsToDollars, formatDate } from '../../Utils';
 import ListTable from '@/app/ui/components/table/ListTable';
 import { Budget } from '@/app/lib/models/cashflow/Budget';
-import { DateRange } from '../../DatePicker';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 
 interface BudgetsListProps {
 	budgets: Budget[],
+	expenses: CashFlowEntry[],
 	onBudgetDeleted: () => void,
 	onBudgetIsEditing: (budget: Budget) => void,
 	isLoading: boolean,
 	isError: boolean,
-  dateRange: DateRange,
 }
 
 export default function BudgetsList(props: BudgetsListProps) {
-  const [expenses, setExpenses] = useState<CashFlowEntry[]>([]);
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-  
-  const fetchExpenses = useCallback(async () => {
-    // setInfoMessage("");
-    // setErrorMessage("");
-    // setIsLoading(true);
-    const response = await getRequest<CashFlowEntry>(`CashFlowEntries?cashFlowType=${CashFlowType.Expense}&startDate=${formatDate(props.dateRange.from)}&endDate=${formatDate(props.dateRange.to)}`);
-    if (response.successful) {
-      setExpenses(response.data as CashFlowEntry[]);
-    }
-  }, [props.dateRange]);
-
-  useEffect(() => {
-    fetchExpenses();
-  }, [fetchExpenses]);
 
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
@@ -48,7 +28,7 @@ export default function BudgetsList(props: BudgetsListProps) {
 	};
 
   function getAmountSpentInCategory(categoryId: string) {
-    return expenses.filter(expense => expense.categoryId === categoryId).reduce((acc, expense) => acc + expense.amount, 0);
+    return props.expenses.filter(expense => expense.categoryId === categoryId).reduce((acc, expense) => acc + expense.amount, 0);
   }
 
   function getRemainingBudget(budget: Budget) {

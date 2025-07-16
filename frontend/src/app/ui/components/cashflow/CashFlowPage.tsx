@@ -14,6 +14,7 @@ import { useList } from '../../hooks/useFormList';
 import { handleFormSubmit } from '../form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './entries/form/functions/transformFormDataToEntry';
 import CashFlowSideBar from './entries/CashFlowSideBar';
+import TotalDisplay from '../TotalDisplay';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
@@ -64,6 +65,9 @@ export default function CashFlowPage(props: CashFlowPageProps) {
 		fetchItems();
 	}, [fetchItems]);
   
+  const total = items.reduce((sum, entry) => sum + entry.amount, 0);
+	const totalLabel = props.cashFlowType === CashFlowType.Income ? 'Total Income' : 'Total Expenses';
+  
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
       <CashFlowSideBar />
@@ -81,11 +85,23 @@ export default function CashFlowPage(props: CashFlowPageProps) {
             cashFlowType={props.cashFlowType}
           />
         </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <DatePicker
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-          />
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <DatePicker
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+              />
+            </div>
+            <div className="flex-1 flex justify-center">
+              <TotalDisplay
+                label={totalLabel}
+                amount={total}
+                isLoading={isLoading}
+              />
+            </div>
+            <div className="flex-1"></div>
+          </div>
           <CashFlowEntriesList
             entries={items}
             onEntryDeleted={fetchItems}
