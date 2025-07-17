@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { Budget } from '@/app/lib/models/cashflow/Budget';
 import { CashFlowEntry } from '@/app/lib/models/cashflow/CashFlowEntry';
-import { CashFlowType } from '@/app/lib/models/cashflow/CashFlowType';
 import { DateRange } from '../../DatePicker';
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import { formatDate } from '../../Utils';
 import { ArrowUp, ArrowDown, Equal } from 'lucide-react';
 import TotalDisplay from '../../TotalDisplay';
 
