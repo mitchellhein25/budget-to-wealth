@@ -6,7 +6,7 @@ import BudgetsForm from '@/app/ui/components/cashflow/budgets/BudgetsForm';
 import BudgetsList from '@/app/ui/components/cashflow/budgets/BudgetsList';
 import BudgetSummary from '@/app/ui/components/cashflow/budgets/BudgetSummary';
 import { transformFormDataToBudget } from '@/app/ui/components/cashflow/budgets/transformFormDataToBudget';
-import { cleanCurrencyInput, formatDate, getCurrentMonthRange } from '@/app/ui/components/Utils';
+import { cleanCurrencyInput, convertDateToISOString, formatDate, getCurrentMonthRange } from '@/app/ui/components/Utils';
 import DatePicker from '@/app/ui/components/DatePicker';
 import { handleFormSubmit } from '@/app/ui/components/form/functions/handleFormSubmit';
 import { useList } from '@/app/ui/hooks/useFormList';
@@ -69,7 +69,7 @@ export default function BudgetsPage() {
 	};
   
   const fetchExpenses = useCallback(async () => {
-    const response = await getRequest<CashFlowEntry>(`CashFlowEntries?cashFlowType=${CashFlowType.Expense}&startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`);
+    const response = await getRequest<CashFlowEntry>(`CashFlowEntries?entryType=${CashFlowType.Expense}&startDate=${convertDateToISOString(dateRange.from)}&endDate=${convertDateToISOString(dateRange.to)}`);
     if (response.successful) {
       setExpenses(response.data as CashFlowEntry[]);
     }
