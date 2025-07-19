@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
+import { getRequestList, GetRequestResultList } from '@/app/lib/api/rest-methods/getRequest';
 import { MessageState } from '@/app/components/Utils';
 import { Budget } from '@/app/cashflow/budget/components/Budget';
 
 export const useList = <T>(
-  fetchEndpoint: string,
+  fetchFunction: () => Promise<GetRequestResultList<T>>,
   itemName: string
 ) => {
   const [items, setItems] = useState<T[]>([]);
@@ -29,7 +29,7 @@ export const useList = <T>(
     try {
       setIsLoading(true);
       setMessage({ type: null, text: '' });
-      const response = await getRequest<T>(fetchEndpoint);
+      const response = await fetchFunction();
       if (!response.successful) {
         setErrorMessage(`Failed to load ${itemName}. Please try again.`, 'list');
         return;
@@ -47,7 +47,7 @@ export const useList = <T>(
     } finally {
       setIsLoading(false);
     }
-  }, [fetchEndpoint, itemName, setErrorMessage]);
+  }, [fetchFunction, itemName, setErrorMessage]);
 
   return {
     items,

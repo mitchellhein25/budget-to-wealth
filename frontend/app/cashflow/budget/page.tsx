@@ -14,14 +14,14 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange } from '../../components/DatePicker';
 import CashFlowSideBar from '@/app/cashflow/components/CashFlowSideBar';
 import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
+import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowType } from '@/app/cashflow/components/CashFlowType';
+import { getBudgetsByDateRange } from '@/app/lib/api/data-methods/getBudgets';
 
 export default function BudgetsPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-  const fetchEndpoint = `Budgets?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`;
-	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<Budget>(fetchEndpoint, "Budgets");
+	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<Budget>(() => getBudgetsByDateRange(dateRange),"Budgets");
 	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});
   const [expenses, setExpenses] = useState<CashFlowEntry[]>([]);
 
@@ -69,7 +69,7 @@ export default function BudgetsPage() {
 	};
   
   const fetchExpenses = useCallback(async () => {
-    const response = await getRequest<CashFlowEntry>(`CashFlowEntries?entryType=${CashFlowType.Expense}&startDate=${convertDateToISOString(dateRange.from)}&endDate=${convertDateToISOString(dateRange.to)}`);
+    const response = await getRequestList<CashFlowEntry>(`CashFlowEntries?entryType=${CashFlowType.Expense}&startDate=${convertDateToISOString(dateRange.from)}&endDate=${convertDateToISOString(dateRange.to)}`);
     if (response.successful) {
       setExpenses(response.data as CashFlowEntry[]);
     }
