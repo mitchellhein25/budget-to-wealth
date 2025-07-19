@@ -6,7 +6,7 @@ import BudgetsForm from '@/app/cashflow/budget/components/BudgetsForm';
 import BudgetsList from '@/app/cashflow/budget/components/BudgetsList';
 import BudgetSummary from '@/app/cashflow/budget/components/BudgetSummary';
 import { transformFormDataToBudget } from '@/app/cashflow/budget/components/transformFormDataToBudget';
-import { cleanCurrencyInput, convertDateToISOString, formatDate, getCurrentMonthRange } from '@/app/components/Utils';
+import { cleanCurrencyInput, convertDateToISOString, formatDate, getCurrentMonthRange, messageTypeIsError } from '@/app/components/Utils';
 import DatePicker from '@/app/components/DatePicker';
 import { handleFormSubmit } from '@/app/components/form/functions/handleFormSubmit';
 import { useDataListFetcher } from '@/app/components/form/useDataListFetcher';
@@ -14,22 +14,18 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange } from '../../components/DatePicker';
 import CashFlowSideBar from '@/app/cashflow/components/CashFlowSideBar';
 import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
-import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
-import { CashFlowType } from '@/app/cashflow/components/CashFlowType';
 import { getBudgetsByDateRange } from '@/app/lib/api/data-methods/getBudgets';
+import { getExpensesByDateRange } from '@/app/lib/api/data-methods/getExpenses';
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-  const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
-	const dataListFetchState = useDataListFetcher<Budget>(fetchBudgets, "budgets");
-
-  
+  const fetchBudgets = useCallback(async () => await getBudgetsByDateRange(dateRange), [dateRange]);
+	const budgetsDataListFetchState = useDataListFetcher<Budget>(fetchBudgets, "budgets");
+  const fetchExpenses = useCallback(async () => await getExpensesByDateRange(dateRange), [dateRange]);
+	const expensesDataListFetchState = useDataListFetcher<CashFlowEntry>(fetchExpenses, "expenses");
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});
-  const [expenses, setExpenses] = useState<CashFlowEntry[]>([]);
-
-  const clearDataListMessage = () => dataListFetchState.setMessage({ type: null, text: '' });
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value, name } = event.target;
@@ -73,13 +69,6 @@ export default function BudgetsPage() {
 		setEditingFormData({});
 		setMessage({ type: null, text: '' });
 	};
-  
-  const fetchExpenses = useCallback(async () => {
-    const response = await getRequestList<CashFlowEntry>(`CashFlowEntries?entryType=${CashFlowType.Expense}&startDate=${convertDateToISOString(dateRange.from)}&endDate=${convertDateToISOString(dateRange.to)}`);
-    if (response.successful) {
-      setExpenses(response.data as CashFlowEntry[]);
-    }
-  }, [dateRange]);
 
 	useEffect(() => {
 		fetchBudgets();
@@ -121,12 +110,12 @@ export default function BudgetsPage() {
             <div className="flex-1"></div>
           </div>
           <BudgetsList
-            budgets={dataListFetchState.items}
-            expenses={expenses}
+            budgets={budgetsDataListFetchState.items}
+            expenses={expensesDataListFetchState.items}
             onBudgetDeleted={fetchBudgets}
-            isLoading={dataListFetchState.isLoading}
-            isError={dataListFetchState.message.type === 'ERROR'}
             onBudgetIsEditing={onBudgetIsEditing}
+            isLoading={budgetsDataListFetchState.isLoading || expensesDataListFetchState.isLoading}
+            isError={messageTypeIsError(budgetsDataListFetchState.message) || messageTypeIsError(expensesDataListFetchState.message)}
           />
         </div>
       </div>

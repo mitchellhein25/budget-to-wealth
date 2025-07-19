@@ -1,10 +1,10 @@
-import { formatDate } from "@/app/components/Utils";
 import { getRequestList } from "../rest-methods/getRequest";
 import { DateRange } from "@/app/components/DatePicker";
 import { Budget } from "@/app/cashflow/budget/components/Budget";
+import { getQueryStringForDateRange } from "./queryHelpers";
 
 export async function getBudgetsByDateRange(dateRange: DateRange) {
-  const fetchEndpoint = `Budgets?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`;
+  const fetchEndpoint = `Budgets?${getQueryStringForDateRange(dateRange)}`;
   const response = await getRequestList<Budget>(fetchEndpoint);
   if (response.successful) {
     const budgets = response.data as Budget[];

@@ -7,6 +7,8 @@ export type MessageState = {
   text: string;
 };
 
+export const messageTypeIsError = (message: MessageState) => message.type === "ERROR";
+
 export const convertDollarsToCents = (dollarAmount: string): number | null => {
   const parsed = Number.parseFloat(dollarAmount);
   if (isNaN(parsed))
