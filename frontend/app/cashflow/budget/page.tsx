@@ -9,7 +9,7 @@ import { transformFormDataToBudget } from '@/app/cashflow/budget/components/tran
 import { cleanCurrencyInput, convertDateToISOString, formatDate, getCurrentMonthRange } from '@/app/components/Utils';
 import DatePicker from '@/app/components/DatePicker';
 import { handleFormSubmit } from '@/app/components/form/functions/handleFormSubmit';
-import { useList } from '@/app/components/form/useFormList';
+import { useDataListFetcher } from '@/app/components/form/useDataListFetcher';
 import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange } from '../../components/DatePicker';
 import CashFlowSideBar from '@/app/cashflow/components/CashFlowSideBar';
@@ -19,11 +19,17 @@ import { CashFlowType } from '@/app/cashflow/components/CashFlowType';
 import { getBudgetsByDateRange } from '@/app/lib/api/data-methods/getBudgets';
 
 export default function BudgetsPage() {
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-	const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<Budget>(() => getBudgetsByDateRange(dateRange),"Budgets");
+  const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
+	const dataListFetchState = useDataListFetcher<Budget>(fetchBudgets, "budgets");
+
+  
+
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});
   const [expenses, setExpenses] = useState<CashFlowEntry[]>([]);
+
+  const clearDataListMessage = () => dataListFetchState.setMessage({ type: null, text: '' });
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value, name } = event.target;
@@ -76,9 +82,9 @@ export default function BudgetsPage() {
   }, [dateRange]);
 
 	useEffect(() => {
-		fetchItems();
+		fetchBudgets();
     fetchExpenses();
-	}, [fetchItems, fetchExpenses]);
+	}, [fetchBudgets, fetchExpenses]);
 
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
@@ -106,20 +112,20 @@ export default function BudgetsPage() {
             </div>
             <div className="flex-1 flex justify-center">
               <BudgetSummary
-                budgets={items}
+                budgets={dataListFetchState.items}
                 expenses={expenses}
                 dateRange={dateRange}
-                isLoading={isLoading}
+                isLoading={dataListFetchState.isLoading}
               />
             </div>
             <div className="flex-1"></div>
           </div>
           <BudgetsList
-            budgets={items}
+            budgets={dataListFetchState.items}
             expenses={expenses}
-            onBudgetDeleted={fetchItems}
-            isLoading={isLoading}
-            isError={message.type === 'list-error'}
+            onBudgetDeleted={fetchBudgets}
+            isLoading={dataListFetchState.isLoading}
+            isError={dataListFetchState.message.type === 'ERROR'}
             onBudgetIsEditing={onBudgetIsEditing}
           />
         </div>

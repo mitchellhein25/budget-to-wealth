@@ -10,7 +10,7 @@ import DatePicker from '../../components/DatePicker';
 import CashFlowEntriesForm from './form/CashFlowEntriesForm';
 import { cashFlowFormOnChange } from './form/functions/cashFlowFormOnChange';
 import { CashFlowEntryFormData } from './form/CashFlowEntryFormData';
-import { useList } from '../../components/form/useFormList';
+import { useList } from '../../components/form/useDataListFetcher';
 import { handleFormSubmit } from '../../components/form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './form/functions/transformFormDataToEntry';
 import CashFlowSideBar from './CashFlowSideBar';

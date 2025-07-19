@@ -1,7 +1,9 @@
 export const numberRegex = /^\d+(\.\d{0,2})?$/;
 
+export type MessageType = "ERROR" | "INFO" | null;
+
 export type MessageState = {
-  type: 'form-info' | 'form-error' | 'list-info' | 'list-error' | null;
+  type: MessageType;
   text: string;
 };
 

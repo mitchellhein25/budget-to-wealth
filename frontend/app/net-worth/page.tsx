@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react'
-import { useList } from '@/app/components/form/useFormList';
+import { useList } from '@/app/components/form/useDataListFetcher';
 import { handleFormSubmit } from '@/app/components/form/functions/handleFormSubmit';
 import { HoldingSnapshot } from './components/HoldingSnapshot';
 import { formatDate, getCurrentMonthRange } from '@/app/components/Utils';
