@@ -6,7 +6,7 @@ import HoldingsList from '@/app/net-worth/holdings/components/list/HoldingsList'
 import { HoldingFormData } from '@/app/net-worth/holdings/components/form/HoldingFormData';
 import HoldingForm from '@/app/net-worth/holdings/components/form/HoldingForm';
 import { holdingFormOnChange } from '@/app/net-worth/holdings/components/form/functions/holdingFormOnChange';
-import { useList } from '@/app/components/form/useDataListFetcher';
+import { useList } from '@/app/hooks/useDataListFetcher';
 import { handleFormSubmit } from '@/app/components/form/functions/handleFormSubmit';
 import { transformFormDataToHolding } from '@/app/net-worth/holdings/components/form/functions/transformFormDataToHolding';
 import { ArrowLeft } from 'lucide-react';

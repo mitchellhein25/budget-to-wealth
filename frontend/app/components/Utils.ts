@@ -8,6 +8,7 @@ export type MessageState = {
 };
 
 export const messageTypeIsError = (message: MessageState) => message.type === "ERROR";
+export const messageTypeIsInfo = (message: MessageState) => message.type === "INFO";
 
 export const convertDollarsToCents = (dollarAmount: string): number | null => {
   const parsed = Number.parseFloat(dollarAmount);
@@ -70,3 +71,6 @@ export const formatDate = (date: Date | undefined, noDay: boolean = false): stri
 
 export const convertDateToISOString = (date: Date | undefined): string =>
   date?.toISOString().slice(0, 10) ?? '';
+
+export const replaceSpacesWithDashes = (itemName: string): string => 
+  itemName.replace(/\s+/g, '-');

@@ -6,16 +6,16 @@ import BudgetsForm from '@/app/cashflow/budget/components/BudgetsForm';
 import BudgetsList from '@/app/cashflow/budget/components/BudgetsList';
 import BudgetSummary from '@/app/cashflow/budget/components/BudgetSummary';
 import { transformFormDataToBudget } from '@/app/cashflow/budget/components/transformFormDataToBudget';
-import { cleanCurrencyInput, convertDateToISOString, formatDate, getCurrentMonthRange, messageTypeIsError } from '@/app/components/Utils';
+import { getCurrentMonthRange, messageTypeIsError } from '@/app/components/Utils';
 import DatePicker from '@/app/components/DatePicker';
-import { handleFormSubmit } from '@/app/components/form/functions/handleFormSubmit';
-import { useDataListFetcher } from '@/app/components/form/useDataListFetcher';
+import { useDataListFetcher } from '@/app/hooks/useDataListFetcher';
 import React, { useCallback, useEffect, useState } from 'react'
 import { DateRange } from '../../components/DatePicker';
 import CashFlowSideBar from '@/app/cashflow/components/CashFlowSideBar';
 import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
 import { getBudgetsByDateRange } from '@/app/lib/api/data-methods/getBudgets';
 import { getExpensesByDateRange } from '@/app/lib/api/data-methods/getExpenses';
+import { useForm } from '@/app/hooks/useForm';
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
@@ -24,51 +24,21 @@ export default function BudgetsPage() {
   const fetchExpenses = useCallback(async () => await getExpensesByDateRange(dateRange), [dateRange]);
 	const expensesDataListFetchState = useDataListFetcher<CashFlowEntry>(fetchExpenses, "expenses");
 
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [editingFormData, setEditingFormData] = useState<Partial<BudgetFormData>>({});
+  const convertBudgetToFormData = (budget: Budget) => ({
+    id: budget.id?.toString(),
+    amount: (budget.amount / 100).toFixed(2),
+    categoryId: budget.categoryId,
+  });
 
-  function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { value, name } = event.target;
-    const fieldName = name.replace('budget-', '');
-    let cleanedValue: string | null = value;
-    if (fieldName === "amount") {
-      cleanedValue = cleanCurrencyInput(value);
-      if (cleanedValue == null)
-        return;
+  const formState = useForm<Budget, BudgetFormData>(
+    {
+      itemName: "Budget",
+      itemEndpoint: "Budgets",
+      transformFormDataToItem: transformFormDataToBudget,
+      convertItemToFormData: convertBudgetToFormData,
+      fetchItems: () => fetchBudgets(),
     }
-    setEditingFormData(
-        prev => prev ? 
-        { ...prev, [fieldName]: cleanedValue } : 
-        { [fieldName]: cleanedValue } as BudgetFormData)
-  }
-
-  const handleSubmit = (formData: FormData) => 
-		handleFormSubmit<Budget | null, BudgetFormData>(
-			formData,
-			(formData) => transformFormDataToBudget(formData),
-			setIsSubmitting,
-			setMessage,
-			setErrorMessage,
-			setInfoMessage,
-			fetchItems,
-			setEditingFormData,
-			"Budget",
-			"Budgets"
-	);
-
-  const onBudgetIsEditing = (budget: Budget) => {
-		setEditingFormData({
-			id: budget.id?.toString(),
-			amount: (budget.amount / 100).toFixed(2),
-			categoryId: budget.categoryId,
-		});
-		setMessage({ type: null, text: '' });
-	};
-
-  const onReset = () => {
-		setEditingFormData({});
-		setMessage({ type: null, text: '' });
-	};
+  );
 
 	useEffect(() => {
 		fetchBudgets();
@@ -81,14 +51,12 @@ export default function BudgetsPage() {
       <div className="flex flex-1 gap-6">
         <div className="flex-shrink-0">
           <BudgetsForm
-            handleSubmit={handleSubmit}
-            editingFormData={editingFormData}
-            onChange={onChange}
-            onReset={onReset}
-            errorMessage={message.type === 'form-error' ? message.text : ''}
-            infoMessage={message.type === 'form-info' ? message.text : ''}
-            isLoading={isLoading}
-            isSubmitting={isSubmitting}
+            handleSubmit={formState.handleSubmit}
+            editingFormData={formState.editingFormData}
+            onChange={formState.onChange}
+            onReset={formState.onReset}
+            message={formState.message}
+            isSubmitting={formState.isSubmitting}
           />
         </div>
         <div className="flex flex-1 flex-col gap-4">
@@ -101,10 +69,10 @@ export default function BudgetsPage() {
             </div>
             <div className="flex-1 flex justify-center">
               <BudgetSummary
-                budgets={dataListFetchState.items}
-                expenses={expenses}
+                budgets={budgetsDataListFetchState.items}
+                expenses={expensesDataListFetchState.items}
                 dateRange={dateRange}
-                isLoading={dataListFetchState.isLoading}
+                isLoading={budgetsDataListFetchState.isLoading || expensesDataListFetchState.isLoading}
               />
             </div>
             <div className="flex-1"></div>
@@ -113,7 +81,7 @@ export default function BudgetsPage() {
             budgets={budgetsDataListFetchState.items}
             expenses={expensesDataListFetchState.items}
             onBudgetDeleted={fetchBudgets}
-            onBudgetIsEditing={onBudgetIsEditing}
+            onBudgetIsEditing={formState.onItemIsEditing}
             isLoading={budgetsDataListFetchState.isLoading || expensesDataListFetchState.isLoading}
             isError={messageTypeIsError(budgetsDataListFetchState.message) || messageTypeIsError(expensesDataListFetchState.message)}
           />

@@ -1,12 +1,12 @@
 import Form from 'next/form';
+import { MessageState, messageTypeIsError, messageTypeIsInfo } from '../Utils';
 
 export type FormTemplateProps = {
   formId: string;
   formHeader: string;
   inputs: React.ReactNode;
   buttons: React.ReactNode;
-  errorMessage?: string;
-  infoMessage?: string;
+  message: MessageState;
   handleSubmit: (formData: FormData) => void;
 }
 
@@ -28,14 +28,14 @@ export default function FormTemplate(props: FormTemplateProps) {
           <div className="flex flex-col sm:flex-row gap-2 pt-4">
             {props.buttons}
           </div>
-          {props.errorMessage && (
+          {messageTypeIsError(props.message) && (
             <div className="alert alert-error">
-              <span>{props.errorMessage}</span>
+              <span>{props.message.text}</span>
             </div>
           )}
-          {props.infoMessage && (
+          {messageTypeIsInfo(props.message) && (
             <div className="alert alert-info">
-              <span>{props.infoMessage}</span>
+              <span>{props.message.text}</span>
             </div>
           )}
         </Form>

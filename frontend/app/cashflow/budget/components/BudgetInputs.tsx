@@ -1,6 +1,6 @@
 'use client';
 
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
+import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/cashflow/components/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useCallback, useEffect, useState } from 'react'
@@ -12,16 +12,19 @@ import Link from 'next/link';
 interface BudgetInputsProps {
   editingFormData: Partial<BudgetFormData>;
   onChange: React.ChangeEventHandler;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function BudgetInputs(props: BudgetInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   
   const fetchCategories = useCallback(async () => {
-    const response = await getRequest<CashFlowCategory>(`CashFlowCategories?cashFlowType=${CashFlowType.Expense}`);
+    props.setIsLoading(true);
+    const response = await getRequestList<CashFlowCategory>(`CashFlowCategories?cashFlowType=${CashFlowType.Expense}`);
     if (response.successful) {
       setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
+    props.setIsLoading(false);
   }, []);
 
   useEffect(() => {
