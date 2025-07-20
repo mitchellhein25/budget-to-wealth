@@ -1,27 +1,17 @@
 'use client';
 
-import { Budget } from '@/app/cashflow/budget/components/Budget';
-import { BudgetFormData } from '@/app/cashflow/budget/components/BudgetFormData';
-import BudgetsForm from '@/app/cashflow/budget/components/BudgetsForm';
-import BudgetsList from '@/app/cashflow/budget/components/BudgetsList';
-import BudgetSummary from '@/app/cashflow/budget/components/BudgetSummary';
-import { transformFormDataToBudget } from '@/app/cashflow/budget/components/transformFormDataToBudget';
-import { getCurrentMonthRange, messageTypeIsError } from '@/app/components/Utils';
-import DatePicker from '@/app/components/DatePicker';
-import { useDataListFetcher } from '@/app/hooks/useDataListFetcher';
-import React, { useCallback, useEffect, useState } from 'react'
-import { DateRange } from '../../components/DatePicker';
-import CashFlowSideBar from '@/app/cashflow/components/CashFlowSideBar';
-import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
-import { getBudgetsByDateRange } from '@/app/lib/api/data-methods/getBudgets';
-import { getExpensesByDateRange } from '@/app/lib/api/data-methods/getExpenses';
-import { useForm } from '@/app/hooks/useForm';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Budget, BudgetsForm, BudgetFormData, transformFormDataToBudget, BudgetsList, BudgetSummary, BUDGET_ITEM_NAME } from './components';
+import { getCurrentMonthRange, messageTypeIsError, DatePicker, DateRange } from '@/app/components';
+import { useForm, useDataListFetcher } from '@/app/hooks';
+import { CashFlowSideBar, CashFlowEntry } from '@/app/cashflow/components';
+import { getBudgetsByDateRange, getExpensesByDateRange, BUDGETS_ENDPOINT } from '@/app/lib/api/data-methods';
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-  const fetchBudgets = useCallback(async () => await getBudgetsByDateRange(dateRange), [dateRange]);
-	const budgetsDataListFetchState = useDataListFetcher<Budget>(fetchBudgets, "budgets");
-  const fetchExpenses = useCallback(async () => await getExpensesByDateRange(dateRange), [dateRange]);
+  const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
+	const budgetsDataListFetchState = useDataListFetcher<Budget>(fetchBudgets, BUDGET_ITEM_NAME);
+  const fetchExpenses = useCallback(() => getExpensesByDateRange(dateRange), [dateRange]);
 	const expensesDataListFetchState = useDataListFetcher<CashFlowEntry>(fetchExpenses, "expenses");
 
   const convertBudgetToFormData = (budget: Budget) => ({
@@ -32,18 +22,18 @@ export default function BudgetsPage() {
 
   const formState = useForm<Budget, BudgetFormData>(
     {
-      itemName: "Budget",
-      itemEndpoint: "Budgets",
+      itemName: BUDGET_ITEM_NAME,
+      itemEndpoint: BUDGETS_ENDPOINT,
       transformFormDataToItem: transformFormDataToBudget,
       convertItemToFormData: convertBudgetToFormData,
-      fetchItems: () => fetchBudgets(),
+      fetchItems: () => budgetsDataListFetchState.fetchItems(),
     }
   );
 
 	useEffect(() => {
-		fetchBudgets();
-    fetchExpenses();
-	}, [fetchBudgets, fetchExpenses]);
+		budgetsDataListFetchState.fetchItems();
+    expensesDataListFetchState.fetchItems();
+	}, [dateRange]);
 
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
@@ -51,12 +41,7 @@ export default function BudgetsPage() {
       <div className="flex flex-1 gap-6">
         <div className="flex-shrink-0">
           <BudgetsForm
-            handleSubmit={formState.handleSubmit}
-            editingFormData={formState.editingFormData}
-            onChange={formState.onChange}
-            onReset={formState.onReset}
-            message={formState.message}
-            isSubmitting={formState.isSubmitting}
+            formState={formState}
           />
         </div>
         <div className="flex flex-1 flex-col gap-4">
@@ -80,7 +65,7 @@ export default function BudgetsPage() {
           <BudgetsList
             budgets={budgetsDataListFetchState.items}
             expenses={expensesDataListFetchState.items}
-            onBudgetDeleted={fetchBudgets}
+            onBudgetDeleted={budgetsDataListFetchState.fetchItems}
             onBudgetIsEditing={formState.onItemIsEditing}
             isLoading={budgetsDataListFetchState.isLoading || expensesDataListFetchState.isLoading}
             isError={messageTypeIsError(budgetsDataListFetchState.message) || messageTypeIsError(expensesDataListFetchState.message)}

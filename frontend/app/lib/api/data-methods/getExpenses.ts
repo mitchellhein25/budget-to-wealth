@@ -1,3 +1,5 @@
+"use server";
+
 import { getRequestList } from "../rest-methods/getRequest";
 import { DateRange } from "@/app/components/DatePicker";
 import { CashFlowEntry } from "@/app/cashflow/components/CashFlowEntry";

@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Budget } from '@/app/cashflow/budget/components/Budget';
 import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
 import { DateRange } from '../../../components/DatePicker';
 import { ArrowUp, ArrowDown, Equal } from 'lucide-react';
 import TotalDisplay from '../../../components/TotalDisplay';
+import { BUDGET_ITEM_NAME } from './constants';
 
 interface BudgetSummaryProps {
   budgets: Budget[];
@@ -16,8 +17,8 @@ interface BudgetSummaryProps {
 
 export default function BudgetSummary(props: BudgetSummaryProps) {
 
-  const totalBudget = props.budgets.reduce((sum, budget) => sum + budget.amount, 0);
-  const totalExpenses = props.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const totalBudget = useMemo(() => props.budgets.reduce((sum, budget) => sum + budget.amount, 0), [props.budgets]);
+  const totalExpenses = useMemo(() => props.expenses.reduce((sum, expense) => sum + expense.amount, 0), [props.expenses]);
   const overUnder = totalBudget - totalExpenses;
 
   const getStatusIcon = () => {
@@ -27,9 +28,9 @@ export default function BudgetSummary(props: BudgetSummaryProps) {
   };
 
   const getOverUnderLabel = () => {
-    if (overUnder === 0) return 'On Budget';
-    if (overUnder > 0) return 'Under Budget';
-    return 'Over Budget';
+    if (overUnder === 0) return `On ${BUDGET_ITEM_NAME}`;
+    if (overUnder > 0) return `Under ${BUDGET_ITEM_NAME}`;
+    return `Over ${BUDGET_ITEM_NAME}`;
   };
 
   const isLoading = props.isLoading;
@@ -37,7 +38,7 @@ export default function BudgetSummary(props: BudgetSummaryProps) {
   return (
     <div className="flex gap-4">
       <TotalDisplay
-        label="Total Budget"
+        label={`Total ${BUDGET_ITEM_NAME}`}
         amount={totalBudget}
         isLoading={isLoading}
       />

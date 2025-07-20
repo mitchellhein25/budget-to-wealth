@@ -1,0 +1,1 @@
+export const BUDGETS_ENDPOINT = "Budgets";

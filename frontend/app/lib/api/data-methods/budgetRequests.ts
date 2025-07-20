@@ -1,10 +1,14 @@
+"use server";
+
 import { getRequestList } from "../rest-methods/getRequest";
 import { DateRange } from "@/app/components/DatePicker";
 import { Budget } from "@/app/cashflow/budget/components/Budget";
 import { getQueryStringForDateRange } from "./queryHelpers";
+import { deleteRequest } from "../rest-methods/deleteRequest";
+import { BUDGETS_ENDPOINT } from "./endpoints";
 
 export async function getBudgetsByDateRange(dateRange: DateRange) {
-  const fetchEndpoint = `Budgets?${getQueryStringForDateRange(dateRange)}`;
+  const fetchEndpoint = `${BUDGETS_ENDPOINT}?${getQueryStringForDateRange(dateRange)}`;
   const response = await getRequestList<Budget>(fetchEndpoint);
   if (response.successful) {
     const budgets = response.data as Budget[];
@@ -12,4 +16,8 @@ export async function getBudgetsByDateRange(dateRange: DateRange) {
     response.data = budgets;
   }
   return response;
+}
+
+export async function deleteBudget(id: number) {
+  return await deleteRequest<Budget>(BUDGETS_ENDPOINT, id);
 }

@@ -1,13 +1,13 @@
 'use client';
 
-import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '@/app/cashflow/components/CashFlowCategory';
 import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useCallback, useEffect, useState } from 'react'
 import { BudgetFormData } from './BudgetFormData';
-import { CashFlowType } from '@/app/cashflow/components/CashFlowType';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
+import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods/getCategories';
+import { BUDGET_ITEM_NAME_LOWERCASE } from './constants';
 
 interface BudgetInputsProps {
   editingFormData: Partial<BudgetFormData>;
@@ -20,7 +20,7 @@ export default function BudgetInputs(props: BudgetInputsProps) {
   
   const fetchCategories = useCallback(async () => {
     props.setIsLoading(true);
-    const response = await getRequestList<CashFlowCategory>(`CashFlowCategories?cashFlowType=${CashFlowType.Expense}`);
+    const response = await getExpenseCategoriesList();
     if (response.successful) {
       setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
@@ -34,8 +34,8 @@ export default function BudgetInputs(props: BudgetInputsProps) {
   return (
     <>
       <input
-        id={`budget-id`}
-        name={`budget-id`}
+        id={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
+        name={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
         readOnly
         type="text"
         value={props.editingFormData?.id ?? ''}
@@ -46,8 +46,8 @@ export default function BudgetInputs(props: BudgetInputsProps) {
         isRequired={true}
         inputChild={
           <input
-            id={`budget-amount`}
-            name={`budget-amount`}
+            id={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
+            name={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
             type="text"
             value={props.editingFormData?.amount ?? ""}
             onChange={props.onChange}
@@ -61,8 +61,8 @@ export default function BudgetInputs(props: BudgetInputsProps) {
         inputChild={
           <div className="flex items-center gap-2">
             <select
-              id={`budget-categoryId`}
-              name={`budget-categoryId`}
+              id={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
+              name={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
               value={props.editingFormData.categoryId || ""}
               onChange={props.onChange}
               className="select flex-1"

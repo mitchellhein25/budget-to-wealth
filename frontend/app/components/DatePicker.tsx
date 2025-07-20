@@ -12,7 +12,7 @@ type DatePickerProps = {
   className?: string;
 }
 
-export default function DatePicker({ dateRange, setDateRange, className = "" }: DatePickerProps) {
+export function DatePicker({ dateRange, setDateRange, className = "" }: DatePickerProps) {
   const [fromInputValue, setFromInputValue] = useState('');
   const [toInputValue, setToInputValue] = useState('');
 

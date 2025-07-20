@@ -1,12 +1,13 @@
 'use client'
 
-import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { Pencil, Trash2, Equal, ArrowUp, ArrowDown } from 'lucide-react';
-import React	 from 'react';
+import React, { useMemo }	 from 'react';
 import { convertCentsToDollars } from '../../../components/Utils';
 import ListTable from '@/app/components/table/ListTable';
 import { Budget } from '@/app/cashflow/budget/components/Budget';
 import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
+import { deleteBudget } from '@/app/lib/api/data-methods/budgetRequests';
+import { BUDGET_ITEM_NAME } from './constants';
 
 interface BudgetsListProps {
 	budgets: Budget[],
@@ -21,19 +22,20 @@ export default function BudgetsList(props: BudgetsListProps) {
 
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteRequest<Budget>("Budgets", id);
+			const result = await deleteBudget(id);
 			if (result.successful)
 				props.onBudgetDeleted();
 		}
 	};
 
-  function getAmountSpentInCategory(categoryId: string) {
-    return props.expenses.filter(expense => expense.categoryId === categoryId).reduce((acc, expense) => acc + expense.amount, 0);
-  }
+  const getAmountSpentInCategory = useMemo(() => {
+    return (categoryId: string) => props.expenses.filter(expense => expense.categoryId === categoryId)
+												 	.reduce((acc, expense) => acc + expense.amount, 0);
+  }, [props.expenses]);
 
-  function getRemainingBudget(budget: Budget) {
+  const getRemainingBudget = (budget: Budget) => {
     return budget.amount - getAmountSpentInCategory(budget.categoryId);
-  }
+  };
 
 	const tableHeaderRow = (
 		<tr>
@@ -85,7 +87,7 @@ export default function BudgetsList(props: BudgetsListProps) {
 
 	return (
 		<ListTable
-			title={"Budgets"}
+			title={`${BUDGET_ITEM_NAME}s`}
 			headerRow={tableHeaderRow}
 			bodyRow={tableBodyRow}
 			items={props.budgets}

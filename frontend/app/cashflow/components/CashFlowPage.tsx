@@ -6,21 +6,21 @@ import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
 import { convertDateToISOString, getCurrentMonthRange } from '../../components/Utils';
 import { DateRange } from '../../components/DatePicker';
 import CashFlowEntriesList from './list/CashFlowEntriesList';
-import DatePicker from '../../components/DatePicker';
+import { DatePicker } from '@/app/components';
 import CashFlowEntriesForm from './form/CashFlowEntriesForm';
 import { cashFlowFormOnChange } from './form/functions/cashFlowFormOnChange';
 import { CashFlowEntryFormData } from './form/CashFlowEntryFormData';
 import { useList } from '../../hooks/useDataListFetcher';
 import { handleFormSubmit } from '../../components/form/functions/handleFormSubmit';
 import { transformFormDataToEntry } from './form/functions/transformFormDataToEntry';
-import CashFlowSideBar from './CashFlowSideBar';
+import { CashFlowSideBar } from './CashFlowSideBar';
 import TotalDisplay from '../../components/TotalDisplay';
 
 type CashFlowPageProps = {
   cashFlowType: CashFlowType;
 }
 
-export default function CashFlowPage(props: CashFlowPageProps) {
+export function CashFlowPage(props: CashFlowPageProps) {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
 
 	const fetchEndpoint = `CashFlowEntries?entryType=${props.cashFlowType}&startDate=${convertDateToISOString(dateRange.from)}&endDate=${convertDateToISOString(dateRange.to)}`;
