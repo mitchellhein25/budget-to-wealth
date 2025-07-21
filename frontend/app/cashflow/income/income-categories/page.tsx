@@ -4,6 +4,8 @@ import CategoriesPage from '@/app/components/categories/CategoriesPage';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParentPath } from '@/app/hooks/useParentPath';
+import { INCOME_ITEM_NAME } from '../../components/constants';
+import { CASHFLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods/categoriesRequests';
 
 export default function IncomeCategories() {
   const parentPath = useParentPath();
@@ -22,9 +24,9 @@ export default function IncomeCategories() {
 			
 			<CategoriesPage 
 				isLoggedIn={true} 
-				categoryTypeName="Income"
-				getEndpoint="CashFlowCategories?cashFlowType=Income"
-				createUpdateDeletEndpoint="CashFlowCategories"
+				categoryTypeName={INCOME_ITEM_NAME}
+				getEndpoint={`${CASHFLOW_CATEGORIES_ENDPOINT}?cashFlowType=${INCOME_ITEM_NAME}`}
+				createUpdateDeleteEndpoint={CASHFLOW_CATEGORIES_ENDPOINT}
 			/>
 		</div>
 	)	

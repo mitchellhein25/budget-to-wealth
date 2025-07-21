@@ -5,6 +5,8 @@ import { useParentPath } from '@/app/hooks/useParentPath';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { EXPENSE_ITEM_NAME } from '../../components/constants';
+import { CASHFLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods/categoriesRequests';
 
 export default function ExpenseCategories() {
   const searchParams = useSearchParams();  
@@ -25,9 +27,9 @@ export default function ExpenseCategories() {
       
       <CategoriesPage 
         isLoggedIn={true} 
-        categoryTypeName="Expense"
-        getEndpoint="CashFlowCategories?cashFlowType=Expense"
-        createUpdateDeletEndpoint="CashFlowCategories"
+        categoryTypeName={EXPENSE_ITEM_NAME}
+        getEndpoint={`${CASHFLOW_CATEGORIES_ENDPOINT}?cashFlowType=${EXPENSE_ITEM_NAME}`}
+        createUpdateDeleteEndpoint={CASHFLOW_CATEGORIES_ENDPOINT}
       />
     </div>
   )	

@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { BudgetFormData } from './BudgetFormData';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods/getCategories';
+import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods/categoriesRequests';
 import { BUDGET_ITEM_NAME_LOWERCASE } from './constants';
 
 interface BudgetInputsProps {
