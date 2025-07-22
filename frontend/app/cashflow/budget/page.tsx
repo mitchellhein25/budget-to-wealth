@@ -5,13 +5,13 @@ import { Budget, BudgetsForm, BudgetFormData, transformFormDataToBudget, Budgets
 import { getCurrentMonthRange, messageTypeIsError, DatePicker, DateRange } from '@/app/components';
 import { useForm, useDataListFetcher } from '@/app/hooks';
 import { CashFlowSideBar, CashFlowEntry } from '@/app/cashflow/components';
-import { getBudgetsByDateRange, getExpensesByDateRange, BUDGETS_ENDPOINT } from '@/app/lib/api/data-methods';
+import { getBudgetsByDateRange, BUDGETS_ENDPOINT, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
 	const budgetsDataListFetchState = useDataListFetcher<Budget>(fetchBudgets, BUDGET_ITEM_NAME);
-  const fetchExpenses = useCallback(() => getExpensesByDateRange(dateRange), [dateRange]);
+  const fetchExpenses = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, 'Expense'), [dateRange]);
 	const expensesDataListFetchState = useDataListFetcher<CashFlowEntry>(fetchExpenses, "expenses");
 
   const convertBudgetToFormData = (budget: Budget) => ({

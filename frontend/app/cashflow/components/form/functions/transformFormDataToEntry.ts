@@ -1,9 +1,9 @@
-import { CashFlowEntry } from "@/app/lib/models/cashflow/CashFlowEntry";
-import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
+import { CashFlowEntry } from "@/app/cashflow/components/CashFlowEntry";
+import { CashFlowType } from "@/app/cashflow/components/CashFlowType";
 import { getCashFlowValidationResult } from "./getCashFlowValidationResult";
 import { convertDollarsToCents } from "../../../../components/Utils";
 
-export const transformFormDataToEntry = (formData: FormData, cashFlowType: CashFlowType): { item: CashFlowEntry | null; errors: string[] } => {
+export const transformCashFlowFormDataToEntry = (formData: FormData, cashFlowType: CashFlowType): { item: CashFlowEntry | null; errors: string[] } => {
   try {
     const validationResult = getCashFlowValidationResult(formData, cashFlowType);
     if (!validationResult.success) {

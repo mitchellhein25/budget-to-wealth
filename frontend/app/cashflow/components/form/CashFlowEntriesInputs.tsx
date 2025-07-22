@@ -1,6 +1,5 @@
 'use client';
 
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
 import { CashFlowCategory } from '../CashFlowCategory';
 import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useCallback, useEffect, useState } from 'react'
@@ -10,43 +9,34 @@ import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { RecurrenceFrequency } from '../RecurrenceFrequency';
 import { convertDateToISOString } from '../../../components/Utils';
+import { getCategoriesList } from '@/app/lib/api/data-methods';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
   onChange: React.ChangeEventHandler;
   cashFlowType: CashFlowType;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   const [noEndDate, setNoEndDate] = useState(false);
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
   const cashFlowTypeLower = props.cashFlowType.toLowerCase();
   
   const fetchCategories = useCallback(async () => {
-    // setInfoMessage("");
-    // setErrorMessage("");
-    // setIsLoading(true);
-    const response = await getRequest<CashFlowCategory>(`CashFlowCategories?cashFlowType=${props.cashFlowType}`);
+    props.setIsLoading(true);
+    const response = await getCategoriesList(props.cashFlowType);
     if (response.successful) {
       setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
+    props.setIsLoading(false);
   }, [props.cashFlowType]);
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const getCategoriesPageUrl = () => {
-    switch (props.cashFlowType) {
-      case CashFlowType.Income:
-        return '/cashflow/income/income-categories';
-      case CashFlowType.Expense:
-      default:
-        return '/cashflow/expenses/expense-categories';
-    }
-  };
+  const getCategoriesPageUrl = () => `/cashflow/${cashFlowTypeLower}/${cashFlowTypeLower}-categories`;
 
   return (
     <>

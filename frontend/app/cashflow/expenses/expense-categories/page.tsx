@@ -1,11 +1,11 @@
 'use client';
 
-import CategoriesPage from '@/app/components/categories/CategoriesPage';
-import { useParentPath } from '@/app/hooks/useParentPath';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { EXPENSE_ITEM_NAME } from '../../components/constants';
+import { useParentPath } from '@/app/hooks';
+import CategoriesPage from '@/app/components/categories/CategoriesPage';
+import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components/constants';
 import { CASHFLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods/categoriesRequests';
 
 export default function ExpenseCategories() {

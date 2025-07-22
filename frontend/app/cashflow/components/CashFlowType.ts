@@ -1,4 +1,1 @@
-export enum CashFlowType {
-  Income = "Income",
-  Expense = "Expense"
-}
+export type CashFlowType = "Income" | "Expense";
