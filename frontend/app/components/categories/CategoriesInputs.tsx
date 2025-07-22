@@ -1,21 +1,21 @@
-import { Category } from '@/app/components/categories/Category';
+import { CategoryFormData } from '@/app/components/categories/Category';
 import React from 'react'
 import InputFieldSetTemplate from '../form/InputFieldSetTemplate';
 
 interface CategoriesInputsProps {
-  editingCategory: Category | null;
-  onNameChange: (name: string) => void;
+  editingFormData: Partial<CategoryFormData>;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function CategoriesInputs(props : CategoriesInputsProps) {
   return (
     <>
       <input
-        id="Id"
-        name="Id"
+        id="id"
+        name="id"
         readOnly
         type="text"
-        value={props.editingCategory?.id ?? ''}
+        value={props.editingFormData?.id ?? ''}
         hidden={true}
       />
       <InputFieldSetTemplate
@@ -23,12 +23,12 @@ export default function CategoriesInputs(props : CategoriesInputsProps) {
         isRequired={true}
         inputChild={
           <input
-            id="Name"
-            name="Name"
+            id="name"
+            name="name"
             type="text"
             required
-            value={props.editingCategory?.name ?? ""}
-            onChange={(e) => props.onNameChange(e.target.value)}
+            value={props.editingFormData?.name ?? ""}
+            onChange={props.onChange}
             className="input w-full"
           />
         }

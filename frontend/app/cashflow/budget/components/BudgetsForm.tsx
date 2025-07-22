@@ -35,12 +35,12 @@ export default function BudgetsForm({formState} : {formState: FormState<Budget, 
 
   return (
     <FormTemplate
+      formId={`${BUDGET_ITEM_NAME_LOWERCASE}-form`}
       handleSubmit={formState.handleSubmit}
       formHeader={formHeader}
       inputs={inputs}
       buttons={buttons}
       message={formState.message}
-      formId={`${BUDGET_ITEM_NAME_LOWERCASE}-form`}
     />
   )
 }

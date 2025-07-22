@@ -5,50 +5,45 @@ import FormTemplate from "../form/FormTemplate";
 import UpdateCreateButton from "../buttons/UpdateCreateButton";
 import ResetButton from "../buttons/ResetButton";
 import CategoriesInputs from "./CategoriesInputs";
-import { Category } from "@/app/components/categories/Category";
+import { FormState } from "@/app/hooks";
+import { Category, CategoryFormData } from "./Category";
 
-interface CategoriesFormProps {
-  handleSubmit: (formData: FormData) => void;
-  editingCategory: Category | null;
-  onNameChange: (name: string) => void;
-  onReset: () => void;
-  infoMessage: string;
-  errorMessage: string;
+interface CategoriesFormProps<T extends Category> {
+  formState: FormState<T, CategoryFormData>;
   categoryTypeName: string;
 }
 
-export default function CategoriesForm(props: CategoriesFormProps) {
+export default function CategoriesForm<T extends Category>({formState, categoryTypeName} : CategoriesFormProps<T>) {
 
-  const formHeader: string = props.editingCategory?.id ? `Edit ${props.categoryTypeName} Category` : `New ${props.categoryTypeName} Category`;
+  const formHeader: string = formState.editingFormData?.id ? `Edit ${categoryTypeName} Category` : `New ${categoryTypeName} Category`;
 
   const inputs: React.ReactElement = 
     <CategoriesInputs 
-      editingCategory={props.editingCategory}
-      onNameChange={props.onNameChange}
+      editingFormData={formState.editingFormData}
+      onChange={formState.onChange}
     />;
 
     const buttons: React.ReactElement = (
       <>
         <UpdateCreateButton 
-          isUpdateState={props.editingCategory?.id != null} 
-          isDisabled={false}
+          isUpdateState={formState.editingFormData?.id != null} 
+          isDisabled={formState.isSubmitting}
         />
         <ResetButton 
-          onClick={props.onReset}
-          isHidden={props.editingCategory == null || props.editingCategory.name == ""}
+          onClick={formState.onReset}
+          isHidden={formState.editingFormData == null || formState.editingFormData.name == ""}
         />
       </>
     )
 
   return (
     <FormTemplate
-      formId={`${props.categoryTypeName.toLowerCase()}-category-form`}
-      handleSubmit={props.handleSubmit}
+      formId={`${categoryTypeName.toLowerCase()}-category-form`}
+      handleSubmit={formState.handleSubmit}
       formHeader={formHeader}
       inputs={inputs}
       buttons={buttons}
-      infoMessage={props.infoMessage}
-      errorMessage={props.errorMessage}
+      message={formState.message}
     />
   )
 }
