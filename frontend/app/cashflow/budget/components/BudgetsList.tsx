@@ -18,7 +18,7 @@ interface BudgetsListProps {
 	isError: boolean,
 }
 
-export default function BudgetsList(props: BudgetsListProps) {
+export function BudgetsList(props: BudgetsListProps) {
 
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {

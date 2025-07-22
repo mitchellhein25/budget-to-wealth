@@ -5,7 +5,7 @@ import { Budget } from '@/app/cashflow/budget/components/Budget';
 import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
 import { DateRange } from '../../../components/DatePicker';
 import { ArrowUp, ArrowDown, Equal } from 'lucide-react';
-import TotalDisplay from '../../../components/TotalDisplay';
+import { TotalDisplay } from '@/app/components';
 import { BUDGET_ITEM_NAME } from './constants';
 
 interface BudgetSummaryProps {
@@ -15,7 +15,7 @@ interface BudgetSummaryProps {
   isLoading: boolean;
 }
 
-export default function BudgetSummary(props: BudgetSummaryProps) {
+export function BudgetSummary(props: BudgetSummaryProps) {
 
   const totalBudget = useMemo(() => props.budgets.reduce((sum, budget) => sum + budget.amount, 0), [props.budgets]);
   const totalExpenses = useMemo(() => props.expenses.reduce((sum, expense) => sum + expense.amount, 0), [props.expenses]);

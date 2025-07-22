@@ -1,13 +1,12 @@
 'use client';
 
-import { CashFlowCategory } from '@/app/cashflow/components/CashFlowCategory';
-import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useCallback, useEffect, useState } from 'react'
-import { BudgetFormData } from './BudgetFormData';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods/categoriesRequests';
-import { BUDGET_ITEM_NAME_LOWERCASE } from './constants';
+import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods';
+import { InputFieldSetTemplate } from '@/app/components/form';
+import { CashFlowCategory } from '@/app/cashflow/components';
+import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from './';
 
 interface BudgetInputsProps {
   editingFormData: Partial<BudgetFormData>;
@@ -15,7 +14,7 @@ interface BudgetInputsProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function BudgetInputs(props: BudgetInputsProps) {
+export function BudgetInputs(props: BudgetInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   
   const fetchCategories = useCallback(async () => {
