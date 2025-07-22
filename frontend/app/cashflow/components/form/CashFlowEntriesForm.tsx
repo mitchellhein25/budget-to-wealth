@@ -1,14 +1,11 @@
-import React, { ChangeEventHandler, useState } from 'react'
-import FormTemplate from '../../../components/form/FormTemplate';
-import UpdateCreateButton from '../../../components/buttons/UpdateCreateButton';
-import ResetButton from '../../../components/buttons/ResetButton';
-import { CashFlowType } from '../CashFlowType';
-import CashFlowEntriesInputs from './CashFlowEntriesInputs';
-import { CashFlowEntryFormData } from './CashFlowEntryFormData';
-import { FormState } from '@/app/hooks/useForm';
-import { CashFlowEntry } from '../CashFlowEntry';
+import React, { useState } from 'react'
+import { FormState } from '@/app/hooks';
+import { FormTemplate } from '@/app/components/form';
+import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
+import { CashFlowEntriesInputs, CashFlowEntryFormData } from './';
+import { CashFlowEntry, CashFlowType } from '..';
 
-export default function CashFlowEntriesForm({formState, cashFlowType} : {formState: FormState<CashFlowEntry, CashFlowEntryFormData>, cashFlowType: CashFlowType}) {
+export function CashFlowEntriesForm({formState, cashFlowType} : {formState: FormState<CashFlowEntry, CashFlowEntryFormData>, cashFlowType: CashFlowType}) {
   
   const [isLoading, setIsLoading] = useState(false);
   const formHeader: string = formState.editingFormData?.id ? `Edit ${cashFlowType} Entry` : `New ${cashFlowType} Entry`;

@@ -1,13 +1,11 @@
 'use client'
 
-import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { CashFlowEntry } from '../CashFlowEntry';
-import { Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
-import { CashFlowType } from '../CashFlowType';
-import { convertCentsToDollars } from '../../../components/Utils';
-import ListTable from '../../../components/table/ListTable';
-import { RecurrenceFrequency } from '../RecurrenceFrequency';
+import { Pencil, Trash2 } from 'lucide-react';
+import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
+import { convertCentsToDollars } from '@/app/components';
+import ListTable from '@/app/components/table/ListTable';
+import { CashFlowEntry, CashFlowType, RecurrenceFrequency } from '..';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
@@ -22,7 +20,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 	
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteRequest<CashFlowEntry>("CashFlowEntries", id);
+			const result = await deleteCashFlowEntry(id);
 			if (result.successful)
 				props.onEntryDeleted();
 		}

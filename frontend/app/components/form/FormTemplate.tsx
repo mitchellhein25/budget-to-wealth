@@ -10,7 +10,7 @@ export type FormTemplateProps = {
   handleSubmit: (formData: FormData) => void;
 }
 
-export default function FormTemplate(props: FormTemplateProps) {
+export function FormTemplate(props: FormTemplateProps) {
   return (
     <div className="card bg-base-100 shadow-sm w-full max-w-md">
       <div className="card-body p-6">

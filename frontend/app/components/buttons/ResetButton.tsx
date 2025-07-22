@@ -5,7 +5,7 @@ interface ResetButtonProps {
   isHidden: boolean;
 }
 
-export default function ResetButton(props : ResetButtonProps) {
+export function ResetButton(props : ResetButtonProps) {
   return (
     <button
       type="reset"

@@ -13,7 +13,7 @@ export type SideBarProps = {
   navItems: NavItem[];
 }
 
-export default function SideBar(props: SideBarProps) {
+export function SideBar(props: SideBarProps) {
   const pathname = usePathname()
   
   return (

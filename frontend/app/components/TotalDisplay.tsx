@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { convertCentsToDollars } from './Utils';
+import { convertCentsToDollars } from '@/app/components';
 
 interface TotalDisplayProps {
   label: string;
@@ -10,7 +10,7 @@ interface TotalDisplayProps {
   className?: string;
 }
 
-export default function TotalDisplay(props: TotalDisplayProps) {
+export function TotalDisplay(props: TotalDisplayProps) {
   return (
     <div className={`bg-base-200 rounded-lg p-4 min-w-[200px] ${props.className || ''}`}>
       <div className="text-sm font-medium text-base-content/70">

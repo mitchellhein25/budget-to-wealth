@@ -6,7 +6,7 @@ type UpdateCreateButtonProps = {
   onClick?: () => void;
 };
 
-export default function UpdateCreateButton(props: UpdateCreateButtonProps) {
+export function UpdateCreateButton(props: UpdateCreateButtonProps) {
   return (
     <button
       type="submit"

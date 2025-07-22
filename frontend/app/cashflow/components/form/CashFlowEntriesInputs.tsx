@@ -1,15 +1,13 @@
 'use client';
 
-import { CashFlowCategory } from '../CashFlowCategory';
-import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useCallback, useEffect, useState } from 'react'
-import { CashFlowType } from '../CashFlowType';
-import { CashFlowEntryFormData } from './CashFlowEntryFormData';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { RecurrenceFrequency } from '../RecurrenceFrequency';
-import { convertDateToISOString } from '../../../components/Utils';
 import { getCategoriesList } from '@/app/lib/api/data-methods';
+import { convertDateToISOString } from '@/app/components';
+import { InputFieldSetTemplate } from '@/app/components/form';
+import { CashFlowEntryFormData } from './';
+import { CashFlowType, CashFlowCategory, RecurrenceFrequency } from '..';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
@@ -18,7 +16,7 @@ interface CashFlowEntriesInputsProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
+export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   const [noEndDate, setNoEndDate] = useState(false);
   const cashFlowTypeLower = props.cashFlowType.toLowerCase();
