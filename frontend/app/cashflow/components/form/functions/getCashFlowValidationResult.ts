@@ -1,4 +1,4 @@
-import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
+import { CashFlowType } from "../../CashFlowType";
 import { cashFlowEntryFormSchema } from "../CashFlowEntryFormData";
 
 export const getCashFlowValidationResult = (formData: FormData, cashFlowType: CashFlowType) => {

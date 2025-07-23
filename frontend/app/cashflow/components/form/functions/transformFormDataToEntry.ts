@@ -26,7 +26,6 @@ export const transformCashFlowFormDataToEntry = (formData: FormData, cashFlowTyp
       entryType: cashFlowType,
     };
 
-    // Only add recurrence fields if they have values
     if (validatedData.recurrenceFrequency) {
       item.recurrenceFrequency = validatedData.recurrenceFrequency;
     }

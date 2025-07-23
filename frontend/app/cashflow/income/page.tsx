@@ -1,12 +1,11 @@
 'use client';
 
-import { CashFlowType } from '@/app/cashflow/components/CashFlowType';
-import { CashFlowPage } from '@/app/cashflow/components/CashFlowPage';
 import React from 'react'
+import { INCOME_ITEM_NAME, CashFlowPage } from '@/app/cashflow/components';
 
 export default function Income() {
 
 	return (
-		<CashFlowPage cashFlowType={CashFlowType.Income} />
+		<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />
 	)
 }

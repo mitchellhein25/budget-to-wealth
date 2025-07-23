@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useParentPath } from '@/app/hooks';
 import CategoriesPage from '@/app/components/categories/CategoriesPage';
 import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components/constants';
-import { CASHFLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods/categoriesRequests';
+import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
 
 export default function ExpenseCategories() {
   const searchParams = useSearchParams();  
@@ -28,8 +28,8 @@ export default function ExpenseCategories() {
       <CategoriesPage 
         isLoggedIn={true} 
         categoryTypeName={EXPENSE_ITEM_NAME}
-        getEndpoint={`${CASHFLOW_CATEGORIES_ENDPOINT}?cashFlowType=${EXPENSE_ITEM_NAME}`}
-        createUpdateDeleteEndpoint={CASHFLOW_CATEGORIES_ENDPOINT}
+        getEndpoint={`${CASH_FLOW_CATEGORIES_ENDPOINT}?cashFlowType=${EXPENSE_ITEM_NAME}`}
+        createUpdateDeleteEndpoint={CASH_FLOW_CATEGORIES_ENDPOINT}
       />
     </div>
   )	

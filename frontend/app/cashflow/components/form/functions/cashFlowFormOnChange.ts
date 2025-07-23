@@ -1,5 +1,5 @@
-import { CashFlowType } from "@/app/lib/models/cashflow/CashFlowType";
 import { cleanCurrencyInput } from "../../../../components/Utils";
+import { CashFlowType } from "../../CashFlowType";
 import { CashFlowEntryFormData } from "../CashFlowEntryFormData";
 
 export const cashFlowFormOnChange = (
@@ -21,7 +21,6 @@ export const cashFlowFormOnChange = (
   setEditingFormData((prev) => {
     const updated = { ...prev, [fieldName]: value };
     
-    // Clear recurrence end date if no recurrence frequency is selected
     if (fieldName === "recurrenceFrequency" && !value) {
       delete updated.recurrenceEndDate;
     }

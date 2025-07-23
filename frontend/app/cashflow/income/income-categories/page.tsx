@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParentPath } from '@/app/hooks';
 import CategoriesPage from '@/app/components/categories/CategoriesPage';
 import { INCOME_ITEM_NAME } from '@/app/cashflow/components/constants';
-import { CASHFLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods/categoriesRequests';
+import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
 
 export default function IncomeCategories() {
   const parentPath = useParentPath();
@@ -25,8 +25,8 @@ export default function IncomeCategories() {
 			<CategoriesPage 
 				isLoggedIn={true} 
 				categoryTypeName={INCOME_ITEM_NAME}
-				getEndpoint={`${CASHFLOW_CATEGORIES_ENDPOINT}?cashFlowType=${INCOME_ITEM_NAME}`}
-				createUpdateDeleteEndpoint={CASHFLOW_CATEGORIES_ENDPOINT}
+				getEndpoint={`${CASH_FLOW_CATEGORIES_ENDPOINT}?cashFlowType=${INCOME_ITEM_NAME}`}
+				createUpdateDeleteEndpoint={CASH_FLOW_CATEGORIES_ENDPOINT}
 			/>
 		</div>
 	)	
