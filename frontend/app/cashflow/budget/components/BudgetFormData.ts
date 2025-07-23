@@ -1,5 +1,5 @@
 import z from "zod";
-import { numberRegex } from "../../../components/Utils";
+import { numberRegex } from "@/app/components";
 
 export const budgetFormSchema = z.object({
   id: z.string().uuid().optional(),

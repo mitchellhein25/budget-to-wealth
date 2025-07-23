@@ -16,7 +16,7 @@ export type ListTableProps<T extends ListTableItem> = {
   isError?: boolean;
 }
 
-export default function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
+export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 	const [currentPage, setCurrentPage] = useState(1);
 	const itemsPerPage = props.itemsPerPage || 10;
 

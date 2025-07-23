@@ -1,5 +1,5 @@
 import { ListTableItem } from "@/app/components/table/ListTable";
-import { CashFlowCategory } from "../../components/CashFlowCategory";
+import { CashFlowCategory } from "../../components";
 
 export type Budget = ListTableItem & {
   id?: number;

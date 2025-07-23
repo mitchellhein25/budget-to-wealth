@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Budget } from '@/app/cashflow/budget/components/Budget';
-import { CashFlowEntry } from '@/app/cashflow/components/CashFlowEntry';
-import { DateRange } from '../../../components/DatePicker';
 import { ArrowUp, ArrowDown, Equal } from 'lucide-react';
-import { TotalDisplay } from '@/app/components';
-import { BUDGET_ITEM_NAME } from './constants';
+import { DateRange, TotalDisplay } from '@/app/components';
+import { CashFlowEntry } from '../../components';
+import { BUDGET_ITEM_NAME, Budget } from './';
 
 interface BudgetSummaryProps {
   budgets: Budget[];

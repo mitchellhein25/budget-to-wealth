@@ -4,7 +4,7 @@ import React from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
 import { convertCentsToDollars } from '@/app/components';
-import ListTable from '@/app/components/table/ListTable';
+import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry, CashFlowType, RecurrenceFrequency } from '..';
 
 interface CashFlowEntriesListProps {
