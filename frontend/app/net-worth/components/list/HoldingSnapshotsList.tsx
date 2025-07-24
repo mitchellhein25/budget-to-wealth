@@ -15,7 +15,7 @@ type HoldingSnapshotsListProps = {
 	isError: boolean
 }
 
-export default function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
+export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {

@@ -1,39 +1,30 @@
-import React, { ChangeEventHandler } from 'react'
-import FormTemplate from '../../../components/form/FormTemplate';
-import UpdateCreateButton from '../../../components/buttons/UpdateCreateButton';
-import ResetButton from '../../../components/buttons/ResetButton';
-import { HoldingSnapshotFormData } from './HoldingSnapshotFormData';
-import HoldingSnapshotInputs from './HoldingSnapshotInputs';
+import React, { useState } from 'react'
+import { FormState } from '@/app/hooks';
+import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
+import { FormTemplate } from '@/app/components/form';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshot, HoldingSnapshotInputs, HoldingSnapshotFormData } from '../';
 
-interface HoldingSnapshotFormProps {
-  handleSubmit: (formData: FormData) => void;
-  editingFormData: Partial<HoldingSnapshotFormData>;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  onReset: () => void;
-  infoMessage: string;
-  errorMessage: string;
-  isLoading: boolean;
-  isSubmitting: boolean;
-}
-
-export default function HoldingSnapshotForm(props : HoldingSnapshotFormProps) {
-
-  const formHeader: string = props.editingFormData?.id ? `Edit Holding Snapshot` : `New Holding Snapshot`;
+export function HoldingSnapshotForm(
+  {formState} : {formState: FormState<HoldingSnapshot, HoldingSnapshotFormData>}
+) {
+  const [isLoading, setIsLoading] = useState(false);
+  const formHeader: string = formState.editingFormData?.id ? `Edit ${HOLDING_SNAPSHOT_ITEM_NAME}` : `New ${HOLDING_SNAPSHOT_ITEM_NAME}`;
 
   const inputs: React.ReactElement = 
     <HoldingSnapshotInputs
-      editingFormData={props.editingFormData}
-      onChange={props.onChange}
+      editingFormData={formState.editingFormData}
+      onChange={formState.onChange}
+      setIsLoading={setIsLoading}
     />;
 
     const buttons: React.ReactElement = (
       <>
         <UpdateCreateButton 
-          isUpdateState={props.editingFormData?.id != null} 
-          isDisabled={props.isLoading || props.isSubmitting}
+          isUpdateState={formState.editingFormData?.id != null} 
+          isDisabled={isLoading || formState.isSubmitting}
         />
         <ResetButton 
-          onClick={props.onReset}
+          onClick={formState.onReset}
           isHidden={true}
         />
       </>
@@ -41,13 +32,12 @@ export default function HoldingSnapshotForm(props : HoldingSnapshotFormProps) {
 
   return (
     <FormTemplate
-      handleSubmit={props.handleSubmit}
+      formId={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-form`}
+      handleSubmit={formState.handleSubmit}
       formHeader={formHeader}
       inputs={inputs}
       buttons={buttons}
-      infoMessage={props.infoMessage}
-      errorMessage={props.errorMessage}
-      formId="holding-snapshot-form"
+      message={formState.message}
     />
   )
 }

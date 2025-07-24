@@ -12,26 +12,24 @@ import { convertDateToISOString } from '../../../components/Utils';
 interface HoldingSnapshotInputsProps {
   editingFormData: Partial<HoldingSnapshotFormData>;
   onChange: React.ChangeEventHandler;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
+export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
   const [holdings, setHoldings] = useState<Holding[]>([]);
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
   
   async function fetchHoldings() {
-    // setInfoMessage("");
-    // setErrorMessage("");
-    // setIsLoading(true);
+    props.setIsLoading(true);
     const response = await getRequest<Holding>(`Holdings`);
     if (response.successful) {
       setHoldings((response.data as Holding[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
+    props.setIsLoading(false);
   }
 
   useEffect(() => {
     fetchHoldings();
-  }, []);
+  }, [fetchHoldings]);
 
   return (
     <>
