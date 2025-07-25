@@ -4,8 +4,8 @@ import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
 import { convertCentsToDollars } from '../../../components/Utils';
-import ListTable from '../../../components/table/ListTable';
-import { HoldingSnapshot } from '@/app/lib/models/net-worth/HoldingSnapshot';
+import { ListTable } from '@/app/components/table';
+import { HoldingSnapshot } from '@/app/net-worth/components';
 
 type HoldingSnapshotsListProps = {
 	snapshots: HoldingSnapshot[],

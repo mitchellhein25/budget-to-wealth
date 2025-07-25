@@ -1,13 +1,13 @@
 'use client';
 
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
-import { HoldingSnapshotFormData } from './HoldingSnapshotFormData';
-import { Holding } from '@/app/net-worth/holdings/Holding';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { convertDateToISOString } from '../../../components/Utils';
+import { getAllHoldings } from '@/app/lib/api/data-methods';
+import { convertDateToISOString } from '@/app/components';
+import { InputFieldSetTemplate } from '@/app/components/form';
+import { Holding } from '@/app/net-worth/holdings/Holding';
+import { HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshotFormData } from '../';
 
 interface HoldingSnapshotInputsProps {
   editingFormData: Partial<HoldingSnapshotFormData>;
@@ -20,7 +20,7 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
   
   async function fetchHoldings() {
     props.setIsLoading(true);
-    const response = await getRequest<Holding>(`Holdings`);
+    const response = await getAllHoldings();
     if (response.successful) {
       setHoldings((response.data as Holding[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
@@ -34,8 +34,8 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
   return (
     <>
       <input
-        id={`holding-snapshot-id`}
-        name={`holding-snapshot-id`}
+        id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-id`}
+        name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-id`}
         readOnly
         type="text"
         value={props.editingFormData?.id ?? ''}
@@ -47,8 +47,8 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
         inputChild={
           <div className="flex items-center gap-2">
             <select
-              id={`holding-snapshot-holdingId`}
-              name={`holding-snapshot-holdingId`}
+              id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-holdingId`}
+              name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-holdingId`}
               value={props.editingFormData.holdingId || ""}
               onChange={props.onChange}
               className="select flex-1"
@@ -75,8 +75,8 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
         isRequired={true}
         inputChild={
           <input
-            id={`holding-snapshot-date`}
-            name={`holding-snapshot-date`}
+            id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-date`}
+            name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-date`}
             type="date"
             value={
               props.editingFormData?.date
@@ -93,8 +93,8 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
         isRequired={true}
         inputChild={
           <input
-            id={`holding-snapshot-balance`}
-            name={`holding-snapshot-balance`}
+            id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-balance`}
+            name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-balance`}
             type="text"
             value={props.editingFormData?.balance ?? ""}
             onChange={props.onChange}
