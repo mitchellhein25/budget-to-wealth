@@ -1,9 +1,11 @@
 'use client';
 
-import CategoriesPage from '@/app/components/categories/CategoriesPage'
-import { useParentPath } from '@/app/hooks/useParentPath';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useParentPath } from '@/app/hooks';
+import CategoriesPage from '@/app/components/categories/CategoriesPage';
+import { HOLDING_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
+import { HOLDING_ITEM_NAME } from '../components';
 
 export default function HoldingCategories() {
   const parentPath = useParentPath();
@@ -21,9 +23,9 @@ export default function HoldingCategories() {
       </div>
     <CategoriesPage 
       isLoggedIn={true} 
-      categoryTypeName="Holding"
-      getEndpoint="HoldingCategories"
-      createUpdateDeletEndpoint="HoldingCategories"
+      categoryTypeName={HOLDING_ITEM_NAME}
+      getEndpoint={HOLDING_CATEGORIES_ENDPOINT}
+      createUpdateDeleteEndpoint={HOLDING_CATEGORIES_ENDPOINT}
     />
     </div>
   )

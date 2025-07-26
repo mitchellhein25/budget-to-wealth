@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { getAllHoldings } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate } from '@/app/components/form';
-import { Holding } from '@/app/net-worth/holdings/Holding';
+import { Holding } from '@/app/net-worth/holdings/components';
 import { HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshotFormData } from '../';
 
 interface HoldingSnapshotInputsProps {

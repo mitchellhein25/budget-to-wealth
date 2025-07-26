@@ -1,0 +1,8 @@
+export const HOLDING_ITEM_NAME = "Holding";
+export const HOLDING_ITEM_NAME_LOWERCASE = HOLDING_ITEM_NAME.toLowerCase();
+export const HOLDING_TYPE_ASSET = "Asset";
+export const HOLDING_TYPE_DEBT = "Debt";
+export const HOLDING_CATEGORY_ITEM_NAME = "Holding Category";
+export const HOLDING_CATEGORY_ITEM_NAME_LOWERCASE = HOLDING_CATEGORY_ITEM_NAME.toLowerCase();
+export const HOLDING_CATEGORY_ITEM_NAME_PLURAL = "Holding Categories";
+export const HOLDING_CATEGORY_ITEM_NAME_PLURAL_LOWERCASE = HOLDING_CATEGORY_ITEM_NAME_PLURAL.toLowerCase();

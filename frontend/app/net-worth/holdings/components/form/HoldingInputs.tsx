@@ -1,32 +1,29 @@
 'use client';
 
-import { getRequest } from '@/app/lib/api/rest-methods/getRequest';
-import InputFieldSetTemplate from '@/app/components/form/InputFieldSetTemplate';
 import React, { useEffect, useState } from 'react'
-import { HoldingFormData } from './HoldingFormData';
-import { HoldingType } from '@/app/net-worth/holdings/HoldingType';
-import { Category } from '@/app/components/categories/Category';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
+import { InputFieldSetTemplate } from '@/app/components/form';
+import { Category } from '@/app/components/categories/Category';
+import { getAllHoldingCategories } from '@/app/lib/api/data-methods';
+import { HOLDING_CATEGORY_ITEM_NAME_PLURAL, HOLDING_ITEM_NAME_LOWERCASE, HOLDING_TYPE_ASSET, HOLDING_TYPE_DEBT, HoldingFormData } from '..';
 
 interface HoldingInputsProps {
   editingFormData: Partial<HoldingFormData>;
   onChange: React.ChangeEventHandler;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
-export default function HoldingInputs(props: HoldingInputsProps) {
+export function HoldingInputs(props: HoldingInputsProps) {
   const [categories, setCategories] = useState<Category[]>([]);
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
   
   async function fetchCategories() {
-    // setInfoMessage("");
-    // setErrorMessage("");
-    // setIsLoading(true);
-    const response = await getRequest<Category>(`HoldingCategories`);
+    props.setIsLoading(true);
+    const response = await getAllHoldingCategories();
     if (response.successful) {
       setCategories((response.data as Category[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
+    props.setIsLoading(false);
   }
 
   useEffect(() => {
@@ -36,8 +33,8 @@ export default function HoldingInputs(props: HoldingInputsProps) {
   return (
     <>
       <input
-        id={`holding-id`}
-        name={`holding-id`}
+        id={`${HOLDING_ITEM_NAME_LOWERCASE}-id`}
+        name={`${HOLDING_ITEM_NAME_LOWERCASE}-id`}
         readOnly
         type="text"
         value={props.editingFormData?.id ?? ''}
@@ -48,8 +45,8 @@ export default function HoldingInputs(props: HoldingInputsProps) {
         isRequired={true}
         inputChild={
           <input
-            id={`holding-name`}
-            name={`holding-name`}
+            id={`${HOLDING_ITEM_NAME_LOWERCASE}-name`}
+            name={`${HOLDING_ITEM_NAME_LOWERCASE}-name`}
             type="text"
             value={props.editingFormData?.name ?? ""}
             onChange={props.onChange}
@@ -62,14 +59,14 @@ export default function HoldingInputs(props: HoldingInputsProps) {
         isRequired={true}
         inputChild={
           <select
-            id={`holding-type`}
-            name={`holding-type`}
-            value={props.editingFormData.type || HoldingType.Asset}
+            id={`${HOLDING_ITEM_NAME_LOWERCASE}-type`}
+            name={`${HOLDING_ITEM_NAME_LOWERCASE}-type`}
+            value={props.editingFormData.type || HOLDING_TYPE_ASSET}
             onChange={props.onChange}
             className="select"
           >
-            <option value={HoldingType.Asset}>{HoldingType.Asset}</option>
-            <option value={HoldingType.Debt}>{HoldingType.Debt}</option>
+            <option value={HOLDING_TYPE_ASSET}>{HOLDING_TYPE_ASSET}</option>
+            <option value={HOLDING_TYPE_DEBT}>{HOLDING_TYPE_DEBT}</option>
           </select>
         }
       />
@@ -79,8 +76,8 @@ export default function HoldingInputs(props: HoldingInputsProps) {
         inputChild={
           <div className="flex items-center gap-2">
             <select
-              id={`holding-holdingCategoryId`}
-              name={`holding-holdingCategoryId`}
+              id={`${HOLDING_ITEM_NAME_LOWERCASE}-holdingCategoryId`}
+              name={`${HOLDING_ITEM_NAME_LOWERCASE}-holdingCategoryId`}
               value={props.editingFormData.holdingCategoryId || ""}
               onChange={props.onChange}
               className="select flex-1"
@@ -95,7 +92,7 @@ export default function HoldingInputs(props: HoldingInputsProps) {
             <Link
               href="/net-worth/holdings/holding-categories"
               className="btn btn-ghost btn-sm btn-circle"
-              title="Edit Holding Categories"
+              title={`Edit ${HOLDING_CATEGORY_ITEM_NAME_PLURAL}`}
             >
               <Edit size={16} />
             </Link>
@@ -107,8 +104,8 @@ export default function HoldingInputs(props: HoldingInputsProps) {
         isRequired={false}
         inputChild={
           <input
-            id={`holding-institution`}
-            name={`holding-institution`}
+            id={`${HOLDING_ITEM_NAME_LOWERCASE}-institution`}
+            name={`${HOLDING_ITEM_NAME_LOWERCASE}-institution`}
             type="text"
             value={props.editingFormData.institution ?? ""}
             onChange={props.onChange}

@@ -1,56 +1,38 @@
 'use client';
 
-import React, { useEffect, useState } from 'react'
-import { Holding } from '@/app/net-worth/holdings/Holding';
-import HoldingsList from '@/app/net-worth/holdings/components/list/HoldingsList';
-import { HoldingFormData } from '@/app/net-worth/holdings/components/form/HoldingFormData';
-import HoldingForm from '@/app/net-worth/holdings/components/form/HoldingForm';
-import { holdingFormOnChange } from '@/app/net-worth/holdings/components/form/functions/holdingFormOnChange';
-import { useList } from '@/app/hooks/useDataListFetcher';
-import { handleFormSubmit } from '@/app/components/form/functions/handleFormSubmit';
-import { transformFormDataToHolding } from '@/app/net-worth/holdings/components/form/functions/transformFormDataToHolding';
+import React, { useCallback, useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useParentPath } from '@/app/hooks/useParentPath';
+import { useForm, useDataListFetcher, useParentPath } from '@/app/hooks';
+import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api/data-methods';
+import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding } from './components';
+import { messageTypeIsError } from '@/app/components/Utils';
 
 export default function HoldingsPage() {
   const parentPath = useParentPath();
-  
-  const { items, isLoading, message, fetchItems, setMessage, setInfoMessage, setErrorMessage } = useList<Holding>("Holdings", "holdings");
-	const [editingFormData, setEditingFormData] = useState<Partial<HoldingFormData>>({});
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const handleSubmit = (formData: FormData) => handleFormSubmit<Holding | null, HoldingFormData>(
-		formData,
-		transformFormDataToHolding,
-		setIsSubmitting,
-		setMessage,
-		setErrorMessage,
-		setInfoMessage,
-		fetchItems,
-		setEditingFormData,
-		"holding",
-		"Holdings"
-	);
 
-	const onHoldingIsEditing = (holding: Holding) => {
-		setEditingFormData({
+  const fetchHoldings = useCallback( () => getAllHoldings(), []);
+	const holdingsDataListFetchState = useDataListFetcher<Holding>(fetchHoldings, HOLDING_ITEM_NAME);
+
+	const convertHoldingToFormData = (holding: Holding) => ({
 			id: holding.id?.toString(),
 			name: holding.name,
 			type: holding.type,
 			holdingCategoryId: holding.holdingCategoryId,
 			institution: holding.institution
 		});
-		setMessage({ type: null, text: '' });
-	};
-
-	const onReset = () => {
-		setEditingFormData({});
-		setMessage({ type: null, text: '' });
-	};
+  
+  const formState = useForm<Holding, HoldingFormData>({
+      itemName: HOLDING_ITEM_NAME,
+      itemEndpoint: HOLDINGS_ENDPOINT,
+      transformFormDataToItem: transformFormDataToHolding,
+      convertItemToFormData: convertHoldingToFormData,
+      fetchItems: () => holdingsDataListFetchState.fetchItems(),
+    });
 
 	useEffect(() => {
-		fetchItems();
-	}, [fetchItems]);
+		holdingsDataListFetchState.fetchItems();
+	}, [holdingsDataListFetchState]);
   
   return (
     <div className="p-6">
@@ -68,23 +50,16 @@ export default function HoldingsPage() {
         <div className="flex flex-1 gap-6">
           <div className="flex-shrink-0">
             <HoldingForm
-              handleSubmit={handleSubmit}
-              editingFormData={editingFormData}
-              onChange={(event) => holdingFormOnChange(event, setEditingFormData)}
-              onReset={onReset}
-              errorMessage={message.type === 'form-error' ? message.text : ''}
-              infoMessage={message.type === 'form-info' ? message.text : ''}
-              isLoading={isLoading}
-              isSubmitting={isSubmitting}
+              formState={formState}
             />
           </div>
           <div className="flex flex-1 flex-col gap-2">
             <HoldingsList
-              holdings={items}
-              isLoading={isLoading}
-              message={message}
-              onHoldingDeleted={fetchItems}
-              onHoldingIsEditing={onHoldingIsEditing}
+              holdings={holdingsDataListFetchState.items}
+              onHoldingDeleted={holdingsDataListFetchState.fetchItems}
+              onHoldingIsEditing={formState.onItemIsEditing}
+              isLoading={holdingsDataListFetchState.isLoading}
+              isError={messageTypeIsError(holdingsDataListFetchState.message)}
             />
           </div>
         </div>

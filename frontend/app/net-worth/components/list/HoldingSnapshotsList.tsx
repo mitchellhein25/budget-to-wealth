@@ -1,11 +1,11 @@
 'use client'
 
-import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
-import { convertCentsToDollars } from '../../../components/Utils';
-import { ListTable } from '@/app/components/table';
-import { HoldingSnapshot } from '@/app/net-worth/components';
+import { Pencil, Trash2 } from 'lucide-react';
+import { convertCentsToDollars } from '@/app/components';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/components';
+import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
+import { ListTable } from '@/app/components/table/ListTable';
 
 type HoldingSnapshotsListProps = {
 	snapshots: HoldingSnapshot[],
@@ -19,7 +19,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteRequest<HoldingSnapshot>("HoldingSnapshots", id);
+			const result = await deleteHoldingSnapshot(id);
 			if (result.successful)
 				props.onSnapshotDeleted();
 		}
@@ -68,7 +68,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 
 	return (
 		<ListTable
-			title={"Holding Snapshots"}
+			title={`${HOLDING_SNAPSHOT_ITEM_NAME}s`}
 			headerRow={tableHeaderRow}
 			bodyRow={tableBodyRow}
 			items={props.snapshots}

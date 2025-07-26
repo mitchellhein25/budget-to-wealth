@@ -1,19 +1,18 @@
-import { Holding } from '@/app/net-worth/holdings/Holding';
 import React from 'react'
-import { MessageState } from '../../../../components/Utils';
 import { Pencil, Trash2 } from 'lucide-react';
-import ListTable from '../../../../components/table/ListTable';
-import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
+import { deleteHolding } from '@/app/lib/api/data-methods';
+import { ListTable } from '@/app/components/table/ListTable';
+import { HOLDING_ITEM_NAME, Holding } from '..';
 
 type HoldingsListProps = {
   holdings: Holding[],
-  isLoading: boolean,
-  message: MessageState,
   onHoldingDeleted: () => void,
   onHoldingIsEditing: (holding: Holding) => void,
+  isLoading: boolean,
+	isError: boolean
 }
 
-export default function HoldingsList(props: HoldingsListProps) {
+export function HoldingsList(props: HoldingsListProps) {
   const tableHeaderRow = (
     <tr>
       <th className="w-1/5">Name</th>
@@ -23,6 +22,14 @@ export default function HoldingsList(props: HoldingsListProps) {
       <th></th>
     </tr>
   );
+
+  async function handleDelete(id: number) {
+		if (window.confirm('Are you sure you want to delete this?')) {
+			const result = await deleteHolding(id);
+			if (result.successful)
+      props.onHoldingDeleted();
+		}
+	};
 
   const tableBodyRow = (holding: Holding) => (
     <tr key={holding.id}>
@@ -59,22 +66,14 @@ export default function HoldingsList(props: HoldingsListProps) {
     </tr>
   );
 
-  async function handleDelete(id: number) {
-		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteRequest<Holding>("Holdings", id);
-			if (result.successful)
-      props.onHoldingDeleted();
-		}
-	};
-
   return (
     <ListTable
       items={props.holdings}
       bodyRow={tableBodyRow}
       headerRow={tableHeaderRow}
       isLoading={props.isLoading}
-      isError={props.message.type === 'list-error'}
-      title="Holdings"
+      isError={props.isError}
+      title={`${HOLDING_ITEM_NAME}s`}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { Holding } from "@/app/net-worth/holdings/Holding";
+import { Holding } from "@/app/net-worth/holdings/components";
 import { deleteRequest, getRequestList } from "../rest-methods";
 import { HOLDINGS_ENDPOINT } from "./";
 

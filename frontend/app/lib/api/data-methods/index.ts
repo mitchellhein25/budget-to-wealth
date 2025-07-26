@@ -5,3 +5,4 @@ export * from './cashFlowEntryRequests';
 export * from './queryHelpers';
 export * from './holdingSnapshotRequests';
 export * from './holdingRequests';
+export * from './holdingCategoriesRequests';
