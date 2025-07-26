@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
+    domains: [
+      'lh3.googleusercontent.com',
+      'graph.facebook.com',
+      'platform-lookaside.fbsbx.com',
+      'graph.microsoft.com',
+    ],
     remotePatterns: [
       {
         protocol: 'https',
