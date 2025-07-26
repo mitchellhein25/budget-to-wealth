@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
-import { getRequestList } from "@/app/lib/api/rest-methods/getRequest";
-import CategoriesList from "./CategoriesList";
-import CategoriesForm from "./CategoriesForm";
-import { Category, CategoryFormData } from "@/app/components/categories/Category";
-import { CashFlowType } from "@/app/cashflow/components/CashFlowType";
-import { CashFlowCategory } from "@/app/cashflow/components/CashFlowCategory";
 import { useDataListFetcher, useForm } from "@/app/hooks";
+import { getRequestList } from "@/app/lib/api/rest-methods";
+import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow/components";
 import { messageTypeIsError } from "../Utils";
-import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME } from "@/app/cashflow/components/constants";
+import { Category, CategoryFormData } from "./Category";
+import { CategoriesForm } from "./form/CategoriesForm";
+import { CategoriesList } from "./list/CategoriesList";
 
 type CategoriesPageProps = {
   isLoggedIn: boolean;
@@ -18,7 +16,7 @@ type CategoriesPageProps = {
   createUpdateDeleteEndpoint: string;
 }
 
-export default function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
+export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   const fetchCategories = useCallback(() => getRequestList<T>(props.getEndpoint), [props.getEndpoint]);
 	const categoriesDataListFetchState = useDataListFetcher<T>(fetchCategories, props.categoryTypeName);
 
@@ -26,9 +24,9 @@ export default function CategoriesPage<T extends Category>(props: CategoriesPage
     const nameValue = formData.get("Name") as string;
     const category: T = { name: nameValue } as T;
     if (props.categoryTypeName === INCOME_ITEM_NAME)
-      (category as unknown as CashFlowCategory).categoryType = CashFlowType.Income;
+      (category as unknown as CashFlowCategory).categoryType = INCOME_ITEM_NAME;
     else if (props.categoryTypeName === EXPENSE_ITEM_NAME) {
-      (category as unknown as CashFlowCategory).categoryType = CashFlowType.Expense;
+      (category as unknown as CashFlowCategory).categoryType = EXPENSE_ITEM_NAME;
     }
     return { item: category, errors: [] };
   }

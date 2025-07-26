@@ -1,9 +1,9 @@
 'use client'
 
-import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { Category } from '@/app/components/categories/Category';
 import { Pencil, Trash2 } from 'lucide-react';
-import ListTable from '../table/ListTable';
+import { deleteRequest } from '@/app/lib/api/rest-methods';
+import { ListTable } from '../../table/ListTable';
+import { Category } from '../Category';
 
 type CategoriesListProps<T extends Category> = {
   categories: T[],
@@ -15,7 +15,7 @@ type CategoriesListProps<T extends Category> = {
   isError: boolean,
 }
 
-export default function CategoriesList<T extends Category>(props: CategoriesListProps<T>) {
+export function CategoriesList<T extends Category>(props: CategoriesListProps<T>) {
   async function handleDelete(id: number) {
     const result = await deleteRequest<T>(props.deleteEndpoint, id);
     if (result.successful)

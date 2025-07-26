@@ -1,13 +1,13 @@
-import { CategoryFormData } from '@/app/components/categories/Category';
 import React from 'react'
-import InputFieldSetTemplate from '../form/InputFieldSetTemplate';
+import { InputFieldSetTemplate } from '../../form';
+import { CategoryFormData } from '@/app/components/categories/Category';
 
 interface CategoriesInputsProps {
   editingFormData: Partial<CategoryFormData>;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function CategoriesInputs(props : CategoriesInputsProps) {
+export function CategoriesInputs(props : CategoriesInputsProps) {
   return (
     <>
       <input

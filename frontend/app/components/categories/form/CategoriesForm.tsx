@@ -1,19 +1,18 @@
 "use client"
 
 import React from "react"
-import FormTemplate from "../form/FormTemplate";
-import UpdateCreateButton from "../buttons/UpdateCreateButton";
-import ResetButton from "../buttons/ResetButton";
-import CategoriesInputs from "./CategoriesInputs";
 import { FormState } from "@/app/hooks";
-import { Category, CategoryFormData } from "./Category";
+import { FormTemplate } from "../../form";
+import { UpdateCreateButton, ResetButton } from "../../buttons";
+import { Category, CategoryFormData } from "..";
+import { CategoriesInputs } from "./CategoriesInputs";
 
 interface CategoriesFormProps<T extends Category> {
   formState: FormState<T, CategoryFormData>;
   categoryTypeName: string;
 }
 
-export default function CategoriesForm<T extends Category>({formState, categoryTypeName} : CategoriesFormProps<T>) {
+export function CategoriesForm<T extends Category>({formState, categoryTypeName} : CategoriesFormProps<T>) {
 
   const formHeader: string = formState.editingFormData?.id ? `Edit ${categoryTypeName} Category` : `New ${categoryTypeName} Category`;
 
