@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods';
 import { InputFieldSetTemplate } from '@/app/components/form';
 import { CashFlowCategory } from '@/app/cashflow/components';
-import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from './';
+import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from '..';
 
 interface BudgetInputsProps {
   editingFormData: Partial<BudgetFormData>;

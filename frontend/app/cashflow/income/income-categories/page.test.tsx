@@ -1,16 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import HoldingCategories from '../page';
+import IncomeCategories from './page';
 import { BACK_ARROW_TEXT } from '@/app/components/buttons/BackArrow';
-import { NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/components';
-import { HOLDING_CATEGORY_ITEM_NAME_PLURAL_LOWERCASE } from '../../components';
+import { INCOME_ITEM_NAME } from '@/app/cashflow/components/constants';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-const mockParentPath = `/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_CATEGORY_ITEM_NAME_PLURAL_LOWERCASE}`;
-export const testingId = 'categories-page';
+const mockParentPath = '/cashflow/income';
+const categoriesPageTestId = 'categories-page';
 
 jest.mock('@/app/hooks', () => ({
   useParentPath: () => mockParentPath,
@@ -18,11 +17,11 @@ jest.mock('@/app/hooks', () => ({
 
 jest.mock('@/app/components/categories/CategoriesPage', () => {
   return function MockCategoriesPage() {
-    return <div data-testid={testingId}>Categories Page</div>;
+    return <div data-testid={categoriesPageTestId}>Categories Page</div>;
   };
 });
 
-describe('HoldingCategories', () => {
+describe('IncomeCategories', () => {
   const mockRouter = {
     push: jest.fn(),
     back: jest.fn(),
@@ -33,14 +32,14 @@ describe('HoldingCategories', () => {
   });
 
   it('renders the page correctly', () => {
-    render(<HoldingCategories />);
+    render(<IncomeCategories />);
     
     expect(screen.getByText(BACK_ARROW_TEXT)).toBeInTheDocument();
-    expect(screen.getByTestId(testingId)).toBeInTheDocument();
+    expect(screen.getByTestId(categoriesPageTestId)).toBeInTheDocument();
   });
 
   it('renders back arrow with correct link', () => {
-    render(<HoldingCategories />);
+    render(<IncomeCategories />);
     
     const backButton = screen.getByText(BACK_ARROW_TEXT);
     expect(backButton).toBeInTheDocument();

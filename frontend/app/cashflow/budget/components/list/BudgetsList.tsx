@@ -6,7 +6,7 @@ import { convertCentsToDollars } from '@/app/components';
 import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { deleteBudget } from '@/app/lib/api/data-methods';
-import { BUDGET_ITEM_NAME, Budget } from './';
+import { BUDGET_ITEM_NAME, Budget } from '..';
 
 interface BudgetsListProps {
 	budgets: Budget[],

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { FormTemplate } from '@/app/components/form';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
-import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, Budget, BudgetFormData, BudgetInputs } from './';
+import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, Budget, BudgetFormData, BudgetInputs } from '..';
 
 
 export function BudgetsForm({formState} : {formState: FormState<Budget, BudgetFormData>}) {

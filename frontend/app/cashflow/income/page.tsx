@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react'
 import { INCOME_ITEM_NAME, CashFlowPage } from '@/app/cashflow/components';
 
