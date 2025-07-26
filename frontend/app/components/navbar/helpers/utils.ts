@@ -1,5 +1,7 @@
 import { SessionData } from "@auth0/nextjs-auth0/types";
-import { NavItem } from './types';
+import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from "@/app/cashflow/components";
+import { NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from "@/app/net-worth/components";
+import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from "@/app/dashboards/components/constants";
 
 export const isTokenExpired = (session: SessionData | null): boolean => {
   return session?.tokenSet?.expiresAt
@@ -18,8 +20,13 @@ export const closeDrawer = (): void => {
   }
 };
 
+export interface NavItem {
+  href: string;
+  label: string;
+}
+
 export const navItems: NavItem[] = [
-  { href: '/cashflow/expenses', label: 'Cashflow' },
-  { href: '/net-worth', label: 'Net Worth' },
-  { href: '/dashboards', label: 'Dashboards' }
+  { href: `/${CASHFLOW_ITEM_NAME_LOWERCASE}/${EXPENSE_ITEM_NAME_LOWERCASE}s`, label: CASHFLOW_ITEM_NAME },
+  { href: `/${NET_WORTH_ITEM_NAME_LINK}`, label: NET_WORTH_ITEM_NAME },
+  { href: `/${DASHBOARDS_ITEM_NAME_LOWERCASE}`, label: DASHBOARDS_ITEM_NAME }
 ]; 

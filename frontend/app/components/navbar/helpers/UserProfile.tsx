@@ -2,12 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Import, User } from 'lucide-react';
 import Image from 'next/image';
-import { UserProfileProps } from './types';
+import { Import, User } from 'lucide-react';
 import { isAuthenticated } from './utils';
+import { SessionData } from '@auth0/nextjs-auth0/types';
 
-export default function UserProfile({ session, pathname }: UserProfileProps) {
+export function UserProfile({ session, pathname }: { session: SessionData, pathname: string }) {
   if (!isAuthenticated(session)) {
     return (
       <div className="navbar-end">

@@ -2,15 +2,10 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { NavBarProps } from './helpers/types';
-import { closeDrawer, navItems } from './helpers/utils';
-import Logo from './helpers/Logo';
-import UserProfile from './helpers/UserProfile';
-import DesktopNav from './helpers/DesktopNav';
-import MobileDrawer from './helpers/MobileDrawer';
-import MobileMenuButton from './helpers/MobileMenuButton';
+import { SessionData } from '@auth0/nextjs-auth0/types';
+import { Logo, UserProfile, DesktopNav, MobileDrawer, MobileMenuButton, closeDrawer } from './helpers';
 
-export default function NavBar({ session }: NavBarProps) {
+export default function NavBar({ session }: { session: SessionData }) {
   const pathname = usePathname();
 
   return (
@@ -27,13 +22,12 @@ export default function NavBar({ session }: NavBarProps) {
             <Logo />
           </div>
 
-          <DesktopNav navItems={navItems} pathname={pathname} />
+          <DesktopNav pathname={pathname} />
           <UserProfile session={session} pathname={pathname} />
         </nav>
       </div>
       
       <MobileDrawer 
-        navItems={navItems} 
         pathname={pathname} 
         onClose={closeDrawer} 
       />

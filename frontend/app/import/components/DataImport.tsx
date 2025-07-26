@@ -12,7 +12,7 @@ import { ImportDataType } from './models/ImportDataType';
 import { ImportDataTypeStringMappings } from './models/ImportDataTypeStringMappings';
 import { ImportDataTypeStrings } from './models/ImportDataTypeStrings';
 import { ImportResult } from './models/ImportResult';
-import InputFieldSetTemplate from '../../components/form/InputFieldSetTemplate';
+import { InputFieldSetTemplate } from '@/app/components/form';
 
 export default function DataImport() {
   const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>(ImportDataTypeStringMappings.CashFlowEntries);

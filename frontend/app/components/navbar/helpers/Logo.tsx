@@ -3,9 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LogoProps } from './types';
 
-export default function Logo({ className = "" }: LogoProps) {
+export function Logo({ className = "" }: { className?: string }) {
   return (
     <Link href="/" className={`flex items-center gap-2 text-xl font-bold text-primary ${className}`}>
       <Image 

@@ -1,0 +1,2 @@
+export const DASHBOARDS_ITEM_NAME = "Dashboards";
+export const DASHBOARDS_ITEM_NAME_LOWERCASE = DASHBOARDS_ITEM_NAME.toLowerCase();

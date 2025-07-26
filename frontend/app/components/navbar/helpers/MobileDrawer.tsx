@@ -3,9 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
-import { MobileDrawerProps } from './types';
+import { navItems } from '.';
 
-export default function MobileDrawer({ navItems, pathname, onClose }: MobileDrawerProps) {
+export function MobileDrawer(
+  { pathname, onClose }: { pathname: string, onClose: () => void }) 
+{
   return (
     <div className="drawer-side">
       <label htmlFor="mobile-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
