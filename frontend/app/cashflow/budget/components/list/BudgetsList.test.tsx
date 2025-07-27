@@ -40,6 +40,13 @@ jest.mock('@/app/lib/api/data-methods', () => ({
 }));
 
 describe('BudgetsList', () => {
+  const mockDeleteBudget = jest.mocked(require('@/app/lib/api/data-methods').deleteBudget);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDeleteBudget.mockResolvedValue({ successful: true });
+  });
+
   const mockBudgets = [
     { id: 1, amount: 1700, categoryId: '1', category: { name: 'Food', categoryType: 'EXPENSE' }, date: '2024-01-01' },
     { id: 2, amount: 2100, categoryId: '2', category: { name: 'Transport', categoryType: 'EXPENSE' }, date: '2024-01-01' },
@@ -92,12 +99,10 @@ describe('BudgetsList', () => {
     const rows = screen.getAllByTestId(/^row-/);
     expect(rows).toHaveLength(2);
     
-    // Budget 1: $17.00 budget, $5.00 spent, $12.00 remaining
     expect(screen.getByTestId('budget-amount-0')).toHaveTextContent('$17.00');
     expect(screen.getByTestId('spent-amount-0')).toHaveTextContent('$5.00');
     expect(screen.getByTestId('remaining-amount-0')).toHaveTextContent('$12.00');
 
-    // Budget 2: $21.00 budget, $15.00 spent, $6.00 remaining
     expect(screen.getByTestId('budget-amount-1')).toHaveTextContent('$21.00');
     expect(screen.getByTestId('spent-amount-1')).toHaveTextContent('$15.00');
     expect(screen.getByTestId('remaining-amount-1')).toHaveTextContent('$6.00');
@@ -129,17 +134,14 @@ describe('BudgetsList', () => {
     
     render(<BudgetsList {...propsWithOverBudget} />);
     
-    // Should still render the table with budgets
     expect(screen.getByTestId('table-rows')).toBeInTheDocument();
     expect(screen.getByTestId('row-0')).toBeInTheDocument();
     expect(screen.getByTestId('row-1')).toBeInTheDocument();
     
-    // Budget 1: $17.00 budget, $15.00 spent, $2.00 remaining
     expect(screen.getByTestId('budget-amount-0')).toHaveTextContent('$17.00');
     expect(screen.getByTestId('spent-amount-0')).toHaveTextContent('$15.00');
     expect(screen.getByTestId('remaining-amount-0')).toHaveTextContent('$2.00');
     
-    // Budget 2: $21.00 budget, $22.00 spent, -$1.00 remaining (over budget)
     expect(screen.getByTestId('budget-amount-1')).toHaveTextContent('$21.00');
     expect(screen.getByTestId('spent-amount-1')).toHaveTextContent('$22.00');
     expect(screen.getByTestId('remaining-amount-1')).toHaveTextContent('-$1.00');

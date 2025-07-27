@@ -1,5 +1,5 @@
 import z from "zod";
-import { numberRegex } from "../../../components/Utils";
+import { numberRegex } from "@/app/components";
 import { RecurrenceFrequency } from "../RecurrenceFrequency";
 
 export const cashFlowEntryFormSchema = z.object({
@@ -23,7 +23,7 @@ export const cashFlowEntryFormSchema = z.object({
     .transform((val) => {
       return val.replace(/[,\s]/g, '');
     }),
-  date: z.date({ message: "Date field is required." }),
+  date: z.date({ message: "Date field is required." }).nullable().refine((val) => val !== null, { message: "Date field is required." }),
   categoryId: z.string().trim().min(1, { message: "Category field is required" }),
   description: z.string().trim().optional(),
   recurrenceFrequency: z.nativeEnum(RecurrenceFrequency).optional(),
