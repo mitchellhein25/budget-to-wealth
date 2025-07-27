@@ -6,7 +6,7 @@ export type Budget = ListTableItem & {
   amount: number;
   categoryId: string;
   category?: CashFlowCategory;
-  name?: string;
+  name?: string; // To match ListTableItem format
   startDate?: string;
   endDate?: string;
   userId?: string;
