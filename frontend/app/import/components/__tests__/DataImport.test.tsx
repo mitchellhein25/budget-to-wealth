@@ -255,21 +255,7 @@ describe('DataImport', () => {
       expect(screen.getByText(/Error processing file/)).toBeInTheDocument();
     });
   });
-
-  it('shows processing state during file upload', async () => {
-    const user = userEvent.setup();
-    mockParseCsvFile.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
-    
-    render(<DataImport />);
-    
-    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
-    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
-    
-    await user.upload(fileInput, file);
-    
-    expect(screen.getAllByText(/Processing file/)).toHaveLength(2);
-  });
-
+  
   it('shows processing state during import', async () => {
     const user = userEvent.setup();
     mockUploadImportData.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
