@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CategoriesList } from './CategoriesList';
 
 const listTableTestId = 'list-table';
@@ -18,17 +18,19 @@ jest.mock('@/app/components/table/ListTable', () => ({
       <div data-testid={isErrorTestId}>{isError.toString()}</div>
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
       <div data-testid="table-content">
-        {items?.map((item: any, index: number) => (
-          <div key={index} data-testid={`item-${index}`}>
-            <div data-testid={`item-name-${index}`}>
-              {item.name}
+        {items?.map((item: any, index: number) => {
+          const rowElement = bodyRow(item);
+          return (
+            <div key={index} data-testid={`item-${index}`}>
+              <div data-testid={`item-name-${index}`}>
+                {item.name}
+              </div>
+              <div data-testid={`item-actions-${index}`}>
+                {rowElement.props.children[1].props.children}
+              </div>
             </div>
-            <div data-testid={`item-actions-${index}`}>
-              <button data-testid={`edit-button-${index}`}>Edit</button>
-              <button data-testid={`delete-button-${index}`}>Delete</button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   ),
@@ -115,11 +117,46 @@ describe('CategoriesList', () => {
 
   it('renders edit and delete buttons for each category', () => {
     render(<CategoriesList {...defaultProps} />);
-    expect(screen.getByTestId('edit-button-0')).toBeInTheDocument();
-    expect(screen.getByTestId('delete-button-0')).toBeInTheDocument();
-    expect(screen.getByTestId('edit-button-1')).toBeInTheDocument();
-    expect(screen.getByTestId('delete-button-1')).toBeInTheDocument();
-    expect(screen.getByTestId('edit-button-2')).toBeInTheDocument();
-    expect(screen.getByTestId('delete-button-2')).toBeInTheDocument();
+    const editButtons = screen.getAllByLabelText('Edit');
+    const deleteButtons = screen.getAllByLabelText('Delete');
+    expect(editButtons).toHaveLength(3);
+    expect(deleteButtons).toHaveLength(3);
+  });
+
+  it('calls onCategoryDeleted when delete is successful', async () => {
+    mockDeleteRequest.mockResolvedValue({ successful: true });
+    
+    render(<CategoriesList {...defaultProps} />);
+    
+    const deleteButtons = screen.getAllByLabelText('Delete');
+    fireEvent.click(deleteButtons[0]);
+    
+    await waitFor(() => {
+      expect(mockDeleteRequest).toHaveBeenCalledWith('/api/test-categories', 1);
+      expect(mockOnCategoryDeleted).toHaveBeenCalled();
+    });
+  });
+
+  it('does not call onCategoryDeleted when delete is unsuccessful', async () => {
+    mockDeleteRequest.mockResolvedValue({ successful: false });
+    
+    render(<CategoriesList {...defaultProps} />);
+    
+    const deleteButtons = screen.getAllByLabelText('Delete');
+    fireEvent.click(deleteButtons[0]);
+    
+    await waitFor(() => {
+      expect(mockDeleteRequest).toHaveBeenCalledWith('/api/test-categories', 1);
+      expect(mockOnCategoryDeleted).not.toHaveBeenCalled();
+    });
+  });
+
+  it('calls onCategoryIsEditing when edit button is clicked', () => {
+    render(<CategoriesList {...defaultProps} />);
+    
+    const editButtons = screen.getAllByLabelText('Edit');
+    fireEvent.click(editButtons[0]);
+    
+    expect(mockOnCategoryIsEditing).toHaveBeenCalledWith(mockCategories[0]);
   });
 }); 
