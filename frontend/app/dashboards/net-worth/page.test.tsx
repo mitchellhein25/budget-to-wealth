@@ -34,19 +34,40 @@ jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestSingle: jest.fn(),
 }));
 
+jest.mock('@/app/components/Utils', () => ({
+  ...jest.requireActual('@/app/components/Utils'),
+  getCurrentYearRange: jest.fn(() => ({
+    from: new Date('2023-12-01'),
+    to: new Date('2024-01-31'),
+  })),
+  formatDate: jest.fn((date: Date, noDay: boolean = false) => {
+    if (noDay) {
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+      });
+    }
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }),
+}));
+
 const mockGetRequestSingle = jest.mocked(getRequestSingle);
 
 describe('NetWorthTrendGraph', () => {
   const mockNetWorthData: NetWorthTrendGraphData = {
     entries: [
       {
-        date: '2024-01-01',
+        date: '2023-12-31',
         assetValueInCents: 1000000,
         debtValueInCents: 300000,
         netWorthInCents: 700000,
       },
       {
-        date: '2024-02-01',
+        date: '2024-01-31',
         assetValueInCents: 1100000,
         debtValueInCents: 250000,
         netWorthInCents: 850000,
@@ -129,7 +150,7 @@ describe('NetWorthTrendGraph', () => {
     expect(trendGraph).toHaveAttribute('data-title', 'Net Worth');
 
     const labels = JSON.parse(trendGraph.getAttribute('data-labels') || '[]');
-    expect(labels).toEqual(['December 31, 2023', 'January 31, 2024']);
+    expect(labels).toEqual(['December 30, 2023', 'January 30, 2024']);
 
     const datasets = JSON.parse(trendGraph.getAttribute('data-datasets') || '[]');
     expect(datasets).toHaveLength(3);

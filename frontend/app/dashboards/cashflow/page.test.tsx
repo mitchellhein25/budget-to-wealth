@@ -34,19 +34,40 @@ jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestSingle: jest.fn(),
 }));
 
+jest.mock('@/app/components/Utils', () => ({
+  ...jest.requireActual('@/app/components/Utils'),
+  getCurrentYearRange: jest.fn(() => ({
+    from: new Date('2023-12-01'),
+    to: new Date('2024-01-31'),
+  })),
+  formatDate: jest.fn((date: Date, noDay: boolean = false) => {
+    if (noDay) {
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+      });
+    }
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }),
+}));
+
 const mockGetRequestSingle = jest.mocked(getRequestSingle);
 
 describe('CashFlowTrendGraph', () => {
   const mockCashFlowData: CashFlowTrendGraphData = {
     entries: [
       {
-        date: '2024-01-01',
+        date: '2023-12-01',
         incomeInCents: 500000,
         expensesInCents: 300000,
         netCashFlowInCents: 200000,
       },
       {
-        date: '2024-02-01',
+        date: '2024-01-01',
         incomeInCents: 600000,
         expensesInCents: 350000,
         netCashFlowInCents: 250000,
@@ -129,7 +150,7 @@ describe('CashFlowTrendGraph', () => {
     expect(trendGraph).toHaveAttribute('data-title', 'CashFlow');
 
     const labels = JSON.parse(trendGraph.getAttribute('data-labels') || '[]');
-    expect(labels).toEqual(['December 2023', 'January 2024']);
+    expect(labels).toEqual(['November 2023', 'December 2023']);
 
     const datasets = JSON.parse(trendGraph.getAttribute('data-datasets') || '[]');
     expect(datasets).toHaveLength(3);
