@@ -189,4 +189,61 @@ describe('CashFlowEntriesList', () => {
     expect(screen.getByText('$50.25')).toBeInTheDocument();
     expect(screen.getByText('$75.00')).toBeInTheDocument();
   });
+
+  it('handles delete when user cancels confirmation', async () => {
+    window.confirm = jest.fn(() => false);
+    
+    render(<CashFlowEntriesList {...defaultProps} />);
+    
+    const deleteButtons = screen.getAllByLabelText('Delete');
+    fireEvent.click(deleteButtons[0]);
+    
+    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
+    expect(mockDeleteCashFlowEntry).not.toHaveBeenCalled();
+    expect(defaultProps.onEntryDeleted).not.toHaveBeenCalled();
+  });
+
+  it('handles entries with Every2Weeks recurrence frequency', () => {
+    const entriesWithEvery2Weeks = [
+      {
+        ...mockEntries[0],
+        recurrenceFrequency: RecurrenceFrequency.Every2Weeks,
+        recurrenceEndDate: '2024-12-30',
+      }
+    ];
+    
+    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithEvery2Weeks} />);
+    
+    expect(screen.getByText(/Every 2 Weeks until/)).toBeInTheDocument();
+  });
+
+  it('handles entries with recurrence frequency but no end date', () => {
+    const entriesWithRecurrenceNoEndDate = [
+      {
+        ...mockEntries[0],
+        recurrenceFrequency: RecurrenceFrequency.Weekly,
+        recurrenceEndDate: undefined,
+      }
+    ];
+    
+    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithRecurrenceNoEndDate} />);
+    
+    expect(screen.getByText('Weekly')).toBeInTheDocument();
+    expect(screen.queryByText('until')).not.toBeInTheDocument();
+  });
+
+  it('handles entries without recurrence frequency', () => {
+    const entriesWithoutRecurrence = [
+      {
+        ...mockEntries[0],
+        recurrenceFrequency: undefined,
+        recurrenceEndDate: undefined,
+      }
+    ];
+    
+    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithoutRecurrence} />);
+    
+    expect(screen.getByText('Freelance')).toBeInTheDocument();
+    expect(screen.getByText('$25.00')).toBeInTheDocument();
+  });
 }); 

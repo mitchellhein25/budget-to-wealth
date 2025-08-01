@@ -2,24 +2,16 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { HoldingSnapshotInputs } from '../HoldingSnapshotInputs';
 import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
+import { act } from 'react-dom/test-utils';
+import { waitFor } from '@testing-library/react';
 
-// Mock the dependencies
+// Mock getAllHoldings globally before imports
 jest.mock('@/app/lib/api/data-methods', () => ({
-  getAllHoldings: jest.fn().mockResolvedValue({
-    successful: true,
-    data: []
-  })
+  getAllHoldings: jest.fn().mockResolvedValue({ successful: true, data: [] })
 }));
 
-jest.mock('@/app/components/form', () => ({
-  InputFieldSetTemplate: ({ label, isRequired, inputChild }: any) => (
-    <div data-testid={`input-field-${label.toLowerCase()}`}>
-      <label>{label}</label>
-      <span data-testid="required-indicator">{isRequired ? 'required' : 'optional'}</span>
-      {inputChild}
-    </div>
-  )
-}));
+// Unmock InputFieldSetTemplate for the entire file
+jest.unmock('@/app/components/form');
 
 jest.mock('@/app/components', () => ({
   convertDateToISOString: (date: Date) => date.toISOString().split('T')[0]
@@ -56,20 +48,15 @@ describe('HoldingSnapshotInputs', () => {
 
   it('renders all required input fields', () => {
     render(<HoldingSnapshotInputs {...mockProps} />);
-    
-    expect(screen.getByTestId('input-field-holding')).toBeInTheDocument();
-    expect(screen.getByTestId('input-field-date')).toBeInTheDocument();
-    expect(screen.getByTestId('input-field-balance')).toBeInTheDocument();
+    expect(screen.getByText('Holding')).toBeInTheDocument();
+    expect(screen.getByText('Date')).toBeInTheDocument();
+    expect(screen.getByText('Balance')).toBeInTheDocument();
   });
 
   it('marks all fields as required', () => {
     render(<HoldingSnapshotInputs {...mockProps} />);
-    
-    const requiredIndicators = screen.getAllByTestId('required-indicator');
-    expect(requiredIndicators).toHaveLength(3);
-    requiredIndicators.forEach(indicator => {
-      expect(indicator).toHaveTextContent('required');
-    });
+    const requiredLabels = screen.getAllByText('Required');
+    expect(requiredLabels).toHaveLength(3);
   });
 
   it('displays correct field labels', () => {
@@ -129,10 +116,9 @@ describe('HoldingSnapshotInputs', () => {
 
   it('renders component successfully', () => {
     render(<HoldingSnapshotInputs {...mockProps} />);
-    
-    expect(screen.getByTestId('input-field-holding')).toBeInTheDocument();
-    expect(screen.getByTestId('input-field-date')).toBeInTheDocument();
-    expect(screen.getByTestId('input-field-balance')).toBeInTheDocument();
+    expect(screen.getByText('Holding')).toBeInTheDocument();
+    expect(screen.getByText('Date')).toBeInTheDocument();
+    expect(screen.getByText('Balance')).toBeInTheDocument();
   });
 
   it('displays id value when provided', () => {
@@ -153,5 +139,35 @@ describe('HoldingSnapshotInputs', () => {
     render(<HoldingSnapshotInputs {...mockProps} />);
     
     expect(mockProps.setIsLoading).toHaveBeenCalledWith(true);
+  });
+
+  it('displays today\'s date if editingFormData.date is undefined', () => {
+    render(<HoldingSnapshotInputs {...mockProps} editingFormData={{ ...mockProps.editingFormData, date: undefined }} />);
+    const dateInput = document.getElementById('holding-snapshot-date') as HTMLInputElement;
+    expect(dateInput).toBeTruthy();
+    expect(dateInput.value).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(dateInput.value).not.toBe('');
+  });
+
+  it('renders holding options when holdings are returned', async () => {
+    const holdings = [
+      { id: 'h1', name: 'Account 1', institution: 'Bank', holdingCategory: { name: 'Cat' }, type: 'Cash' },
+      { id: 'h2', name: 'Account 2', institution: '', holdingCategory: { name: 'Cat2' }, type: 'Stock' },
+    ];
+    const { getAllHoldings } = require('@/app/lib/api/data-methods');
+    getAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings });
+    render(<HoldingSnapshotInputs {...mockProps} />);
+    await screen.findByText((content) => content.replace(/\s+/g, ' ').includes('Account 1 - Bank - Cat (Cash)'));
+    await screen.findByText((content) => content.replace(/\s+/g, ' ').includes('Account 2 - Cat2 (Stock)'));
+  });
+
+  it('does not set holdings if fetch is unsuccessful', async () => {
+    const { getAllHoldings } = require('@/app/lib/api/data-methods');
+    getAllHoldings.mockResolvedValueOnce({ successful: false, data: [] });
+    render(<HoldingSnapshotInputs {...mockProps} />);
+    // There should only be the default option
+    const options = await screen.findAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]).toHaveTextContent('Pick a holding');
   });
 }); 

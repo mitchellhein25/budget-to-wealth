@@ -1,7 +1,7 @@
 'use client'
 
 import { Pencil, Trash2 } from 'lucide-react';
-import { deleteRequest } from '@/app/lib/api/rest-methods';
+import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { ListTable } from '../../table/ListTable';
 import { Category } from '../Category';
 

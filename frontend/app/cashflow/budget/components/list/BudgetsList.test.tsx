@@ -1,5 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BUDGET_ITEM_NAME, BudgetsList } from '../';
+
+// Mock window.confirm
+const mockConfirm = jest.fn();
+Object.defineProperty(window, 'confirm', {
+  writable: true,
+  value: mockConfirm,
+});
 
 const listTableTestId = 'list-table';
 const listTableText = 'List Table';
@@ -28,6 +35,12 @@ jest.mock('@/app/components/table/ListTable', () => ({
             <div data-testid={`remaining-amount-${index}`}>
               {bodyRow(item).props.children[3].props.children}
             </div>
+            <div data-testid={`status-${index}`}>
+              {bodyRow(item).props.children[4].props.children}
+            </div>
+            <div data-testid={`actions-${index}`}>
+              {bodyRow(item).props.children[5].props.children}
+            </div>
           </div>
         ))}
       </div>
@@ -45,6 +58,7 @@ describe('BudgetsList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDeleteBudget.mockResolvedValue({ successful: true });
+    mockConfirm.mockReturnValue(true);
   });
 
   const mockBudgets = [
@@ -145,5 +159,102 @@ describe('BudgetsList', () => {
     expect(screen.getByTestId('budget-amount-1')).toHaveTextContent('$21.00');
     expect(screen.getByTestId('spent-amount-1')).toHaveTextContent('$22.00');
     expect(screen.getByTestId('remaining-amount-1')).toHaveTextContent('-$1.00');
+  });
+
+  it('handles delete when user cancels confirmation', async () => {
+    mockConfirm.mockReturnValue(false);
+    
+    render(<BudgetsList {...mockProps} />);
+    
+    const deleteButton = screen.getByTestId('actions-0').querySelector('#delete-button');
+    fireEvent.click(deleteButton!);
+    
+    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
+    expect(mockDeleteBudget).not.toHaveBeenCalled();
+    expect(mockProps.onBudgetDeleted).not.toHaveBeenCalled();
+  });
+
+  it('handles delete when API call fails', async () => {
+    mockDeleteBudget.mockResolvedValue({ successful: false });
+    
+    render(<BudgetsList {...mockProps} />);
+    
+    const deleteButton = screen.getByTestId('actions-0').querySelector('#delete-button');
+    fireEvent.click(deleteButton!);
+    
+    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
+    expect(mockDeleteBudget).toHaveBeenCalledWith(1);
+    expect(mockProps.onBudgetDeleted).not.toHaveBeenCalled();
+  });
+
+  it('handles delete when API call succeeds', async () => {
+    render(<BudgetsList {...mockProps} />);
+    
+    const deleteButton = screen.getByTestId('actions-0').querySelector('#delete-button');
+    fireEvent.click(deleteButton!);
+    
+    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
+    expect(mockDeleteBudget).toHaveBeenCalledWith(1);
+    
+    await waitFor(() => {
+      expect(mockProps.onBudgetDeleted).toHaveBeenCalled();
+    });
+  });
+
+  it('handles edit button click', () => {
+    render(<BudgetsList {...mockProps} />);
+    
+    const editButton = screen.getByTestId('actions-0').querySelector('#edit-button');
+    fireEvent.click(editButton!);
+    
+    expect(mockProps.onBudgetIsEditing).toHaveBeenCalledWith(mockBudgets[0]);
+  });
+
+  it('shows correct status for budget equal to spent amount', () => {
+    const equalBudgetExpenses = [
+      { id: 1, amount: 1700, categoryId: '1' },
+    ] as any;
+    
+    const propsWithEqualBudget = {
+      ...mockProps,
+      expenses: equalBudgetExpenses,
+    };
+    
+    render(<BudgetsList {...propsWithEqualBudget} />);
+    
+    const statusElement = screen.getByTestId('status-0');
+    expect(statusElement).toBeInTheDocument();
+  });
+
+  it('shows correct status for budget greater than spent amount', () => {
+    const underBudgetExpenses = [
+      { id: 1, amount: 500, categoryId: '1' },
+    ] as any;
+    
+    const propsWithUnderBudget = {
+      ...mockProps,
+      expenses: underBudgetExpenses,
+    };
+    
+    render(<BudgetsList {...propsWithUnderBudget} />);
+    
+    const statusElement = screen.getByTestId('status-0');
+    expect(statusElement).toBeInTheDocument();
+  });
+
+  it('shows correct status for budget less than spent amount', () => {
+    const overBudgetExpenses = [
+      { id: 1, amount: 2000, categoryId: '1' },
+    ] as any;
+    
+    const propsWithOverBudget = {
+      ...mockProps,
+      expenses: overBudgetExpenses,
+    };
+    
+    render(<BudgetsList {...propsWithOverBudget} />);
+    
+    const statusElement = screen.getByTestId('status-0');
+    expect(statusElement).toBeInTheDocument();
   });
 }); 

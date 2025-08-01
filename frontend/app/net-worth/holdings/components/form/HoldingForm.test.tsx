@@ -61,4 +61,13 @@ describe('HoldingForm', () => {
     expect(screen.getByText(updateCreateButtonText)).toBeInTheDocument();
     expect(screen.getByText(resetButtonText)).toBeInTheDocument();
   });
+
+  it('renders with Edit header when editingFormData.id is present', () => {
+    const editFormState = {
+      ...mockFormState,
+      editingFormData: { id: 'some-id' },
+    };
+    render(<HoldingForm formState={editFormState} />);
+    expect(screen.getByTestId('form-header')).toHaveTextContent('Edit Holding');
+  });
 }); 

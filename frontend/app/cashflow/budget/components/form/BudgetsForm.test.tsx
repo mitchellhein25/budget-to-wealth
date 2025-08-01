@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '../';
+import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '../';
 
 const formTemplateTestId = 'form-template';
 const budgetInputsTestId = 'budget-inputs';
@@ -61,5 +61,23 @@ describe('BudgetsForm', () => {
     expect(screen.getByTestId(budgetInputsTestId)).toBeInTheDocument();
     expect(screen.getByText(updateCreateButtonText)).toBeInTheDocument();
     expect(screen.getByText(resetButtonText)).toBeInTheDocument();
+  });
+
+  it('renders with Edit header when editingFormData.id is present', () => {
+    const editFormState = {
+      ...mockFormState,
+      editingFormData: { id: 'some-id' },
+    };
+    render(<BudgetsForm formState={editFormState} />);
+    expect(screen.getByTestId(formHeaderTestId)).toHaveTextContent(`Edit ${BUDGET_ITEM_NAME}`);
+  });
+
+  it('renders with New header when editingFormData.id is not present', () => {
+    const newFormState = {
+      ...mockFormState,
+      editingFormData: {},
+    };
+    render(<BudgetsForm formState={newFormState} />);
+    expect(screen.getByTestId(formHeaderTestId)).toHaveTextContent(`New ${BUDGET_ITEM_NAME}`);
   });
 }); 

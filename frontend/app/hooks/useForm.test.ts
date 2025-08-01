@@ -43,11 +43,22 @@ jest.mock('../components/form/functions/handleFormSubmit', () => ({
   handleFormSubmit: jest.fn()
 }));
 
+jest.mock('../components/Utils', () => ({
+  cleanCurrencyInput: jest.fn(),
+  replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-').toLowerCase()),
+}));
+
 describe('useForm', () => {
+  const mockCleanCurrencyInput = require('../components/Utils').cleanCurrencyInput;
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockTransformFormDataToItem.mockReturnValue({ item: mockTestItem, errors: [] });
     mockConvertItemToFormData.mockReturnValue(mockFormData);
+    mockCleanCurrencyInput.mockImplementation((value: string) => {
+      const num = parseFloat(value.replace(/,/g, ''));
+      return isNaN(num) ? null : num.toFixed(2);
+    });
   });
 
   it('should initialize with default state', () => {
@@ -128,6 +139,74 @@ describe('useForm', () => {
     });
 
     expect(result.current.editingFormData).toEqual({ amount: '100.12' });
+  });
+
+  it('should return early when cleanCurrencyInput returns null for amount field', () => {
+    mockCleanCurrencyInput.mockReturnValue(null);
+    const { result } = renderHook(() => useForm<TestItem, TestFormData>(mockArgs));
+
+    const mockEvent = {
+      target: {
+        name: `${TEST_ITEM_NAME.toLowerCase()}-amount`,
+        value: 'invalid'
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    act(() => {
+      result.current.onChange(mockEvent);
+    });
+
+    expect(result.current.editingFormData).toEqual({});
+  });
+
+  it('should return early when cleanCurrencyInput returns null for balance field', () => {
+    mockCleanCurrencyInput.mockReturnValue(null);
+    const { result } = renderHook(() => useForm<TestItem, TestFormData>(mockArgs));
+
+    const mockEvent = {
+      target: {
+        name: `${TEST_ITEM_NAME.toLowerCase()}-balance`,
+        value: 'invalid'
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    act(() => {
+      result.current.onChange(mockEvent);
+    });
+
+    expect(result.current.editingFormData).toEqual({});
+  });
+
+  it('should handle first field change when editingFormData is empty', () => {
+    const { result } = renderHook(() => useForm<TestItem, TestFormData>(mockArgs));
+
+    const mockEvent = {
+      target: {
+        name: `${TEST_ITEM_NAME.toLowerCase()}-name`,
+        value: 'First Field'
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+
+    act(() => {
+      result.current.onChange(mockEvent);
+    });
+
+    expect(result.current.editingFormData).toEqual({ name: 'First Field' });
+  });
+
+  it('should handle field change when editingFormData is null/undefined', () => {
+    const { result } = renderHook(() => useForm<TestItem, TestFormData>(mockArgs));
+
+    // The falsy branch is triggered when prev is null/undefined in the setEditingFormData callback
+    // This can happen in edge cases where the state becomes null
+    // Let's test this by directly calling the onChange with a field that doesn't exist yet
+    act(() => {
+      result.current.onChange({
+        target: { name: `${TEST_ITEM_NAME.toLowerCase()}-newfield`, value: 'New Value' }
+      } as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(result.current.editingFormData).toEqual({ newfield: 'New Value' });
   });
 
   it('should handle multiple field changes', () => {

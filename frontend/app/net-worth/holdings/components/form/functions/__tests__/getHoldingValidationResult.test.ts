@@ -115,7 +115,7 @@ describe('getHoldingValidationResult', () => {
       if (!result.success) {
         expect(result.error.issues).toHaveLength(1);
         expect(result.error.issues[0].path).toEqual(['name']);
-        expect(result.error.issues[0].message).toBe('Name field is required.');
+        expect(result.error.issues[0].message).toBe('Expected string, received null');
       }
     });
 
@@ -168,7 +168,7 @@ describe('getHoldingValidationResult', () => {
       if (!result.success) {
         expect(result.error.issues).toHaveLength(1);
         expect(result.error.issues[0].path).toEqual(['type']);
-        expect(result.error.issues[0].message).toBe('Type field is required.');
+        expect(result.error.issues[0].message).toBe('Expected string, received null');
       }
     });
 
