@@ -7,7 +7,7 @@ import { getCategoriesList } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate } from '@/app/components/form';
 import { CashFlowEntryFormData } from './';
-import { CashFlowType, CashFlowCategory, RecurrenceFrequency } from '..';
+import { CashFlowType, CashFlowCategory, RecurrenceFrequency, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL } from '..';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
@@ -34,7 +34,7 @@ export function CashFlowEntriesInputs({ editingFormData, onChange, cashFlowType,
     fetchCategories();
   }, [fetchCategories]);
 
-  const getCategoriesPageUrl = () => `/cashflow/${cashFlowTypeLower}/${cashFlowTypeLower}-categories`;
+  const getCategoriesPageUrl = () => `/cashflow/${cashFlowTypeLower === INCOME_ITEM_NAME_LOWERCASE ? INCOME_ITEM_NAME_LOWERCASE : EXPENSE_ITEM_NAME_LOWERCASE_PLURAL}/${cashFlowTypeLower}-categories`;
 
   return (
     <>

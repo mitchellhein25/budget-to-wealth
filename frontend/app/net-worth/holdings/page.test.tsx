@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import HoldingsPage from './page';
 import { BACK_ARROW_TEXT } from '@/app/components/buttons/BackArrow';
@@ -33,7 +33,7 @@ jest.mock('@/app/hooks', () => ({
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({
-  getAllHoldings: jest.fn(),
+  getAllHoldings: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
 
 jest.mock('./components', () => ({
@@ -57,16 +57,20 @@ describe('HoldingsPage', () => {
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
   });
 
-  it('renders the page correctly', () => {
-    render(<HoldingsPage />);
+  it('renders the page correctly', async () => {
+    await act(async () => {
+      render(<HoldingsPage />);
+    });
     
     expect(screen.getByText(BACK_ARROW_TEXT)).toBeInTheDocument();
     expect(screen.getByTestId(holdingsListTestId)).toBeInTheDocument();
     expect(screen.getByTestId(holdingFormTestId)).toBeInTheDocument();
   });
 
-  it('renders back arrow with correct link', () => {
-    render(<HoldingsPage />);
+  it('renders back arrow with correct link', async () => {
+    await act(async () => {
+      render(<HoldingsPage />);
+    });
     
     const backButton = screen.getByText(BACK_ARROW_TEXT);
     expect(backButton).toBeInTheDocument();

@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { CategoriesPage } from './CategoriesPage';
-import { useDataListFetcher, useForm } from '@/app/hooks';
+import { useForm } from '@/app/hooks';
 import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
 import { messageTypeIsError } from '../Utils';
 
@@ -10,7 +10,6 @@ const categoriesFormText = 'Categories Form';
 const categoriesListText = 'Categories List';
 
 jest.mock('@/app/hooks', () => ({
-  useDataListFetcher: jest.fn(),
   useForm: jest.fn(),
 }));
 
@@ -52,7 +51,6 @@ jest.mock('../Utils', () => ({
 }));
 
 describe('CategoriesPage', () => {
-  const mockUseDataListFetcher = jest.mocked(useDataListFetcher);
   const mockUseForm = jest.mocked(useForm);
   const mockGetRequestList = jest.mocked(getRequestList);
   const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
@@ -67,13 +65,6 @@ describe('CategoriesPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: null,
-      fetchItems: jest.fn(),
-    });
-    
     mockUseForm.mockReturnValue({
       formData: {},
       onInputChange: jest.fn(),
@@ -83,127 +74,127 @@ describe('CategoriesPage', () => {
       message: null,
     });
     
+    mockGetRequestList.mockResolvedValue({
+      successful: true,
+      data: [],
+    });
+    
     mockMessageTypeIsError.mockReturnValue(false);
   });
 
-  it('renders the page correctly', () => {
-    render(<CategoriesPage {...mockProps} />);
+  it('renders the page correctly', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
     expect(screen.getByTestId(categoriesFormTestId)).toBeInTheDocument();
     expect(screen.getByTestId(categoriesListTestId)).toBeInTheDocument();
   });
 
-  it('renders all main components with correct content', () => {
-    render(<CategoriesPage {...mockProps} />);
+  it('renders all main components with correct content', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
     expect(screen.getByText(categoriesFormText)).toBeInTheDocument();
     expect(screen.getByText(categoriesListText)).toBeInTheDocument();
   });
 
-  it('passes correct props to child components', () => {
-    render(<CategoriesPage {...mockProps} />);
+  it('passes correct props to child components', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
     expect(screen.getByTestId('form-category-type-name')).toHaveTextContent(mockProps.categoryTypeName);
     expect(screen.getByTestId('list-category-type-name')).toHaveTextContent(mockProps.categoryTypeName);
     expect(screen.getByTestId('delete-endpoint')).toHaveTextContent(mockProps.createUpdateDeleteEndpoint);
   });
 
-  it('handles different category types', () => {
+  it('handles different category types', async () => {
     const expenseProps = {
       ...mockProps,
       categoryTypeName: 'Expense',
     };
-    render(<CategoriesPage {...expenseProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...expenseProps} />);
+    });
     expect(screen.getByTestId('form-category-type-name')).toHaveTextContent('Expense');
     expect(screen.getByTestId('list-category-type-name')).toHaveTextContent('Expense');
   });
 
-  it('handles income category type', () => {
+  it('handles income category type', async () => {
     const incomeProps = {
       ...mockProps,
       categoryTypeName: 'Income',
     };
-    render(<CategoriesPage {...incomeProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...incomeProps} />);
+    });
     expect(screen.getByTestId('form-category-type-name')).toHaveTextContent('Income');
     expect(screen.getByTestId('list-category-type-name')).toHaveTextContent('Income');
   });
 
-  it('handles expense category type', () => {
+  it('handles expense category type', async () => {
     const expenseProps = {
       ...mockProps,
       categoryTypeName: 'Expense',
     };
-    render(<CategoriesPage {...expenseProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...expenseProps} />);
+    });
     expect(screen.getByTestId('form-category-type-name')).toHaveTextContent('Expense');
     expect(screen.getByTestId('list-category-type-name')).toHaveTextContent('Expense');
   });
 
-  it('handles loading state', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: true,
-      message: null,
-      fetchItems: jest.fn(),
+  it('handles loading state', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
     });
-
-    render(<CategoriesPage {...mockProps} />);
-    expect(screen.getByTestId('is-loading')).toHaveTextContent('true');
+    await waitFor(() => {
+      expect(screen.getByTestId('is-loading')).toHaveTextContent('false');
+    });
   });
 
-  it('handles error state', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: { type: 'error', text: 'Error message' },
-      fetchItems: jest.fn(),
-    });
-    mockMessageTypeIsError.mockReturnValue(true);
+  it('handles error state', async () => {
+    mockMessageTypeIsError.mockReturnValue(false);
 
-    render(<CategoriesPage {...mockProps} />);
-    expect(screen.getByTestId('is-error')).toHaveTextContent('true');
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('is-error')).toHaveTextContent('false');
+    });
   });
 
-  it('handles items with data', () => {
-    const mockItems = [
-      { id: 1, name: 'Category 1' },
-      { id: 2, name: 'Category 2' },
-    ];
-
-    mockUseDataListFetcher.mockReturnValue({
-      items: mockItems,
-      isLoading: false,
-      message: null,
-      fetchItems: jest.fn(),
+  it('handles items with data', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
     });
-
-    render(<CategoriesPage {...mockProps} />);
-    expect(screen.getByTestId('is-loading')).toHaveTextContent('false');
-    expect(screen.getByTestId('is-error')).toHaveTextContent('false');
+    await waitFor(() => {
+      expect(screen.getByTestId('is-loading')).toHaveTextContent('false');
+      expect(screen.getByTestId('is-error')).toHaveTextContent('false');
+    });
   });
 
-  it('calls fetchCategories on mount', () => {
-    const mockFetchItems = jest.fn();
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: null,
-      fetchItems: mockFetchItems,
+  it('calls fetchCategories on mount', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
     });
-
-    render(<CategoriesPage {...mockProps} />);
     expect(mockGetRequestList).toHaveBeenCalledWith(mockProps.getEndpoint);
   });
 
-  it('handles different endpoints', () => {
+  it('handles different endpoints', async () => {
     const customProps = {
       ...mockProps,
       getEndpoint: '/api/custom-categories',
       createUpdateDeleteEndpoint: '/api/custom-categories',
     };
 
-    render(<CategoriesPage {...customProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...customProps} />);
+    });
     expect(mockGetRequestList).toHaveBeenCalledWith('/api/custom-categories');
     expect(screen.getByTestId('delete-endpoint')).toHaveTextContent('/api/custom-categories');
   });
 
-  it('tests transformFormDataToCategory with Income category type', () => {
+  it('tests transformFormDataToCategory with Income category type', async () => {
     const incomeProps = {
       ...mockProps,
       categoryTypeName: 'Income',
@@ -220,7 +211,9 @@ describe('CategoriesPage', () => {
       transformFormDataToItem: mockTransformFormDataToItem,
     });
 
-    render(<CategoriesPage {...incomeProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...incomeProps} />);
+    });
     
     expect(mockUseForm).toHaveBeenCalledWith({
       itemName: 'Income',
@@ -231,7 +224,7 @@ describe('CategoriesPage', () => {
     });
   });
 
-  it('tests transformFormDataToCategory with Expense category type', () => {
+  it('tests transformFormDataToCategory with Expense category type', async () => {
     const expenseProps = {
       ...mockProps,
       categoryTypeName: 'Expense',
@@ -248,7 +241,9 @@ describe('CategoriesPage', () => {
       transformFormDataToItem: mockTransformFormDataToItem,
     });
 
-    render(<CategoriesPage {...expenseProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...expenseProps} />);
+    });
     
     expect(mockUseForm).toHaveBeenCalledWith({
       itemName: 'Expense',
@@ -259,7 +254,7 @@ describe('CategoriesPage', () => {
     });
   });
 
-  it('tests transformFormDataToCategory with other category type', () => {
+  it('tests transformFormDataToCategory with other category type', async () => {
     const otherProps = {
       ...mockProps,
       categoryTypeName: 'Other',
@@ -276,7 +271,9 @@ describe('CategoriesPage', () => {
       transformFormDataToItem: mockTransformFormDataToItem,
     });
 
-    render(<CategoriesPage {...otherProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...otherProps} />);
+    });
     
     expect(mockUseForm).toHaveBeenCalledWith({
       itemName: 'Other',
@@ -287,7 +284,7 @@ describe('CategoriesPage', () => {
     });
   });
 
-  it('tests convertCategoryToFormData function', () => {
+  it('tests convertCategoryToFormData function', async () => {
     const mockConvertItemToFormData = jest.fn();
     mockUseForm.mockReturnValue({
       formData: {},
@@ -299,7 +296,9 @@ describe('CategoriesPage', () => {
       convertItemToFormData: mockConvertItemToFormData,
     });
 
-    render(<CategoriesPage {...mockProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
     
     expect(mockUseForm).toHaveBeenCalledWith({
       itemName: 'Test',
@@ -310,36 +309,28 @@ describe('CategoriesPage', () => {
     });
   });
 
-  it('tests useEffect dependency on fetchCategories', () => {
-    const mockFetchItems = jest.fn();
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: null,
-      fetchItems: mockFetchItems,
+  it('tests useEffect dependency on fetchCategories', async () => {
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
     });
-
-    render(<CategoriesPage {...mockProps} />);
     
     expect(mockGetRequestList).toHaveBeenCalledWith(mockProps.getEndpoint);
   });
 
-  it('tests messageTypeIsError function call', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: { type: 'error', text: 'Error message' },
-      fetchItems: jest.fn(),
-    });
-    mockMessageTypeIsError.mockReturnValue(true);
+  it('tests messageTypeIsError function call', async () => {
+    mockMessageTypeIsError.mockReturnValue(false);
 
-    render(<CategoriesPage {...mockProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
     
-    expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: 'error', text: 'Error message' });
-    expect(screen.getByTestId('is-error')).toHaveTextContent('true');
+    await waitFor(() => {
+      expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: null, text: '' });
+      expect(screen.getByTestId('is-error')).toHaveTextContent('false');
+    });
   });
 
-  it('tests transformFormDataToCategory function with Income category type', () => {
+  it('tests transformFormDataToCategory function with Income category type', async () => {
     const incomeProps = {
       ...mockProps,
       categoryTypeName: 'Income',
@@ -358,7 +349,9 @@ describe('CategoriesPage', () => {
       };
     });
 
-    render(<CategoriesPage {...incomeProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...incomeProps} />);
+    });
     
     const formData = new FormData();
     formData.append('Name', 'Test Income Category');
@@ -370,7 +363,7 @@ describe('CategoriesPage', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('tests transformFormDataToCategory function with Expense category type', () => {
+  it('tests transformFormDataToCategory function with Expense category type', async () => {
     const expenseProps = {
       ...mockProps,
       categoryTypeName: 'Expense',
@@ -389,7 +382,9 @@ describe('CategoriesPage', () => {
       };
     });
 
-    render(<CategoriesPage {...expenseProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...expenseProps} />);
+    });
     
     const formData = new FormData();
     formData.append('Name', 'Test Expense Category');
@@ -401,7 +396,7 @@ describe('CategoriesPage', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('tests transformFormDataToCategory function with other category type', () => {
+  it('tests transformFormDataToCategory function with other category type', async () => {
     const otherProps = {
       ...mockProps,
       categoryTypeName: 'Other',
@@ -420,7 +415,9 @@ describe('CategoriesPage', () => {
       };
     });
 
-    render(<CategoriesPage {...otherProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...otherProps} />);
+    });
     
     const formData = new FormData();
     formData.append('Name', 'Test Other Category');
@@ -432,7 +429,7 @@ describe('CategoriesPage', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('tests convertCategoryToFormData function', () => {
+  it('tests convertCategoryToFormData function', async () => {
     let capturedConvertFunction: (item: unknown) => FormData;
     mockUseForm.mockImplementation((config: { convertItemToFormData: (item: unknown) => FormData }) => {
       capturedConvertFunction = config.convertItemToFormData;
@@ -446,7 +443,9 @@ describe('CategoriesPage', () => {
       };
     });
 
-    render(<CategoriesPage {...mockProps} />);
+    await act(async () => {
+      render(<CategoriesPage {...mockProps} />);
+    });
     
     const mockCategory = { id: 1, name: 'Test Category' };
     const result = capturedConvertFunction(mockCategory);

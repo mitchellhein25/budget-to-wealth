@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
-import { useDataListFetcher, useForm } from "@/app/hooks";
+import { useEffect, useCallback, useState } from "react";
+import { useForm } from "@/app/hooks";
 import { getRequestList } from "@/app/lib/api/rest-methods";
 import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow/components";
-import { messageTypeIsError } from "../Utils";
+import { MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from "../Utils";
 import { Category, CategoryFormData } from "./Category";
 import { CategoriesForm } from "./form/CategoriesForm";
 import { CategoriesList } from "./list/CategoriesList";
@@ -17,8 +17,30 @@ type CategoriesPageProps = {
 }
 
 export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
+  const [items, setItems] = useState<T[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
+
   const fetchCategories = useCallback(() => getRequestList<T>(props.getEndpoint), [props.getEndpoint]);
-	const categoriesDataListFetchState = useDataListFetcher<T>(fetchCategories, props.categoryTypeName);
+
+  const fetchItems = useCallback(async () => {
+    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoading(true);
+      setMessage({ type: null, text: '' });
+      const response = await fetchCategories();
+      if (!response.successful) {
+        setErrorMessage(`Failed to load ${props.categoryTypeName}s. Please try again.`);
+        return;
+      }
+      setItems(response.data as T[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${props.categoryTypeName}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchCategories, props.categoryTypeName]);  
 
   const transformFormDataToCategory = (formData: FormData) => {
     const nameValue = formData.get("Name") as string;
@@ -40,12 +62,12 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
     itemEndpoint: props.createUpdateDeleteEndpoint,
     transformFormDataToItem: transformFormDataToCategory,
     convertItemToFormData: convertCategoryToFormData,
-    fetchItems: () => categoriesDataListFetchState.fetchItems(),
+    fetchItems: fetchItems,
   })
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    fetchItems();
+  }, [fetchItems]);
 
   return (
     <div className="flex gap-6 p-6">
@@ -54,11 +76,11 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
         categoryTypeName={props.categoryTypeName}
       />
       <CategoriesList
-        categories={categoriesDataListFetchState.items}
-        onCategoryDeleted={categoriesDataListFetchState.fetchItems}
+        categories={items}
+        onCategoryDeleted={fetchItems}
         onCategoryIsEditing={formState.onItemIsEditing}
-        isLoading={categoriesDataListFetchState.isLoading}
-        isError={messageTypeIsError(categoriesDataListFetchState.message)}
+        isLoading={isLoading}
+        isError={messageTypeIsError(message)}
         categoryTypeName={props.categoryTypeName}
         deleteEndpoint={props.createUpdateDeleteEndpoint}
       />

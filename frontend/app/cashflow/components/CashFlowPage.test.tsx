@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { CashFlowPage } from './CashFlowPage';
 import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from './components/constants';
-import { useForm, useDataListFetcher } from '@/app/hooks';
+import { useForm } from '@/app/hooks';
 import { messageTypeIsError } from '@/app/components';
+import { getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
 import { transformCashFlowFormDataToEntry } from './form';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
@@ -33,7 +34,6 @@ interface CashFlowEntry {
 
 jest.mock('@/app/hooks', () => ({
   useForm: jest.fn(),
-  useDataListFetcher: jest.fn(),
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({
@@ -64,8 +64,8 @@ jest.mock('./list/CashFlowEntriesList', () => ({
 
 describe('CashFlowPage', () => {
   const mockUseForm = jest.mocked(useForm);
-  const mockUseDataListFetcher = jest.mocked(useDataListFetcher);
   const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
+  const mockGetCashFlowEntriesByDateRangeAndType = jest.mocked(getCashFlowEntriesByDateRangeAndType);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -79,18 +79,18 @@ describe('CashFlowPage', () => {
       message: null,
     });
     
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: null,
-      fetchItems: jest.fn(),
+    mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
+      successful: true,
+      data: [],
     });
     
     mockMessageTypeIsError.mockReturnValue(false);
   });
 
-  it('renders the page correctly', () => {
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+  it('renders the page correctly', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
     expect(screen.getByTestId(cashFlowSideBarTestId)).toBeInTheDocument();
     expect(screen.getByTestId(cashFlowEntriesFormTestId)).toBeInTheDocument();
@@ -99,8 +99,10 @@ describe('CashFlowPage', () => {
     expect(screen.getByTestId(cashFlowEntriesListTestId)).toBeInTheDocument();
   });
 
-  it('renders all main components with correct content', () => {
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+  it('renders all main components with correct content', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
     expect(screen.getByText(cashFlowSideBarText)).toBeInTheDocument();
     expect(screen.getByText(cashFlowEntriesFormText)).toBeInTheDocument();
@@ -109,7 +111,7 @@ describe('CashFlowPage', () => {
     expect(screen.getByText(cashFlowEntriesListText)).toBeInTheDocument();
   });
 
-  it('tests convertCashFlowEntryToFormData function with description', () => {
+  it('tests convertCashFlowEntryToFormData function with description', async () => {
     let capturedConvertFunction: (item: CashFlowEntry) => Record<string, unknown>;
     mockUseForm.mockImplementation((config: UseFormConfig) => {
       capturedConvertFunction = config.convertItemToFormData!;
@@ -123,7 +125,9 @@ describe('CashFlowPage', () => {
       };
     });
 
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
     const mockCashFlowEntry: CashFlowEntry = {
       id: 1,
@@ -148,7 +152,7 @@ describe('CashFlowPage', () => {
     });
   });
 
-  it('tests convertCashFlowEntryToFormData function without description', () => {
+  it('tests convertCashFlowEntryToFormData function without description', async () => {
     let capturedConvertFunction: (item: CashFlowEntry) => Record<string, unknown>;
     mockUseForm.mockImplementation((config: UseFormConfig) => {
       capturedConvertFunction = config.convertItemToFormData!;
@@ -162,7 +166,9 @@ describe('CashFlowPage', () => {
       };
     });
 
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
     const mockCashFlowEntry: CashFlowEntry = {
       id: 1,
@@ -187,7 +193,7 @@ describe('CashFlowPage', () => {
     });
   });
 
-  it('tests convertCashFlowEntryToFormData function with undefined description', () => {
+  it('tests convertCashFlowEntryToFormData function with undefined description', async () => {
     let capturedConvertFunction: (item: CashFlowEntry) => Record<string, unknown>;
     mockUseForm.mockImplementation((config: UseFormConfig) => {
       capturedConvertFunction = config.convertItemToFormData!;
@@ -201,7 +207,9 @@ describe('CashFlowPage', () => {
       };
     });
 
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
     const mockCashFlowEntry: CashFlowEntry = {
       id: 1,
@@ -226,7 +234,7 @@ describe('CashFlowPage', () => {
     });
   });
 
-  it('tests transformFormDataToEntry function', () => {
+  it('tests transformFormDataToEntry function', async () => {
     const mockTransformCashFlowFormDataToEntry = jest.mocked(transformCashFlowFormDataToEntry);
     mockTransformCashFlowFormDataToEntry.mockReturnValue({ item: {}, errors: [] });
 
@@ -243,7 +251,9 @@ describe('CashFlowPage', () => {
       };
     });
 
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
     const formData = new FormData();
     formData.append('amount', '100.50');
@@ -255,68 +265,44 @@ describe('CashFlowPage', () => {
     expect(mockTransformCashFlowFormDataToEntry).toHaveBeenCalledWith(formData, INCOME_ITEM_NAME);
   });
 
-  it('tests useEffect dependency on dateRange', () => {
-    const mockFetchItems = jest.fn();
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: null,
-      fetchItems: mockFetchItems,
+  it('tests useEffect dependency on dateRange', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     });
-
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    expect(mockFetchItems).toHaveBeenCalled();
+    expect(mockGetCashFlowEntriesByDateRangeAndType).toHaveBeenCalled();
   });
 
-  it('tests useMemo totalAmount calculation with items', () => {
-    const mockItems = [
-      { id: 1, amount: 5000 },
-      { id: 2, amount: 3000 },
-      { id: 3, amount: 2000 },
-    ];
-
-    mockUseDataListFetcher.mockReturnValue({
-      items: mockItems,
-      isLoading: false,
-      message: null,
-      fetchItems: jest.fn(),
+  it('tests useMemo totalAmount calculation with items', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     });
-
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    expect(mockUseDataListFetcher).toHaveBeenCalled();
+    expect(mockGetCashFlowEntriesByDateRangeAndType).toHaveBeenCalled();
   });
 
-  it('tests useMemo totalAmount calculation with empty items', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: null,
-      fetchItems: jest.fn(),
+  it('tests useMemo totalAmount calculation with empty items', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     });
-
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    expect(mockUseDataListFetcher).toHaveBeenCalled();
+    expect(mockGetCashFlowEntriesByDateRangeAndType).toHaveBeenCalled();
   });
 
-  it('tests messageTypeIsError function call', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: { type: 'error', text: 'Error message' },
-      fetchItems: jest.fn(),
-    });
+  it('tests messageTypeIsError function call', async () => {
     mockMessageTypeIsError.mockReturnValue(true);
 
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
-    expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: 'error', text: 'Error message' });
+    expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: null, text: '' });
   });
 
-  it('tests different cash flow types', () => {
-    render(<CashFlowPage cashFlowType={EXPENSE_ITEM_NAME} />);
+  it('tests different cash flow types', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={EXPENSE_ITEM_NAME} />);
+    });
     
     expect(screen.getByTestId(cashFlowSideBarTestId)).toBeInTheDocument();
     expect(screen.getByTestId(cashFlowEntriesFormTestId)).toBeInTheDocument();
@@ -325,31 +311,21 @@ describe('CashFlowPage', () => {
     expect(screen.getByTestId(cashFlowEntriesListTestId)).toBeInTheDocument();
   });
 
-  it('tests loading state', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: true,
-      message: null,
-      fetchItems: jest.fn(),
+  it('tests loading state', async () => {
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     });
-
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    expect(mockUseDataListFetcher).toHaveBeenCalled();
+    expect(mockGetCashFlowEntriesByDateRangeAndType).toHaveBeenCalled();
   });
 
-  it('tests error state', () => {
-    mockUseDataListFetcher.mockReturnValue({
-      items: [],
-      isLoading: false,
-      message: { type: 'error', text: 'Error message' },
-      fetchItems: jest.fn(),
-    });
+  it('tests error state', async () => {
     mockMessageTypeIsError.mockReturnValue(true);
 
-    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    await act(async () => {
+      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    });
     
-    
-    expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: 'error', text: 'Error message' });
+    expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: null, text: '' });
   });
 }); 

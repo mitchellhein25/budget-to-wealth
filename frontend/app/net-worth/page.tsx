@@ -1,15 +1,37 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { DatePicker, DateRange, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
-import { useDataListFetcher, useForm } from '@/app/hooks';
+import { DatePicker, DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
+import {  useForm } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange } from '@/app/lib/api/data-methods';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/components';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/components';
 
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-  const fetchHoldingSnapshots = useCallback( () => getHoldingSnapshotsByDateRange(dateRange), [dateRange]);
-	const holdingSnapshotsDataListFetchState = useDataListFetcher<HoldingSnapshot>(fetchHoldingSnapshots, HOLDING_SNAPSHOT_ITEM_NAME);
+  const [items, setItems] = useState<HoldingSnapshot[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
+
+  const fetchHoldingSnapshots = useCallback(() => getHoldingSnapshotsByDateRange(dateRange), [dateRange]);
+  
+  const fetchItems = useCallback(async () => {
+    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoading(true);
+      setMessage({ type: null, text: '' });
+      const response = await fetchHoldingSnapshots();
+      if (!response.successful) {
+        setErrorMessage(`Failed to load ${HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE}s. Please try again.`);
+        return;
+      }
+      setItems(response.data as HoldingSnapshot[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchHoldingSnapshots]);
   
   const convertHoldingSnapshotToFormData = (holdingSnapshot: HoldingSnapshot) => ({
     id: holdingSnapshot.id?.toString(),
@@ -24,13 +46,13 @@ export default function HoldingSnapshotsPage() {
       itemEndpoint: HOLDING_SNAPSHOTS_ENDPOINT,
       transformFormDataToItem: transformFormDataToHoldingSnapshot,
       convertItemToFormData: convertHoldingSnapshotToFormData,
-      fetchItems: () => holdingSnapshotsDataListFetchState.fetchItems(),
+      fetchItems: fetchItems,
     }
   );
 
 	useEffect(() => {
-		holdingSnapshotsDataListFetchState.fetchItems();
-	}, [dateRange, holdingSnapshotsDataListFetchState]);
+		fetchItems();
+	}, [fetchItems]);
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
@@ -46,11 +68,11 @@ export default function HoldingSnapshotsPage() {
             setDateRange={setDateRange}
           />
           <HoldingSnapshotsList
-            snapshots={holdingSnapshotsDataListFetchState.items}
-            onSnapshotDeleted={holdingSnapshotsDataListFetchState.fetchItems}
+            snapshots={items}
+            onSnapshotDeleted={fetchItems}
             onSnapshotIsEditing={formState.onItemIsEditing}
-            isLoading={holdingSnapshotsDataListFetchState.isLoading}
-            isError={messageTypeIsError(holdingSnapshotsDataListFetchState.message)}
+            isLoading={isLoading}
+            isError={messageTypeIsError(message)}
           />
         </div>
       </div>

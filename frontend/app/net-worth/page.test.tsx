@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import HoldingSnapshotsPage from './page';
 
 const holdingSnapshotFormTestId = 'holding-snapshot-form';
@@ -26,7 +26,7 @@ jest.mock('@/app/hooks', () => ({
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({
-  getHoldingSnapshotsByDateRange: jest.fn(),
+  getHoldingSnapshotsByDateRange: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -43,16 +43,20 @@ jest.mock('@/app/net-worth/components', () => ({
 }));
 
 describe('HoldingSnapshotsPage', () => {
-  it('renders the page correctly', () => {
-    render(<HoldingSnapshotsPage />);
+  it('renders the page correctly', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotsPage />);
+    });
     
     expect(screen.getByTestId(holdingSnapshotFormTestId)).toBeInTheDocument();
     expect(screen.getByTestId(holdingSnapshotsListTestId)).toBeInTheDocument();
     expect(screen.getByTestId(datePickerTestId)).toBeInTheDocument();
   });
 
-  it('renders all main components with correct content', () => {
-    render(<HoldingSnapshotsPage />);
+  it('renders all main components with correct content', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotsPage />);
+    });
     
     expect(screen.getByText(holdingSnapshotFormText)).toBeInTheDocument();
     expect(screen.getByText(holdingSnapshotsListText)).toBeInTheDocument();

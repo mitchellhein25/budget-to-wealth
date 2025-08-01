@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import BudgetsPage from './page';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
@@ -30,8 +30,8 @@ jest.mock('@/app/hooks', () => ({
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({
-  getBudgetsByDateRange: jest.fn(),
-  getCashFlowEntriesByDateRangeAndType: jest.fn(),
+  getBudgetsByDateRange: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
+  getCashFlowEntriesByDateRangeAndType: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -53,8 +53,10 @@ jest.mock('./components', () => ({
 }));
 
 describe('BudgetsPage', () => {
-  it('renders the page correctly', () => {
-    render(<BudgetsPage />);
+  it('renders the page correctly', async () => {
+    await act(async () => {
+      render(<BudgetsPage />);
+    });
     
     expect(screen.getByTestId(cashFlowSideBarTestId)).toBeInTheDocument();
     expect(screen.getByTestId(budgetsFormTestId)).toBeInTheDocument();
@@ -63,8 +65,10 @@ describe('BudgetsPage', () => {
     expect(screen.getByTestId(budgetsListTestId)).toBeInTheDocument();
   });
 
-  it('renders all main components with correct content', () => {
-    render(<BudgetsPage />);
+  it('renders all main components with correct content', async () => {
+    await act(async () => {
+      render(<BudgetsPage />);
+    });
     
     expect(screen.getByText(cashFlowSideBarText)).toBeInTheDocument();
     expect(screen.getByText(budgetsFormText)).toBeInTheDocument();

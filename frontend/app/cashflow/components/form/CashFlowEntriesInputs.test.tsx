@@ -129,7 +129,7 @@ describe('CashFlowEntriesInputs', () => {
     await waitFor(() => {
       const editLink = screen.getByTitle('Edit Expense Categories');
       expect(editLink).toBeInTheDocument();
-      expect(editLink).toHaveAttribute('href', '/cashflow/expense/expense-categories');
+      expect(editLink).toHaveAttribute('href', '/cashflow/expenses/expense-categories');
     });
   });
 

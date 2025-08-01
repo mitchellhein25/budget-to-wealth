@@ -1,18 +1,39 @@
 'use client';
 
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useForm, useDataListFetcher, useParentPath } from '@/app/hooks';
+import { useForm, useParentPath } from '@/app/hooks';
 import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api/data-methods';
 import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding } from './components';
-import { messageTypeIsError } from '@/app/components/Utils';
+import { MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components/Utils';
 
 export default function HoldingsPage() {
   const parentPath = useParentPath();
+  const [items, setItems] = useState<Holding[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
 
   const fetchHoldings = useCallback( () => getAllHoldings(), []);
-	const holdingsDataListFetchState = useDataListFetcher<Holding>(fetchHoldings, HOLDING_ITEM_NAME);
+
+  const fetchItems = useCallback(async () => {
+    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoading(true);
+      setMessage({ type: null, text: '' });
+      const response = await fetchHoldings();
+      if (!response.successful) {
+        setErrorMessage(`Failed to load ${HOLDING_ITEM_NAME}s. Please try again.`);
+        return;
+      }
+      setItems(response.data as Holding[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${HOLDING_ITEM_NAME}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchHoldings]);
 
 	const convertHoldingToFormData = (holding: Holding) => ({
 			id: holding.id?.toString(),
@@ -27,12 +48,12 @@ export default function HoldingsPage() {
       itemEndpoint: HOLDINGS_ENDPOINT,
       transformFormDataToItem: transformFormDataToHolding,
       convertItemToFormData: convertHoldingToFormData,
-      fetchItems: () => holdingsDataListFetchState.fetchItems(),
+      fetchItems: fetchItems,
     });
 
 	useEffect(() => {
-		holdingsDataListFetchState.fetchItems();
-	}, [holdingsDataListFetchState]);
+		fetchItems();
+	}, [fetchItems]);
   
   return (
     <div className="p-6">
@@ -55,11 +76,11 @@ export default function HoldingsPage() {
           </div>
           <div className="flex flex-1 flex-col gap-2">
             <HoldingsList
-              holdings={holdingsDataListFetchState.items}
-              onHoldingDeleted={holdingsDataListFetchState.fetchItems}
+              holdings={items}
+              onHoldingDeleted={fetchHoldings}
               onHoldingIsEditing={formState.onItemIsEditing}
-              isLoading={holdingsDataListFetchState.isLoading}
-              isError={messageTypeIsError(holdingsDataListFetchState.message)}
+              isLoading={isLoading}
+              isError={messageTypeIsError(message)}
             />
           </div>
         </div>

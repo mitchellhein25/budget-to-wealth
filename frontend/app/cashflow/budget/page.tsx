@@ -1,18 +1,61 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useForm, useDataListFetcher } from '@/app/hooks';
-import { getCurrentMonthRange, messageTypeIsError, DatePicker, DateRange } from '@/app/components';
-import { CashFlowSideBar, CashFlowEntry } from '@/app/cashflow/components';
-import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, BudgetsForm, BudgetsList, BudgetSummary } from './components';
+import { useForm } from '@/app/hooks';
+import { getCurrentMonthRange, messageTypeIsError, DatePicker, DateRange, MessageState, MESSAGE_TYPE_ERROR } from '@/app/components';
+import { CashFlowSideBar, CashFlowEntry, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components';
+import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, BudgetsForm, BudgetsList, BudgetSummary, BUDGET_ITEM_NAME_LOWERCASE } from './components';
 import { BUDGETS_ENDPOINT, getBudgetsByDateRange, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [expenses, setExpenses] = useState<CashFlowEntry[]>([]);
+  const [isLoadingBudgets, setIsLoadingBudgets] = useState(false);
+  const [isLoadingExpenses, setIsLoadingExpenses] = useState(false);
+  const [messageBudgets, setMessageBudgets] = useState<MessageState>({ type: null, text: '' });
+  const [messageExpenses, setMessageExpenses] = useState<MessageState>({ type: null, text: '' });
+
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
-	const budgetsDataListFetchState = useDataListFetcher<Budget>(fetchBudgets, BUDGET_ITEM_NAME);
   const fetchExpenses = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, 'Expense'), [dateRange]);
-	const expensesDataListFetchState = useDataListFetcher<CashFlowEntry>(fetchExpenses, "expenses");
+
+  const fetchBudgetItems = useCallback(async () => {
+    const setErrorMessage = (text: string) => setMessageBudgets({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoadingBudgets(true);
+      setMessageBudgets({ type: null, text: '' });
+      const response = await fetchBudgets();
+      if (!response.successful) {
+        setErrorMessage(`Failed to load ${BUDGET_ITEM_NAME_LOWERCASE}s. Please try again.`);
+        return;
+      }
+      setBudgets(response.data as Budget[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${BUDGET_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoadingBudgets(false);
+    }
+  }, [fetchBudgets]);
+
+  const fetchExpenseItems = useCallback(async () => {
+    const setErrorMessage = (text: string) => setMessageExpenses({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoadingExpenses(true);
+      setMessageExpenses({ type: null, text: '' });
+      const response = await fetchExpenses();
+      if (!response.successful) {
+        setErrorMessage(`Failed to load ${EXPENSE_ITEM_NAME_LOWERCASE}s. Please try again.`);
+        return;
+      }
+      setExpenses(response.data as CashFlowEntry[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${EXPENSE_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoadingExpenses(false);
+    }
+  }, [fetchExpenses]);
 
   const convertBudgetToFormData = (budget: Budget) => ({
     id: budget.id?.toString(),
@@ -26,14 +69,14 @@ export default function BudgetsPage() {
       itemEndpoint: BUDGETS_ENDPOINT,
       transformFormDataToItem: transformFormDataToBudget,
       convertItemToFormData: convertBudgetToFormData,
-      fetchItems: () => budgetsDataListFetchState.fetchItems(),
+      fetchItems: fetchBudgetItems,
     }
   );
 
 	useEffect(() => {
-		budgetsDataListFetchState.fetchItems();
-    expensesDataListFetchState.fetchItems();
-	}, [dateRange, budgetsDataListFetchState, expensesDataListFetchState]);
+		fetchBudgetItems();
+    fetchExpenseItems();
+	}, [fetchBudgetItems, fetchExpenseItems]);
 
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
@@ -54,21 +97,21 @@ export default function BudgetsPage() {
             </div>
             <div className="flex-1 flex justify-center">
               <BudgetSummary
-                budgets={budgetsDataListFetchState.items}
-                expenses={expensesDataListFetchState.items}
+                budgets={budgets}
+                expenses={expenses}
                 dateRange={dateRange}
-                isLoading={budgetsDataListFetchState.isLoading || expensesDataListFetchState.isLoading}
+                isLoading={isLoadingBudgets || isLoadingExpenses}
               />
             </div>
             <div className="flex-1"></div>
           </div>
           <BudgetsList
-            budgets={budgetsDataListFetchState.items}
-            expenses={expensesDataListFetchState.items}
-            onBudgetDeleted={budgetsDataListFetchState.fetchItems}
+            budgets={budgets}
+            expenses={expenses}
+            onBudgetDeleted={fetchBudgetItems}
             onBudgetIsEditing={formState.onItemIsEditing}
-            isLoading={budgetsDataListFetchState.isLoading || expensesDataListFetchState.isLoading}
-            isError={messageTypeIsError(budgetsDataListFetchState.message) || messageTypeIsError(expensesDataListFetchState.message)}
+            isLoading={isLoadingBudgets || isLoadingExpenses}
+            isError={messageTypeIsError(messageBudgets) || messageTypeIsError(messageExpenses)}
           />
         </div>
       </div>
