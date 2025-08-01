@@ -1,5 +1,5 @@
 import { ListTableItem } from "@/app/components/table/ListTable";
-import { Holding } from "./Holding";
+import { Holding } from "../holdings/components";
 
 export type HoldingSnapshot = ListTableItem & {
   id?: number;
