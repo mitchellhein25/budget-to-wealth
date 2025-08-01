@@ -39,7 +39,7 @@ describe('budgetRequests', () => {
     });
 
     it('should call getRequestList with correct endpoint and query string', async () => {
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: true, 
         data: [], 
         responseMessage: 'Success' 
@@ -58,7 +58,7 @@ describe('budgetRequests', () => {
         { id: 2, amount: 500, category: { name: 'Transport' } },
         { id: 3, amount: 200, category: null },
       ];
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 
@@ -76,7 +76,7 @@ describe('budgetRequests', () => {
     });
 
     it('should handle empty budgets array when successful', async () => {
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: true, 
         data: [], 
         responseMessage: 'Success' 
@@ -90,7 +90,7 @@ describe('budgetRequests', () => {
     });
 
     it('should return unsuccessful response without processing when getRequestList fails', async () => {
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: false, 
         data: null, 
         responseMessage: 'Error fetching budgets' 
@@ -108,7 +108,7 @@ describe('budgetRequests', () => {
       const mockBudgets = [
         { id: 1, amount: 1000, category: null },
       ];
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 
@@ -127,7 +127,7 @@ describe('budgetRequests', () => {
       const mockBudgets = [
         { id: 1, amount: 1000, category: undefined },
       ];
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 
@@ -146,7 +146,7 @@ describe('budgetRequests', () => {
       const mockBudgets = [
         { id: 1, amount: 1000, category: {} },
       ];
-      const mockResponse: GetRequestResultList<any> = { 
+      const mockResponse: GetRequestResultList<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 

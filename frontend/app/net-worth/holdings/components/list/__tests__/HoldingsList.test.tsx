@@ -12,11 +12,6 @@ jest.mock('@/app/lib/api/data-methods', () => ({
 const mockDeleteHolding = deleteHolding as jest.MockedFunction<typeof deleteHolding>;
 
 describe('HoldingsList', () => {
-  const testIds = {
-    editButton: 'edit-button',
-    deleteButton: 'delete-button',
-  };
-
   const testTexts = {
     confirmDeleteMessage: 'Are you sure you want to delete this?',
     loadingText: 'Loading...',

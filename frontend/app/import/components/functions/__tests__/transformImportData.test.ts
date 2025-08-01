@@ -189,7 +189,7 @@ describe('transformImportData', () => {
       { amount: '1000000.00', date: '2024-01-15', categoryName: 'Test', description: 'Test', categoryType: 'Expense' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as any[];
+    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as unknown[];
 
     expect(result).toHaveLength(3);
     expect(result[0].amountInCents).toBe(123456);
@@ -299,7 +299,7 @@ describe('transformImportData', () => {
       { field1: 'value3', field2: 'value4' }
     ];
 
-    const result = transformImportData(rawData, 'Unknown Type' as any);
+    const result = transformImportData(rawData, 'Unknown Type' as ImportDataTypeStringMappings);
 
     expect(result).toEqual(rawData);
   });
@@ -339,7 +339,7 @@ describe('transformImportData', () => {
       { amount: '1234.56', date: '2024-01-15', categoryName: 'Test', description: 'Test', categoryType: 'Expense' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as any[];
+    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as unknown[];
 
     expect(result).toHaveLength(3);
     expect(result[0].amountInCents).toBe(123456);

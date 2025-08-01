@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { formatDate, getCurrentYearRange } from '@/app/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 import { DateRange } from '../../components/DatePicker';
-import DatePicker from '@/app/components/DatePicker';
+import { DatePicker } from '@/app/components/DatePicker';
 import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/CashFlowTrendGraphData';
 import TrendGraph, { TrendGraphDataset } from '../components/TrendGraph';
 

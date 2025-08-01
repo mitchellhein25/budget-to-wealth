@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { CashFlowPage } from './CashFlowPage';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from './constants';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from './components/constants';
+import { useForm, useDataListFetcher } from '@/app/hooks';
+import { messageTypeIsError } from '@/app/components';
+import { transformCashFlowFormDataToEntry } from './form';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
 const cashFlowEntriesFormTestId = 'cash-flow-entries-form';
@@ -12,6 +15,21 @@ const cashFlowEntriesFormText = 'Cash Flow Entries Form';
 const datePickerText = 'Date Picker';
 const totalDisplayText = 'Total Display';
 const cashFlowEntriesListText = 'Cash Flow Entries List';
+
+interface UseFormConfig {
+  convertItemToFormData?: (item: CashFlowEntry) => Record<string, unknown>;
+  transformFormDataToItem?: (formData: FormData) => Record<string, unknown>;
+}
+
+interface CashFlowEntry {
+  id: number;
+  amount: number;
+  date: string;
+  categoryId: number;
+  description?: string | null;
+  recurrenceFrequency?: string;
+  recurrenceEndDate?: string;
+}
 
 jest.mock('@/app/hooks', () => ({
   useForm: jest.fn(),
@@ -29,7 +47,7 @@ jest.mock('@/app/components', () => ({
   messageTypeIsError: jest.fn(() => false),
 }));
 
-jest.mock('./CashFlowSideBar', () => ({
+jest.mock('./components/CashFlowSideBar', () => ({
   CashFlowSideBar: () => <div data-testid={cashFlowSideBarTestId}>{cashFlowSideBarText}</div>,
 }));
 
@@ -45,10 +63,9 @@ jest.mock('./list/CashFlowEntriesList', () => ({
 }));
 
 describe('CashFlowPage', () => {
-  const mockUseForm = require('@/app/hooks').useForm as jest.MockedFunction<any>;
-  const mockUseDataListFetcher = require('@/app/hooks').useDataListFetcher as jest.MockedFunction<any>;
-  const mockGetCashFlowEntriesByDateRangeAndType = require('@/app/lib/api/data-methods').getCashFlowEntriesByDateRangeAndType as jest.MockedFunction<any>;
-  const mockMessageTypeIsError = require('@/app/components').messageTypeIsError as jest.MockedFunction<any>;
+  const mockUseForm = jest.mocked(useForm);
+  const mockUseDataListFetcher = jest.mocked(useDataListFetcher);
+  const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -93,9 +110,9 @@ describe('CashFlowPage', () => {
   });
 
   it('tests convertCashFlowEntryToFormData function with description', () => {
-    let capturedConvertFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
-      capturedConvertFunction = config.convertItemToFormData;
+    let capturedConvertFunction: (item: CashFlowEntry) => Record<string, unknown>;
+    mockUseForm.mockImplementation((config: UseFormConfig) => {
+      capturedConvertFunction = config.convertItemToFormData!;
       return {
         formData: {},
         onInputChange: jest.fn(),
@@ -108,7 +125,7 @@ describe('CashFlowPage', () => {
 
     render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    const mockCashFlowEntry = {
+    const mockCashFlowEntry: CashFlowEntry = {
       id: 1,
       amount: 5000,
       date: '2023-01-15',
@@ -132,9 +149,9 @@ describe('CashFlowPage', () => {
   });
 
   it('tests convertCashFlowEntryToFormData function without description', () => {
-    let capturedConvertFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
-      capturedConvertFunction = config.convertItemToFormData;
+    let capturedConvertFunction: (item: CashFlowEntry) => Record<string, unknown>;
+    mockUseForm.mockImplementation((config: UseFormConfig) => {
+      capturedConvertFunction = config.convertItemToFormData!;
       return {
         formData: {},
         onInputChange: jest.fn(),
@@ -147,7 +164,7 @@ describe('CashFlowPage', () => {
 
     render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    const mockCashFlowEntry = {
+    const mockCashFlowEntry: CashFlowEntry = {
       id: 1,
       amount: 5000,
       date: '2023-01-15',
@@ -171,9 +188,9 @@ describe('CashFlowPage', () => {
   });
 
   it('tests convertCashFlowEntryToFormData function with undefined description', () => {
-    let capturedConvertFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
-      capturedConvertFunction = config.convertItemToFormData;
+    let capturedConvertFunction: (item: CashFlowEntry) => Record<string, unknown>;
+    mockUseForm.mockImplementation((config: UseFormConfig) => {
+      capturedConvertFunction = config.convertItemToFormData!;
       return {
         formData: {},
         onInputChange: jest.fn(),
@@ -186,7 +203,7 @@ describe('CashFlowPage', () => {
 
     render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    const mockCashFlowEntry = {
+    const mockCashFlowEntry: CashFlowEntry = {
       id: 1,
       amount: 5000,
       date: '2023-01-15',
@@ -210,12 +227,12 @@ describe('CashFlowPage', () => {
   });
 
   it('tests transformFormDataToEntry function', () => {
-    const mockTransformCashFlowFormDataToEntry = require('./form').transformCashFlowFormDataToEntry as jest.MockedFunction<any>;
+    const mockTransformCashFlowFormDataToEntry = jest.mocked(transformCashFlowFormDataToEntry);
     mockTransformCashFlowFormDataToEntry.mockReturnValue({ item: {}, errors: [] });
 
-    let capturedTransformFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
-      capturedTransformFunction = config.transformFormDataToItem;
+    let capturedTransformFunction: (formData: FormData) => Record<string, unknown>;
+    mockUseForm.mockImplementation((config: UseFormConfig) => {
+      capturedTransformFunction = config.transformFormDataToItem!;
       return {
         formData: {},
         onInputChange: jest.fn(),

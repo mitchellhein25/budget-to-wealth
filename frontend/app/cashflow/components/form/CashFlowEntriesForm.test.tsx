@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { CashFlowEntriesForm } from './';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../';
+import { CashFlowEntriesForm } from './CashFlowEntriesForm';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '..';
 
 const formTemplateTestId = 'form-template';
 const cashFlowEntriesInputsTestId = 'cash-flow-entries-inputs';
@@ -11,8 +11,22 @@ const formIdTestId = 'form-id';
 const formHeaderTestId = 'form-header';
 const messageTestId = 'message';
 
+interface FormTemplateProps {
+  formId: string;
+  formHeader: string;
+  inputs: React.ReactNode;
+  buttons: React.ReactNode;
+  message?: { type: string | null; text: string };
+}
+
+interface CashFlowEntriesInputsProps {
+  editingFormData: Record<string, unknown>;
+  onChange: (field: string, value: unknown) => void;
+  setIsLoading: (loading: boolean) => void;
+}
+
 jest.mock('@/app/components/form', () => ({
-  FormTemplate: ({ formId, formHeader, inputs, buttons, message }: any) => (
+  FormTemplate: ({ formId, formHeader, inputs, buttons, message }: FormTemplateProps) => (
     <div data-testid={formTemplateTestId}>
       <div>{formTemplateTestId}</div>
       <div data-testid={formIdTestId}>{formId}</div>
@@ -30,7 +44,7 @@ jest.mock('@/app/components/buttons', () => ({
 }));
 
 jest.mock('./CashFlowEntriesInputs', () => ({
-  CashFlowEntriesInputs: ({ cashFlowType, editingFormData, onChange, setIsLoading }: any) => (
+  CashFlowEntriesInputs: ({ }: CashFlowEntriesInputsProps) => (
     <div data-testid={cashFlowEntriesInputsTestId}>
       {cashFlowEntriesInputsTestId}
     </div>
@@ -38,7 +52,7 @@ jest.mock('./CashFlowEntriesInputs', () => ({
 }));
 
 describe('CashFlowEntriesForm', () => {
-  const mockFormState: FormState<any, any> = {
+  const mockFormState: FormState<Record<string, unknown>, Record<string, unknown>> = {
     editingFormData: {},
     onChange: jest.fn(),
     handleSubmit: jest.fn(),

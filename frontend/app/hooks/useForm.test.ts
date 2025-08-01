@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useForm } from './useForm';
 import { handleFormSubmit } from '../components/form/functions/handleFormSubmit';
+import { cleanCurrencyInput } from '@/app/components/Utils';
 
 const TEST_ITEM_NAME = 'TestItem';
 const TEST_ENDPOINT = '/api/test-items';
@@ -43,13 +44,13 @@ jest.mock('../components/form/functions/handleFormSubmit', () => ({
   handleFormSubmit: jest.fn()
 }));
 
-jest.mock('../components/Utils', () => ({
+jest.mock('@/app/components/Utils', () => ({
   cleanCurrencyInput: jest.fn(),
   replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-').toLowerCase()),
 }));
 
 describe('useForm', () => {
-  const mockCleanCurrencyInput = require('../components/Utils').cleanCurrencyInput;
+  const mockCleanCurrencyInput = jest.mocked(cleanCurrencyInput);
 
   beforeEach(() => {
     jest.clearAllMocks();

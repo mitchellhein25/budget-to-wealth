@@ -14,21 +14,20 @@ interface HoldingInputsProps {
   setIsLoading: (isLoading: boolean) => void;
 }
 
-export function HoldingInputs(props: HoldingInputsProps) {
+export function HoldingInputs({ editingFormData, onChange, setIsLoading }: HoldingInputsProps) {
   const [categories, setCategories] = useState<Category[]>([]);
-  
-  async function fetchCategories() {
-    props.setIsLoading(true);
-    const response = await getAllHoldingCategories();
-    if (response.successful) {
-      setCategories((response.data as Category[]).sort((a, b) => a.name.localeCompare(b.name)));
-    }
-    props.setIsLoading(false);
-  }
 
   useEffect(() => {
+    async function fetchCategories() {
+      setIsLoading(true);
+      const response = await getAllHoldingCategories();
+      if (response.successful) {
+        setCategories((response.data as Category[]).sort((a, b) => a.name.localeCompare(b.name)));
+      }
+      setIsLoading(false);
+    }
     fetchCategories();
-  }, []);
+  }, [setIsLoading]);
 
   return (
     <>
@@ -37,7 +36,7 @@ export function HoldingInputs(props: HoldingInputsProps) {
         name={`${HOLDING_ITEM_NAME_LOWERCASE}-id`}
         readOnly
         type="text"
-        value={props.editingFormData?.id ?? ''}
+        value={editingFormData?.id ?? ''}
         hidden={true}
       />
       <InputFieldSetTemplate 
@@ -48,8 +47,8 @@ export function HoldingInputs(props: HoldingInputsProps) {
             id={`${HOLDING_ITEM_NAME_LOWERCASE}-name`}
             name={`${HOLDING_ITEM_NAME_LOWERCASE}-name`}
             type="text"
-            value={props.editingFormData?.name ?? ""}
-            onChange={props.onChange}
+            value={editingFormData?.name ?? ""}
+            onChange={onChange}
             className="input m-0 w-full" 
           />
         }
@@ -61,8 +60,8 @@ export function HoldingInputs(props: HoldingInputsProps) {
           <select
             id={`${HOLDING_ITEM_NAME_LOWERCASE}-type`}
             name={`${HOLDING_ITEM_NAME_LOWERCASE}-type`}
-            value={props.editingFormData.type || HOLDING_TYPE_ASSET}
-            onChange={props.onChange}
+            value={editingFormData.type || HOLDING_TYPE_ASSET}
+            onChange={onChange}
             className="select"
           >
             <option value={HOLDING_TYPE_ASSET}>{HOLDING_TYPE_ASSET}</option>
@@ -78,8 +77,8 @@ export function HoldingInputs(props: HoldingInputsProps) {
             <select
               id={`${HOLDING_ITEM_NAME_LOWERCASE}-holdingCategoryId`}
               name={`${HOLDING_ITEM_NAME_LOWERCASE}-holdingCategoryId`}
-              value={props.editingFormData.holdingCategoryId || ""}
-              onChange={props.onChange}
+              value={editingFormData.holdingCategoryId || ""}
+              onChange={onChange}
               className="select flex-1"
             >
               <option value="" disabled>Pick a category</option>
@@ -107,8 +106,8 @@ export function HoldingInputs(props: HoldingInputsProps) {
             id={`${HOLDING_ITEM_NAME_LOWERCASE}-institution`}
             name={`${HOLDING_ITEM_NAME_LOWERCASE}-institution`}
             type="text"
-            value={props.editingFormData.institution ?? ""}
-            onChange={props.onChange}
+            value={editingFormData.institution ?? ""}
+            onChange={onChange}
             className="input m-0 w-full"
           />
         }

@@ -3,7 +3,7 @@ import { MobileDrawer } from './MobileDrawer';
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, className, children, onClick }: any) => (
+  default: ({ href, className, children, onClick }: { href: string; className?: string; children: React.ReactNode; onClick?: () => void }) => (
     <a href={href} className={className} onClick={onClick} data-testid={`mobile-nav-link-${href}`}>
       {children}
     </a>

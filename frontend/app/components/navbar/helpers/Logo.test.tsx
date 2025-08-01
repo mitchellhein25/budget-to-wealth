@@ -1,16 +1,17 @@
 import { render, screen } from '@testing-library/react';
-import { Logo } from './Logo';
+import { Logo } from './';
 
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, width, height, className }: any) => (
+  default: ({ src, alt, width, height, className }: { src: string; alt: string; width: number; height: number; className?: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} width={width} height={height} className={className} />
   ),
 }));
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, className, children }: any) => (
+  default: ({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) => (
     <a href={href} className={className} data-testid="logo-link">
       {children}
     </a>

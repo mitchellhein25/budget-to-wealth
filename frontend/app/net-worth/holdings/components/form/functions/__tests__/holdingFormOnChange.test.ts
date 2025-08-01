@@ -107,7 +107,7 @@ describe('holdingFormOnChange', () => {
       holdingFormOnChange(event, mockSetState);
 
       const setStateCallback = mockSetState.mock.calls[0][0];
-      const result = setStateCallback(undefined as any);
+      const result = setStateCallback(undefined as HoldingFormData | undefined);
       expect(result).toEqual({ institution: 'New Bank' });
     });
 
@@ -118,7 +118,7 @@ describe('holdingFormOnChange', () => {
       holdingFormOnChange(event, mockSetState);
 
       const setStateCallback = mockSetState.mock.calls[0][0];
-      const result = setStateCallback(null as any);
+      const result = setStateCallback(null as HoldingFormData | null);
       expect(result).toEqual({ name: 'Test Name' });
     });
   });
@@ -273,7 +273,7 @@ describe('holdingFormOnChange', () => {
 
     it('should handle undefined values', () => {
       const mockSetState = createMockSetEditingFormData();
-      const event = createMockEvent('holding-name', undefined as any);
+      const event = createMockEvent('holding-name', undefined as string | undefined);
 
       holdingFormOnChange(event, mockSetState);
 
@@ -284,7 +284,7 @@ describe('holdingFormOnChange', () => {
 
     it('should handle null values', () => {
       const mockSetState = createMockSetEditingFormData();
-      const event = createMockEvent('holding-name', null as any);
+      const event = createMockEvent('holding-name', null as string | null);
 
       holdingFormOnChange(event, mockSetState);
 

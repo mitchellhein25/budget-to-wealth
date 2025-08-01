@@ -2,12 +2,13 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { SideBar } from './SideBar';
+import { usePathname } from 'next/navigation';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-const mockUsePathname = require('next/navigation').usePathname;
+const mockUsePathname = jest.mocked(usePathname);
 
 const mockNavItems = [
   { href: '/cashflow', label: 'Cash Flow' },

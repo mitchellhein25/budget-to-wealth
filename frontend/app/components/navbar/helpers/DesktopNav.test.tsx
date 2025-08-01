@@ -3,7 +3,7 @@ import { DesktopNav } from './DesktopNav';
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, className, children }: any) => (
+  default: ({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) => (
     <a href={href} className={className} data-testid={`nav-link-${href}`}>
       {children}
     </a>
@@ -15,7 +15,7 @@ jest.mock('@/app/cashflow/components', () => ({
   CASHFLOW_ITEM_NAME_LOWERCASE: 'cashflow',
 }));
 
-jest.mock('.', () => ({
+jest.mock('./index', () => ({
   navItems: [
     { href: '/cashflow/expenses', label: 'Cash Flow' },
     { href: '/net-worth', label: 'Net Worth' },

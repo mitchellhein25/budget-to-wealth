@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { BUDGET_ITEM_NAME, BudgetSummary } from '../';
-import { EXPENSE_ITEM_NAME } from '../../../components';
+import { BUDGET_ITEM_NAME, BudgetSummary } from '..';
+import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components';
 
 const totalDisplayTestId = 'total-display';
 const totalDisplayText = 'Total Display';
@@ -8,8 +8,26 @@ const labelTestId = 'label';
 const amountTestId = 'amount';
 const isLoadingTestId = 'is-loading';
 
+interface TotalDisplayProps {
+  label: string;
+  amount: number;
+  isLoading: boolean;
+}
+
+interface Budget {
+  id: number;
+  amount: number;
+  categoryId: string;
+}
+
+interface Expense {
+  id: number;
+  amount: number;
+  categoryId: string;
+}
+
 jest.mock('@/app/components', () => ({
-  TotalDisplay: ({ label, amount, isLoading }: any) => (
+  TotalDisplay: ({ label, amount, isLoading }: TotalDisplayProps) => (
     <div data-testid={totalDisplayTestId}>
       <div>{totalDisplayText}</div>
       <div data-testid={labelTestId}>{label}</div>
@@ -20,15 +38,15 @@ jest.mock('@/app/components', () => ({
 }));
 
 describe('BudgetSummary', () => {
-  const mockBudgets = [
+  const mockBudgets: Budget[] = [
     { id: 1, amount: 1000, categoryId: '1' },
     { id: 2, amount: 2000, categoryId: '2' },
-  ] as any;
+  ];
   
-  const mockExpenses = [
+  const mockExpenses: Expense[] = [
     { id: 1, amount: 500, categoryId: '1' },
     { id: 2, amount: 1500, categoryId: '2' },
-  ] as any;
+  ];
 
   const mockDateRange = {
     from: new Date('2024-01-01'),
@@ -79,10 +97,10 @@ describe('BudgetSummary', () => {
   });
 
   it('handles over-budget scenario correctly', () => {
-    const overBudgetExpenses = [
+    const overBudgetExpenses: Expense[] = [
       { id: 1, amount: 2000, categoryId: '1' },
       { id: 2, amount: 2500, categoryId: '2' },
-    ] as any;
+    ];
     
     const propsWithOverBudget = {
       ...mockProps,
@@ -96,10 +114,10 @@ describe('BudgetSummary', () => {
   });
 
   it('handles exact budget scenario correctly', () => {
-    const exactBudgetExpenses = [
+    const exactBudgetExpenses: Expense[] = [
       { id: 1, amount: 1000, categoryId: '1' },
       { id: 2, amount: 2000, categoryId: '2' },
-    ] as any;
+    ];
     
     const propsWithExactBudget = {
       ...mockProps,

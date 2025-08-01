@@ -1,6 +1,6 @@
 import z from "zod";
 import { numberRegex } from "@/app/components";
-import { RecurrenceFrequency } from "../RecurrenceFrequency";
+import { RecurrenceFrequency } from "../components/RecurrenceFrequency";
 
 export const cashFlowEntryFormSchema = z.object({
   id: z.string().uuid().optional(),

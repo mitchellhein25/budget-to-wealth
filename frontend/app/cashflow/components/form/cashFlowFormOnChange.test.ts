@@ -1,11 +1,11 @@
-import { cashFlowFormOnChange } from './cashFlowFormOnChange';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../';
+import { cashFlowFormOnChange } from './functions/cashFlowFormOnChange';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../components';
 
-jest.mock('../../../../components/Utils', () => ({
+jest.mock('@/app/components/Utils', () => ({
   cleanCurrencyInput: jest.fn(),
 }));
 
-import { cleanCurrencyInput } from '../../../../components/Utils';
+import { cleanCurrencyInput } from '@/app/components/Utils';
 
 const mockCleanCurrencyInput = cleanCurrencyInput as jest.MockedFunction<typeof cleanCurrencyInput>;
 

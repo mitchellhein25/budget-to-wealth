@@ -2,6 +2,7 @@ import { getHoldingSnapshotsByDateRange, deleteHoldingSnapshot } from '../holdin
 import { getRequestList, GetRequestResultList } from '../../rest-methods/getRequest';
 import { deleteRequest } from '../../rest-methods/deleteRequest';
 import { DateRange } from '@/app/components/DatePicker';
+import { HoldingSnapshot } from '@/app/net-worth/components/HoldingSnapshot';
 
 jest.mock('../../rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
@@ -34,22 +35,22 @@ describe('holdingSnapshotRequests', () => {
     };
 
     it('fetches holding snapshots by date range successfully', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: 1000,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: 1000,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 2, 
-            holdingId: 2, 
+            holdingId: '2', 
             date: '2024-01-01', 
-            value: 2000,
-            holding: { id: 2, name: 'Bond B', type: 'Bond' }
+            balance: 2000,
+            holding: { id: 2, name: 'Bond B', type: 'Bond', holdingCategoryId: '2' }
           },
         ],
         responseMessage: 'Success',
@@ -64,7 +65,7 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: false,
         data: null,
         responseMessage: 'Failed to fetch holding snapshots',
@@ -85,7 +86,7 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles empty snapshots list', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [],
         responseMessage: 'Success',
@@ -99,15 +100,15 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles single snapshot', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: 1000,
-            holding: { id: 1, name: 'Single Stock', type: 'Stock' }
+            balance: 1000,
+            holding: { id: 1, name: 'Single Stock', type: 'Stock', holdingCategoryId: '1' }
           },
         ],
         responseMessage: 'Success',
@@ -121,22 +122,22 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles snapshots with null values', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: null,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: null,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 2, 
-            holdingId: 2, 
+            holdingId: '2', 
             date: '2024-01-01', 
-            value: 2000,
-            holding: { id: 2, name: 'Bond B', type: 'Bond' }
+            balance: 2000,
+            holding: { id: 2, name: 'Bond B', type: 'Bond', holdingCategoryId: '2' }
           },
         ],
         responseMessage: 'Success',
@@ -150,22 +151,22 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles snapshots with undefined values', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: undefined,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: undefined,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 2, 
-            holdingId: 2, 
+            holdingId: '2', 
             date: '2024-01-01', 
-            value: 2000,
-            holding: { id: 2, name: 'Bond B', type: 'Bond' }
+            balance: 2000,
+            holding: { id: 2, name: 'Bond B', type: 'Bond', holdingCategoryId: '2' }
           },
         ],
         responseMessage: 'Success',
@@ -179,22 +180,22 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles snapshots with zero values', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: 0,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: 0,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 2, 
-            holdingId: 2, 
+            holdingId: '2', 
             date: '2024-01-01', 
-            value: 2000,
-            holding: { id: 2, name: 'Bond B', type: 'Bond' }
+            balance: 2000,
+            holding: { id: 2, name: 'Bond B', type: 'Bond', holdingCategoryId: '2' }
           },
         ],
         responseMessage: 'Success',
@@ -208,22 +209,22 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles snapshots with negative values', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: -500,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: -500,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 2, 
-            holdingId: 2, 
+            holdingId: '2', 
             date: '2024-01-01', 
-            value: 2000,
-            holding: { id: 2, name: 'Bond B', type: 'Bond' }
+            balance: 2000,
+            holding: { id: 2, name: 'Bond B', type: 'Bond', holdingCategoryId: '2' }
           },
         ],
         responseMessage: 'Success',
@@ -237,29 +238,29 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles snapshots with different dates', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
             id: 1, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-01', 
-            value: 1000,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: 1000,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 2, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-02', 
-            value: 1100,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: 1100,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
           { 
             id: 3, 
-            holdingId: 1, 
+            holdingId: '1', 
             date: '2024-01-03', 
-            value: 1050,
-            holding: { id: 1, name: 'Stock A', type: 'Stock' }
+            balance: 1050,
+            holding: { id: 1, name: 'Stock A', type: 'Stock', holdingCategoryId: '1' }
           },
         ],
         responseMessage: 'Success',
@@ -273,7 +274,7 @@ describe('holdingSnapshotRequests', () => {
     });
 
     it('handles snapshots with missing holding data', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [
           { 
@@ -307,7 +308,7 @@ describe('holdingSnapshotRequests', () => {
         to: undefined,
       };
 
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<HoldingSnapshot> = {
         successful: true,
         data: [],
         responseMessage: 'Success',

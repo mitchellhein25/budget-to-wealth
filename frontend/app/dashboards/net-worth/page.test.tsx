@@ -1,6 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import NetWorthTrendGraph from './page';
 import { NetWorthTrendGraphData } from './NetWorthTrendGraphData';
+import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
+
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/dashboards/net-worth',
+}));
 
 jest.mock('../components/DashboardSideBar', () => ({
   __esModule: true,
@@ -9,7 +14,7 @@ jest.mock('../components/DashboardSideBar', () => ({
 
 jest.mock('@/app/components/DatePicker', () => ({
   __esModule: true,
-  default: ({ dateRange, setDateRange }: any) => (
+  DatePicker: ({ dateRange }: { dateRange: unknown; setDateRange: () => void }) => (
     <div data-testid="date-picker" data-date-range={JSON.stringify(dateRange)}>
       DatePicker Component
     </div>
@@ -18,7 +23,7 @@ jest.mock('@/app/components/DatePicker', () => ({
 
 jest.mock('../components/TrendGraph', () => ({
   __esModule: true,
-  default: ({ title, labels, datasets }: any) => (
+  default: ({ title, labels, datasets }: { title: string; labels: string[]; datasets: unknown[] }) => (
     <div data-testid="trend-graph" data-title={title} data-labels={JSON.stringify(labels)} data-datasets={JSON.stringify(datasets)}>
       TrendGraph Component
     </div>
@@ -29,7 +34,7 @@ jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestSingle: jest.fn(),
 }));
 
-const mockGetRequestSingle = require('@/app/lib/api/rest-methods/getRequest').getRequestSingle as jest.MockedFunction<() => Promise<any>>;
+const mockGetRequestSingle = jest.mocked(getRequestSingle);
 
 describe('NetWorthTrendGraph', () => {
   const mockNetWorthData: NetWorthTrendGraphData = {
@@ -43,8 +48,8 @@ describe('NetWorthTrendGraph', () => {
       {
         date: '2024-02-01',
         assetValueInCents: 1100000,
-        debtValueInCents: 280000,
-        netWorthInCents: 820000,
+        debtValueInCents: 250000,
+        netWorthInCents: 850000,
       },
     ],
   };
@@ -55,7 +60,7 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('renders the main page structure', () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 
@@ -72,7 +77,7 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('shows error state when API call fails', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: null, successful: false });
+    mockGetRequestSingle.mockResolvedValue({ data: null, successful: false, responseMessage: 'Error' });
 
     render(<NetWorthTrendGraph />);
 
@@ -92,7 +97,7 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('shows no data message when entries are empty', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 
@@ -102,7 +107,7 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('shows no data message when entries are null', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: null }, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: { entries: null }, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 
@@ -112,7 +117,7 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('renders TrendGraph with correct data when successful', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 
@@ -129,7 +134,7 @@ describe('NetWorthTrendGraph', () => {
     const datasets = JSON.parse(trendGraph.getAttribute('data-datasets') || '[]');
     expect(datasets).toHaveLength(3);
 
-    const assetsDataset = datasets.find((d: any) => d.label === 'Assets');
+    const assetsDataset = datasets.find((d: { label: string }) => d.label === 'Assets');
     expect(assetsDataset).toEqual({
       type: 'line',
       label: 'Assets',
@@ -138,27 +143,27 @@ describe('NetWorthTrendGraph', () => {
       backgroundColor: 'rgba(34, 197, 94, 0.5)',
     });
 
-    const debtDataset = datasets.find((d: any) => d.label === 'Debt');
+    const debtDataset = datasets.find((d: { label: string }) => d.label === 'Debt');
     expect(debtDataset).toEqual({
       type: 'line',
       label: 'Debt',
-      data: [3000, 2800],
+      data: [3000, 2500],
       borderColor: 'rgb(239, 68, 68)',
       backgroundColor: 'rgba(239, 68, 68, 0.5)',
     });
 
-    const netWorthDataset = datasets.find((d: any) => d.label === 'Net Worth');
+    const netWorthDataset = datasets.find((d: { label: string }) => d.label === 'Net Worth');
     expect(netWorthDataset).toEqual({
       type: 'line',
       label: 'Net Worth',
-      data: [7000, 8200],
+      data: [7000, 8500],
       borderColor: 'rgb(59, 130, 246)',
       backgroundColor: 'rgba(59, 130, 246)',
     });
   });
 
   it('calls API with correct date range', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 
@@ -170,7 +175,7 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('handles date range changes', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 

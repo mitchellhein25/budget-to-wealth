@@ -16,19 +16,19 @@ interface CashFlowEntriesInputsProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
+export function CashFlowEntriesInputs({ editingFormData, onChange, cashFlowType, setIsLoading }: CashFlowEntriesInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   const [noEndDate, setNoEndDate] = useState(false);
-  const cashFlowTypeLower = props.cashFlowType.toLowerCase();
+  const cashFlowTypeLower = cashFlowType.toLowerCase();
   
   const fetchCategories = useCallback(async () => {
-    props.setIsLoading(true);
-    const response = await getCategoriesList(props.cashFlowType);
+    setIsLoading(true);
+    const response = await getCategoriesList(cashFlowType);
     if (response.successful) {
       setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
-    props.setIsLoading(false);
-  }, [props.cashFlowType]);
+    setIsLoading(false);
+  }, [cashFlowType, setIsLoading]);
 
   useEffect(() => {
     fetchCategories();
@@ -43,7 +43,7 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
         name={`${cashFlowTypeLower}-id`}
         readOnly
         type="text"
-        value={props.editingFormData?.id ?? ''}
+        value={editingFormData?.id ?? ''}
         hidden={true}
       />
       <InputFieldSetTemplate 
@@ -54,8 +54,8 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
             id={`${cashFlowTypeLower}-amount`}
             name={`${cashFlowTypeLower}-amount`}
             type="text"
-            value={props.editingFormData?.amount ?? ""}
-            onChange={props.onChange}
+            value={editingFormData?.amount ?? ""}
+            onChange={onChange}
             placeholder="0.00" 
             className="input m-0 w-full" 
           />}
@@ -69,11 +69,11 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
             name={`${cashFlowTypeLower}-date`}
             type="date"
             value={
-              props.editingFormData?.date
-                ? convertDateToISOString(new Date(props.editingFormData.date))
+              editingFormData?.date
+                ? convertDateToISOString(new Date(editingFormData.date))
                 : convertDateToISOString(new Date())
             }
-            onChange={props.onChange}
+            onChange={onChange}
             className="input w-full" 
           />}
       />
@@ -85,8 +85,8 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
             <select
               id={`${cashFlowTypeLower}-categoryId`}
               name={`${cashFlowTypeLower}-categoryId`}
-              value={props.editingFormData.categoryId || ""}
-              onChange={props.onChange}
+              value={editingFormData.categoryId || ""}
+              onChange={onChange}
               className="select flex-1"
             >
               <option value="" disabled>Pick a category</option>
@@ -99,7 +99,7 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
             <Link
               href={getCategoriesPageUrl()}
               className="btn btn-ghost btn-sm btn-circle"
-              title={`Edit ${props.cashFlowType} Categories`}
+              title={`Edit ${cashFlowType} Categories`}
             >
               <Edit size={16} />
             </Link>
@@ -114,8 +114,8 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
             id={`${cashFlowTypeLower}-description`}
             name={`${cashFlowTypeLower}-description`}
             type="text"
-            value={props.editingFormData?.description ?? ""}
-            onChange={props.onChange}
+            value={editingFormData?.description ?? ""}
+            onChange={onChange}
             className="input w-full" 
           />}
       />
@@ -126,8 +126,8 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
           <select
             id={`${cashFlowTypeLower}-recurrenceFrequency`}
             name={`${cashFlowTypeLower}-recurrenceFrequency`}
-            value={props.editingFormData.recurrenceFrequency || ""}
-            onChange={props.onChange}
+            value={editingFormData.recurrenceFrequency || ""}
+            onChange={onChange}
             className="select w-full"
           >
             <option value="">No recurrence</option>
@@ -139,7 +139,7 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
           </select>
         }
       />
-      {props.editingFormData.recurrenceFrequency && (
+      {editingFormData.recurrenceFrequency && (
         <InputFieldSetTemplate 
           label="Recurrence End Date" 
           isRequired={false}
@@ -160,7 +160,7 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
                           value: ''
                         }
                       } as React.ChangeEvent<HTMLInputElement>;
-                      props.onChange(syntheticEvent);
+                      onChange(syntheticEvent);
                     }
                   }}
                   className="checkbox"
@@ -174,8 +174,8 @@ export function CashFlowEntriesInputs(props: CashFlowEntriesInputsProps) {
                   id={`${cashFlowTypeLower}-recurrenceEndDate`}
                   name={`${cashFlowTypeLower}-recurrenceEndDate`}
                   type="date"
-                  value={props.editingFormData.recurrenceEndDate || ""}
-                  onChange={props.onChange}
+                  value={editingFormData.recurrenceEndDate || ""}
+                  onChange={onChange}
                   className="input w-full" 
                 />
               )}

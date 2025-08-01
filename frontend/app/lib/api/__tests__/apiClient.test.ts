@@ -1,4 +1,5 @@
 import { fetchWithAuth, HttpMethod } from '../apiClient';
+import { getAccessToken } from '@/app/lib/auth/getAccessToken';
 
 // Mock dependencies
 jest.mock('@/app/lib/auth/getAccessToken', () => ({
@@ -8,8 +9,8 @@ jest.mock('@/app/lib/auth/getAccessToken', () => ({
 global.fetch = jest.fn();
 
 describe('fetchWithAuth', () => {
-  const mockGetAccessToken = require('@/app/lib/auth/getAccessToken').getAccessToken as jest.MockedFunction<any>;
-  const mockFetch = global.fetch as jest.MockedFunction<any>;
+  const mockGetAccessToken = getAccessToken as jest.MockedFunction<() => Promise<string | null>>;
+  const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
   const endpoint = 'test-endpoint';
   const apiResponse = { foo: 'bar' };

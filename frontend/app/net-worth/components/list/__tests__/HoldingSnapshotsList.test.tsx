@@ -2,6 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HoldingSnapshotsList } from '../HoldingSnapshotsList';
 import { HoldingSnapshot } from '@/app/net-worth/components';
+import { convertCentsToDollars } from '@/app/components';
+import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
 
 // Mock the dependencies
 jest.mock('@/app/components', () => ({
@@ -13,7 +15,7 @@ jest.mock('@/app/lib/api/data-methods', () => ({
 }));
 
 jest.mock('@/app/components/table/ListTable', () => ({
-  ListTable: ({ title, headerRow, bodyRow, items, isError, isLoading }: any) => (
+  ListTable: ({ title, headerRow, bodyRow, items, isError, isLoading }: { title: string; headerRow: React.ReactNode; bodyRow: (item: HoldingSnapshot) => React.ReactNode; items: HoldingSnapshot[]; isError: boolean; isLoading: boolean }) => (
     <div data-testid="list-table">
       <h2>{title}</h2>
       {isLoading && <div data-testid="loading">Loading...</div>}
@@ -23,7 +25,7 @@ jest.mock('@/app/components/table/ListTable', () => ({
           <table>
             <thead>{headerRow}</thead>
             <tbody>
-              {items.map((item: any) => bodyRow(item))}
+              {items.map((item: HoldingSnapshot) => bodyRow(item))}
             </tbody>
           </table>
         </>
@@ -33,8 +35,8 @@ jest.mock('@/app/components/table/ListTable', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  Pencil: ({ size }: any) => <span data-testid="pencil-icon" style={{ fontSize: size }}>Edit</span>,
-  Trash2: ({ size }: any) => <span data-testid="trash-icon" style={{ fontSize: size }}>Delete</span>
+  Pencil: ({ size }: { size?: number }) => <span data-testid="pencil-icon" style={{ fontSize: size }}>Edit</span>,
+  Trash2: ({ size }: { size?: number }) => <span data-testid="trash-icon" style={{ fontSize: size }}>Delete</span>
 }));
 
 // Mock window.confirm
@@ -45,8 +47,8 @@ Object.defineProperty(window, 'confirm', {
 });
 
 describe('HoldingSnapshotsList', () => {
-  const mockConvertCentsToDollars = require('@/app/components').convertCentsToDollars as jest.MockedFunction<any>;
-  const mockDeleteHoldingSnapshot = require('@/app/lib/api/data-methods').deleteHoldingSnapshot as jest.MockedFunction<any>;
+  const mockConvertCentsToDollars = convertCentsToDollars as jest.MockedFunction<(cents: number) => string>;
+  const mockDeleteHoldingSnapshot = deleteHoldingSnapshot as jest.MockedFunction<(id: number) => Promise<{ successful: boolean; data: unknown; responseMessage: string }>>;
   const mockOnSnapshotDeleted = jest.fn();
   const mockOnSnapshotIsEditing = jest.fn();
 

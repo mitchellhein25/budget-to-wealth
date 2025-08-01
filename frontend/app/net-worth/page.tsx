@@ -30,7 +30,7 @@ export default function HoldingSnapshotsPage() {
 
 	useEffect(() => {
 		holdingSnapshotsDataListFetchState.fetchItems();
-	}, [dateRange]);
+	}, [dateRange, holdingSnapshotsDataListFetchState]);
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">

@@ -10,9 +10,15 @@ const formIdTestId = 'form-id';
 const formHeaderTestId = 'form-header';
 const messageTestId = 'message';
 
-jest.mock('@/app/components/form/FormTemplate', () => ({
+jest.mock('@/app/components/form', () => ({
   __esModule: true,
-  FormTemplate: ({ formId, formHeader, inputs, buttons, message }: any) => (
+  FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { 
+    formId: string; 
+    formHeader: string; 
+    inputs: React.ReactNode; 
+    buttons: React.ReactNode; 
+    message?: React.ReactNode; 
+  }) => (
     <div data-testid={formTemplateTestId}>
       <div>{formTemplateTestId}</div>
       <div data-testid={formIdTestId}>{formId}</div>
@@ -36,7 +42,7 @@ jest.mock('@/app/components/buttons/ResetButton', () => ({
 
 jest.mock('./CategoriesInputs', () => ({
   __esModule: true,
-  CategoriesInputs: ({ editingFormData, onChange }: any) => (
+  CategoriesInputs: ({}: { editingFormData: unknown; onChange: () => void }) => (
     <div data-testid={categoriesInputsTestId}>
       {categoriesInputsTestId}
     </div>
@@ -44,7 +50,7 @@ jest.mock('./CategoriesInputs', () => ({
 }));
 
 describe('CategoriesForm', () => {
-  const mockFormState: FormState<any, any> = {
+  const mockFormState: FormState<unknown, unknown> = {
     editingFormData: {},
     onChange: jest.fn(),
     handleSubmit: jest.fn(),

@@ -1,5 +1,5 @@
 import React from 'react'
-import SideBar from '../../components/SideBar'
+import { SideBar } from '@/app/components/SideBar'
 
 export default function DashboardSideBar() {
   return (

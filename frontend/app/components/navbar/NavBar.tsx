@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 import { Logo, UserProfile, DesktopNav, MobileDrawer, MobileMenuButton, closeDrawer } from './helpers';
 
-export default function NavBar({ session }: { session: SessionData }) {
+export default function NavBar({ session }: { session: SessionData | null }) {
   const pathname = usePathname();
 
   return (

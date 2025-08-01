@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import Profile from './page';
+import { auth0 } from '@/app/lib/auth/auth0';
 
 const profileTitleText = 'Profile';
 const loginPromptText = 'Please log in to view your profile.';
@@ -13,13 +14,14 @@ jest.mock('@/app/lib/auth/auth0', () => ({
 
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, width, height, className }: any) => (
+  default: ({ src, alt, width, height, className }: { src: string; alt: string; width: number; height: number; className?: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} width={width} height={height} className={className} />
   ),
 }));
 
 describe('Profile', () => {
-  const mockAuth0 = require('@/app/lib/auth/auth0').auth0;
+  const mockAuth0 = auth0 as unknown as { getSession: jest.MockedFunction<() => Promise<{ user: { name?: string; email?: string; picture?: string | null } } | null>> };
 
   beforeEach(() => {
     jest.clearAllMocks();

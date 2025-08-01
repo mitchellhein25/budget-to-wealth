@@ -1,4 +1,4 @@
-import { isTokenExpired, isAuthenticated, closeDrawer, navItems } from './utils';
+import { isTokenExpired, isAuthenticated, closeDrawer, navItems } from './';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
 describe('utils', () => {
@@ -132,7 +132,7 @@ describe('utils', () => {
 
     it('does not throw error when element is not an input', () => {
       const mockElement = document.createElement('div');
-      mockGetElementById.mockReturnValue(mockElement as any);
+      mockGetElementById.mockReturnValue(mockElement as HTMLInputElement);
 
       expect(() => closeDrawer()).not.toThrow();
       expect(mockGetElementById).toHaveBeenCalledWith('mobile-drawer');

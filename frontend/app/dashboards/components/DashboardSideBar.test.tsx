@@ -1,9 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import DashboardSideBar from './DashboardSideBar';
 
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/dashboards/net-worth',
+}));
+
 jest.mock('../../components/SideBar', () => ({
   __esModule: true,
-  default: ({ navItems }: { navItems: Array<{ href: string; label: string }> }) => (
+  SideBar: ({ navItems }: { navItems: Array<{ href: string; label: string }> }) => (
     <div data-testid="sidebar" data-nav-items={JSON.stringify(navItems)}>
       SideBar Component
     </div>

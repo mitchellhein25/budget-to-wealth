@@ -3,6 +3,7 @@ import { render, screen, act } from '@testing-library/react';
 import { HoldingSnapshotInputs } from '../HoldingSnapshotInputs';
 import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
 import { waitFor } from '@testing-library/react';
+import { getAllHoldings } from '@/app/lib/api/data-methods';
 
 // Mock getAllHoldings globally before imports
 jest.mock('@/app/lib/api/data-methods', () => ({
@@ -18,7 +19,7 @@ jest.mock('@/app/components', () => ({
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ children, href, ...props }: any) => (
+  default: ({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) => (
     <a href={href} {...props}>
       {children}
     </a>
@@ -26,7 +27,7 @@ jest.mock('next/link', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  Edit: ({ size }: any) => <span data-testid="edit-icon" style={{ fontSize: size }}>Edit</span>
+  Edit: ({ size }: { size?: number }) => <span data-testid="edit-icon" style={{ fontSize: size }}>Edit</span>
 }));
 
 describe('HoldingSnapshotInputs', () => {
@@ -179,8 +180,8 @@ describe('HoldingSnapshotInputs', () => {
       { id: 'h1', name: 'Account 1', institution: 'Bank', holdingCategory: { name: 'Cat' }, type: 'Cash' },
       { id: 'h2', name: 'Account 2', institution: '', holdingCategory: { name: 'Cat2' }, type: 'Stock' },
     ];
-    const { getAllHoldings } = require('@/app/lib/api/data-methods');
-    getAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings });
+    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<{ successful: boolean; data: unknown[] }>>;
+    mockGetAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings });
     
     await act(async () => {
       render(<HoldingSnapshotInputs {...mockProps} />);
@@ -195,8 +196,8 @@ describe('HoldingSnapshotInputs', () => {
   });
 
   it('does not set holdings if fetch is unsuccessful', async () => {
-    const { getAllHoldings } = require('@/app/lib/api/data-methods');
-    getAllHoldings.mockResolvedValueOnce({ successful: false, data: [] });
+    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<{ successful: boolean; data: unknown[] }>>;
+    mockGetAllHoldings.mockResolvedValueOnce({ successful: false, data: [] });
     
     await act(async () => {
       render(<HoldingSnapshotInputs {...mockProps} />);

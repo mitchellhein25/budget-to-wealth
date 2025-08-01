@@ -243,7 +243,7 @@ describe('uploadImportData', () => {
   it('handles unknown data types', async () => {
     const mockData = [{ id: 1, name: 'Test Item' }];
 
-    await expect(uploadImportData(mockData, 'Unknown Type' as any))
+    await expect(uploadImportData(mockData, 'Unknown Type' as ImportDataTypeStringMappings))
       .rejects.toThrow('Unknown data type: Unknown Type');
   });
 
@@ -315,7 +315,7 @@ describe('uploadImportData', () => {
     mockPostRequest.mockResolvedValue({
       successful: false,
       data: null,
-      responseMessage: undefined as any
+      responseMessage: undefined as string | undefined
     });
 
     const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
@@ -430,7 +430,7 @@ describe('uploadImportData', () => {
       successful: true,
       data: {
         success: false,
-        message: undefined as any,
+        message: undefined as string | undefined,
         importedCount: 8,
         errorCount: 2,
         results: [

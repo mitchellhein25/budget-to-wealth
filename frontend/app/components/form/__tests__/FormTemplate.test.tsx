@@ -5,12 +5,6 @@ import { FormTemplate } from '../FormTemplate';
 import { MessageState } from '../../Utils';
 
 describe('FormTemplate', () => {
-  const testIds = {
-    form: 'test-form',
-    errorAlert: 'error-alert',
-    infoAlert: 'info-alert',
-  };
-
   const testTexts = {
     formHeader: 'Test Form',
     errorMessage: 'This is an error message',

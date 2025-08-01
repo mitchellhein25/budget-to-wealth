@@ -40,7 +40,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
 
 	useEffect(() => {
 		cashFlowEntriesDataListFetchState.fetchItems();
-	}, [dateRange]);
+	}, [dateRange, cashFlowEntriesDataListFetchState]);
   
   const totalAmount = useMemo(() => cashFlowEntriesDataListFetchState.items.reduce((sum, entry) => sum + entry.amount, 0), [cashFlowEntriesDataListFetchState.items]);
   

@@ -1,5 +1,5 @@
 import { cleanCurrencyInput } from "../../../../components/Utils";
-import { CashFlowType } from "../../CashFlowType";
+import { CashFlowType } from "../../components/CashFlowType";
 import { CashFlowEntryFormData } from "../CashFlowEntryFormData";
 
 export const cashFlowFormOnChange = (

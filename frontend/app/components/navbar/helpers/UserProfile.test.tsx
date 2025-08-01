@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
-import { UserProfile } from './UserProfile';
+import { UserProfile } from './';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, className, children, title }: any) => (
+  default: ({ href, className, children, title }: { href: string; className?: string; children: React.ReactNode; title?: string }) => (
     <a href={href} className={className} title={title} data-testid={`link-${href}`}>
       {children}
     </a>
@@ -13,7 +13,8 @@ jest.mock('next/link', () => ({
 
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, width, height, className }: any) => (
+  default: ({ src, alt, width, height, className }: { src: string; alt: string; width: number; height: number; className?: string }) => (
+    // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} width={width} height={height} className={className} data-testid="user-avatar" />
   ),
 }));
@@ -31,7 +32,8 @@ jest.mock('./utils', () => ({
   isAuthenticated: jest.fn(),
 }));
 
-const mockIsAuthenticated = require('./utils').isAuthenticated as jest.MockedFunction<() => boolean>;
+import { isAuthenticated } from './utils';
+const mockIsAuthenticated = isAuthenticated as jest.MockedFunction<() => boolean>;
 
 describe('UserProfile', () => {
   const mockSession: SessionData = {
@@ -227,14 +229,14 @@ describe('UserProfile', () => {
   describe('edge cases', () => {
     it('handles null session', () => {
       mockIsAuthenticated.mockReturnValue(false);
-      render(<UserProfile session={null as any} pathname="/test" />);
+      render(<UserProfile session={null as SessionData | null} pathname="/test" />);
 
       expect(screen.getByRole('link', { name: /login/i })).toBeInTheDocument();
     });
 
     it('handles undefined session', () => {
       mockIsAuthenticated.mockReturnValue(false);
-      render(<UserProfile session={undefined as any} pathname="/test" />);
+      render(<UserProfile session={undefined as unknown as SessionData} pathname="/test" />);
 
       expect(screen.getByRole('link', { name: /login/i })).toBeInTheDocument();
     });
@@ -243,7 +245,7 @@ describe('UserProfile', () => {
       mockIsAuthenticated.mockReturnValue(true);
       const sessionWithoutUser = { ...mockSession, user: undefined };
 
-      render(<UserProfile session={sessionWithoutUser as any} pathname="/test" />);
+      render(<UserProfile session={sessionWithoutUser as unknown as SessionData} pathname="/test" />);
 
       expect(screen.getByText('User')).toBeInTheDocument();
     });

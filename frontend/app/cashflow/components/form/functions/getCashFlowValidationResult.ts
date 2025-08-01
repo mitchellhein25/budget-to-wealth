@@ -1,4 +1,4 @@
-import { CashFlowType } from "../../CashFlowType";
+import { CashFlowType } from "../../components/CashFlowType";
 import { cashFlowEntryFormSchema } from "../CashFlowEntryFormData";
 
 export const getCashFlowValidationResult = (formData: FormData, cashFlowType: CashFlowType) => {

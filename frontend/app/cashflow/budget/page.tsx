@@ -33,7 +33,7 @@ export default function BudgetsPage() {
 	useEffect(() => {
 		budgetsDataListFetchState.fetchItems();
     expensesDataListFetchState.fetchItems();
-	}, [dateRange]);
+	}, [dateRange, budgetsDataListFetchState, expensesDataListFetchState]);
 
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">

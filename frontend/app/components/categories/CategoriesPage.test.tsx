@@ -1,5 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { CategoriesPage } from './CategoriesPage';
+import { useDataListFetcher, useForm } from '@/app/hooks';
+import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
+import { messageTypeIsError } from '../Utils';
 
 const categoriesFormTestId = 'categories-form';
 const categoriesListTestId = 'categories-list';
@@ -17,7 +20,7 @@ jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
 
 jest.mock('./form/CategoriesForm', () => ({
   __esModule: true,
-  CategoriesForm: ({ formState, categoryTypeName }: any) => (
+  CategoriesForm: ({ categoryTypeName }: { formState: unknown; categoryTypeName: string }) => (
     <div data-testid={categoriesFormTestId}>
       <div>{categoriesFormText}</div>
       <div data-testid="form-category-type-name">{categoryTypeName}</div>
@@ -27,7 +30,13 @@ jest.mock('./form/CategoriesForm', () => ({
 
 jest.mock('./list/CategoriesList', () => ({
   __esModule: true,
-  CategoriesList: ({ categories, categoryTypeName, deleteEndpoint, isLoading, isError }: any) => (
+  CategoriesList: ({ categoryTypeName, deleteEndpoint, isLoading, isError }: { 
+    categories: unknown[]; 
+    categoryTypeName: string; 
+    deleteEndpoint: string; 
+    isLoading: boolean; 
+    isError: boolean; 
+  }) => (
     <div data-testid={categoriesListTestId}>
       <div>{categoriesListText}</div>
       <div data-testid="list-category-type-name">{categoryTypeName}</div>
@@ -43,10 +52,10 @@ jest.mock('../Utils', () => ({
 }));
 
 describe('CategoriesPage', () => {
-  const mockUseDataListFetcher = require('@/app/hooks').useDataListFetcher as jest.MockedFunction<any>;
-  const mockUseForm = require('@/app/hooks').useForm as jest.MockedFunction<any>;
-  const mockGetRequestList = require('@/app/lib/api/rest-methods/getRequest').getRequestList as jest.MockedFunction<any>;
-  const mockMessageTypeIsError = require('../Utils').messageTypeIsError as jest.MockedFunction<any>;
+  const mockUseDataListFetcher = jest.mocked(useDataListFetcher);
+  const mockUseForm = jest.mocked(useForm);
+  const mockGetRequestList = jest.mocked(getRequestList);
+  const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
 
   const mockProps = {
     isLoggedIn: true,
@@ -336,8 +345,8 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Income',
     };
 
-    let capturedTransformFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
+    let capturedTransformFunction: (formData: FormData) => unknown;
+    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => unknown }) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
         formData: {},
@@ -367,8 +376,8 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Expense',
     };
 
-    let capturedTransformFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
+    let capturedTransformFunction: (formData: FormData) => unknown;
+    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => unknown }) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
         formData: {},
@@ -398,8 +407,8 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Other',
     };
 
-    let capturedTransformFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
+    let capturedTransformFunction: (formData: FormData) => unknown;
+    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => unknown }) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
         formData: {},
@@ -424,8 +433,8 @@ describe('CategoriesPage', () => {
   });
 
   it('tests convertCategoryToFormData function', () => {
-    let capturedConvertFunction: any;
-    mockUseForm.mockImplementation((config: any) => {
+    let capturedConvertFunction: (item: unknown) => FormData;
+    mockUseForm.mockImplementation((config: { convertItemToFormData: (item: unknown) => FormData }) => {
       capturedConvertFunction = config.convertItemToFormData;
       return {
         formData: {},

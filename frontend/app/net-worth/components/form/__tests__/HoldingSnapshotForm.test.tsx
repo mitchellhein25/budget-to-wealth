@@ -1,11 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { HoldingSnapshotForm } from '../HoldingSnapshotForm';
 import { FormState } from '@/app/hooks';
 import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
 import { HoldingSnapshot } from '../../HoldingSnapshot';
-import { MessageState, MESSAGE_TYPE_INFO } from '@/app/components/Utils';
 
 // Mock the dependencies
 jest.mock('@/app/components/buttons', () => ({
@@ -22,7 +20,7 @@ jest.mock('@/app/components/buttons', () => ({
 }));
 
 jest.mock('@/app/components/form', () => ({
-  FormTemplate: ({ formHeader, inputs, buttons, message }: any) => (
+  FormTemplate: ({ formHeader, inputs, buttons, message }: { formHeader: string; inputs: React.ReactNode; buttons: React.ReactNode; message?: { type: string | null; text: string } }) => (
     <form data-testid="form-template">
       <h2>{formHeader}</h2>
       <div data-testid="form-inputs">{inputs}</div>
@@ -33,26 +31,26 @@ jest.mock('@/app/components/form', () => ({
 }));
 
 jest.mock('../HoldingSnapshotInputs', () => ({
-  HoldingSnapshotInputs: ({ editingFormData, onChange, setIsLoading }: any) => (
+  HoldingSnapshotInputs: ({ editingFormData, onChange }: { editingFormData?: HoldingSnapshotFormData; onChange: (field: string, value: unknown) => void }) => (
     <div data-testid="holding-snapshot-inputs">
       <input
         data-testid="holding-id-input"
         name="holding-snapshot-holdingId"
         value={editingFormData?.holdingId || ''}
-        onChange={onChange}
+        onChange={() => onChange('holdingId', editingFormData?.holdingId || '')}
       />
       <input
         data-testid="date-input"
         name="holding-snapshot-date"
         type="date"
-        value={editingFormData?.date || ''}
-        onChange={onChange}
+        value={editingFormData?.date instanceof Date ? editingFormData.date.toISOString().split('T')[0] : editingFormData?.date || ''}
+        onChange={() => onChange('date', editingFormData?.date || '')}
       />
       <input
         data-testid="balance-input"
         name="holding-snapshot-balance"
         value={editingFormData?.balance || ''}
-        onChange={onChange}
+        onChange={() => onChange('balance', editingFormData?.balance || '')}
       />
     </div>
   )

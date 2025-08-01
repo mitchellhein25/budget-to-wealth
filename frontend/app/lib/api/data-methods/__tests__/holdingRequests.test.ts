@@ -1,5 +1,6 @@
 import { getAllHoldings } from '../holdingRequests';
 import { getRequestList, GetRequestResultList } from '../../rest-methods';
+import { Holding } from '@/app/net-worth/holdings/components/Holding';
 
 jest.mock('../../rest-methods', () => ({
   getRequestList: jest.fn(),
@@ -18,7 +19,7 @@ describe('holdingRequests', () => {
 
   describe('getAllHoldings', () => {
     it('fetches all holdings successfully', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: true,
         data: [
           { id: 1, name: 'Stock A', type: 'Stock', value: 1000 },
@@ -37,7 +38,7 @@ describe('holdingRequests', () => {
     });
 
     it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: false,
         data: null,
         responseMessage: 'Failed to fetch holdings',
@@ -58,7 +59,7 @@ describe('holdingRequests', () => {
     });
 
     it('handles empty holdings list', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: true,
         data: [],
         responseMessage: 'Success',
@@ -72,7 +73,7 @@ describe('holdingRequests', () => {
     });
 
     it('handles single holding', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: true,
         data: [
           { id: 1, name: 'Single Stock', type: 'Stock', value: 1000 },
@@ -88,7 +89,7 @@ describe('holdingRequests', () => {
     });
 
     it('handles holdings with different types', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: true,
         data: [
           { id: 1, name: 'Stock A', type: 'Stock', value: 1000 },
@@ -107,7 +108,7 @@ describe('holdingRequests', () => {
     });
 
     it('handles holdings with null values', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: true,
         data: [
           { id: 1, name: 'Stock A', type: 'Stock', value: null },
@@ -124,7 +125,7 @@ describe('holdingRequests', () => {
     });
 
     it('handles holdings with undefined values', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Holding> = {
         successful: true,
         data: [
           { id: 1, name: 'Stock A', type: 'Stock', value: undefined },

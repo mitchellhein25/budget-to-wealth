@@ -1,4 +1,5 @@
 import { BUDGET_ITEM_NAME, transformFormDataToBudget } from '..';
+import { convertDollarsToCents } from '@/app/components';
 
 // Mock only the convertDollarsToCents function
 jest.mock('@/app/components', () => ({
@@ -10,7 +11,7 @@ const budgetAmountField = `${BUDGET_ITEM_NAME}-amount`;
 const budgetCategoryIdField = `${BUDGET_ITEM_NAME}-categoryId`;
 
 describe('transformFormDataToBudget', () => {
-  const mockConvertDollarsToCents = require('@/app/components').convertDollarsToCents;
+  const mockConvertDollarsToCents = jest.mocked(convertDollarsToCents);
 
   beforeEach(() => {
     jest.clearAllMocks();

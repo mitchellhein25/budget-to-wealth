@@ -3,8 +3,8 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParentPath } from '@/app/hooks';
-import CategoriesPage from '@/app/components/categories/CategoriesPage';
-import { INCOME_ITEM_NAME } from '@/app/cashflow/components/constants';
+import { CategoriesPage } from '@/app/components/categories/CategoriesPage';
+import { INCOME_ITEM_NAME } from '@/app/cashflow/components/components/constants';
 import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
 
 export default function IncomeCategories() {

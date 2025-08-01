@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CategoriesList } from './CategoriesList';
+import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 
 const listTableTestId = 'list-table';
 const listTableText = 'List Table';
@@ -10,7 +11,14 @@ const isLoadingTestId = 'is-loading';
 
 jest.mock('@/app/components/table/ListTable', () => ({
   __esModule: true,
-  ListTable: ({ title, headerRow, bodyRow, items, isError, isLoading }: any) => (
+  ListTable: ({ title, bodyRow, items, isError, isLoading }: { 
+    title: string; 
+    headerRow: unknown; 
+    bodyRow: (item: unknown) => React.ReactElement; 
+    items: unknown[]; 
+    isError: boolean; 
+    isLoading: boolean; 
+  }) => (
     <div data-testid={listTableTestId}>
       <div>{listTableText}</div>
       <div data-testid={titleTestId}>{title}</div>
@@ -18,12 +26,12 @@ jest.mock('@/app/components/table/ListTable', () => ({
       <div data-testid={isErrorTestId}>{isError.toString()}</div>
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
       <div data-testid="table-content">
-        {items?.map((item: any, index: number) => {
+        {items?.map((item: unknown, index: number) => {
           const rowElement = bodyRow(item);
           return (
             <div key={index} data-testid={`item-${index}`}>
               <div data-testid={`item-name-${index}`}>
-                {item.name}
+                {(item as { name: string }).name}
               </div>
               <div data-testid={`item-actions-${index}`}>
                 {rowElement.props.children[1].props.children}
@@ -47,7 +55,7 @@ describe('CategoriesList', () => {
     { id: 3, name: 'Category 3' },
   ];
 
-  const mockDeleteRequest = require('@/app/lib/api/rest-methods/deleteRequest').deleteRequest as jest.MockedFunction<any>;
+  const mockDeleteRequest = jest.mocked(deleteRequest);
   const mockOnCategoryDeleted = jest.fn();
   const mockOnCategoryIsEditing = jest.fn();
 

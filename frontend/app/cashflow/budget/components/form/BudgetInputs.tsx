@@ -14,17 +14,17 @@ interface BudgetInputsProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function BudgetInputs(props: BudgetInputsProps) {
+export function BudgetInputs({ editingFormData, onChange, setIsLoading }: BudgetInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
   
   const fetchCategories = useCallback(async () => {
-    props.setIsLoading(true);
+    setIsLoading(true);
     const response = await getExpenseCategoriesList();
     if (response.successful) {
       setCategories((response.data as CashFlowCategory[]).sort((a, b) => a.name.localeCompare(b.name)));
     }
-    props.setIsLoading(false);
-  }, []);
+    setIsLoading(false);
+  }, [setIsLoading]);
 
   useEffect(() => {
     fetchCategories();
@@ -37,7 +37,7 @@ export function BudgetInputs(props: BudgetInputsProps) {
         name={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
         readOnly
         type="text"
-        value={props.editingFormData?.id ?? ''}
+        value={editingFormData?.id ?? ''}
         hidden={true}
       />
       <InputFieldSetTemplate 
@@ -48,8 +48,8 @@ export function BudgetInputs(props: BudgetInputsProps) {
             id={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
             name={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
             type="text"
-            value={props.editingFormData?.amount ?? ""}
-            onChange={props.onChange}
+            value={editingFormData?.amount ?? ""}
+            onChange={onChange}
             placeholder="0.00" 
             className="input m-0 w-full" 
           />}
@@ -62,8 +62,8 @@ export function BudgetInputs(props: BudgetInputsProps) {
             <select
               id={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
               name={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
-              value={props.editingFormData.categoryId || ""}
-              onChange={props.onChange}
+              value={editingFormData.categoryId || ""}
+              onChange={onChange}
               className="select flex-1"
             >
               <option value="" disabled>Pick a category</option>

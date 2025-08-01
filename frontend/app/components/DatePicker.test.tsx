@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DatePicker } from './DatePicker';
 
-jest.mock('./Utils', () => ({
+jest.mock('@/app/components/Utils', () => ({
   convertDateToISOString: jest.fn((date) => date?.toISOString().slice(0, 10) ?? ''),
 }));
 
@@ -93,17 +93,13 @@ describe('DatePicker', () => {
     const fromInput = inputs[0];
     const applyButton = screen.getByText('Apply Filter');
     
-    // Enter invalid date directly
     fireEvent.change(fromInput, { target: { value: 'invalid-date' } });
     
-    // Button should remain disabled for invalid dates
     expect(applyButton).toBeDisabled();
     
-    // Enter valid date to enable button
     fireEvent.change(fromInput, { target: { value: '2024-01-15' } });
     expect(applyButton).toBeEnabled();
     
-    // Click button to test valid date handling
     fireEvent.click(applyButton);
     
     await waitFor(() => {

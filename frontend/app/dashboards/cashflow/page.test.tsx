@@ -1,6 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import CashFlowTrendGraph from './page';
 import { CashFlowTrendGraphData } from './CashFlowTrendGraphData';
+import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
+
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/dashboards/cashflow',
+}));
 
 jest.mock('../components/DashboardSideBar', () => ({
   __esModule: true,
@@ -9,7 +14,7 @@ jest.mock('../components/DashboardSideBar', () => ({
 
 jest.mock('@/app/components/DatePicker', () => ({
   __esModule: true,
-  default: ({ dateRange, setDateRange }: any) => (
+  DatePicker: ({ dateRange }: { dateRange: unknown; setDateRange: () => void }) => (
     <div data-testid="date-picker" data-date-range={JSON.stringify(dateRange)}>
       DatePicker Component
     </div>
@@ -18,7 +23,7 @@ jest.mock('@/app/components/DatePicker', () => ({
 
 jest.mock('../components/TrendGraph', () => ({
   __esModule: true,
-  default: ({ title, labels, datasets }: any) => (
+  default: ({ title, labels, datasets }: { title: string; labels: string[]; datasets: unknown[] }) => (
     <div data-testid="trend-graph" data-title={title} data-labels={JSON.stringify(labels)} data-datasets={JSON.stringify(datasets)}>
       TrendGraph Component
     </div>
@@ -29,7 +34,7 @@ jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestSingle: jest.fn(),
 }));
 
-const mockGetRequestSingle = require('@/app/lib/api/rest-methods/getRequest').getRequestSingle as jest.MockedFunction<() => Promise<any>>;
+const mockGetRequestSingle = jest.mocked(getRequestSingle);
 
 describe('CashFlowTrendGraph', () => {
   const mockCashFlowData: CashFlowTrendGraphData = {
@@ -55,7 +60,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('renders the main page structure', () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 
@@ -72,7 +77,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('shows error state when API call fails', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: null, successful: false });
+    mockGetRequestSingle.mockResolvedValue({ data: null, successful: false, responseMessage: 'Error' });
 
     render(<CashFlowTrendGraph />);
 
@@ -92,7 +97,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('shows no data message when entries are empty', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 
@@ -102,7 +107,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('shows no data message when entries are null', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: null }, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: { entries: null }, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 
@@ -112,7 +117,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('renders TrendGraph with correct data when successful', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 
@@ -129,7 +134,7 @@ describe('CashFlowTrendGraph', () => {
     const datasets = JSON.parse(trendGraph.getAttribute('data-datasets') || '[]');
     expect(datasets).toHaveLength(3);
 
-    const incomeDataset = datasets.find((d: any) => d.label === 'Income');
+    const incomeDataset = datasets.find((d: { label: string }) => d.label === 'Income');
     expect(incomeDataset).toEqual({
       type: 'bar',
       label: 'Income',
@@ -138,7 +143,7 @@ describe('CashFlowTrendGraph', () => {
       backgroundColor: 'rgba(34, 197, 94, 0.5)',
     });
 
-    const expensesDataset = datasets.find((d: any) => d.label === 'Expenses');
+    const expensesDataset = datasets.find((d: { label: string }) => d.label === 'Expenses');
     expect(expensesDataset).toEqual({
       type: 'bar',
       label: 'Expenses',
@@ -147,7 +152,7 @@ describe('CashFlowTrendGraph', () => {
       backgroundColor: 'rgba(239, 68, 68, 0.5)',
     });
 
-    const netCashFlowDataset = datasets.find((d: any) => d.label === 'Net Cash Flow');
+    const netCashFlowDataset = datasets.find((d: { label: string }) => d.label === 'Net Cash Flow');
     expect(netCashFlowDataset).toEqual({
       type: 'line',
       label: 'Net Cash Flow',
@@ -158,7 +163,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('calls API with correct date range', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 
@@ -170,7 +175,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('handles date range changes', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 
@@ -182,7 +187,7 @@ describe('CashFlowTrendGraph', () => {
   });
 
   it('renders content container with correct classes', () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true });
+    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
 
     render(<CashFlowTrendGraph />);
 

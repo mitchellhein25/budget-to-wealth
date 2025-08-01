@@ -1,12 +1,12 @@
-import { transformCashFlowFormDataToEntry } from './transformFormDataToEntry';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../constants';
+import { transformCashFlowFormDataToEntry } from './functions/transformFormDataToEntry';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../components';
 
-jest.mock('../../../../components/Utils', () => ({
+jest.mock('@/app/components/Utils', () => ({
   convertDollarsToCents: jest.fn(),
   numberRegex: /^\d+(\.\d{0,2})?$/,
 }));
 
-import { convertDollarsToCents } from '../../../../components/Utils';
+import { convertDollarsToCents } from '@/app/components/Utils';
 
 const mockConvertDollarsToCents = convertDollarsToCents as jest.MockedFunction<typeof convertDollarsToCents>;
 

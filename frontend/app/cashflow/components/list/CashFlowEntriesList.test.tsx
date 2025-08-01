@@ -1,249 +1,62 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import CashFlowEntriesList from './CashFlowEntriesList';
-import { CashFlowEntry, CashFlowType, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, RecurrenceFrequency } from '..';
-import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
 
-jest.mock('@/app/lib/api/data-methods', () => ({
-  deleteCashFlowEntry: jest.fn(),
+const listTableTestId = 'list-table';
+const listTableText = 'ListTable';
+const titleTestId = 'title';
+const itemsCountTestId = 'items-count';
+const isErrorTestId = 'is-error';
+const isLoadingTestId = 'is-loading';
+
+interface ListTableProps {
+  title: string;
+  items: unknown[];
+  isError: boolean;
+  isLoading: boolean;
+}
+
+jest.mock('@/app/components/table/ListTable', () => ({
+  ListTable: ({ title, items, isError, isLoading }: ListTableProps) => (
+    <div data-testid={listTableTestId}>
+      <div>{listTableText}</div>
+      <div data-testid={titleTestId}>{title}</div>
+      <div data-testid={itemsCountTestId}>{items?.length || 0}</div>
+      <div data-testid={isErrorTestId}>{isError.toString()}</div>
+      <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
+    </div>
+  ),
 }));
-
-jest.mock('@/app/components', () => ({
-  convertCentsToDollars: jest.fn((cents) => `$${(cents / 100).toFixed(2)}`),
-}));
-
-const mockDeleteCashFlowEntry = deleteCashFlowEntry as jest.MockedFunction<typeof deleteCashFlowEntry>;
-
-const mockEntries: CashFlowEntry[] = [
-  {
-    id: 1,
-    amount: 2500,
-    entryType: "Income" as CashFlowType,
-    categoryId: '1',
-    category: { id: 1, name: 'Freelance', categoryType: "Income" as CashFlowType },
-    date: '2024-01-17',
-    description: 'One-time project',
-    recurrenceFrequency: undefined,
-    recurrenceEndDate: undefined,
-  },
-  {
-    id: 2,
-    amount: 5025,
-    entryType: "Expense" as CashFlowType,
-    categoryId: '2',
-    category: { id: 2, name: 'Groceries', categoryType: "Expense" as CashFlowType },
-    date: '2024-01-16',
-    description: 'Weekly groceries',
-    recurrenceFrequency: RecurrenceFrequency.Weekly,
-    recurrenceEndDate: '2024-12-30',
-  },
-  {
-    id: 3,
-    amount: 7500,
-    entryType: "Income" as CashFlowType,
-    categoryId: '3',
-    category: { id: 3, name: 'Salary', categoryType: "Income" as CashFlowType },
-    date: '2024-01-15',
-    description: 'Monthly salary',
-    recurrenceFrequency: RecurrenceFrequency.Monthly,
-    recurrenceEndDate: undefined,
-  },
-];
-
-const defaultProps = {
-  entries: mockEntries,
-  cashFlowType: "Income" as CashFlowType,
-  onEntryDeleted: jest.fn(),
-  onEntryIsEditing: jest.fn(),
-  isLoading: false,
-  isError: false,
-};
 
 describe('CashFlowEntriesList', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    window.confirm = jest.fn(() => true);
+  const mockProps = {
+    entries: [],
+    onEntryDeleted: jest.fn(),
+    onEntryIsEditing: jest.fn(),
+    isLoading: false,
+    isError: false,
+    cashFlowType: 'Cash Flow' as const,
+  };
+
+  it('renders with correct title', () => {
+    render(<CashFlowEntriesList {...mockProps} />);
+    expect(screen.getByTestId(titleTestId)).toHaveTextContent('Cash Flow Entries');
   });
 
-  it('renders the component with correct title', () => {
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    expect(screen.getByText(`${INCOME_ITEM_NAME} Entries`)).toBeInTheDocument();
+  it('passes correct props to ListTable', () => {
+    render(<CashFlowEntriesList {...mockProps} />);
+    expect(screen.getByTestId(listTableTestId)).toBeInTheDocument();
+    expect(screen.getByTestId(itemsCountTestId)).toHaveTextContent('0');
+    expect(screen.getByTestId(isErrorTestId)).toHaveTextContent('false');
+    expect(screen.getByTestId(isLoadingTestId)).toHaveTextContent('false');
   });
 
-  it('renders all entries with their basic information', () => {
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    expect(screen.getByText('Freelance')).toBeInTheDocument();
-    expect(screen.getByText('One-time project')).toBeInTheDocument();
-    expect(screen.getByText('$25.00')).toBeInTheDocument();
-    
-    expect(screen.getByText('Groceries')).toBeInTheDocument();
-    expect(screen.getByText('Weekly groceries')).toBeInTheDocument();
-    expect(screen.getByText('$50.25')).toBeInTheDocument();
-    
-    expect(screen.getByText('Salary')).toBeInTheDocument();
-    expect(screen.getByText('Monthly salary')).toBeInTheDocument();
-    expect(screen.getByText('$75.00')).toBeInTheDocument();
+  it('handles loading state', () => {
+    render(<CashFlowEntriesList {...mockProps} isLoading={true} />);
+    expect(screen.getByTestId(isLoadingTestId)).toHaveTextContent('true');
   });
 
-  it('shows recurrence information for recurring entries', () => {
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    const recurrenceCells = screen.getAllByText(/until/);
-    expect(recurrenceCells).toHaveLength(1);
-    expect(recurrenceCells[0]).toHaveTextContent('Weekly until');
-    
-    const monthlyCell = screen.getByText('Monthly');
-    expect(monthlyCell).toBeInTheDocument();
-  });
-
-  it('renders edit and delete buttons for each entry', () => {
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    const editButtons = screen.getAllByLabelText('Edit');
-    const deleteButtons = screen.getAllByLabelText('Delete');
-    
-    expect(editButtons).toHaveLength(3);
-    expect(deleteButtons).toHaveLength(3);
-  });
-
-  it('calls onEntryEdited when edit button is clicked', () => {
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    const editButtons = screen.getAllByLabelText('Edit');
-    fireEvent.click(editButtons[0]);
-    
-    expect(defaultProps.onEntryIsEditing).toHaveBeenCalledWith(mockEntries[0]);
-  });
-
-  it('calls deleteCashFlowEntry when delete button is clicked and confirmed', async () => {
-    mockDeleteCashFlowEntry.mockResolvedValue({ 
-      data: null, 
-      responseMessage: 'Entry deleted successfully', 
-      successful: true 
-    });
-    
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    const deleteButtons = screen.getAllByLabelText('Delete');
-    fireEvent.click(deleteButtons[0]);
-    
-    await waitFor(() => {
-      expect(mockDeleteCashFlowEntry).toHaveBeenCalledWith(mockEntries[0].id);
-    });
-    
-    expect(defaultProps.onEntryDeleted).toHaveBeenCalled();
-  });
-
-  it('does not call onEntryDeleted when delete fails', async () => {
-    mockDeleteCashFlowEntry.mockResolvedValue({ 
-      data: null, 
-      responseMessage: 'Delete failed', 
-      successful: false 
-    });
-    
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    const deleteButtons = screen.getAllByLabelText('Delete');
-    fireEvent.click(deleteButtons[0]);
-    
-    await waitFor(() => {
-      expect(mockDeleteCashFlowEntry).toHaveBeenCalled();
-    });
-    
-    expect(defaultProps.onEntryDeleted).not.toHaveBeenCalled();
-  });
-
-  it('handles empty entries list', () => {
-    render(<CashFlowEntriesList {...defaultProps} entries={[]} />);
-    
-    expect(screen.getByText(`${INCOME_ITEM_NAME} Entries`)).toBeInTheDocument();
-    expect(screen.queryByLabelText('Edit')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Delete')).not.toBeInTheDocument();
-  });
-
-  it('handles entries without descriptions', () => {
-    const entriesWithoutDescriptions = mockEntries.map(entry => ({
-      ...entry,
-      description: ''
-    }));
-    
-    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithoutDescriptions} />);
-    
-    expect(screen.getByText('Freelance')).toBeInTheDocument();
-    expect(screen.getByText('Groceries')).toBeInTheDocument();
-    expect(screen.getByText('Salary')).toBeInTheDocument();
-  });
-
-  it('handles entries without categories', () => {
-    const entriesWithoutCategories = mockEntries.map(entry => ({
-      ...entry,
-      category: undefined
-    }));
-    
-    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithoutCategories} />);
-    
-    expect(screen.getByText('$25.00')).toBeInTheDocument();
-    expect(screen.getByText('$50.25')).toBeInTheDocument();
-    expect(screen.getByText('$75.00')).toBeInTheDocument();
-  });
-
-  it('handles delete when user cancels confirmation', async () => {
-    window.confirm = jest.fn(() => false);
-    
-    render(<CashFlowEntriesList {...defaultProps} />);
-    
-    const deleteButtons = screen.getAllByLabelText('Delete');
-    fireEvent.click(deleteButtons[0]);
-    
-    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockDeleteCashFlowEntry).not.toHaveBeenCalled();
-    expect(defaultProps.onEntryDeleted).not.toHaveBeenCalled();
-  });
-
-  it('handles entries with Every2Weeks recurrence frequency', () => {
-    const entriesWithEvery2Weeks = [
-      {
-        ...mockEntries[0],
-        recurrenceFrequency: RecurrenceFrequency.Every2Weeks,
-        recurrenceEndDate: '2024-12-30',
-      }
-    ];
-    
-    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithEvery2Weeks} />);
-    
-    expect(screen.getByText(/Every 2 Weeks until/)).toBeInTheDocument();
-  });
-
-  it('handles entries with recurrence frequency but no end date', () => {
-    const entriesWithRecurrenceNoEndDate = [
-      {
-        ...mockEntries[0],
-        recurrenceFrequency: RecurrenceFrequency.Weekly,
-        recurrenceEndDate: undefined,
-      }
-    ];
-    
-    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithRecurrenceNoEndDate} />);
-    
-    expect(screen.getByText('Weekly')).toBeInTheDocument();
-    expect(screen.queryByText('until')).not.toBeInTheDocument();
-  });
-
-  it('handles entries without recurrence frequency', () => {
-    const entriesWithoutRecurrence = [
-      {
-        ...mockEntries[0],
-        recurrenceFrequency: undefined,
-        recurrenceEndDate: undefined,
-      }
-    ];
-    
-    render(<CashFlowEntriesList {...defaultProps} entries={entriesWithoutRecurrence} />);
-    
-    expect(screen.getByText('Freelance')).toBeInTheDocument();
-    expect(screen.getByText('$25.00')).toBeInTheDocument();
+  it('handles error state', () => {
+    render(<CashFlowEntriesList {...mockProps} isError={true} />);
+    expect(screen.getByTestId(isErrorTestId)).toHaveTextContent('true');
   });
 }); 

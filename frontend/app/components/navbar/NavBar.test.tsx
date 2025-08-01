@@ -127,7 +127,7 @@ describe('NavBar', () => {
   });
 
   it('handles null session gracefully', () => {
-    render(<NavBar session={null as any} />);
+    render(<NavBar session={null as SessionData | null} />);
 
     expect(screen.getByTestId('user-profile')).toBeInTheDocument();
     expect(screen.getByTestId('user-profile')).toHaveAttribute('data-session', 'null');

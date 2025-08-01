@@ -129,7 +129,7 @@ describe('CategoriesInputs', () => {
 
   it('handles undefined editingFormData', () => {
     const propsWithUndefinedData = {
-      editingFormData: {} as any,
+      editingFormData: {} as Record<string, unknown>,
       onChange: mockOnChange,
     };
 
@@ -146,7 +146,7 @@ describe('CategoriesInputs', () => {
 
   it('handles null editingFormData', () => {
     const propsWithNullData = {
-      editingFormData: {} as any,
+      editingFormData: {} as Record<string, unknown>,
       onChange: mockOnChange,
     };
 

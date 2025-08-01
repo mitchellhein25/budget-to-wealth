@@ -15,21 +15,21 @@ interface HoldingSnapshotInputsProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
+export function HoldingSnapshotInputs({ editingFormData, onChange, setIsLoading }: HoldingSnapshotInputsProps) {
   const [holdings, setHoldings] = useState<Holding[]>([]);
   
-  async function fetchHoldings() {
-    props.setIsLoading(true);
-    const response = await getAllHoldings();
-    if (response.successful) {
-      setHoldings((response.data as Holding[]).sort((a, b) => a.name.localeCompare(b.name)));
-    }
-    props.setIsLoading(false);
-  }
 
   useEffect(() => {
+    async function fetchHoldings() {
+      setIsLoading(true);
+      const response = await getAllHoldings();
+      if (response.successful) {
+        setHoldings((response.data as Holding[]).sort((a, b) => a.name.localeCompare(b.name)));
+      }
+      setIsLoading(false);
+    }
     fetchHoldings();
-  }, [fetchHoldings]);
+  }, [setIsLoading]);
 
   return (
     <>
@@ -38,7 +38,7 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
         name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-id`}
         readOnly
         type="text"
-        value={props.editingFormData?.id ?? ''}
+        value={editingFormData?.id ?? ''}
         hidden={true}
       />
       <InputFieldSetTemplate 
@@ -49,8 +49,8 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
             <select
               id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-holdingId`}
               name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-holdingId`}
-              value={props.editingFormData.holdingId || ""}
-              onChange={props.onChange}
+              value={editingFormData.holdingId || ""}
+              onChange={onChange}
               className="select flex-1"
             >
               <option value="" disabled>Pick a holding</option>
@@ -79,11 +79,11 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
             name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-date`}
             type="date"
             value={
-              props.editingFormData?.date
-                ? convertDateToISOString(new Date(props.editingFormData.date))
+              editingFormData?.date
+                ? convertDateToISOString(new Date(editingFormData.date))
                 : convertDateToISOString(new Date())
             }
-            onChange={props.onChange}
+            onChange={onChange}
             className="input m-0 w-full" 
           />
         }
@@ -96,8 +96,8 @@ export function HoldingSnapshotInputs(props: HoldingSnapshotInputsProps) {
             id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-balance`}
             name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-balance`}
             type="text"
-            value={props.editingFormData?.balance ?? ""}
-            onChange={props.onChange}
+            value={editingFormData?.balance ?? ""}
+            onChange={onChange}
             placeholder="0.00" 
             className="input m-0 w-full" 
           />}

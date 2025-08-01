@@ -1,4 +1,4 @@
-import { Category } from "../../components/categories/Category";
+import { Category } from "@/app/components/categories/Category";
 import { CashFlowType } from "./CashFlowType";
 
 export type CashFlowCategory = Category & {

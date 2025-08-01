@@ -1,5 +1,6 @@
 import { getAllHoldingCategories } from '../holdingCategoriesRequests';
 import { getRequestList, GetRequestResultList } from '../../rest-methods';
+import { Category } from '@/app/components/categories/Category';
 
 jest.mock('../../rest-methods', () => ({
   getRequestList: jest.fn(),
@@ -18,7 +19,7 @@ describe('holdingCategoriesRequests', () => {
 
   describe('getAllHoldingCategories', () => {
     it('fetches all holding categories successfully', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { id: 1, name: 'Stocks', description: 'Stock investments' },
@@ -37,7 +38,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: false,
         data: null,
         responseMessage: 'Failed to fetch holding categories',
@@ -58,7 +59,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles empty categories list', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [],
         responseMessage: 'Success',
@@ -72,7 +73,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles single category', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { id: 1, name: 'Single Category', description: 'A single category' },
@@ -88,7 +89,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles categories with null descriptions', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { id: 1, name: 'Category A', description: null },
@@ -105,7 +106,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles categories with undefined descriptions', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { id: 1, name: 'Category A', description: undefined },
@@ -122,7 +123,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles categories with empty descriptions', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { id: 1, name: 'Category A', description: '' },
@@ -139,7 +140,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles categories with special characters in names', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { id: 1, name: 'Category & Co.', description: 'Special characters' },
@@ -157,7 +158,7 @@ describe('holdingCategoriesRequests', () => {
     });
 
     it('handles categories with long names and descriptions', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<Category> = {
         successful: true,
         data: [
           { 

@@ -3,14 +3,20 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import { getCategoriesList } from '@/app/lib/api/data-methods';
 import { CashFlowCategory, CashFlowType, RecurrenceFrequency } from '@/app/cashflow/components';
 import { CashFlowEntriesInputs } from './CashFlowEntriesInputs';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '../constants';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '../../components';
+
+interface MockLinkProps {
+  children: React.ReactNode;
+  href: string;
+  [key: string]: unknown;
+}
 
 jest.mock('@/app/lib/api/data-methods', () => ({
   getCategoriesList: jest.fn(),
 }));
 
 jest.mock('next/link', () => {
-  return function MockLink({ children, href, ...props }: any) {
+  return function MockLink({ children, href, ...props }: MockLinkProps) {
     return <a href={href} {...props}>{children}</a>;
   };
 });

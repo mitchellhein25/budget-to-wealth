@@ -34,7 +34,7 @@ describe('cashFlowEntryRequests', () => {
     };
 
     it('fetches cash flow entries for income type', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<unknown> = {
         successful: true,
         data: [
           { id: 1, name: 'Entry 1', entryType: 'Income' },
@@ -54,7 +54,7 @@ describe('cashFlowEntryRequests', () => {
     });
 
     it('fetches cash flow entries for expense type', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<unknown> = {
         successful: true,
         data: [
           { id: 1, name: 'Entry 1', entryType: 'Expense' },
@@ -74,7 +74,7 @@ describe('cashFlowEntryRequests', () => {
     });
 
     it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<unknown> = {
         successful: false,
         data: null,
         responseMessage: 'Failed to fetch entries',
@@ -100,7 +100,7 @@ describe('cashFlowEntryRequests', () => {
         to: new Date('2024-02-29'),
       };
 
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<unknown> = {
         successful: true,
         data: [],
         responseMessage: 'Success',
@@ -116,7 +116,7 @@ describe('cashFlowEntryRequests', () => {
     });
 
     it('handles empty response data', async () => {
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<unknown> = {
         successful: true,
         data: [],
         responseMessage: 'Success',
@@ -135,7 +135,7 @@ describe('cashFlowEntryRequests', () => {
         to: undefined,
       };
 
-      const mockResponse: GetRequestResultList<any> = {
+      const mockResponse: GetRequestResultList<unknown> = {
         successful: true,
         data: [],
         responseMessage: 'Success',

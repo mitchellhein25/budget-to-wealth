@@ -6,7 +6,7 @@ import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/NetWorthTrend
 import { formatDate, getCurrentYearRange } from '@/app/components/Utils';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 import { DateRange } from '../../components/DatePicker';
-import DatePicker from '@/app/components/DatePicker';
+import { DatePicker } from '@/app/components/DatePicker';
 import TrendGraph, { TrendGraphDataset } from '../components/TrendGraph';
 
 export default function NetWorthTrendGraph() {

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '../';
+import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '..';
 
 const formTemplateTestId = 'form-template';
 const budgetInputsTestId = 'budget-inputs';
@@ -10,9 +10,16 @@ const formIdTestId = 'form-id';
 const formHeaderTestId = 'form-header';
 const messageTestId = 'message';
 
+interface FormTemplateProps {
+  formId: string;
+  formHeader: string;
+  inputs: React.ReactNode;
+  buttons: React.ReactNode;
+  message?: { type: string | null; text: string };
+}
 
 jest.mock('@/app/components/form', () => ({
-  FormTemplate: ({ formId, formHeader, inputs, buttons, message }: any) => (
+  FormTemplate: ({ formId, formHeader, inputs, buttons, message }: FormTemplateProps) => (
     <div data-testid={formTemplateTestId}>
       <div>{formTemplateTestId}</div>
       <div data-testid={formIdTestId}>{formId}</div>
@@ -30,7 +37,7 @@ jest.mock('@/app/components/buttons', () => ({
 }));
 
 jest.mock('./BudgetInputs', () => ({
-  BudgetInputs: ({ editingFormData, onChange, setIsLoading }: any) => (
+  BudgetInputs: () => (
     <div data-testid={budgetInputsTestId}>
       {budgetInputsTestId}
     </div>
@@ -38,7 +45,7 @@ jest.mock('./BudgetInputs', () => ({
 }));
 
 describe('BudgetsForm', () => {
-  const mockFormState: FormState<any, any> = {
+  const mockFormState: FormState<Record<string, unknown>, Record<string, unknown>> = {
     editingFormData: {},
     onChange: jest.fn(),
     handleSubmit: jest.fn(),

@@ -1,13 +1,8 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { HoldingInputs } from '../HoldingInputs';
 import { getAllHoldingCategories } from '@/app/lib/api/data-methods';
-import { HOLDING_ITEM_NAME_LOWERCASE, HOLDING_TYPE_ASSET, HOLDING_TYPE_DEBT } from '../../constants';
+import { HOLDING_ITEM_NAME_LOWERCASE, HOLDING_TYPE_ASSET } from '../../constants';
 
-const nameInputTestId = 'name-input';
-const typeSelectTestId = 'type-select';
-const categorySelectTestId = 'category-select';
-const institutionInputTestId = 'institution-input';
-const idInputTestId = 'id-input';
 const editCategoriesLinkTestId = 'edit-categories-link';
 
 jest.mock('@/app/lib/api/data-methods', () => ({
@@ -15,7 +10,7 @@ jest.mock('@/app/lib/api/data-methods', () => ({
 }));
 
 jest.mock('@/app/components/form', () => ({
-  InputFieldSetTemplate: ({ label, isRequired, inputChild }: any) => (
+  InputFieldSetTemplate: ({ label, isRequired, inputChild }: { label: string, isRequired: boolean, inputChild: React.ReactNode }) => (
     <div data-testid={`field-${label.toLowerCase()}`}>
       <label>{label}</label>
       <div data-testid={`required-${label.toLowerCase()}`}>{isRequired.toString()}</div>
@@ -26,7 +21,7 @@ jest.mock('@/app/components/form', () => ({
 
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ children, href, className, title }: any) => (
+  default: ({ children, href, className, title }: { children: React.ReactNode, href: string, className: string, title: string }) => (
     <a data-testid={editCategoriesLinkTestId} href={href} className={className} title={title}>
       {children}
     </a>

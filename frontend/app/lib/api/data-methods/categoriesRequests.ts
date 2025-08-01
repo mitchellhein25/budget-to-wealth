@@ -3,8 +3,8 @@
 import { getRequestList } from "../rest-methods/getRequest";
 import { CashFlowCategory } from "@/app/cashflow/components/CashFlowCategory";
 import { CASH_FLOW_CATEGORIES_ENDPOINT } from "./endpoints";
-import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME } from "@/app/cashflow/components/constants";
-import { CashFlowType } from "@/app/cashflow/components/CashFlowType";
+import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME } from "@/app/cashflow/components/components/constants";
+import { CashFlowType } from "@/app/cashflow/components/components/CashFlowType";
 
 
 export async function getCategoriesList(cashFlowType: CashFlowType) {

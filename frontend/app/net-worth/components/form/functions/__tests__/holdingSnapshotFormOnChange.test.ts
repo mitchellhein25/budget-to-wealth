@@ -1,5 +1,6 @@
 import { holdingSnapshotFormOnChange } from '../holdingSnapshotFormOnChange';
 import { HoldingSnapshotFormData } from '../../HoldingSnapshotFormData';
+import { cleanCurrencyInput } from '@/app/components/Utils';
 
 // Mock the Utils module
 jest.mock('@/app/components/Utils', () => ({
@@ -8,7 +9,7 @@ jest.mock('@/app/components/Utils', () => ({
 
 describe('holdingSnapshotFormOnChange', () => {
   const mockSetEditingFormData = jest.fn();
-  const mockCleanCurrencyInput = require('@/app/components/Utils').cleanCurrencyInput as jest.MockedFunction<any>;
+  const mockCleanCurrencyInput = cleanCurrencyInput as jest.MockedFunction<(value: string) => string>;
 
   beforeEach(() => {
     jest.clearAllMocks();
