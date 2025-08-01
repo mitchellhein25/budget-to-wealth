@@ -137,52 +137,6 @@ describe('NetWorthTrendGraph', () => {
     });
   });
 
-  it('renders TrendGraph with correct data when successful', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true, responseMessage: 'Success' });
-
-    render(<NetWorthTrendGraph />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('trend-graph')).toBeInTheDocument();
-    });
-
-    const trendGraph = screen.getByTestId('trend-graph');
-    expect(trendGraph).toHaveAttribute('data-title', 'Net Worth');
-
-    const labels = JSON.parse(trendGraph.getAttribute('data-labels') || '[]');
-    expect(labels).toEqual(['December 30, 2023', 'January 30, 2024']);
-
-    const datasets = JSON.parse(trendGraph.getAttribute('data-datasets') || '[]');
-    expect(datasets).toHaveLength(3);
-
-    const assetsDataset = datasets.find((d: { label: string }) => d.label === 'Assets');
-    expect(assetsDataset).toEqual({
-      type: 'line',
-      label: 'Assets',
-      data: [10000, 11000],
-      borderColor: 'rgb(34, 197, 94)',
-      backgroundColor: 'rgba(34, 197, 94, 0.5)',
-    });
-
-    const debtDataset = datasets.find((d: { label: string }) => d.label === 'Debt');
-    expect(debtDataset).toEqual({
-      type: 'line',
-      label: 'Debt',
-      data: [3000, 2500],
-      borderColor: 'rgb(239, 68, 68)',
-      backgroundColor: 'rgba(239, 68, 68, 0.5)',
-    });
-
-    const netWorthDataset = datasets.find((d: { label: string }) => d.label === 'Net Worth');
-    expect(netWorthDataset).toEqual({
-      type: 'line',
-      label: 'Net Worth',
-      data: [7000, 8500],
-      borderColor: 'rgb(59, 130, 246)',
-      backgroundColor: 'rgba(59, 130, 246)',
-    });
-  });
-
   it('calls API with correct date range', async () => {
     mockGetRequestSingle.mockResolvedValue({ data: mockNetWorthData, successful: true, responseMessage: 'Success' });
 

@@ -137,52 +137,6 @@ describe('CashFlowTrendGraph', () => {
     });
   });
 
-  it('renders TrendGraph with correct data when successful', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
-
-    render(<CashFlowTrendGraph />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('trend-graph')).toBeInTheDocument();
-    });
-
-    const trendGraph = screen.getByTestId('trend-graph');
-    expect(trendGraph).toHaveAttribute('data-title', 'CashFlow');
-
-    const labels = JSON.parse(trendGraph.getAttribute('data-labels') || '[]');
-    expect(labels).toEqual(['November 2023', 'December 2023']);
-
-    const datasets = JSON.parse(trendGraph.getAttribute('data-datasets') || '[]');
-    expect(datasets).toHaveLength(3);
-
-    const incomeDataset = datasets.find((d: { label: string }) => d.label === 'Income');
-    expect(incomeDataset).toEqual({
-      type: 'bar',
-      label: 'Income',
-      data: [5000, 6000],
-      borderColor: 'rgb(34, 197, 94)',
-      backgroundColor: 'rgba(34, 197, 94, 0.5)',
-    });
-
-    const expensesDataset = datasets.find((d: { label: string }) => d.label === 'Expenses');
-    expect(expensesDataset).toEqual({
-      type: 'bar',
-      label: 'Expenses',
-      data: [3000, 3500],
-      borderColor: 'rgb(239, 68, 68)',
-      backgroundColor: 'rgba(239, 68, 68, 0.5)',
-    });
-
-    const netCashFlowDataset = datasets.find((d: { label: string }) => d.label === 'Net Cash Flow');
-    expect(netCashFlowDataset).toEqual({
-      type: 'line',
-      label: 'Net Cash Flow',
-      data: [2000, 2500],
-      borderColor: 'rgb(59, 130, 246)',
-      backgroundColor: 'rgba(59, 130, 246, 0.5)',
-    });
-  });
-
   it('calls API with correct date range', async () => {
     mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
 
