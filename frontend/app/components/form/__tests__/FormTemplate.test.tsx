@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { FormTemplate } from '../FormTemplate';
 import { MessageState } from '../../Utils';
 
@@ -131,17 +132,21 @@ describe('FormTemplate', () => {
   });
 
   describe('Form Submission', () => {
-    it('should call handleSubmit when form is submitted', () => {
+    it('should call handleSubmit when form is submitted', async () => {
       render(<FormTemplate {...mockProps} />);
       
       const form = screen.getByText(testTexts.buttonText).closest('form');
+      expect(form).not.toBeNull();
+      
       const formData = new FormData();
       formData.append('test', 'value');
       
       const submitEvent = new Event('submit', { bubbles: true });
       Object.defineProperty(submitEvent, 'target', { value: form });
       
-      form.dispatchEvent(submitEvent);
+      await act(async () => {
+        form!.dispatchEvent(submitEvent);
+      });
       
       expect(mockProps.handleSubmit).toHaveBeenCalled();
     });

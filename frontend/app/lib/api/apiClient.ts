@@ -37,8 +37,8 @@ export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<{ da
 
   try {
     const res = await fetch(`${API_BASE_URL}/${fetchOptions.endpoint}`, request);
-    console.log(`Request: ${fetchOptions.method} ${API_BASE_URL}/${fetchOptions.endpoint}\n${request.body}`);
-    console.log(`Response: ${res.status} ${res.statusText}`);
+    // console.log(`Request: ${fetchOptions.method} ${API_BASE_URL}/${fetchOptions.endpoint}\n${request.body}`);
+    // console.log(`Response: ${res.status} ${res.statusText}`);
     if (!res.ok) 
       return { data: {} as T, responseMessage: await res.text(), successful: res.ok };
     

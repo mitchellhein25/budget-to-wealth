@@ -308,4 +308,192 @@ describe('uploadImportData', () => {
     expect(result.results.filter(r => r.success)).toHaveLength(30);
     expect(result.results.filter(r => !r.success)).toHaveLength(20);
   });
+
+  it('handles API response without responseMessage', async () => {
+    const mockData = [{ id: 1, name: 'Test Item' }];
+    
+    mockPostRequest.mockResolvedValue({
+      successful: false,
+      data: null,
+      responseMessage: undefined as any
+    });
+
+    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+
+    expect(result.success).toBe(false);
+    expect(result.importedCount).toBe(0);
+    expect(result.errorCount).toBe(1);
+    expect(result.message).toContain('Imported 0 items with 1 errors');
+    expect(result.results).toHaveLength(1);
+    expect(result.results[0].success).toBe(false);
+    expect(result.results[0].message).toBe('Upload failed');
+  });
+
+  it('handles import result without message', async () => {
+    const mockData = [{ id: 1, name: 'Test Item' }];
+    
+    mockPostRequest.mockResolvedValue({
+      successful: true,
+      data: {
+        success: false,
+        message: undefined,
+        importedCount: 0,
+        errorCount: 1,
+        results: [
+          { success: false, message: 'Validation failed', row: 1 }
+        ]
+      },
+      responseMessage: 'Success'
+    });
+
+    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+
+    expect(result.success).toBe(false);
+    expect(result.importedCount).toBe(0);
+    expect(result.errorCount).toBe(1);
+    expect(result.message).toContain('Imported 0 items with 1 errors');
+    expect(result.results).toHaveLength(1);
+    expect(result.results[0].success).toBe(false);
+  });
+
+  it('handles successful upload with errors in message', async () => {
+    const mockData = Array.from({ length: 10 }, (_, i) => ({ id: i, name: `Item ${i}` }));
+    
+    mockPostRequest.mockResolvedValue({
+      successful: true,
+      data: {
+        success: true,
+        message: 'Successfully imported 8 items with 2 errors',
+        importedCount: 8,
+        errorCount: 2,
+        results: [
+          ...Array.from({ length: 8 }, (_, i) => ({
+            success: true,
+            message: 'Success',
+            row: i + 1
+          })),
+          ...Array.from({ length: 2 }, (_, i) => ({
+            success: false,
+            message: 'Validation failed',
+            row: i + 9
+          }))
+        ]
+      },
+      responseMessage: 'Partial success'
+    });
+
+    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+
+    expect(result.success).toBe(true);
+    expect(result.importedCount).toBe(8);
+    expect(result.errorCount).toBe(2);
+    expect(result.message).toContain('Successfully imported 8 items with 2 errors');
+    expect(result.results).toHaveLength(10);
+    expect(result.results.filter(r => r.success)).toHaveLength(8);
+    expect(result.results.filter(r => !r.success)).toHaveLength(2);
+  });
+
+  it('handles successful upload with no errors', async () => {
+    const mockData = Array.from({ length: 5 }, (_, i) => ({ id: i, name: `Item ${i}` }));
+    
+    mockPostRequest.mockResolvedValue({
+      successful: true,
+      data: {
+        success: true,
+        message: 'Successfully imported 5 items',
+        importedCount: 5,
+        errorCount: 0,
+        results: Array.from({ length: 5 }, (_, i) => ({
+          success: true,
+          message: 'Success',
+          row: i + 1
+        }))
+      },
+      responseMessage: 'Success'
+    });
+
+    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+
+    expect(result.success).toBe(true);
+    expect(result.importedCount).toBe(5);
+    expect(result.errorCount).toBe(0);
+    expect(result.message).toContain('Successfully imported 5 items');
+    expect(result.message).not.toContain('with 0 errors');
+    expect(result.results).toHaveLength(5);
+    expect(result.results.every(r => r.success)).toBe(true);
+  });
+
+  it('handles successful upload with errors but no message in importResult', async () => {
+    const mockData = Array.from({ length: 10 }, (_, i) => ({ id: i, name: `Item ${i}` }));
+    
+    mockPostRequest.mockResolvedValue({
+      successful: true,
+      data: {
+        success: false,
+        message: undefined as any,
+        importedCount: 8,
+        errorCount: 2,
+        results: [
+          ...Array.from({ length: 8 }, (_, i) => ({
+            success: true,
+            message: 'Success',
+            row: i + 1
+          })),
+          ...Array.from({ length: 2 }, (_, i) => ({
+            success: false,
+            message: 'Validation failed',
+            row: i + 9
+          }))
+        ]
+      },
+      responseMessage: 'Partial success'
+    });
+
+    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+
+    expect(result.success).toBe(false);
+    expect(result.importedCount).toBe(8);
+    expect(result.errorCount).toBe(2);
+    expect(result.message).toContain('Imported 8 items with 2 errors');
+    expect(result.results).toHaveLength(10);
+    expect(result.results.filter(r => r.success)).toHaveLength(8);
+    expect(result.results.filter(r => !r.success)).toHaveLength(2);
+  });
+
+  it('handles successful upload with errors in success message', async () => {
+    const mockData = Array.from({ length: 15 }, (_, i) => ({ id: i, name: `Item ${i}` }));
+    
+    mockPostRequest.mockResolvedValue({
+      successful: true,
+      data: {
+        success: true,
+        message: 'Successfully imported 12 items with 3 errors',
+        importedCount: 12,
+        errorCount: 3,
+        results: [
+          ...Array.from({ length: 12 }, (_, i) => ({
+            success: true,
+            message: 'Success',
+            row: i + 1
+          })),
+          ...Array.from({ length: 3 }, (_, i) => ({
+            success: false,
+            message: 'Validation failed',
+            row: i + 13
+          }))
+        ]
+      },
+      responseMessage: 'Partial success'
+    });
+
+    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+
+    expect(result.success).toBe(true);
+    expect(result.importedCount).toBe(12);
+    expect(result.errorCount).toBe(3);
+    expect(result.message).toContain('Successfully imported 12 items with 3 errors');
+    expect(result.results).toHaveLength(15);
+    expect(result.results.filter(r => r.success)).toHaveLength(12);
+    expect(result.results.filter(r => !r.success)).toHaveLength(3);
+  });
 }); 

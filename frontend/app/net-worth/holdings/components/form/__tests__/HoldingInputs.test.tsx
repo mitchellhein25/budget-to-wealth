@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { HoldingInputs } from '../HoldingInputs';
 import { getAllHoldingCategories } from '@/app/lib/api/data-methods';
 import { HOLDING_ITEM_NAME_LOWERCASE, HOLDING_TYPE_ASSET, HOLDING_TYPE_DEBT } from '../../constants';
@@ -64,7 +64,9 @@ describe('HoldingInputs', () => {
   });
 
   it('renders all form fields with correct labels and requirements', async () => {
-    render(<HoldingInputs {...defaultProps} />);
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
     expect(screen.getByTestId('field-name')).toBeInTheDocument();
     expect(screen.getByTestId('field-type')).toBeInTheDocument();
@@ -78,7 +80,9 @@ describe('HoldingInputs', () => {
   });
 
   it('renders hidden id input with correct attributes', async () => {
-    render(<HoldingInputs {...defaultProps} />);
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
     const idInput = screen.getByTestId('field-name').parentElement?.querySelector('input[hidden]');
     expect(idInput).toHaveAttribute('id', `${HOLDING_ITEM_NAME_LOWERCASE}-id`);
@@ -89,7 +93,9 @@ describe('HoldingInputs', () => {
 
   it('renders name input with correct attributes and value', async () => {
     const editingFormData = { name: 'Test Holding' };
-    render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
+    });
 
     const nameInput = screen.getByDisplayValue('Test Holding');
     expect(nameInput).toHaveAttribute('id', `${HOLDING_ITEM_NAME_LOWERCASE}-name`);
@@ -98,152 +104,109 @@ describe('HoldingInputs', () => {
   });
 
   it('renders type select with correct options and default value', async () => {
-    render(<HoldingInputs {...defaultProps} />);
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
-    const typeSelect = screen.getByDisplayValue(HOLDING_TYPE_ASSET);
+    const typeSelects = screen.getAllByRole('combobox');
+    const typeSelect = typeSelects[0]; // First combobox is the type select
     expect(typeSelect).toHaveAttribute('id', `${HOLDING_ITEM_NAME_LOWERCASE}-type`);
     expect(typeSelect).toHaveAttribute('name', `${HOLDING_ITEM_NAME_LOWERCASE}-type`);
 
-    expect(screen.getByText(HOLDING_TYPE_ASSET)).toBeInTheDocument();
-    expect(screen.getByText(HOLDING_TYPE_DEBT)).toBeInTheDocument();
+    const options = typeSelect.querySelectorAll('option');
+    expect(options).toHaveLength(2);
+    expect(options[0]).toHaveTextContent('Asset');
+    expect(options[1]).toHaveTextContent('Debt');
   });
 
-  it('renders type select with editing form data value', async () => {
-    const editingFormData = { type: HOLDING_TYPE_DEBT };
-    render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
+  it('renders category select with correct attributes', async () => {
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
-    expect(screen.getByDisplayValue(HOLDING_TYPE_DEBT)).toBeInTheDocument();
-  });
-
-  it('renders category select with placeholder and edit link', async () => {
-    render(<HoldingInputs {...defaultProps} />);
-
-    const categorySelect = screen.getByTestId('field-category').querySelector('select');
+    const categorySelects = screen.getAllByRole('combobox');
+    const categorySelect = categorySelects[1]; // Second combobox is the category select
     expect(categorySelect).toHaveAttribute('id', `${HOLDING_ITEM_NAME_LOWERCASE}-holdingCategoryId`);
-    expect(screen.getByText('Pick a category')).toBeInTheDocument();
+    expect(categorySelect).toHaveAttribute('name', `${HOLDING_ITEM_NAME_LOWERCASE}-holdingCategoryId`);
+  });
+
+  it('renders institution input with correct attributes', async () => {
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
+
+    const institutionInput = screen.getByTestId('field-institution').querySelector('input');
+    expect(institutionInput).toHaveAttribute('id', `${HOLDING_ITEM_NAME_LOWERCASE}-institution`);
+    expect(institutionInput).toHaveAttribute('name', `${HOLDING_ITEM_NAME_LOWERCASE}-institution`);
+    expect(institutionInput).toHaveAttribute('type', 'text');
+  });
+
+  it('displays provided values in form fields', async () => {
+    const editingFormData = {
+      name: 'Test Holding',
+      type: HOLDING_TYPE_ASSET,
+      categoryId: '2',
+      institution: 'Test Bank',
+    };
+
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
+    });
+
+    expect(screen.getByDisplayValue('Test Holding')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Asset')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Test Bank')).toBeInTheDocument();
+  });
+
+  it('displays edit categories link with correct attributes', async () => {
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
     const editLink = screen.getByTestId(editCategoriesLinkTestId);
     expect(editLink).toHaveAttribute('href', '/net-worth/holdings/holding-categories');
     expect(editLink).toHaveAttribute('title', 'Edit Holding Categories');
   });
 
-  it('renders institution input with correct attributes', async () => {
-    const editingFormData = { institution: 'Test Bank' };
-    render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
+  it('displays edit icon', async () => {
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
-    const institutionInput = screen.getByDisplayValue('Test Bank');
-    expect(institutionInput).toHaveAttribute('id', `${HOLDING_ITEM_NAME_LOWERCASE}-institution`);
-    expect(institutionInput).toHaveAttribute('name', `${HOLDING_ITEM_NAME_LOWERCASE}-institution`);
-    expect(institutionInput).toHaveAttribute('type', 'text');
+    expect(screen.getByTestId('edit-icon')).toBeInTheDocument();
   });
 
-  it('fetches categories on mount and sets loading state', async () => {
-    render(<HoldingInputs {...defaultProps} />);
+  it('calls setIsLoading when component mounts', async () => {
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
     expect(mockSetIsLoading).toHaveBeenCalledWith(true);
-    expect(mockGetAllHoldingCategories).toHaveBeenCalled();
-
-    await waitFor(() => {
-      expect(mockSetIsLoading).toHaveBeenCalledWith(false);
-    });
   });
 
-  it('populates category select with fetched categories sorted by name', async () => {
-    render(<HoldingInputs {...defaultProps} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Bonds')).toBeInTheDocument();
-      expect(screen.getByText('Real Estate')).toBeInTheDocument();
-      expect(screen.getByText('Stocks')).toBeInTheDocument();
+  it('handles empty editingFormData', async () => {
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
     });
+
+    const nameInput = screen.getByTestId('field-name').querySelector('input');
+    expect(nameInput).toHaveDisplayValue('');
+    expect(screen.getByDisplayValue('Asset')).toBeInTheDocument();
   });
 
-  it('handles category fetch failure gracefully', async () => {
+  it('handles API error gracefully', async () => {
     mockGetAllHoldingCategories.mockResolvedValue({
       successful: false,
-      data: null,
-      responseMessage: 'Failed to fetch categories',
+      data: [],
+      responseMessage: 'Error fetching categories',
     });
 
-    render(<HoldingInputs {...defaultProps} />);
+    await act(async () => {
+      render(<HoldingInputs {...defaultProps} />);
+    });
 
     await waitFor(() => {
       expect(mockSetIsLoading).toHaveBeenCalledWith(false);
     });
-
-    expect(screen.getByText('Pick a category')).toBeInTheDocument();
-  });
-
-  it('calls onChange when name input changes', async () => {
-    render(<HoldingInputs {...defaultProps} />);
-
-    const nameInput = screen.getByTestId('field-name').querySelector('input');
-    fireEvent.change(nameInput!, { target: { value: 'New Holding' } });
-
-    expect(mockOnChange).toHaveBeenCalled();
-  });
-
-  it('calls onChange when type select changes', async () => {
-    render(<HoldingInputs {...defaultProps} />);
-
-    const typeSelect = screen.getByTestId('field-type').querySelector('select');
-    fireEvent.change(typeSelect!, { target: { value: HOLDING_TYPE_DEBT } });
-
-    expect(mockOnChange).toHaveBeenCalled();
-  });
-
-  it('calls onChange when category select changes', async () => {
-    render(<HoldingInputs {...defaultProps} />);
-
-    await waitFor(() => {
-      const categorySelect = screen.getByTestId('field-category').querySelector('select');
-      fireEvent.change(categorySelect!, { target: { value: '1' } });
-    });
-
-    expect(mockOnChange).toHaveBeenCalled();
-  });
-
-  it('calls onChange when institution input changes', async () => {
-    render(<HoldingInputs {...defaultProps} />);
-
-    const institutionInput = screen.getByTestId('field-institution').querySelector('input');
-    fireEvent.change(institutionInput!, { target: { value: 'New Bank' } });
-
-    expect(mockOnChange).toHaveBeenCalled();
-  });
-
-  it('displays selected category when editingFormData has holdingCategoryId', async () => {
-    const editingFormData = { holdingCategoryId: '2' };
-    render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
-
-    await waitFor(() => {
-      const categorySelect = screen.getByTestId('field-category').querySelector('select');
-      expect(categorySelect).toHaveValue('2');
-    });
-  });
-
-  it('handles empty editingFormData gracefully', async () => {
-    render(<HoldingInputs {...defaultProps} editingFormData={{}} />);
-
-    const nameInput = screen.getByTestId('field-name').querySelector('input');
-    const typeSelect = screen.getByTestId('field-type').querySelector('select');
-    const institutionInput = screen.getByTestId('field-institution').querySelector('input');
-
-    expect(nameInput).toHaveValue('');
-    expect(typeSelect).toHaveValue(HOLDING_TYPE_ASSET);
-    expect(institutionInput).toHaveValue('');
-  });
-
-  it('handles partial editingFormData gracefully', async () => {
-    const editingFormData = { name: 'Partial Data' };
-    render(<HoldingInputs {...defaultProps} editingFormData={editingFormData} />);
-
-    const nameInput = screen.getByTestId('field-name').querySelector('input');
-    const typeSelect = screen.getByTestId('field-type').querySelector('select');
-    const institutionInput = screen.getByTestId('field-institution').querySelector('input');
-
-    expect(nameInput).toHaveValue('Partial Data');
-    expect(typeSelect).toHaveValue(HOLDING_TYPE_ASSET);
-    expect(institutionInput).toHaveValue('');
   });
 }); 

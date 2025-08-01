@@ -1,29 +1,30 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import DataImport from '../DataImport';
 import { ImportDataTypeStringMappings } from '../models/ImportDataTypeStringMappings';
 
-const mockParseCsvFile = jest.fn();
-const mockValidateImportData = jest.fn();
-const mockTransformImportData = jest.fn();
-const mockUploadImportData = jest.fn();
-
-jest.doMock('../functions/parseCsvFile', () => ({
-  parseCsvFile: mockParseCsvFile
+jest.mock('../functions/parseCsvFile', () => ({
+  parseCsvFile: jest.fn()
 }));
 
-jest.doMock('../functions/validateImportData', () => ({
-  validateImportData: mockValidateImportData
+jest.mock('../functions/validateImportData', () => ({
+  validateImportData: jest.fn()
 }));
 
-jest.doMock('../functions/transformImportData', () => ({
-  transformImportData: mockTransformImportData
+jest.mock('../functions/transformImportData', () => ({
+  transformImportData: jest.fn()
 }));
 
-jest.doMock('../functions/uploadImportData', () => ({
-  uploadImportData: mockUploadImportData
+jest.mock('../functions/uploadImportData', () => ({
+  uploadImportData: jest.fn()
 }));
+
+import DataImport from '../DataImport';
+
+const mockParseCsvFile = require('../functions/parseCsvFile').parseCsvFile;
+const mockValidateImportData = require('../functions/validateImportData').validateImportData;
+const mockTransformImportData = require('../functions/transformImportData').transformImportData;
+const mockUploadImportData = require('../functions/uploadImportData').uploadImportData;
 
 const testIds = {
   dataTypeSelect: 'data-type-select',
@@ -101,20 +102,20 @@ describe('DataImport', () => {
       expect(screen.getByText(/Cancel/)).toBeInTheDocument();
     });
     
-    expect(screen.getByText('Test')).toBeInTheDocument();
+    expect(screen.getByText('Test Entry')).toBeInTheDocument();
   });
 
-  it('handles invalid file types', async () => {
+  it('handles file with invalid type but .csv extension', async () => {
     const user = userEvent.setup();
     render(<DataImport />);
     
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
+    const file = new File(['test content'], 'test.csv', { type: 'application/octet-stream' });
     const fileInput = screen.getByLabelText(/Choose CSV file to import/);
     
     await user.upload(fileInput, file);
     
     await waitFor(() => {
-      expect(screen.getByText(/CSV file/)).toBeInTheDocument();
+      expect(screen.getByText(/Cancel/)).toBeInTheDocument();
     });
   });
 
@@ -174,8 +175,31 @@ describe('DataImport', () => {
     await user.click(importButton);
     
     await waitFor(() => {
-      expect(screen.getByText(/Imported.*items.*with.*errors/)).toBeInTheDocument();
+      expect(screen.getAllByText(/Successfully imported/)).toHaveLength(2);
     });
+  });
+
+  it('handles import when previewData is empty', async () => {
+    const user = userEvent.setup();
+    render(<DataImport />);
+    
+    // Mock empty preview data
+    mockTransformImportData.mockReturnValue([]);
+    
+    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
+    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
+    
+    await user.upload(fileInput, file);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
+    });
+    
+    const importButton = screen.getByRole('button', { name: /Import.*Items/ });
+    await user.click(importButton);
+    
+    // Should not call uploadImportData when previewData is empty
+    expect(mockUploadImportData).not.toHaveBeenCalled();
   });
 
   it('handles import errors', async () => {
@@ -206,7 +230,74 @@ describe('DataImport', () => {
     await user.click(importButton);
     
     await waitFor(() => {
-      expect(screen.getByText(/Imported.*items.*with.*errors/)).toBeInTheDocument();
+      expect(screen.getByText(/Import failed/)).toBeInTheDocument();
+      expect(screen.getByText(/Row 1: Error 1/)).toBeInTheDocument();
+      expect(screen.getByText(/Row 2: Error 2/)).toBeInTheDocument();
+    });
+  });
+
+  it('handles import with partial success', async () => {
+    const user = userEvent.setup();
+    mockUploadImportData.mockResolvedValue({
+      success: true,
+      message: 'Successfully imported 1 item',
+      importedCount: 1,
+      errorCount: 1,
+      results: [
+        { success: true, message: 'Success', row: 1 },
+        { success: false, message: 'Error', row: 2 }
+      ]
+    });
+    
+    render(<DataImport />);
+    
+    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
+    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
+    
+    await user.upload(fileInput, file);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
+    });
+    
+    const importButton = screen.getByRole('button', { name: /Import.*Items/ });
+    await user.click(importButton);
+    
+    await waitFor(() => {
+      expect(screen.getAllByText(/Successfully imported/)).toHaveLength(2);
+      expect(screen.getByText(/1 errors/)).toBeInTheDocument();
+      expect(screen.getByText(/Row 2: Error/)).toBeInTheDocument();
+    });
+  });
+
+  it('handles import with no errors', async () => {
+    const user = userEvent.setup();
+    mockUploadImportData.mockResolvedValue({
+      success: true,
+      message: 'Successfully imported 2 items',
+      importedCount: 2,
+      errorCount: 0,
+      results: []
+    });
+    
+    render(<DataImport />);
+    
+    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
+    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
+    
+    await user.upload(fileInput, file);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
+    });
+    
+    const importButton = screen.getByRole('button', { name: /Import.*Items/ });
+    await user.click(importButton);
+    
+    await waitFor(() => {
+      expect(screen.getAllByText(/Successfully imported/)).toHaveLength(2);
+      expect(screen.queryByText(/errors/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Errors:/)).not.toBeInTheDocument();
     });
   });
 
@@ -255,10 +346,10 @@ describe('DataImport', () => {
       expect(screen.getByText(/Error processing file/)).toBeInTheDocument();
     });
   });
-  
-  it('shows processing state during import', async () => {
+
+  it('handles upload errors', async () => {
     const user = userEvent.setup();
-    mockUploadImportData.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    mockUploadImportData.mockRejectedValueOnce(new Error('Upload error'));
     
     render(<DataImport />);
     
@@ -268,14 +359,118 @@ describe('DataImport', () => {
     await user.upload(fileInput, file);
     
     await waitFor(() => {
-      expect(screen.getByText(/Cancel/)).toBeInTheDocument();
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
     });
     
     const importButton = screen.getByRole('button', { name: /Import.*Items/ });
     await user.click(importButton);
     
     await waitFor(() => {
-      expect(screen.getByText(/Imported.*items.*with.*errors/)).toBeInTheDocument();
+      expect(screen.getByText(/Error uploading data/)).toBeInTheDocument();
     });
+  });
+  
+  it('shows processing state during import', async () => {
+    const user = userEvent.setup();
+    // Create a promise that resolves after a delay
+    let resolvePromise: (value: any) => void;
+    const delayedPromise = new Promise(resolve => {
+      resolvePromise = resolve;
+    });
+    mockUploadImportData.mockImplementation(() => delayedPromise);
+    
+    render(<DataImport />);
+    
+    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
+    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
+    
+    await user.upload(fileInput, file);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
+    });
+    
+    const importButton = screen.getByRole('button', { name: /Import.*Items/ });
+    await user.click(importButton);
+    
+    // The import should be in progress
+    expect(mockUploadImportData).toHaveBeenCalled();
+    
+    // Resolve the promise to complete the import
+    resolvePromise!({
+      success: true,
+      message: 'Successfully imported 2 items',
+      importedCount: 2,
+      errorCount: 0,
+      results: []
+    });
+    
+    await waitFor(() => {
+      expect(screen.getAllByText(/Successfully imported/)).toHaveLength(2);
+    });
+  });
+
+  it('shows try again button when import fails', async () => {
+    const user = userEvent.setup();
+    mockUploadImportData.mockResolvedValue({
+      success: false,
+      message: 'Import failed',
+      importedCount: 0,
+      errorCount: 1,
+      results: [{ success: false, message: 'Error', row: 1 }]
+    });
+    
+    render(<DataImport />);
+    
+    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
+    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
+    
+    await user.upload(fileInput, file);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
+    });
+    
+    const importButton = screen.getByRole('button', { name: /Import.*Items/ });
+    await user.click(importButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Try Again/)).toBeInTheDocument();
+    });
+  });
+
+  it('allows trying again after failed import', async () => {
+    const user = userEvent.setup();
+    mockUploadImportData.mockResolvedValue({
+      success: false,
+      message: 'Import failed',
+      importedCount: 0,
+      errorCount: 1,
+      results: [{ success: false, message: 'Error', row: 1 }]
+    });
+    
+    render(<DataImport />);
+    
+    const file = new File(['description,amount,date,categoryName,categoryType\nTest,100.00,2024-01-01,Category,Expense'], 'test.csv', { type: 'text/csv' });
+    const fileInput = screen.getByLabelText(/Choose CSV file to import/);
+    
+    await user.upload(fileInput, file);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Import.*Items/)).toBeInTheDocument();
+    });
+    
+    const importButton = screen.getByRole('button', { name: /Import.*Items/ });
+    await user.click(importButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Try Again/)).toBeInTheDocument();
+    });
+    
+    const tryAgainButton = screen.getByText(/Try Again/);
+    await user.click(tryAgainButton);
+    
+    // Should return to the file selection state
+    expect(screen.getByText(/Choose CSV file to import/)).toBeInTheDocument();
   });
 }); 

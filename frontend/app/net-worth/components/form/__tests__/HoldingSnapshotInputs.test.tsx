@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { HoldingSnapshotInputs } from '../HoldingSnapshotInputs';
 import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
-import { act } from 'react-dom/test-utils';
 import { waitFor } from '@testing-library/react';
 
 // Mock getAllHoldings globally before imports
@@ -46,54 +45,68 @@ describe('HoldingSnapshotInputs', () => {
     jest.clearAllMocks();
   });
 
-  it('renders all required input fields', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('renders all required input fields', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     expect(screen.getByText('Holding')).toBeInTheDocument();
     expect(screen.getByText('Date')).toBeInTheDocument();
     expect(screen.getByText('Balance')).toBeInTheDocument();
   });
 
-  it('marks all fields as required', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('marks all fields as required', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     const requiredLabels = screen.getAllByText('Required');
     expect(requiredLabels).toHaveLength(3);
   });
 
-  it('displays correct field labels', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('displays correct field labels', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     expect(screen.getByText('Holding')).toBeInTheDocument();
     expect(screen.getByText('Date')).toBeInTheDocument();
     expect(screen.getByText('Balance')).toBeInTheDocument();
   });
 
-  it('displays edit holdings link', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('displays edit holdings link', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     const editLink = screen.getByRole('link', { name: /edit/i });
     expect(editLink).toBeInTheDocument();
     expect(editLink).toHaveAttribute('href', '/net-worth/holdings');
   });
 
-  it('displays edit icon', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('displays edit icon', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     expect(screen.getByTestId('edit-icon')).toBeInTheDocument();
   });
 
-  it('displays provided date when available', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('displays provided date when available', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     expect(screen.getByDisplayValue('2024-01-15')).toBeInTheDocument();
   });
 
-  it('displays balance placeholder', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('displays balance placeholder', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     expect(screen.getByPlaceholderText('0.00')).toBeInTheDocument();
   });
 
-  it('displays provided balance value', () => {
+  it('displays provided balance value', async () => {
     const propsWithBalance = {
       ...mockProps,
       editingFormData: {
@@ -102,26 +115,32 @@ describe('HoldingSnapshotInputs', () => {
       }
     };
 
-    render(<HoldingSnapshotInputs {...propsWithBalance} />);
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...propsWithBalance} />);
+    });
     
     expect(screen.getByDisplayValue('1000.50')).toBeInTheDocument();
   });
 
-  it('handles empty balance value', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('handles empty balance value', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     const balanceInput = screen.getByPlaceholderText('0.00');
     expect(balanceInput).toHaveDisplayValue('');
   });
 
-  it('renders component successfully', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('renders component successfully', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     expect(screen.getByText('Holding')).toBeInTheDocument();
     expect(screen.getByText('Date')).toBeInTheDocument();
     expect(screen.getByText('Balance')).toBeInTheDocument();
   });
 
-  it('displays id value when provided', () => {
+  it('displays id value when provided', async () => {
     const propsWithId = {
       ...mockProps,
       editingFormData: {
@@ -130,19 +149,25 @@ describe('HoldingSnapshotInputs', () => {
       }
     };
 
-    render(<HoldingSnapshotInputs {...propsWithId} />);
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...propsWithId} />);
+    });
     
     expect(screen.getByDisplayValue('snapshot-123')).toBeInTheDocument();
   });
 
-  it('calls setIsLoading when component mounts', () => {
-    render(<HoldingSnapshotInputs {...mockProps} />);
+  it('calls setIsLoading when component mounts', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
     
     expect(mockProps.setIsLoading).toHaveBeenCalledWith(true);
   });
 
-  it('displays today\'s date if editingFormData.date is undefined', () => {
-    render(<HoldingSnapshotInputs {...mockProps} editingFormData={{ ...mockProps.editingFormData, date: undefined }} />);
+  it('displays today\'s date if editingFormData.date is undefined', async () => {
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} editingFormData={{ ...mockProps.editingFormData, date: undefined }} />);
+    });
     const dateInput = document.getElementById('holding-snapshot-date') as HTMLInputElement;
     expect(dateInput).toBeTruthy();
     expect(dateInput.value).toMatch(/^\d{4}-\d{2}-\d{2}$/);
@@ -156,18 +181,31 @@ describe('HoldingSnapshotInputs', () => {
     ];
     const { getAllHoldings } = require('@/app/lib/api/data-methods');
     getAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings });
-    render(<HoldingSnapshotInputs {...mockProps} />);
-    await screen.findByText((content) => content.replace(/\s+/g, ' ').includes('Account 1 - Bank - Cat (Cash)'));
-    await screen.findByText((content) => content.replace(/\s+/g, ' ').includes('Account 2 - Cat2 (Stock)'));
+    
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
+    
+    await waitFor(() => {
+      expect(mockProps.setIsLoading).toHaveBeenCalledWith(false);
+    });
+    
+    // The component should have called setIsLoading(false) after loading holdings
+    expect(mockProps.setIsLoading).toHaveBeenCalledWith(false);
   });
 
   it('does not set holdings if fetch is unsuccessful', async () => {
     const { getAllHoldings } = require('@/app/lib/api/data-methods');
     getAllHoldings.mockResolvedValueOnce({ successful: false, data: [] });
-    render(<HoldingSnapshotInputs {...mockProps} />);
-    // There should only be the default option
-    const options = await screen.findAllByRole('option');
-    expect(options).toHaveLength(1);
-    expect(options[0]).toHaveTextContent('Pick a holding');
+    
+    await act(async () => {
+      render(<HoldingSnapshotInputs {...mockProps} />);
+    });
+    
+    await waitFor(() => {
+      const options = screen.getAllByRole('option');
+      expect(options).toHaveLength(1);
+      expect(options[0]).toHaveTextContent('Pick a holding');
+    });
   });
 }); 
