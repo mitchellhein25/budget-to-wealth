@@ -45,45 +45,53 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			<th className="w-1/6">Amount</th>
 			<th className="w-1/5">Category</th>
 			<th className="w-1/5">Description</th>
-			<th className="w-1/5">Recurrence</th>
-			<th></th>
+			{/* <th className="w-1/5">Recurrence</th> */}
+			<th className="text-right">Actions</th>
 		</tr>
 	);
 
 	const tableBodyRow = (entry: CashFlowEntry) => (
-		<tr key={entry.id}>
-			<td className="flex-1">
+		<tr key={entry.id} className="hover">
+			<td className="whitespace-nowrap">
 				{entry.date.toLocaleLowerCase('en-US')}
 			</td>
-			<td className="flex-1">
+			<td className="whitespace-nowrap font-medium">
 				{convertCentsToDollars(entry.amount)}
 			</td>
-			<td className="flex-1">
-				{entry.category?.name}
+			<td className="whitespace-nowrap">
+				{entry.category?.name && (
+					<span className="badge badge-primary badge-sm">
+						{entry.category.name}
+					</span>
+				)}
 			</td>
-			<td className="flex-1">
-				{entry.description}
+			<td>
+				<div className="max-w-xs truncate" title={entry.description}>
+					{entry.description}
+				</div>
 			</td>
-			<td className="flex-1">
+			{/* <td className="whitespace-nowrap">
 				{getRecurrenceText(entry)}
-			</td>
-			<td className="flex space-x-2">
-				<button
-					id="edit-button"
-					onClick={() => props.onEntryIsEditing(entry as CashFlowEntry)}
-					className="p-1 hover:text-primary"
-					aria-label="Edit"
-				>
-					<Pencil size={16} />
-				</button>
-				<button
-					id="delete-button"
-					onClick={() => handleDelete(entry.id as number)}
-					className="p-1 hover:text-error"
-					aria-label="Delete"
-				>
-					<Trash2 size={16} />
-				</button>
+			</td> */}
+			<td className="text-right">
+				<div className="flex items-center justify-end space-x-2">
+					<button
+						id="edit-button"
+						onClick={() => props.onEntryIsEditing(entry as CashFlowEntry)}
+						className="btn btn-ghost btn-xs text-primary hover:bg-primary hover:text-primary-content"
+						aria-label="Edit"
+					>
+						<Pencil size={16} />
+					</button>
+					<button
+						id="delete-button"
+						onClick={() => handleDelete(entry.id as number)}
+						className="btn btn-ghost btn-xs text-error hover:bg-error hover:text-error-content"
+						aria-label="Delete"
+					>
+						<Trash2 size={16} />
+					</button>
+				</div>
 			</td>
 		</tr>
 	);
