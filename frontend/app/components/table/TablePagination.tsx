@@ -15,27 +15,27 @@ export default function TablePagination(props: TablePaginationProps) {
   }
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="flex items-center">
         <button
           onClick={props.handlePrevious}
           disabled={props.currentPage === 1}
-          className="btn btn-outline btn-sm"
+          className="btn btn-outline btn-xs sm:btn-sm"
         >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Previous
+          <span>Previous</span>
         </button>
       </div>
 
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center flex-wrap justify-center gap-1 max-w-full overflow-hidden">
         {Array.from({ length: props.totalPages }, (_, i) => i + 1)
           .filter((pageNumber) => {
             if (pageNumber === 1 || pageNumber === props.totalPages) return true;
             if (
-              pageNumber >= props.currentPage - 2 &&
-              pageNumber <= props.currentPage + 2
+              pageNumber >= props.currentPage - 1 &&
+              pageNumber <= props.currentPage + 1
             )
               return true;
             return false;
@@ -47,11 +47,11 @@ export default function TablePagination(props: TablePaginationProps) {
             return (
               <React.Fragment key={pageNumber}>
                 {shouldShowEllipsis && (
-                  <span className="px-3 py-2 text-sm text-base-content/70">...</span>
+                  <span className="px-2 py-1 text-xs sm:text-sm text-base-content/70">...</span>
                 )}
                 <button
                   onClick={() => props.handlePageChange(pageNumber)}
-                  className={`btn btn-sm ${
+                  className={`btn btn-xs sm:btn-sm min-w-[2rem] ${
                     props.currentPage === pageNumber
                       ? 'btn-primary'
                       : 'btn-outline'
@@ -64,14 +64,14 @@ export default function TablePagination(props: TablePaginationProps) {
           })}
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center">
         <button
           onClick={props.handleNext}
           disabled={props.currentPage === props.totalPages}
-          className="btn btn-outline btn-sm"
+          className="btn btn-outline btn-xs sm:btn-sm"
         >
-          Next
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span>Next</span>
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
