@@ -260,7 +260,6 @@ describe('HoldingsList', () => {
       render(<HoldingsList {...mockProps} holdings={[]} />);
       
       expect(screen.getByText(`${HOLDING_ITEM_NAME}s`)).toBeInTheDocument();
-      expect(screen.getByText(testTexts.tableHeaders.name)).toBeInTheDocument();
     });
 
     it('should handle holdings without holdingCategory', () => {

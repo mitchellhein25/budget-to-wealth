@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import TablePagination from './TablePagination';
+import { useMobileDetection } from '@/app/hooks';
 
 export type ListTableItem = (
   | { name: string }
@@ -11,6 +12,7 @@ export type ListTableProps<T extends ListTableItem> = {
   items: T[];
   headerRow: React.ReactNode;
   bodyRow: (item: T) => React.ReactNode;
+  mobileRow?: (item: T) => React.ReactNode;
   itemsPerPage?: number;
   isLoading?: boolean;
   isError?: boolean;
@@ -18,6 +20,7 @@ export type ListTableProps<T extends ListTableItem> = {
 
 export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 	const [currentPage, setCurrentPage] = useState(1);
+	const isMobile = useMobileDetection();
 	const itemsPerPage = props.itemsPerPage || 10;
 
 	const sortedItems = useMemo(() => {
@@ -100,22 +103,32 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 								</div>
 							) : (
 								<>
-									<div className="overflow-hidden rounded-lg border border-base-300">
-										<div className="overflow-x-auto">
-											<table className="table table-zebra w-full">
-												<thead>
-													{props.headerRow}
-												</thead>
-												<tbody>
-													{currentItems.map((item, index) => (
-														<React.Fragment key={index}>
-															{props.bodyRow(item)}
-														</React.Fragment>
-													))}
-												</tbody>
-											</table>
+									{isMobile && props.mobileRow ? (
+										<div className="space-y-4">
+											{currentItems.map((item, index) => (
+												<React.Fragment key={index}>
+													{props.mobileRow!(item)}
+												</React.Fragment>
+											))}
 										</div>
-									</div>
+									) : (
+										<div className="overflow-hidden rounded-lg border border-base-300">
+											<div className="overflow-x-auto">
+												<table className="table table-zebra w-full">
+													<thead>
+														{props.headerRow}
+													</thead>
+													<tbody>
+														{currentItems.map((item, index) => (
+															<React.Fragment key={index}>
+																{props.bodyRow(item)}
+															</React.Fragment>
+														))}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									)}
 									
 									{totalPages > 1 && (
 										<div className="mt-6">

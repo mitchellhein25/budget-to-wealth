@@ -3,11 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
-import { navItems } from '.';
+import { navItems, cashflowSubNavItems } from './utils';
 
 export function MobileDrawer(
   { pathname, onClose }: { pathname: string, onClose: () => void }) 
 {
+  const isCashflowPage = pathname.startsWith('/cashflow');
+  
   return (
     <div className="drawer-side">
       <label htmlFor="mobile-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
@@ -37,6 +39,33 @@ export function MobileDrawer(
               </Link>
             );
           })}
+          
+          {isCashflowPage && (
+            <>
+              <div className="divider my-4"></div>
+              <div className="text-sm font-medium text-base-content/70 mb-2 px-2">
+                Cashflow
+              </div>
+              {cashflowSubNavItems.map((item) => {
+                const isActive = pathname.startsWith(item.href);
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={`btn btn-block justify-start btn-sm ml-4 ${
+                      isActive
+                        ? 'btn-primary'
+                        : 'btn-ghost'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </>
+          )}
         </div>
       </aside>
     </div>

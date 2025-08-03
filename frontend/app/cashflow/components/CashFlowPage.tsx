@@ -1,19 +1,19 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useForm } from '@/app/hooks';
+import { useForm, useMobileDetection } from '@/app/hooks';
 import { CASH_FLOW_ENTRIES_ENDPOINT, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
 import { DatePicker, DateRange, MESSAGE_TYPE_ERROR, MessageState, TotalDisplay, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
 import { CashFlowType, CashFlowEntry, CashFlowSideBar } from '@/app/cashflow/components';
 import { CashFlowEntriesForm, CashFlowEntryFormData, transformCashFlowFormDataToEntry } from './form';
 import CashFlowEntriesList from './list/CashFlowEntriesList';
 
-
 export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [items, setItems] = useState<CashFlowEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
+  const isMobile = useMobileDetection();
 
   const fetchCashFlowEntries = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, cashFlowType), [dateRange, cashFlowType]);
 
@@ -68,40 +68,80 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
   
   return (
     <div className="flex gap-6 p-6 h-full min-h-screen">
-      <CashFlowSideBar />
+      {!isMobile && <CashFlowSideBar />}
       <div className="flex flex-1 gap-6">
-        <div className="flex-shrink-0">
-          <CashFlowEntriesForm
-            cashFlowType={cashFlowType}
-            formState={formState}
-          />
-        </div>
-        <div className="flex flex-1 flex-col gap-4">
-          <div className="flex items-center justify-between">
+        {isMobile ? (
+          <div className="flex-1 flex flex-col gap-6">
+            <div className="w-full">
+              <CashFlowEntriesForm
+                cashFlowType={cashFlowType}
+                formState={formState}
+              />
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              <div className="w-full">
+                <DatePicker
+                  dateRange={dateRange}
+                  setDateRange={setDateRange}
+                />
+              </div>
+              <div className="flex justify-center">
+                <TotalDisplay
+                  label={`Total ${cashFlowType}`}
+                  amount={totalAmount}
+                  isLoading={isLoading}
+                />
+              </div>
+            </div>
+            
             <div className="flex-1">
-              <DatePicker
-                dateRange={dateRange}
-                setDateRange={setDateRange}
-              />
-            </div>
-            <div className="flex-1 flex justify-center">
-              <TotalDisplay
-                label={`Total ${cashFlowType}`}
-                amount={totalAmount}
+              <CashFlowEntriesList
+                cashFlowType={cashFlowType}
+                entries={items}
+                onEntryDeleted={fetchItems}
+                onEntryIsEditing={formState.onItemIsEditing}
                 isLoading={isLoading}
+                isError={messageTypeIsError(message)}
               />
             </div>
-            <div className="flex-1"></div>
           </div>
-          <CashFlowEntriesList
-            cashFlowType={cashFlowType}
-            entries={items}
-            onEntryDeleted={fetchItems}
-            onEntryIsEditing={formState.onItemIsEditing}
-            isLoading={isLoading}
-            isError={messageTypeIsError(message)}
-          />
-        </div>
+        ) : (
+          <>
+            <div className="flex-shrink-0">
+              <CashFlowEntriesForm
+                cashFlowType={cashFlowType}
+                formState={formState}
+              />
+            </div>
+            <div className="flex flex-1 flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <DatePicker
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                  />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <TotalDisplay
+                    label={`Total ${cashFlowType}`}
+                    amount={totalAmount}
+                    isLoading={isLoading}
+                  />
+                </div>
+                <div className="flex-1"></div>
+              </div>
+              <CashFlowEntriesList
+                cashFlowType={cashFlowType}
+                entries={items}
+                onEntryDeleted={fetchItems}
+                onEntryIsEditing={formState.onItemIsEditing}
+                isLoading={isLoading}
+                isError={messageTypeIsError(message)}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
