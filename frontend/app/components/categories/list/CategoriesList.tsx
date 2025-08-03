@@ -1,9 +1,9 @@
 'use client'
 
-import { Pencil, Trash2 } from 'lucide-react';
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { ListTable } from '../../table/ListTable';
 import { Category } from '../Category';
+import { EditButton, DeleteButton } from '../../buttons';
 
 type CategoriesListProps<T extends Category> = {
   categories: T[],
@@ -35,22 +35,14 @@ export function CategoriesList<T extends Category>(props: CategoriesListProps<T>
         {category.name}
       </td>
       <td className="flex space-x-2">
-        <button
-          id="edit-button"
+        <EditButton 
           onClick={() => props.onCategoryIsEditing(category)}
           className="p-1 hover:text-primary"
-          aria-label="Edit"
-        >
-          <Pencil size={16} />
-        </button>
-        <button
-          id="delete-button"
+        />
+        <DeleteButton 
           onClick={() => handleDelete(category.id as number)}
           className="p-1 hover:text-error"
-          aria-label="Delete"
-        >
-          <Trash2 size={16} />
-        </button>
+        />
       </td>
     </tr>
   );

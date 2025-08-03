@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useMemo }	 from 'react';
-import { Pencil, Trash2, Equal, ArrowUp, ArrowDown } from 'lucide-react';
+import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
 import { convertCentsToDollars } from '@/app/components';
 import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { deleteBudget } from '@/app/lib/api/data-methods';
 import { BUDGET_ITEM_NAME, Budget } from '..';
+import { EditButton, DeleteButton } from '@/app/components/buttons';
 
 interface BudgetsListProps {
 	budgets: Budget[],
@@ -64,22 +65,14 @@ export function BudgetsList(props: BudgetsListProps) {
         {getRemainingBudget(budget) == 0 ? <Equal size={22} /> : getRemainingBudget(budget) > 0 ? <ArrowDown size={22} /> : <ArrowUp size={22} />}
       </td>
 			<td className="flex space-x-2">
-				<button
-					id="edit-button"
+				<EditButton 
 					onClick={() => props.onBudgetIsEditing(budget)}
 					className="p-1 hover:text-primary"
-					aria-label="Edit"
-				>
-					<Pencil size={16} />
-				</button>
-				<button
-					id="delete-button"
+				/>
+				<DeleteButton 
 					onClick={() => handleDelete(budget.id as number)}
 					className="p-1 hover:text-error"
-					aria-label="Delete"
-				>
-					<Trash2 size={16} />
-				</button>
+				/>
 			</td>
 		</tr>
 	);

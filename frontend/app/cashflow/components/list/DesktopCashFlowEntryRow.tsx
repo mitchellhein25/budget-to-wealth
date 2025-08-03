@@ -1,6 +1,6 @@
 import { convertCentsToDollars } from '@/app/components';
 import { CashFlowEntry } from '..';
-import { Pencil, Trash2 } from 'lucide-react';
+import { EditButton, DeleteButton } from '@/app/components/buttons';
 
 interface DesktopCashFlowEntryRowProps {
 	entry: CashFlowEntry;
@@ -35,22 +35,8 @@ export default function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowPr
 			</td> */}
 			<td className="text-right">
 				<div className="flex items-center justify-end space-x-2">
-					<button
-						id="edit-button"
-						onClick={() => props.onEdit(props.entry as CashFlowEntry)}
-						className="btn btn-ghost btn-xs text-primary hover:bg-primary hover:text-primary-content"
-						aria-label="Edit"
-					>
-						<Pencil size={16} />
-					</button>
-					<button
-						id="delete-button"
-						onClick={() => props.onDelete(props.entry.id as number)}
-						className="btn btn-ghost btn-xs text-error hover:bg-error hover:text-error-content"
-						aria-label="Delete"
-					>
-						<Trash2 size={16} />
-					</button>
+					<EditButton onClick={() => props.onEdit(props.entry as CashFlowEntry)} />
+					<DeleteButton onClick={() => props.onDelete(props.entry.id as number)} />
 				</div>
 			</td>
 		</tr>

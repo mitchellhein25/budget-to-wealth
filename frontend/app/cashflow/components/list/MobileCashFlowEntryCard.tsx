@@ -1,6 +1,6 @@
-import { Pencil, Trash2 } from "lucide-react";
 import { convertCentsToDollars } from "@/app/components";
 import { CashFlowEntry } from "..";
+import { EditButton, DeleteButton } from "@/app/components/buttons";
 
 interface MobileCashFlowEntryCardProps {
 	entry: CashFlowEntry;
@@ -35,20 +35,8 @@ export function MobileCashFlowEntryCard({ entry, onEdit, onDelete }: MobileCashF
 						</p>
 					</div>
 					<div className="flex items-center space-x-2">
-						<button
-							onClick={() => onEdit(entry)}
-							className="btn btn-ghost btn-xs text-primary hover:bg-primary hover:text-primary-content"
-							aria-label="Edit"
-						>
-							<Pencil size={16} />
-						</button>
-						<button
-							onClick={() => onDelete(entry.id as number)}
-							className="btn btn-ghost btn-xs text-error hover:bg-error hover:text-error-content"
-							aria-label="Delete"
-						>
-							<Trash2 size={16} />
-						</button>
+						<EditButton onClick={() => onEdit(entry)} />
+						<DeleteButton onClick={() => onDelete(entry.id as number)} />
 					</div>
 				</div>
 			</div>

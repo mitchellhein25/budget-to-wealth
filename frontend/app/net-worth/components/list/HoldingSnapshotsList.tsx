@@ -1,11 +1,11 @@
 'use client'
 
 import React from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
 import { convertCentsToDollars } from '@/app/components';
 import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/components';
 import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
+import { EditButton, DeleteButton } from '@/app/components/buttons';
 
 type HoldingSnapshotsListProps = {
 	snapshots: HoldingSnapshot[],
@@ -46,22 +46,14 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 				{convertCentsToDollars(snapshot.balance)}
 			</td>
 			<td className="flex space-x-2">
-				<button
-					id="edit-button"
+				<EditButton 
 					onClick={() => props.onSnapshotIsEditing(snapshot)}
 					className="p-1 hover:text-primary"
-					aria-label="Edit"
-				>
-					<Pencil size={16} />
-				</button>
-				<button
-					id="delete-button"
+				/>
+				<DeleteButton 
 					onClick={() => handleDelete(snapshot.id as number)}
 					className="p-1 hover:text-error"
-					aria-label="Delete"
-				>
-					<Trash2 size={16} />
-				</button>
+				/>
 			</td>
 		</tr>
 	);

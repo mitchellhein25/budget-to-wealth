@@ -1,8 +1,8 @@
 import React from 'react'
-import { Pencil, Trash2 } from 'lucide-react';
 import { deleteHolding } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
 import { HOLDING_ITEM_NAME, Holding } from '..';
+import { EditButton, DeleteButton } from '@/app/components/buttons';
 
 type HoldingsListProps = {
   holdings: Holding[],
@@ -46,22 +46,14 @@ export function HoldingsList(props: HoldingsListProps) {
         {holding.type}
       </td>
       <td className="flex space-x-2">
-        <button
-          id="edit-button"
+        <EditButton 
           onClick={() => props.onHoldingIsEditing(holding)}
           className="p-1 hover:text-primary"
-          aria-label="Edit"
-        >
-          <Pencil size={16} />
-        </button>
-        <button
-          id="delete-button"
+        />
+        <DeleteButton 
           onClick={() => handleDelete(holding.id as number)}
           className="p-1 hover:text-error"
-          aria-label="Delete"
-        >
-          <Trash2 size={16} />
-        </button>
+        />
       </td>
     </tr>
   );

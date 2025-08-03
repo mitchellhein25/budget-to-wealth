@@ -56,7 +56,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
       itemEndpoint: CASH_FLOW_ENTRIES_ENDPOINT,
       transformFormDataToItem: transformFormDataToEntry,
       convertItemToFormData: convertCashFlowEntryToFormData,
-      fetchItems: fetchCashFlowEntries,
+      fetchItems: fetchItems,
     }
   );
 
