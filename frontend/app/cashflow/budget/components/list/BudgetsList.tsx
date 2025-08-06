@@ -1,13 +1,12 @@
 'use client'
 
-import React, { useMemo }	 from 'react';
-import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
-import { convertCentsToDollars } from '@/app/components';
+import React from 'react';
 import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { deleteBudget } from '@/app/lib/api/data-methods';
 import { BUDGET_ITEM_NAME, Budget } from '..';
-import { EditButton, DeleteButton } from '@/app/components/buttons';
+import DesktopBudgetRow from './DesktopBudgetRow';
+import { MobileBudgetCard } from './MobileBudgetCard';
 
 interface BudgetsListProps {
 	budgets: Budget[],
@@ -28,14 +27,7 @@ export function BudgetsList(props: BudgetsListProps) {
 		}
 	};
 
-  const getAmountSpentInCategory = useMemo(() => {
-    return (categoryId: string) => props.expenses.filter(expense => expense.categoryId === categoryId)
-												 	.reduce((acc, expense) => acc + expense.amount, 0);
-  }, [props.expenses]);
 
-  const getRemainingBudget = (budget: Budget) => {
-    return budget.amount - getAmountSpentInCategory(budget.categoryId);
-  };
 
 	const tableHeaderRow = (
 		<tr>
@@ -47,41 +39,32 @@ export function BudgetsList(props: BudgetsListProps) {
 		</tr>
 	);
 
-	const tableBodyRow = (budget: Budget) => (
-		<tr key={budget.id}>
-			<td className="flex-1">
-				{budget.category?.name}
-			</td>
-			<td className="flex-1">
-									{convertCentsToDollars(budget.amount)}
-				</td>
-				<td className="flex-1">
-					{convertCentsToDollars(getAmountSpentInCategory(budget.categoryId))}
-				</td>
-				<td className="flex-1">
-					{convertCentsToDollars(getRemainingBudget(budget))}
-      </td>
-      <td className={"flex-1 " + (getRemainingBudget(budget) == 0 ? "text-yellow-500" : getRemainingBudget(budget) > 0 ? "text-green-500" : "text-red-500")}>
-        {getRemainingBudget(budget) == 0 ? <Equal size={22} /> : getRemainingBudget(budget) > 0 ? <ArrowDown size={22} /> : <ArrowUp size={22} />}
-      </td>
-			<td className="flex space-x-2">
-				<EditButton 
-					onClick={() => props.onBudgetIsEditing(budget)}
-					className="p-1 hover:text-primary"
-				/>
-				<DeleteButton 
-					onClick={() => handleDelete(budget.id as number)}
-					className="p-1 hover:text-error"
-				/>
-			</td>
-		</tr>
+	const desktopRow = (budget: Budget) => (
+		<DesktopBudgetRow
+			key={budget.id}
+			budget={budget}
+			expenses={props.expenses}
+			onEdit={props.onBudgetIsEditing}
+			onDelete={handleDelete}
+		/>
+	);
+
+	const mobileRow = (budget: Budget) => (
+		<MobileBudgetCard
+			key={budget.id}
+			budget={budget}
+			expenses={props.expenses}
+			onEdit={props.onBudgetIsEditing}
+			onDelete={handleDelete}
+		/>
 	);
 
 	return (
 		<ListTable
 			title={`${BUDGET_ITEM_NAME}s`}
 			headerRow={tableHeaderRow}
-			bodyRow={tableBodyRow}
+			bodyRow={desktopRow}
+			mobileRow={mobileRow}
 			items={props.budgets}
 			isError={props.isError}
 			isLoading={props.isLoading}

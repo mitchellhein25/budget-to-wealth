@@ -34,23 +34,25 @@ export function BudgetSummary(props: BudgetSummaryProps) {
   const isLoading = props.isLoading;
 
   return (
-    <div className="flex gap-4">
-      <TotalDisplay
-        label={`Total ${BUDGET_ITEM_NAME}`}
-        amount={totalBudget}
-        isLoading={isLoading}
-      />
-      <TotalDisplay
-        label="Total Expenses"
-        amount={totalExpenses}
-        isLoading={isLoading}
-      />
-      <div className="bg-base-200 rounded-lg p-4 min-w-[200px]">
-        <div className="text-sm font-medium text-base-content/70 flex items-center gap-2">
+    <div className="flex flex-col gap-1 w-full">
+      <div className="flex gap-2">
+        <TotalDisplay
+          label={`Total ${BUDGET_ITEM_NAME}`}
+          amount={totalBudget}
+          isLoading={isLoading}
+        />
+        <TotalDisplay
+          label="Total Expenses"
+          amount={totalExpenses}
+          isLoading={isLoading}
+        />
+      </div>
+      <div className="bg-base-200 rounded p-2">
+        <div className="text-xs font-medium text-base-content/70 flex items-center gap-1">
           {getOverUnderLabel()}
           {getStatusIcon()}
         </div>
-        <div className="text-2xl font-bold text-base-content">
+        <div className="text-lg font-bold text-base-content">
           {isLoading ? '...' : (overUnder >= 0 ? '+' : '') + (overUnder / 100).toFixed(2)}
         </div>
       </div>

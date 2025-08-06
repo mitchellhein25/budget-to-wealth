@@ -33,7 +33,6 @@ export default function BudgetsPage() {
       setBudgets(response.data as Budget[]);
     } catch (error) {
       setErrorMessage(`An error occurred while loading ${BUDGET_ITEM_NAME_LOWERCASE}s. Please try again.`);
-      console.error("Fetch error:", error);
     } finally {
       setIsLoadingBudgets(false);
     }
