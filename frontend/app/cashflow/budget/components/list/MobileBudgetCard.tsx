@@ -50,22 +50,22 @@ export function MobileBudgetCard({ budget, expenses, onEdit, onDelete }: MobileB
 					</div>
 				</div>
 
-				<div className="flex items-center justify-between">
-					<div className="flex flex-col space-y-1">
+				<div className="flex items-center justify-between gap-2">
+					<div className="flex flex-col space-y-1 min-w-0 flex-1">
 						<div className="text-xs text-base-content/70">Budget</div>
-						<div className="text-lg font-bold text-base-content">
+						<div className="text-lg font-bold text-base-content break-words">
 							{convertCentsToDollars(budget.amount)}
 						</div>
 					</div>
-					<div className="flex flex-col space-y-1">
+					<div className="flex flex-col space-y-1 min-w-0 flex-1">
 						<div className="text-xs text-base-content/70">Spent</div>
-						<div className="text-base text-base-content">
+						<div className="text-base text-base-content break-words">
 							{convertCentsToDollars(amountSpent)}
 						</div>
 					</div>
-					<div className="flex flex-col space-y-1">
+					<div className="flex flex-col space-y-1 min-w-0 flex-1">
 						<div className="text-xs text-base-content/70">Remaining</div>
-						<div className={`text-base font-medium ${
+						<div className={`text-base font-medium break-words ${
 							remainingBudget === 0 ? 'text-yellow-500' : 
 							remainingBudget > 0 ? 'text-green-500' : 'text-red-500'
 						}`}>

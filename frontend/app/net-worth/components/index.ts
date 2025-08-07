@@ -7,3 +7,5 @@ export * from './form/functions/transformFormDataToHoldingSnapshot';
 export * from './form/functions/holdingSnapshotFormOnChange';
 export * from './form/functions/getHoldingSnapshotValidationResult';
 export * from './list/HoldingSnapshotsList';
+export * from './list/MobileHoldingSnapshotCard';
+export * from './list/DesktopHoldingSnapshotRow';
