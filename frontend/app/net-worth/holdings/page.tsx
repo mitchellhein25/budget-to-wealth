@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useForm, useParentPath } from '@/app/hooks';
+import { useForm, useParentPath, useMobileDetection } from '@/app/hooks';
 import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api/data-methods';
 import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding } from './components';
 import { MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components/Utils';
@@ -13,6 +13,7 @@ export default function HoldingsPage() {
   const [items, setItems] = useState<Holding[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
+  const isMobile = useMobileDetection();
 
   const fetchHoldings = useCallback( () => getAllHoldings(), []);
 
@@ -68,7 +69,7 @@ export default function HoldingsPage() {
       </div>
       
       <div className="flex gap-6 h-full min-h-screen">
-        <div className="flex flex-1 gap-6">
+        <div className={`flex flex-1 gap-6 ${isMobile ? 'flex-col' : ''}`}>
           <div className="flex-shrink-0">
             <HoldingForm
               formState={formState}

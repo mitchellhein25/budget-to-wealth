@@ -2,7 +2,8 @@ import React from 'react'
 import { deleteHolding } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
 import { HOLDING_ITEM_NAME, Holding } from '..';
-import { EditButton, DeleteButton } from '@/app/components/buttons';
+import { MobileHoldingCard } from './MobileHoldingCard';
+import DesktopHoldingRow from './DesktopHoldingRow';
 
 type HoldingsListProps = {
   holdings: Holding[],
@@ -19,7 +20,7 @@ export function HoldingsList(props: HoldingsListProps) {
       <th className="w-1/5">Institution</th>
       <th className="w-2/5">Category</th>
       <th className="w-1/5">Type</th>
-      <th></th>
+      <th className="text-right">Actions</th>
     </tr>
   );
 
@@ -31,37 +32,29 @@ export function HoldingsList(props: HoldingsListProps) {
 		}
 	};
 
-  const tableBodyRow = (holding: Holding) => (
-    <tr key={holding.id}>
-      <td className="flex-1">
-        {holding.name}
-      </td>
-      <td className="flex-1">
-        {holding.institution}
-      </td>
-      <td className="flex-1">
-        {holding.holdingCategory?.name}
-      </td>
-      <td className="flex-1">
-        {holding.type}
-      </td>
-      <td className="flex space-x-2">
-        <EditButton 
-          onClick={() => props.onHoldingIsEditing(holding)}
-          className="p-1 hover:text-primary"
-        />
-        <DeleteButton 
-          onClick={() => handleDelete(holding.id as number)}
-          className="p-1 hover:text-error"
-        />
-      </td>
-    </tr>
+  const desktopRow = (holding: Holding) => (
+    <DesktopHoldingRow
+      key={holding.id}
+      holding={holding}
+      onEdit={props.onHoldingIsEditing}
+      onDelete={handleDelete}
+    />
+  );
+
+  const mobileRow = (holding: Holding) => (
+    <MobileHoldingCard
+      key={holding.id}
+      holding={holding}
+      onEdit={props.onHoldingIsEditing}
+      onDelete={handleDelete}
+    />
   );
 
   return (
     <ListTable
       items={props.holdings}
-      bodyRow={tableBodyRow}
+      bodyRow={desktopRow}
+      mobileRow={mobileRow}
       headerRow={tableHeaderRow}
       isLoading={props.isLoading}
       isError={props.isError}
