@@ -27,6 +27,7 @@ jest.mock('@/app/hooks', () => ({
     message: null,
     fetchItems: jest.fn(),
   }),
+  useMobileDetection: () => false,
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({

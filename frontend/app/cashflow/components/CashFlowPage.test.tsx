@@ -34,6 +34,7 @@ interface CashFlowEntry {
 
 jest.mock('@/app/hooks', () => ({
   useForm: jest.fn(),
+  useMobileDetection: () => false,
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({

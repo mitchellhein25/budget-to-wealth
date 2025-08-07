@@ -58,14 +58,14 @@ describe('TablePagination', () => {
   it('disables Previous button on first page', () => {
     render(<TablePagination {...mockProps} currentPage={1} />);
     
-    const previousButton = screen.getByText('Previous');
+    const previousButton = screen.getByText('Previous').closest('button');
     expect(previousButton).toBeDisabled();
   });
 
   it('disables Next button on last page', () => {
     render(<TablePagination {...mockProps} currentPage={5} />);
     
-    const nextButton = screen.getByText('Next');
+    const nextButton = screen.getByText('Next').closest('button');
     expect(nextButton).toBeDisabled();
   });
 }); 

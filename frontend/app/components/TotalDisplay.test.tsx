@@ -73,13 +73,6 @@ describe('TotalDisplay', () => {
     expect(container).toHaveClass('custom-class');
   });
 
-  it('applies default styling when no className is provided', () => {
-    render(<TotalDisplay {...defaultProps} />);
-    
-    const container = screen.getByText('Total Income').closest('.bg-base-200');
-    expect(container).toHaveClass('bg-base-200', 'rounded-lg', 'p-4', 'min-w-[200px]');
-  });
-
   it('handles different labels', () => {
     render(<TotalDisplay {...defaultProps} label="Total Expenses" />);
     

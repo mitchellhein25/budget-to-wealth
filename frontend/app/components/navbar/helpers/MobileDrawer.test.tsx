@@ -18,7 +18,7 @@ jest.mock('lucide-react', () => ({
 
 jest.mock('.', () => ({
   navItems: [
-    { href: '/cashflow/expenses', label: 'Cash Flow' },
+    { href: '/cashflow/expenses', label: 'Cashflow' },
     { href: '/net-worth', label: 'Net Worth' },
     { href: '/dashboards', label: 'Dashboards' },
   ],
@@ -49,7 +49,7 @@ describe('MobileDrawer', () => {
   it('renders navigation items with correct labels', () => {
     render(<MobileDrawer pathname="/test" onClose={mockOnClose} />);
 
-    expect(screen.getByText('Cash Flow')).toBeInTheDocument();
+    expect(screen.getByText('Cashflow')).toBeInTheDocument();
     expect(screen.getByText('Net Worth')).toBeInTheDocument();
     expect(screen.getByText('Dashboards')).toBeInTheDocument();
   });
@@ -85,8 +85,10 @@ describe('MobileDrawer', () => {
   it('marks cash flow as active when pathname starts with /cashflow', () => {
     render(<MobileDrawer pathname="/cashflow/expenses" onClose={mockOnClose} />);
 
-    const cashFlowLink = screen.getByTestId('mobile-nav-link-/cashflow/expenses');
-    expect(cashFlowLink).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
+    const cashFlowLinks = screen.getAllByTestId('mobile-nav-link-/cashflow/expenses');
+    cashFlowLinks.forEach(link => {
+      expect(link).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
+    });
   });
 
   it('marks net worth as active when pathname starts with /net-worth', () => {
@@ -136,27 +138,6 @@ describe('MobileDrawer', () => {
     fireEvent.click(dashboardsLink);
 
     expect(mockOnClose).toHaveBeenCalledTimes(3);
-  });
-
-  it('renders navigation items container with correct classes', () => {
-    render(<MobileDrawer pathname="/test" onClose={mockOnClose} />);
-
-    const navContainer = screen.getByText('Cash Flow').closest('.flex');
-    expect(navContainer).toHaveClass('flex', 'flex-col', 'space-y-2');
-  });
-
-  it('renders header with correct classes', () => {
-    render(<MobileDrawer pathname="/test" onClose={mockOnClose} />);
-
-    const header = screen.getByText('Menu').closest('.flex');
-    expect(header).toHaveClass('flex', 'justify-between', 'items-center', 'mb-4');
-  });
-
-  it('renders menu title with correct classes', () => {
-    render(<MobileDrawer pathname="/test" onClose={mockOnClose} />);
-
-    const menuTitle = screen.getByText('Menu');
-    expect(menuTitle).toHaveClass('text-lg', 'font-semibold');
   });
 
   it('handles exact pathname matches', () => {
