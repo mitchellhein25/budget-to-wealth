@@ -1,5 +1,6 @@
 import React from 'react'
-import { ArrowLeft, Link } from 'lucide-react'
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react'
 
 export const BACK_ARROW_TEXT = "Back";
 

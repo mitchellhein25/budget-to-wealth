@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { useForm, useParentPath, useMobileDetection } from '@/app/hooks';
 import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api/data-methods';
 import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding } from './components';
 import { MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components/Utils';
+import { BackArrow } from '@/app/components/buttons/BackArrow';
 
 export default function HoldingsPage() {
   const parentPath = useParentPath();
@@ -59,13 +58,7 @@ export default function HoldingsPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <Link
-          href={parentPath}
-          className="btn btn-ghost btn-sm gap-2"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </Link>
+        <BackArrow link={parentPath} />
       </div>
       
       <div className="flex gap-6 h-full min-h-screen">
