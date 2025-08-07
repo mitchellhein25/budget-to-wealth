@@ -11,6 +11,7 @@ const categoriesListText = 'Categories List';
 
 jest.mock('@/app/hooks', () => ({
   useForm: jest.fn(),
+  useMobileDetection: jest.fn(),
 }));
 
 jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({

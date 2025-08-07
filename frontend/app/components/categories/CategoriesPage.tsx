@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import { useForm } from "@/app/hooks";
+import { useForm, useMobileDetection } from "@/app/hooks";
 import { getRequestList } from "@/app/lib/api/rest-methods";
 import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow/components";
 import { MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from "../Utils";
@@ -20,6 +20,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   const [items, setItems] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
+  const isMobile = useMobileDetection();
 
   const fetchCategories = useCallback(() => getRequestList<T>(props.getEndpoint), [props.getEndpoint]);
 
@@ -70,7 +71,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   }, [fetchItems]);
 
   return (
-    <div className="flex gap-6 p-6">
+    <div className={`flex gap-6 p-6 ${isMobile ? 'flex-col' : ''}`}>
       <CategoriesForm
         formState={formState}
         categoryTypeName={props.categoryTypeName}
