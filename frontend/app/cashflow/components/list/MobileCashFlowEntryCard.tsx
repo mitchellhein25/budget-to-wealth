@@ -1,6 +1,6 @@
 import { convertCentsToDollars } from "@/app/components";
 import { CashFlowEntry } from "..";
-import { EditButton, DeleteButton } from "@/app/components/buttons";
+import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
 
 interface MobileCashFlowEntryCardProps {
 	entry: CashFlowEntry;
@@ -9,37 +9,39 @@ interface MobileCashFlowEntryCardProps {
 }
 
 export function MobileCashFlowEntryCard({ entry, onEdit, onDelete }: MobileCashFlowEntryCardProps) {
+	const handleEdit = () => onEdit(entry);
+	const handleDelete = () => onDelete(entry.id as number);
+
 	return (
-		<div className="card bg-base-100 border border-base-300 shadow-sm">
-			<div className="card-body p-4">
-				<div className="flex items-center justify-between mb-3">
-					<div className="flex items-center space-x-3">
+		<MobileListItemCard>
+			<MobileListItemCardHeader
+				leftContent={
+					<>
 						<div className="text-sm font-medium text-base-content">
 							{entry.date.toLocaleLowerCase('en-US')}
 						</div>
 						<div className="text-lg font-bold text-base-content">
 							{convertCentsToDollars(entry.amount)}
 						</div>
-					</div>
-					{entry.category?.name && (
+					</>
+				}
+				rightContent={
+					entry.category?.name && (
 						<span className="badge badge-primary badge-md">
 							{entry.category.name}
 						</span>
-					)}
-				</div>
-
-				<div className="flex items-start justify-between gap-2">
-					<div className="flex-1 min-w-0">
-						<p className="text-sm text-base-content break-words" title={entry.description}>
-							{entry.description}
-						</p>
-					</div>
-					<div className="flex items-center space-x-2 flex-shrink-0">
-						<EditButton onClick={() => onEdit(entry)} />
-						<DeleteButton onClick={() => onDelete(entry.id as number)} />
-					</div>
-				</div>
-			</div>
-		</div>
+					)
+				}
+			/>
+			<MobileListItemCardContent
+				description={
+					<p className="text-sm text-base-content break-words" title={entry.description}>
+						{entry.description}
+					</p>
+				}
+				onEdit={handleEdit}
+				onDelete={handleDelete}
+			/>
+		</MobileListItemCard>
 	);
 }

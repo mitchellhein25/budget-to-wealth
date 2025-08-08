@@ -31,11 +31,12 @@ export function BudgetsList(props: BudgetsListProps) {
 
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-1/5">Category</th>
-			<th className="w-1/5">Amount</th>
-      <th className="w-1/5">Spent</th>
-      <th className="w-1/5">Remaining</th>
-			<th className="w-1/5">Status</th>
+			<th className="w-1/6">Category</th>
+			<th className="w-1/6">Amount</th>
+      <th className="w-1/6">Spent</th>
+      <th className="w-1/6">Remaining</th>
+			<th className="w-1/6">Status</th>
+			<th className="w-1/6 text-right">Actions</th>
 		</tr>
 	);
 

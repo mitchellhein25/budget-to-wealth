@@ -1,8 +1,7 @@
 import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
-import { convertCentsToDollars } from '@/app/components';
+import { convertCentsToDollars, DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { Budget } from '..';
-import { EditButton, DeleteButton } from '@/app/components/buttons';
 
 interface DesktopBudgetRowProps {
 	budget: Budget;
@@ -22,34 +21,26 @@ export default function DesktopBudgetRow({ budget, expenses, onEdit, onDelete }:
 	};
 
 	const remainingBudget = getRemainingBudget(budget);
+	const handleEdit = () => onEdit(budget);
+	const handleDelete = () => onDelete(budget.id as number);
 
 	return (
-		<tr key={budget.id} className="hover">
-			<td className="flex-1">
+		<DesktopListItemRow key={budget.id} onEdit={handleEdit} onDelete={handleDelete}>
+			<DesktopListItemCell>
 				{budget.category?.name}
-			</td>
-			<td className="flex-1">
+			</DesktopListItemCell>
+			<DesktopListItemCell>
 				{convertCentsToDollars(budget.amount)}
-			</td>
-			<td className="flex-1">
+			</DesktopListItemCell>
+			<DesktopListItemCell>
 				{convertCentsToDollars(getAmountSpentInCategory(budget.categoryId))}
-			</td>
-			<td className="flex-1">
+			</DesktopListItemCell>
+			<DesktopListItemCell>
 				{convertCentsToDollars(remainingBudget)}
-			</td>
-			<td className={"flex-1 " + (remainingBudget === 0 ? "text-yellow-500" : remainingBudget > 0 ? "text-green-500" : "text-red-500")}>
+			</DesktopListItemCell>
+			<DesktopListItemCell className={"flex-1 " + (remainingBudget === 0 ? "text-yellow-500" : remainingBudget > 0 ? "text-green-500" : "text-red-500")}>
 				{remainingBudget === 0 ? <Equal size={22} /> : remainingBudget > 0 ? <ArrowDown size={22} /> : <ArrowUp size={22} />}
-			</td>
-			<td className="flex space-x-2">
-				<EditButton 
-					onClick={() => onEdit(budget)}
-					className="p-1 hover:text-primary"
-				/>
-				<DeleteButton 
-					onClick={() => onDelete(budget.id as number)}
-					className="p-1 hover:text-error"
-				/>
-			</td>
-		</tr>
+			</DesktopListItemCell>
+		</DesktopListItemRow>
 	);
 } 

@@ -1,6 +1,6 @@
 import { convertCentsToDollars } from '@/app/components';
 import { CashFlowEntry } from '..';
-import { EditButton, DeleteButton } from '@/app/components/buttons';
+import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
 interface DesktopCashFlowEntryRowProps {
 	entry: CashFlowEntry;
@@ -9,36 +9,27 @@ interface DesktopCashFlowEntryRowProps {
 }
 
 export default function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
+	const handleEdit = () => props.onEdit(props.entry as CashFlowEntry);
+	const handleDelete = () => props.onDelete(props.entry.id as number);
 	
   return (
-    <tr key={props.entry.id} className="hover">
-			<td className="whitespace-nowrap">
+    <DesktopListItemRow key={props.entry.id} onEdit={handleEdit} onDelete={handleDelete}>
+			<DesktopListItemCell>
 				{props.entry.date.toLocaleLowerCase('en-US')}
-			</td>
-			<td className="whitespace-nowrap font-medium">
+			</DesktopListItemCell>
+			<DesktopListItemCell className="whitespace-nowrap font-medium">
 				{convertCentsToDollars(props.entry.amount)}
-			</td>
-			<td className="whitespace-nowrap">
+			</DesktopListItemCell>
+			<DesktopListItemCell>
 				{props.entry.category?.name && (
 					<span className="badge badge-primary badge-sm">
 						{props.entry.category.name}
 					</span>
 				)}
-			</td>
-			<td>
-				<div className="max-w-xs truncate" title={props.entry.description}>
-					{props.entry.description}
-				</div>
-			</td>
-			{/* <td className="whitespace-nowrap">
-				{getRecurrenceText(entry)}
-			</td> */}
-			<td className="text-right">
-				<div className="flex items-center justify-end space-x-2">
-					<EditButton onClick={() => props.onEdit(props.entry as CashFlowEntry)} />
-					<DeleteButton onClick={() => props.onDelete(props.entry.id as number)} />
-				</div>
-			</td>
-		</tr>
+			</DesktopListItemCell>
+			<DesktopListItemCell title={props.entry.description}>
+				{props.entry.description}
+			</DesktopListItemCell>
+		</DesktopListItemRow>
   )
 }

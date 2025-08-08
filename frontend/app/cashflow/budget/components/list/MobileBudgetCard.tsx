@@ -1,8 +1,8 @@
 import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
-import { convertCentsToDollars } from '@/app/components';
+import { convertCentsToDollars, MobileListItemCard, MobileListItemCardHeader } from '@/app/components';
+import { EditButton, DeleteButton } from '@/app/components/buttons';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { Budget } from '..';
-import { EditButton, DeleteButton } from '@/app/components/buttons';
 
 interface MobileBudgetCardProps {
 	budget: Budget;
@@ -35,45 +35,48 @@ export function MobileBudgetCard({ budget, expenses, onEdit, onDelete }: MobileB
 	};
 
 	return (
-		<div className="card bg-base-100 border border-base-300 shadow-sm">
-			<div className="card-body p-4">
-				<div className="flex items-center justify-between mb-3">
-					<div className="flex items-center space-x-3">
+		<MobileListItemCard>
+			<MobileListItemCardHeader
+				leftContent={
+					<>
 						<div className="text-sm font-medium text-base-content">
 							{budget.category?.name}
 						</div>
 						{getStatusIcon()}
-					</div>
+					</>
+				}
+				rightContent={
 					<div className="flex items-center space-x-2">
 						<EditButton onClick={() => onEdit(budget)} />
 						<DeleteButton onClick={() => onDelete(budget.id as number)} />
 					</div>
+				}
+			/>
+			
+			{/* Custom content section for budget amounts */}
+			<div className="flex items-center justify-between gap-2">
+				<div className="flex flex-col space-y-1 min-w-0 flex-1">
+					<div className="text-xs text-base-content/70">Budget</div>
+					<div className="text-lg font-bold text-base-content break-words">
+						{convertCentsToDollars(budget.amount)}
+					</div>
 				</div>
-
-				<div className="flex items-center justify-between gap-2">
-					<div className="flex flex-col space-y-1 min-w-0 flex-1">
-						<div className="text-xs text-base-content/70">Budget</div>
-						<div className="text-lg font-bold text-base-content break-words">
-							{convertCentsToDollars(budget.amount)}
-						</div>
+				<div className="flex flex-col space-y-1 min-w-0 flex-1">
+					<div className="text-xs text-base-content/70">Spent</div>
+					<div className="text-base text-base-content break-words">
+						{convertCentsToDollars(amountSpent)}
 					</div>
-					<div className="flex flex-col space-y-1 min-w-0 flex-1">
-						<div className="text-xs text-base-content/70">Spent</div>
-						<div className="text-base text-base-content break-words">
-							{convertCentsToDollars(amountSpent)}
-						</div>
-					</div>
-					<div className="flex flex-col space-y-1 min-w-0 flex-1">
-						<div className="text-xs text-base-content/70">Remaining</div>
-						<div className={`text-base font-medium break-words ${
-							remainingBudget === 0 ? 'text-yellow-500' : 
-							remainingBudget > 0 ? 'text-green-500' : 'text-red-500'
-						}`}>
-							{convertCentsToDollars(remainingBudget)}
-						</div>
+				</div>
+				<div className="flex flex-col space-y-1 min-w-0 flex-1">
+					<div className="text-xs text-base-content/70">Remaining</div>
+					<div className={`text-base font-medium break-words ${
+						remainingBudget === 0 ? 'text-yellow-500' : 
+						remainingBudget > 0 ? 'text-green-500' : 'text-red-500'
+					}`}>
+						{convertCentsToDollars(remainingBudget)}
 					</div>
 				</div>
 			</div>
-		</div>
+		</MobileListItemCard>
 	);
 } 

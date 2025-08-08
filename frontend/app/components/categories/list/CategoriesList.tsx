@@ -3,7 +3,8 @@
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 import { ListTable } from '../../table/ListTable';
 import { Category } from '../Category';
-import { EditButton, DeleteButton } from '../../buttons';
+import { MobileCategoryCard } from './MobileCategoryCard';
+import DesktopCategoryRow from './DesktopCategoryRow';
 
 type CategoriesListProps<T extends Category> = {
   categories: T[],
@@ -25,26 +26,26 @@ export function CategoriesList<T extends Category>(props: CategoriesListProps<T>
   const tableHeaderRow = (
     <tr>
       <th className="w-3/4">Name</th>
-      <th className="w-1/4"></th>
+      <th className="w-1/4 text-right">Actions</th>
     </tr>
   );
 
-  const tableBodyRow = (category: T) => (
-    <tr key={category.id}>
-      <td className="flex-1">
-        {category.name}
-      </td>
-      <td className="flex space-x-2">
-        <EditButton 
-          onClick={() => props.onCategoryIsEditing(category)}
-          className="p-1 hover:text-primary"
-        />
-        <DeleteButton 
-          onClick={() => handleDelete(category.id as number)}
-          className="p-1 hover:text-error"
-        />
-      </td>
-    </tr>
+  const desktopRow = (category: T) => (
+    <DesktopCategoryRow
+      key={category.id}
+      category={category}
+      onEdit={props.onCategoryIsEditing}
+      onDelete={handleDelete}
+    />
+  );
+
+  const mobileRow = (category: T) => (
+    <MobileCategoryCard
+      key={category.id}
+      category={category}
+      onEdit={props.onCategoryIsEditing}
+      onDelete={handleDelete}
+    />
   );
 
   return (
@@ -52,7 +53,8 @@ export function CategoriesList<T extends Category>(props: CategoriesListProps<T>
       title={`${props.categoryTypeName} Categories`}
       items={props.categories}
       headerRow={tableHeaderRow}
-      bodyRow={tableBodyRow}
+      bodyRow={desktopRow}
+      mobileRow={mobileRow}
       isLoading={props.isLoading}
       isError={props.isError}
     />

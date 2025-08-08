@@ -1,5 +1,6 @@
 import { render, screen, act } from '@testing-library/react';
 import HoldingsPage from './page';
+import { useMobileDetection } from '@/app/hooks';
 
 const backButtonTestId = 'back-button';
 const holdingFormTestId = 'holding-form';
@@ -18,6 +19,7 @@ jest.mock('@/app/hooks', () => ({
     message: null,
   }),
   useParentPath: () => '/net-worth',
+  useMobileDetection: () => ({ isMobile: false }),
 }));
 
 jest.mock('@/app/lib/api/data-methods', () => ({
