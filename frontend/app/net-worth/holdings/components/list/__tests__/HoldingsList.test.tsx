@@ -14,7 +14,7 @@ jest.mock('@/app/lib/api/data-methods', () => ({
 }));
 
 jest.mock('@/app/components', () => ({
-  DesktopListItemRow: ({ children, onEdit, onDelete }: any) => (
+  DesktopListItemRow: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
     <tr>
       {children}
       <td>
@@ -23,21 +23,21 @@ jest.mock('@/app/components', () => ({
       </td>
     </tr>
   ),
-  DesktopListItemCell: ({ children, title }: any) => (
+  DesktopListItemCell: ({ children, title }: { children: React.ReactNode; title?: string }) => (
     <td title={title}>{children}</td>
   ),
-  MobileListItemCard: ({ children }: any) => (
+  MobileListItemCard: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="mobile-list-item-card">
       {children}
     </div>
   ),
-  MobileListItemCardHeader: ({ leftContent, rightContent }: any) => (
+  MobileListItemCardHeader: ({ leftContent, rightContent }: { leftContent: React.ReactNode; rightContent?: React.ReactNode }) => (
     <div data-testid="mobile-list-item-card-header">
       <div>{leftContent}</div>
       <div>{rightContent}</div>
     </div>
   ),
-  MobileListItemCardContent: ({ description, onEdit, onDelete }: any) => (
+  MobileListItemCardContent: ({ description, onEdit, onDelete }: { description: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
     <div data-testid="mobile-list-item-card-content">
       {description}
       <div>

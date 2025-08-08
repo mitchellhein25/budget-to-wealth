@@ -1,6 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { CategoriesList } from './CategoriesList';
-import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
 
 const listTableTestId = 'list-table';
 const listTableText = 'List Table';
@@ -11,7 +10,7 @@ const isLoadingTestId = 'is-loading';
 
 jest.mock('@/app/components/table/ListTable', () => ({
   __esModule: true,
-  ListTable: ({ title, bodyRow, items, isError, isLoading }: { 
+  ListTable: ({ title, items, isError, isLoading }: { 
     title: string; 
     headerRow: unknown; 
     bodyRow: (item: unknown) => React.ReactElement; 
@@ -26,9 +25,8 @@ jest.mock('@/app/components/table/ListTable', () => ({
       <div data-testid={isErrorTestId}>{isError.toString()}</div>
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
       <div data-testid="table-content">
-        {items?.map((item: unknown, index: number) => {
-          const rowElement = bodyRow(item);
-          return (
+                 {items?.map((item: unknown, index: number) => {
+           return (
             <div key={index} data-testid={`item-${index}`}>
               <div data-testid={`item-name-${index}`}>
                 {(item as { name: string }).name}
@@ -50,7 +48,7 @@ jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
 }));
 
 jest.mock('@/app/components', () => ({
-  DesktopListItemRow: ({ children, onEdit, onDelete }: any) => (
+  DesktopListItemRow: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
     <tr>
       {children}
       <td>
@@ -59,7 +57,7 @@ jest.mock('@/app/components', () => ({
       </td>
     </tr>
   ),
-  DesktopListItemCell: ({ children, title }: any) => (
+  DesktopListItemCell: ({ children, title }: { children: React.ReactNode; title?: string }) => (
     <td title={title}>{children}</td>
   ),
 }));
@@ -71,7 +69,7 @@ describe('CategoriesList', () => {
     { id: 3, name: 'Category 3' },
   ];
 
-  const mockDeleteRequest = jest.mocked(deleteRequest);
+
   const mockOnCategoryDeleted = jest.fn();
   const mockOnCategoryIsEditing = jest.fn();
 

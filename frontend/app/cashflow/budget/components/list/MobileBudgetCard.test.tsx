@@ -39,7 +39,7 @@ const mockOnDelete = jest.fn();
 
 jest.mock('@/app/components', () => ({
   convertCentsToDollars: jest.fn((amount: number) => `$${(amount / 100).toFixed(2)}`),
-  MobileListItemCard: ({ children, onEdit, onDelete }: any) => (
+  MobileListItemCard: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
     <div data-testid="mobile-list-item-card">
       {children}
       <div>
@@ -48,13 +48,13 @@ jest.mock('@/app/components', () => ({
       </div>
     </div>
   ),
-  MobileListItemCardHeader: ({ leftContent, rightContent }: any) => (
+  MobileListItemCardHeader: ({ leftContent, rightContent }: { leftContent: React.ReactNode; rightContent?: React.ReactNode }) => (
     <div data-testid="mobile-list-item-card-header">
       <div>{leftContent}</div>
       <div>{rightContent}</div>
     </div>
   ),
-  MobileListItemCardContent: ({ description }: any) => (
+  MobileListItemCardContent: ({ description }: { description: React.ReactNode }) => (
     <div data-testid="mobile-list-item-card-content">
       {description}
     </div>

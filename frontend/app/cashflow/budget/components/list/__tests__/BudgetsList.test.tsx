@@ -40,7 +40,7 @@ jest.mock('@/app/components/table/ListTable', () => ({
 
 jest.mock('@/app/components', () => ({
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
-  DesktopListItemRow: ({ children, onEdit, onDelete }: any) => (
+  DesktopListItemRow: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
     <tr>
       {children}
       <td>
@@ -49,7 +49,7 @@ jest.mock('@/app/components', () => ({
       </td>
     </tr>
   ),
-  DesktopListItemCell: ({ children, title }: any) => (
+  DesktopListItemCell: ({ children, title }: { children: React.ReactNode; title?: string }) => (
     <td title={title}>{children}</td>
   ),
 }));
