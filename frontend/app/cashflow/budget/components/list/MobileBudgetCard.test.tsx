@@ -39,6 +39,26 @@ const mockOnDelete = jest.fn();
 
 jest.mock('@/app/components', () => ({
   convertCentsToDollars: jest.fn((amount: number) => `$${(amount / 100).toFixed(2)}`),
+  MobileListItemCard: ({ children, onEdit, onDelete }: any) => (
+    <div data-testid="mobile-list-item-card">
+      {children}
+      <div>
+        <button onClick={onEdit}>Edit</button>
+        <button onClick={onDelete}>Delete</button>
+      </div>
+    </div>
+  ),
+  MobileListItemCardHeader: ({ leftContent, rightContent }: any) => (
+    <div data-testid="mobile-list-item-card-header">
+      <div>{leftContent}</div>
+      <div>{rightContent}</div>
+    </div>
+  ),
+  MobileListItemCardContent: ({ description }: any) => (
+    <div data-testid="mobile-list-item-card-content">
+      {description}
+    </div>
+  ),
 }));
 
 jest.mock('@/app/components/buttons', () => ({
@@ -196,7 +216,7 @@ describe('MobileBudgetCard', () => {
       />
     );
 
-    const remainingElement = screen.getByText('$-30.00');
+    const remainingElement = screen.getByText('-$30.00');
     expect(remainingElement).toHaveClass('text-red-500');
   });
 

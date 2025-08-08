@@ -5,6 +5,10 @@ import { CashFlowEntry } from '@/app/cashflow/components';
 import { deleteBudget } from '@/app/lib/api/data-methods';
 import { BUDGET_ITEM_NAME } from '../../constants';
 
+jest.mock('@/app/hooks/useMobileDetection', () => ({
+  useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
+}));
+
 jest.mock('@/app/lib/api/data-methods', () => ({
   deleteBudget: jest.fn(),
 }));
@@ -36,6 +40,18 @@ jest.mock('@/app/components/table/ListTable', () => ({
 
 jest.mock('@/app/components', () => ({
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
+  DesktopListItemRow: ({ children, onEdit, onDelete }: any) => (
+    <tr>
+      {children}
+      <td>
+        <button onClick={onEdit}>Edit</button>
+        <button onClick={onDelete}>Delete</button>
+      </td>
+    </tr>
+  ),
+  DesktopListItemCell: ({ children, title }: any) => (
+    <td title={title}>{children}</td>
+  ),
 }));
 
 const mockDeleteBudget = jest.mocked(deleteBudget);
@@ -116,7 +132,7 @@ describe('BudgetsList', () => {
     
     expect(screen.getByText('Groceries')).toBeInTheDocument();
     expect(screen.getByText('Entertainment')).toBeInTheDocument();
-    expect(screen.getByText('$1000.00')).toBeInTheDocument();
+    expect(screen.getByText('$1,000.00')).toBeInTheDocument();
     expect(screen.getByText('$500.00')).toBeInTheDocument();
   });
 
@@ -134,8 +150,8 @@ describe('BudgetsList', () => {
     
     // Groceries: $1000.00 - $750.00 = $250.00 remaining
     expect(screen.getByText('$250.00')).toBeInTheDocument();
-    // Entertainment: $500.00 - $600.00 = $-100.00 remaining (over budget)
-    expect(screen.getByText('$-100.00')).toBeInTheDocument();
+    // Entertainment: $500.00 - $600.00 = -$100.00 remaining (over budget)
+    expect(screen.getByText('-$100.00')).toBeInTheDocument();
   });
 
   it('shows correct status indicators', () => {
@@ -143,7 +159,7 @@ describe('BudgetsList', () => {
     
     // Should show ArrowDown for under budget (positive remaining)
     expect(screen.getByTestId('list-table')).toHaveTextContent('$250.00'); // Under budget
-    expect(screen.getByTestId('list-table')).toHaveTextContent('$-100.00'); // Over budget
+    expect(screen.getByTestId('list-table')).toHaveTextContent('-$100.00'); // Over budget
   });
 
   it('shows equal sign when budget is exactly spent', () => {
@@ -173,7 +189,7 @@ describe('BudgetsList', () => {
   it('calls onBudgetIsEditing when edit button is clicked', () => {
     render(<BudgetsList {...mockProps} />);
     
-    const editButtons = screen.getAllByLabelText('Edit');
+    const editButtons = screen.getAllByText('Edit');
     fireEvent.click(editButtons[0]);
     
     expect(mockProps.onBudgetIsEditing).toHaveBeenCalledWith(mockBudgets[0]);
@@ -188,7 +204,7 @@ describe('BudgetsList', () => {
     
     render(<BudgetsList {...mockProps} />);
     
-    const deleteButtons = screen.getAllByLabelText('Delete');
+    const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
     
     expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
@@ -204,7 +220,7 @@ describe('BudgetsList', () => {
     
     render(<BudgetsList {...mockProps} />);
     
-    const deleteButtons = screen.getAllByLabelText('Delete');
+    const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
     
     expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
@@ -221,7 +237,7 @@ describe('BudgetsList', () => {
     
     render(<BudgetsList {...mockProps} />);
     
-    const deleteButtons = screen.getAllByLabelText('Delete');
+    const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
     
     await waitFor(() => {
@@ -241,9 +257,9 @@ describe('BudgetsList', () => {
     render(<BudgetsList {...mockProps} expenses={[]} />);
     
     // Should show full budget amounts as remaining
-    expect(screen.getByTestId('list-table')).toHaveTextContent('$1000.00'); // Budget amount
+    expect(screen.getByTestId('list-table')).toHaveTextContent('$1,000.00'); // Budget amount
     expect(screen.getByTestId('list-table')).toHaveTextContent('$0.00'); // Spent amount
-    expect(screen.getByTestId('list-table')).toHaveTextContent('$1000.00'); // Remaining amount
+    expect(screen.getByTestId('list-table')).toHaveTextContent('$1,000.00'); // Remaining amount
   });
 
   it('handles budget without category', () => {
@@ -257,7 +273,7 @@ describe('BudgetsList', () => {
     render(<BudgetsList {...mockProps} budgets={budgetWithoutCategory} />);
     
     // When there's no category, it should show the name instead
-    expect(screen.getByTestId('list-table')).toHaveTextContent('$1000.00'); // Budget amount
+    expect(screen.getByTestId('list-table')).toHaveTextContent('$1,000.00'); // Budget amount
   });
 
   it('calculates spent amount correctly for multiple expenses in same category', () => {
