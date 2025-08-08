@@ -3,7 +3,7 @@ import { deleteHolding } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
 import { HOLDING_ITEM_NAME, Holding } from '..';
 import { MobileHoldingCard } from './MobileHoldingCard';
-import DesktopHoldingRow from './DesktopHoldingRow';
+import { DesktopHoldingRow } from './DesktopHoldingRow';
 
 type HoldingsListProps = {
   holdings: Holding[],

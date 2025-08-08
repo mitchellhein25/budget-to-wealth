@@ -5,3 +5,6 @@ export * from './components/CashFlowSideBar';
 export * from './components/CashFlowType';
 export * from './components/RecurrenceFrequency';
 export * from './components/constants';
+export * from './list/CashFlowEntriesList';
+export * from './list/DesktopCashFlowEntryRow';
+export * from './list/MobileCashFlowEntryCard';

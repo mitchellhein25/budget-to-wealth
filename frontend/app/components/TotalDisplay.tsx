@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { convertCentsToDollars } from '@/app/components';
+import { convertCentsToDollars } from '@/app/components/Utils';
 
 interface TotalDisplayProps {
   label: string;

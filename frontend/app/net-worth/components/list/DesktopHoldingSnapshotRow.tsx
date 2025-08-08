@@ -1,4 +1,4 @@
-import { convertCentsToDollars } from '@/app/components';
+import { convertCentsToDollars } from '@/app/components/Utils';
 import { HoldingSnapshot } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
@@ -8,7 +8,7 @@ interface DesktopHoldingSnapshotRowProps {
 	onDelete: (id: number) => void;
 }
 
-export default function DesktopHoldingSnapshotRow(props: DesktopHoldingSnapshotRowProps) {
+export function DesktopHoldingSnapshotRow(props: DesktopHoldingSnapshotRowProps) {
 	const handleEdit = () => props.onEdit(props.snapshot as HoldingSnapshot);
 	const handleDelete = () => props.onDelete(props.snapshot.id as number);
 	

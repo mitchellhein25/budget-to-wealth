@@ -5,7 +5,7 @@ import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { deleteBudget } from '@/app/lib/api/data-methods';
 import { BUDGET_ITEM_NAME, Budget } from '..';
-import DesktopBudgetRow from './DesktopBudgetRow';
+import { DesktopBudgetRow } from './DesktopBudgetRow';
 import { MobileBudgetCard } from './MobileBudgetCard';
 
 interface BudgetsListProps {

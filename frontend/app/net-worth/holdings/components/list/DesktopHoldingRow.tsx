@@ -7,7 +7,7 @@ interface DesktopHoldingRowProps {
 	onDelete: (id: number) => void;
 }
 
-export default function DesktopHoldingRow(props: DesktopHoldingRowProps) {
+export function DesktopHoldingRow(props: DesktopHoldingRowProps) {
 	const handleEdit = () => props.onEdit(props.holding as Holding);
 	const handleDelete = () => props.onDelete(props.holding.id as number);
 	

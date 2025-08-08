@@ -5,7 +5,7 @@ import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/com
 import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
 import { MobileHoldingSnapshotCard } from './MobileHoldingSnapshotCard';
-import DesktopHoldingSnapshotRow from './DesktopHoldingSnapshotRow';
+import { DesktopHoldingSnapshotRow } from './DesktopHoldingSnapshotRow';
 
 type HoldingSnapshotsListProps = {
 	snapshots: HoldingSnapshot[],

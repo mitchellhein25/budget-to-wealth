@@ -1,5 +1,6 @@
 import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
-import { convertCentsToDollars, DesktopListItemRow, DesktopListItemCell } from '@/app/components';
+import { convertCentsToDollars } from '@/app/components/Utils';
+import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { Budget } from '..';
 
@@ -10,7 +11,7 @@ interface DesktopBudgetRowProps {
 	onDelete: (id: number) => void;
 }
 
-export default function DesktopBudgetRow({ budget, expenses, onEdit, onDelete }: DesktopBudgetRowProps) {
+export function DesktopBudgetRow({ budget, expenses, onEdit, onDelete }: DesktopBudgetRowProps) {
 	const getAmountSpentInCategory = (categoryId: string) => {
 		return expenses.filter(expense => expense.categoryId === categoryId)
 			.reduce((acc, expense) => acc + expense.amount, 0);

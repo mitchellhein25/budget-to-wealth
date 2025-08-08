@@ -1,4 +1,4 @@
-import { convertCentsToDollars } from '@/app/components';
+import { convertCentsToDollars } from '@/app/components/Utils';
 import { CashFlowEntry } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
@@ -8,7 +8,7 @@ interface DesktopCashFlowEntryRowProps {
 	onDelete: (id: number) => void;
 }
 
-export default function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
+export function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
 	const handleEdit = () => props.onEdit(props.entry as CashFlowEntry);
 	const handleDelete = () => props.onDelete(props.entry.id as number);
 	

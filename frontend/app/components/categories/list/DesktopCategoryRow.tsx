@@ -7,7 +7,7 @@ interface DesktopCategoryRowProps<T extends Category> {
 	onDelete: (id: number) => void;
 }
 
-export default function DesktopCategoryRow<T extends Category>(props: DesktopCategoryRowProps<T>) {
+export function DesktopCategoryRow<T extends Category>(props: DesktopCategoryRowProps<T>) {
 	const handleEdit = () => props.onEdit(props.category);
 	const handleDelete = () => props.onDelete(props.category.id as number);
 	

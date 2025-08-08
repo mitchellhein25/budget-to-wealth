@@ -5,7 +5,7 @@ import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry, CashFlowType } from '..';
 import { MobileCashFlowEntryCard } from './MobileCashFlowEntryCard';
-import DesktopCashFlowEntryRow from './DesktopCashFlowEntryRow';
+import { DesktopCashFlowEntryRow } from './DesktopCashFlowEntryRow';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
