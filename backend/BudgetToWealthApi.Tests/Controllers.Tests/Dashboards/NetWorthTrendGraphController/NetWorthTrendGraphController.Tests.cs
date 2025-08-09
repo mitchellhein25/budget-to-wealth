@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 public class NetWorthTrendGraphControllerTests : IDisposable
 {
     private readonly string _user1Id = "auth0|user1";
-    private NetWorthTrendGraphControllerTestObjects _testObjects;
+    private NetWorthTrendGraphControllerTestObjects _testObjects = null!;
     private ApplicationDbContext _context;
     private NetWorthTrendGraphController _controller;
     private readonly IDbContextTransaction _transaction;

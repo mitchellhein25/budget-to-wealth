@@ -16,9 +16,9 @@ public class RecurringCashFlowEntriesServiceTests : IDisposable
     private ApplicationDbContext _context;
     private readonly IDbContextTransaction _transaction;
     private readonly RecurringCashFlowEntriesService _service;
-    public CashFlowCategory DefaultCategory;
-    public CashFlowCategory TestUser1Category;
-    public CashFlowCategory TestUser2Category;
+    public CashFlowCategory DefaultCategory = null!;
+    public CashFlowCategory TestUser1Category = null!;
+    public CashFlowCategory TestUser2Category = null!;
 
     public RecurringCashFlowEntriesServiceTests()
     {
@@ -35,7 +35,7 @@ public class RecurringCashFlowEntriesServiceTests : IDisposable
         TestUser2Category = await CreateTestCategory(_otherUserCatName, CashFlowType.Expense, _user2Id);
     }
 
-    private async Task<CashFlowCategory> CreateTestCategory(string name, CashFlowType categoryType, string userId)
+    private async Task<CashFlowCategory> CreateTestCategory(string name, CashFlowType categoryType, string? userId)
     {
         CashFlowCategory category = new()
         {

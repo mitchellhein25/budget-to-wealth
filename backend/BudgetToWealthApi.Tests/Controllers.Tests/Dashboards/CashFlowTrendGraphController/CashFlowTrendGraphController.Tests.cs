@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 public class CashFlowTrendGraphControllerTests : IDisposable
 {
     private readonly string _user1Id = "auth0|user1";
-    private CashFlowTrendGraphControllerTestObjects _testObjects;
+    private CashFlowTrendGraphControllerTestObjects _testObjects = null!;
     private ApplicationDbContext _context;
     private CashFlowTrendGraphController _controller;
     private readonly IDbContextTransaction _transaction;

@@ -59,7 +59,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
         };
     }
 
-    private async Task<CashFlowCategory> CreateTestCategory(string name, string userId = null)
+    private async Task<CashFlowCategory> CreateTestCategory(string name, string? userId = null)
     {
         CashFlowCategory category = new()
         {
@@ -152,7 +152,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
     [InlineData(" ")]
     public async Task Create_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        IActionResult result = await _controller.Create(new CashFlowCategory { Name = invalidName, CategoryType = CashFlowType.Expense });
+        IActionResult result = await _controller.Create(new CashFlowCategory { Name = invalidName!, CategoryType = CashFlowType.Expense });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
@@ -168,7 +168,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
 
         CashFlowCategory? updated = await _context.CashFlowCategories.FindAsync(oldCatCategory.Id);
         Assert.NotNull(result);
-        Assert.Equal(newName, updated?.Name);
+        Assert.Equal(newName, updated!.Name);
     }
 
     [Fact]
@@ -194,7 +194,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
     public async Task Update_InvalidNameReturnsBadRequest(string? invalidName)
     {
         CashFlowCategory? userCategory = _context.CashFlowCategories.FirstOrDefault(c => c.Name == _userCatName);
-        IActionResult result = await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = invalidName, CategoryType = CashFlowType.Expense });
+        IActionResult result = await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = invalidName!, CategoryType = CashFlowType.Expense });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
@@ -233,7 +233,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
             "Create" => await _controller.Create(new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
             "Update" => await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
             "Delete" => await _controller.Delete(userCategory!.Id),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         Assert.IsType<UnauthorizedResult>(result);
         SetupUserContext(_user1Id);
@@ -249,6 +249,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
         {
             "Create" => await _controller.Create(new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
             "Update" => await _controller.Update(userCategory!.Id, new CashFlowCategory { Name = _newCatName, CategoryType = CashFlowType.Expense }),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         if (action == "Create")
         {
@@ -275,7 +276,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
         return Assert.IsType<ImportResponse>(okResult.Value);
     }
 
-    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    private Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
     {
         Assert.Equal(expectedSuccess, response.Success);
         Assert.Equal(expectedImportedCount, response.ImportedCount);
@@ -289,6 +290,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
         {
             Assert.Contains($"Imported {expectedImportedCount} categories with {expectedErrorCount} errors", response.Message);
         }
+        return Task.CompletedTask;
     }
 
     private async Task<List<CashFlowCategory>> GetSavedCategoriesForImport(List<CashFlowCategoryImport> categoriesToImport)
@@ -310,7 +312,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
 
     private async Task ValidateBadRequestForImport(List<CashFlowCategoryImport>? categories, string expectedMessage)
     {
-        var result = await _controller.Import(categories);
+        var result = await _controller.Import(categories!);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(expectedMessage, badRequestResult.Value);
     }
@@ -351,7 +353,7 @@ public class CashFlowCategoriesControllerTests : IDisposable
         
         var result = await _controller.Import(categories);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Contains("Cannot import more than 100 categories at once", badRequestResult.Value.ToString());
+        Assert.Contains("Cannot import more than 100 categories at once", $"{badRequestResult.Value}");
     }
 
     [Fact]

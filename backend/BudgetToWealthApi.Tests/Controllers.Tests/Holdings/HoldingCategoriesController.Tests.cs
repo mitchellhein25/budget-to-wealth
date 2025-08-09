@@ -59,7 +59,7 @@ public class HoldingCategoriesControllerTests : IDisposable
         };
     }
 
-    private async Task<HoldingCategory> CreateTestCategory(string name, string userId = null)
+    private async Task<HoldingCategory> CreateTestCategory(string name, string? userId = null)
     {
         HoldingCategory category = new()
         {
@@ -148,7 +148,7 @@ public class HoldingCategoriesControllerTests : IDisposable
     [InlineData(" ")]
     public async Task Create_InvalidNameReturnsBadRequest(string? invalidName)
     {
-        IActionResult result = await _controller.Create(new HoldingCategory { Name = invalidName });
+        IActionResult result = await _controller.Create(new HoldingCategory { Name = invalidName! });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
@@ -164,7 +164,7 @@ public class HoldingCategoriesControllerTests : IDisposable
 
         HoldingCategory? updated = await _context.HoldingCategories.FindAsync(oldCatCategory.Id);
         Assert.NotNull(result);
-        Assert.Equal(newName, updated?.Name);
+        Assert.Equal(newName, updated!.Name);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public class HoldingCategoriesControllerTests : IDisposable
     public async Task Update_InvalidNameReturnsBadRequest(string? invalidName)
     {
         HoldingCategory? userCategory = _context.HoldingCategories.FirstOrDefault(c => c.Name == _userCatName);
-        IActionResult result = await _controller.Update(userCategory!.Id, new HoldingCategory { Name = invalidName });
+        IActionResult result = await _controller.Update(userCategory!.Id, new HoldingCategory { Name = invalidName! });
 
         BadRequestObjectResult badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(NameRequiredMessage, badRequest.Value);
@@ -229,7 +229,7 @@ public class HoldingCategoriesControllerTests : IDisposable
             "Create" => await _controller.Create(new HoldingCategory { Name = _newCatName }),
             "Update" => await _controller.Update(userCategory!.Id, new HoldingCategory { Name = _newCatName }),
             "Delete" => await _controller.Delete(userCategory!.Id),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         Assert.IsType<UnauthorizedResult>(result);
         SetupUserContext(_user1Id);
@@ -245,6 +245,7 @@ public class HoldingCategoriesControllerTests : IDisposable
         {
             "Create" => await _controller.Create(new HoldingCategory { Name = _newCatName }),
             "Update" => await _controller.Update(userCategory!.Id, new HoldingCategory { Name = _newCatName }),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         if (action == "Create")
         {
@@ -271,7 +272,7 @@ public class HoldingCategoriesControllerTests : IDisposable
         return Assert.IsType<ImportResponse>(okResult.Value);
     }
 
-    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    private Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
     {
         Assert.Equal(expectedSuccess, response.Success);
         Assert.Equal(expectedImportedCount, response.ImportedCount);
@@ -285,6 +286,7 @@ public class HoldingCategoriesControllerTests : IDisposable
         {
             Assert.Contains($"Imported {expectedImportedCount} categories with {expectedErrorCount} errors", response.Message);
         }
+        return Task.CompletedTask;
     }
 
     private async Task<List<HoldingCategory>> GetSavedCategoriesForImport(List<HoldingCategoryImport> categoriesToImport)
@@ -306,7 +308,7 @@ public class HoldingCategoriesControllerTests : IDisposable
 
     private async Task ValidateBadRequestForImport(List<HoldingCategoryImport>? categories, string expectedMessage)
     {
-        var result = await _controller.Import(categories);
+        var result = await _controller.Import(categories!);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(expectedMessage, badRequestResult.Value);
     }
@@ -347,7 +349,7 @@ public class HoldingCategoriesControllerTests : IDisposable
         
         var result = await _controller.Import(categories);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Contains("Cannot import more than 100 categories at once", badRequestResult.Value.ToString());
+        Assert.Contains("Cannot import more than 100 categories at once", $"{badRequestResult.Value}");
     }
 
     [Fact]

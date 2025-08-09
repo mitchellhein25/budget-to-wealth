@@ -8,7 +8,7 @@ public class BudgetsControllerTests : IDisposable
 {
     private readonly string _user1Id = "auth0|user1";
     private readonly string _user2Id = "auth0|user2";
-    private BudgetsControllerTestObjects _testObjects;
+    private BudgetsControllerTestObjects _testObjects = null!;
     private ApplicationDbContext _context;
     private BudgetsController _controller;
     private readonly IDbContextTransaction _transaction;
@@ -245,7 +245,7 @@ public class BudgetsControllerTests : IDisposable
         var result = await _controller.Create(newBudget);
 
         var objectResult = Assert.IsType<ObjectResult>(result);
-        Budget createdBudget = objectResult.Value as Budget;
+        Budget createdBudget = Assert.IsType<Budget>(objectResult.Value);
         Assert.NotEqual(DateOnly.MinValue, createdBudget.StartDate);
         Assert.Equal(DateOnly.FromDateTime(DateTime.Now), createdBudget.StartDate);
     }
@@ -384,7 +384,7 @@ public class BudgetsControllerTests : IDisposable
             "Create" => await _controller.Create(userBudget!),
             "Update" => await _controller.Update(userBudget!.Id, userBudget),
             "Delete" => await _controller.Delete(userBudget!.Id),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         Assert.IsType<UnauthorizedResult>(result);
         SetupUserContext(_user1Id);
@@ -406,6 +406,7 @@ public class BudgetsControllerTests : IDisposable
         {
             "Create" => await _controller.Create(updatedBudget),
             "Update" => await _controller.Update(userBudget!.Id, updatedBudget),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         if (action == "Create")
         {
@@ -432,7 +433,7 @@ public class BudgetsControllerTests : IDisposable
         return Assert.IsType<ImportResponse>(okResult.Value);
     }
 
-    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    private Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
     {
         Assert.Equal(expectedSuccess, response.Success);
         Assert.Equal(expectedImportedCount, response.ImportedCount);
@@ -446,6 +447,7 @@ public class BudgetsControllerTests : IDisposable
         {
             Assert.Contains($"Imported {expectedImportedCount} budgets with {expectedErrorCount} errors", response.Message);
         }
+        return Task.CompletedTask;
     }
 
     private async Task<List<Budget>> GetSavedBudgetsForImport(List<BudgetImport> budgetsToImport)
@@ -479,7 +481,7 @@ public class BudgetsControllerTests : IDisposable
 
     private async Task ValidateBadRequestForImport(List<BudgetImport>? budgets, string expectedMessage)
     {
-        var result = await _controller.Import(budgets);
+        var result = await _controller.Import(budgets!);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(expectedMessage, badRequestResult.Value);
     }
@@ -520,7 +522,7 @@ public class BudgetsControllerTests : IDisposable
         
         var result = await _controller.Import(budgets);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Contains("Cannot import more than 100 budgets at once", badRequestResult.Value.ToString());
+        Assert.Contains("Cannot import more than 100 budgets at once", $"{badRequestResult.Value}");
     }
 
     [Fact]

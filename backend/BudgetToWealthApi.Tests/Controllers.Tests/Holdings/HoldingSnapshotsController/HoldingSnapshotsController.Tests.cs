@@ -8,7 +8,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
 {
     private readonly string _user1Id = "auth0|user1";
     private readonly string _user2Id = "auth0|user2";
-    private HoldingSnapshotsControllerTestObjects _testObjects;
+    private HoldingSnapshotsControllerTestObjects _testObjects = null!;
     private ApplicationDbContext _context;
     private HoldingSnapshotsController _controller;
     private readonly IDbContextTransaction _transaction;
@@ -230,7 +230,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
             "Create" => await _controller.Create(userSnapshot!),
             "Update" => await _controller.Update(userSnapshot!.Id, userSnapshot),
             "Delete" => await _controller.Delete(userSnapshot!.Id),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         Assert.IsType<UnauthorizedResult>(result);
         SetupUserContext(_user1Id);
@@ -252,6 +252,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
         {
             "Create" => await _controller.Create(newOrUpdatedSnapshot),
             "Update" => await _controller.Update(userHoldingSnapshots!.Id, newOrUpdatedSnapshot),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         if (action == "Create")
         {
@@ -279,7 +280,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
         return Assert.IsType<ImportResponse>(okResult.Value);
     }
 
-    private async Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
+    private Task ValidateImportResponse(ImportResponse response, int expectedImportedCount, int expectedErrorCount, bool expectedSuccess = true)
     {
         Assert.Equal(expectedSuccess, response.Success);
         Assert.Equal(expectedImportedCount, response.ImportedCount);
@@ -293,6 +294,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
         {
             Assert.Contains($"Imported {expectedImportedCount} snapshots with {expectedErrorCount} errors", response.Message);
         }
+        return Task.CompletedTask;
     }
 
     private async Task<List<HoldingSnapshot>> GetSavedSnapshotsForImport(List<HoldingSnapshotImport> snapshotsToImport)
@@ -315,7 +317,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
 
     private async Task ValidateBadRequestForImport(List<HoldingSnapshotImport>? snapshots, string expectedMessage)
     {
-        var result = await _controller.Import(snapshots);
+        var result = await _controller.Import(snapshots!);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(expectedMessage, badRequestResult.Value);
     }
@@ -380,7 +382,7 @@ public class HoldingSnapshotsControllerTests : IDisposable
         
         var result = await _controller.Import(snapshots);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Contains("Cannot import more than 100 snapshots at once", badRequestResult.Value.ToString());
+        Assert.Contains("Cannot import more than 100 snapshots at once", $"{badRequestResult.Value}");
     }
 
     [Fact]

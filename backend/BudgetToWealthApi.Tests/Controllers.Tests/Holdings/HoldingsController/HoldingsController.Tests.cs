@@ -8,7 +8,7 @@ public class HoldingsControllerTests : IDisposable
 {
     private readonly string _user1Id = "auth0|user1";
     private readonly string _user2Id = "auth0|user2";
-    private HoldingsControllerTestObjects _testObjects;
+    private HoldingsControllerTestObjects _testObjects = null!;
     private ApplicationDbContext _context;
     private HoldingsController _controller;
     private readonly IDbContextTransaction _transaction;
@@ -270,7 +270,7 @@ public class HoldingsControllerTests : IDisposable
             "Create" => await _controller.Create(userHolding!),
             "Update" => await _controller.Update(userHolding!.Id, userHolding),
             "Delete" => await _controller.Delete(userHolding!.Id),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         Assert.IsType<UnauthorizedResult>(result);
         SetupUserContext(_user1Id);
@@ -292,6 +292,7 @@ public class HoldingsControllerTests : IDisposable
         {
             "Create" => await _controller.Create(updatedHolding),
             "Update" => await _controller.Update(userHoldings!.Id, updatedHolding),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         if (action == "Create")
         {
@@ -356,7 +357,7 @@ public class HoldingsControllerTests : IDisposable
 
     private async Task ValidateBadRequestForImport(List<HoldingImport>? holdings, string expectedMessage)
     {
-        var result = await _controller.Import(holdings);
+        var result = await _controller.Import(holdings!);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(expectedMessage, badRequestResult.Value);
     }
@@ -397,7 +398,7 @@ public class HoldingsControllerTests : IDisposable
         
         var result = await _controller.Import(holdings);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Contains("Cannot import more than 100 holdings at once", badRequestResult.Value.ToString());
+        Assert.Contains("Cannot import more than 100 holdings at once", $"{badRequestResult.Value}");
     }
 
     [Fact]
