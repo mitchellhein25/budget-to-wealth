@@ -18,15 +18,52 @@ public class HoldingSnapshotsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
+    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null, [FromQuery] bool latestOnly = false)
     {
         string? userId = User.GetUserId();
         if (userId == null)
             return Unauthorized();
 
+        if (latestOnly)
+        {
+            if (holdingId.HasValue)
+            {
+                var latestForHolding = await _context.HoldingSnapshots
+                    .Include(snapshot => snapshot.Holding)
+                    .ThenInclude(holding => holding!.HoldingCategory)
+                    .Where(snapshot => snapshot.UserId == userId && snapshot.HoldingId == holdingId)
+                    .OrderByDescending(snapshot => snapshot.Date)
+                    .FirstOrDefaultAsync();
+
+                var result = latestForHolding != null ? new List<HoldingSnapshot> { latestForHolding } : new List<HoldingSnapshot>();
+                return Ok(result);
+            }
+
+            var maxDatesQuery = _context.HoldingSnapshots
+                .Where(snapshot => snapshot.UserId == userId)
+                .GroupBy(snapshot => snapshot.HoldingId)
+                .Select(group => new { HoldingId = group.Key, Date = group.Max(snapshot => snapshot.Date) });
+
+            var latestSnapshotsQuery = _context.HoldingSnapshots
+                .Where(snapshot => snapshot.UserId == userId)
+                .Join(
+                    maxDatesQuery,
+                    outerSnapshotKey => new { outerSnapshotKey.HoldingId, outerSnapshotKey.Date },
+                    innerSnapshotKey => new { innerSnapshotKey.HoldingId, innerSnapshotKey.Date },
+                    (outerSnapshot, innerSnapshot) => outerSnapshot
+                );
+
+            var latestSnapshots = await latestSnapshotsQuery
+                .Include(snapshot => snapshot.Holding)
+                .ThenInclude(holding => holding!.HoldingCategory)
+                .ToListAsync();
+
+            return Ok(latestSnapshots);
+        }
+
         IQueryable<HoldingSnapshot> query = _context.HoldingSnapshots
                                                     .Include(snapshot => snapshot.Holding)
-                                                    .Include(snapshot => snapshot.Holding!.HoldingCategory)
+                                                    .ThenInclude(holding => holding!.HoldingCategory)
                                                     .Where(snapshot => snapshot.UserId == userId);
 
         if (holdingId != null)

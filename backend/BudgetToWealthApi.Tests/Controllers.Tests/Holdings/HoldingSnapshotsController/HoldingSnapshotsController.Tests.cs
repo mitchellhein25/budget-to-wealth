@@ -87,6 +87,35 @@ public class HoldingSnapshotsControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Get_LatestOnly_ReturnsLatestForEachHolding()
+    {
+        OkObjectResult? result = await _controller.Get(latestOnly: true) as OkObjectResult;
+        IEnumerable<HoldingSnapshot> snapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
+
+        Assert.Equal(2, snapshots.Count());
+
+        var latestHolding1 = snapshots.FirstOrDefault(s => s.HoldingId == _testObjects.TestUser1Holding1.Id);
+        Assert.NotNull(latestHolding1);
+        Assert.Equal(_testObjects.TestHoldingSnapshotHolding1User1A.Date, latestHolding1!.Date);
+
+        var latestHolding2 = snapshots.FirstOrDefault(s => s.HoldingId == _testObjects.TestUser1Holding2.Id);
+        Assert.NotNull(latestHolding2);
+        Assert.Equal(_testObjects.TestHoldingSnapshotHolding2User1.Date, latestHolding2!.Date);
+    }
+
+    [Fact]
+    public async Task Get_LatestOnly_WithHoldingId_ReturnsSingleLatest()
+    {
+        OkObjectResult? result = await _controller.Get(holdingId: _testObjects.TestUser1Holding1.Id, latestOnly: true) as OkObjectResult;
+        IEnumerable<HoldingSnapshot> snapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
+
+        Assert.Single(snapshots);
+        var snapshot = snapshots.First();
+        Assert.Equal(_testObjects.TestUser1Holding1.Id, snapshot.HoldingId);
+        Assert.Equal(_testObjects.TestHoldingSnapshotHolding1User1A.Date, snapshot.Date);
+    }
+
+    [Fact]
     public async Task Create_ReturnsBadRequest_WhenHoldingIdIsEmpty()
     {
         HoldingSnapshot newHoldingSnapshot = new()
