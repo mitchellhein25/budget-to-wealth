@@ -1,29 +1,15 @@
-import React from 'react'
-import { Chart } from 'react-chartjs-2';
+import React from 'react';
 import {
-  Chart as ChartJS,
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
+  ResponsiveContainer,
+  ComposedChart,
+  Line,
+  Bar,
+  XAxis,
+  YAxis,
   Tooltip,
-  LineController,
-  BarController,
-} from 'chart.js';
-
-ChartJS.register(
-  LinearScale,
-  CategoryScale,
-  BarElement,
-  PointElement,
-  LineElement,
   Legend,
-  Tooltip,
-  LineController,
-  BarController,
-);
+  CartesianGrid,
+} from 'recharts';
 
 export type TrendGraphProps = {
   title: string;
@@ -40,37 +26,45 @@ export type TrendGraphDataset = {
 }
 
 export default function TrendGraph(props: TrendGraphProps) {
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'top' as const,
-        },
+  // Transform into Recharts-friendly data
+  const chartData = props.labels.map((label, index) => {
+    const point: Record<string, unknown> = { name: label };
+    props.datasets.forEach(ds => {
+      point[ds.label] = ds.data[index] ?? 0;
+    });
+    return point;
+  });
 
-        title: {
-          display: true,
-          text: props.title,
-        },
-      },
-    };
-
-    const data = {
-      labels: props.labels,
-      datasets: props.datasets.map(dataset => ({
-        type: dataset.type,
-        label: dataset.label,
-        data: dataset.data,
-        borderColor: dataset.borderColor,
-        backgroundColor: dataset.backgroundColor,
-      })),
-    };
-
-    return (
-      <div className="flex-1 flex flex-col">
-        <div className="h-3/4 w-full">
-          <Chart title={props.title} type="line" options={options} data={data} />
-        </div>
+  return (
+    <div className="flex-1 flex flex-col">
+      <div className="h-3/4 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={chartData} margin={{ top: 16, right: 16, bottom: 8, left: 8 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            {props.datasets.map(ds =>
+              ds.type === 'line' ? (
+                <Line
+                  key={ds.label}
+                  type="monotone"
+                  dataKey={ds.label}
+                  stroke={ds.borderColor}
+                  dot={false}
+                />
+              ) : (
+                <Bar
+                  key={ds.label}
+                  dataKey={ds.label}
+                  fill={ds.backgroundColor}
+                />
+              )
+            )}
+          </ComposedChart>
+        </ResponsiveContainer>
       </div>
-    );
+    </div>
+  );
 }
