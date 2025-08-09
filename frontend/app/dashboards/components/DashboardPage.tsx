@@ -5,7 +5,7 @@ import { useMobileDetection } from '@/app/hooks';
 import DashboardSideBar from './DashboardSideBar';
 import { DatePicker, DateRange } from '@/app/components/DatePicker';
 import { HistoryToggle } from './HistoryToggle';
-import { getCompletedMonthsDefaultRange } from './dateRangeUtils';
+import { getCompletedMonthsDefaultRange } from './Utils';
 
 export type AvailableDateRangeFetcher = () => Promise<{ startDate?: string; endDate?: string } | null>;
 
