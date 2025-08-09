@@ -44,7 +44,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 			
 			return 0;
 		});
-	}, [props.items]);
+	}, [props.items, props.title]);
 
 	const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;

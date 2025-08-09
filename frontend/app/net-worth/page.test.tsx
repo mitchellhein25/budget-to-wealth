@@ -4,7 +4,6 @@ import HoldingSnapshotsPage from './page';
 const holdingSnapshotFormTestId = 'holding-snapshot-form';
 const holdingSnapshotsListTestId = 'holding-snapshots-list';
 const datePickerTestId = 'date-picker';
-const latestOnlyCheckboxId = 'show-latest-only';
 const holdingSnapshotFormText = 'Holding Snapshot Form';
 const holdingSnapshotsListText = 'Holding Snapshots List';
 const datePickerText = 'Date Picker';
@@ -67,7 +66,8 @@ describe('HoldingSnapshotsPage', () => {
   });
 
   it('toggles DatePicker visibility and calls appropriate APIs', async () => {
-    const { getLatestHoldingSnapshots, getHoldingSnapshotsByDateRange } = require('@/app/lib/api/data-methods');
+    const getLatestHoldingSnapshots = jest.requireMock('@/app/lib/api/data-methods').getLatestHoldingSnapshots as jest.Mock;
+    const getHoldingSnapshotsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingSnapshotsByDateRange as jest.Mock;
     await act(async () => {
       render(<HoldingSnapshotsPage />);
     });
