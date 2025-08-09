@@ -3,12 +3,31 @@
 import React from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
-import { navItems, cashflowSubNavItems } from './utils';
+import { navItems, cashflowSubNavItems, dashboardsSubNavItems, NavItem } from './utils';
 
 export function MobileDrawer(
   { pathname, onClose }: { pathname: string, onClose: () => void }) 
 {
   const isCashflowPage = pathname.startsWith('/cashflow');
+  const isDashboardsPage = pathname.startsWith('/dashboards');
+
+  const DrawerNavLink = ({ item, isSubItem = false }: { item: NavItem; isSubItem?: boolean }) => {
+    const isActive = pathname.startsWith(item.href);
+    const baseClasses = 'btn btn-block justify-start';
+    const sizeClasses = isSubItem ? ' btn-sm ml-4' : '';
+    const stateClasses = isActive ? ' btn-primary' : ' btn-ghost';
+
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onClose}
+        className={`${baseClasses}${sizeClasses}${stateClasses}`}
+      >
+        {item.label}
+      </Link>
+    );
+  };
   
   return (
     <div className="drawer-side">
@@ -21,24 +40,9 @@ export function MobileDrawer(
           </label>
         </div>
         <div className="flex flex-col space-y-2">
-          {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={`btn btn-block justify-start ${
-                  isActive
-                    ? 'btn-primary'
-                    : 'btn-ghost'
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+          {navItems.map((item) => (
+            <DrawerNavLink key={item.href} item={item} />
+          ))}
           
           {isCashflowPage && (
             <>
@@ -46,24 +50,21 @@ export function MobileDrawer(
               <div className="text-sm font-medium text-base-content/70 mb-2 px-2">
                 Cashflow
               </div>
-              {cashflowSubNavItems.map((item) => {
-                const isActive = pathname.startsWith(item.href);
+              {cashflowSubNavItems.map((item: NavItem) => (
+                <DrawerNavLink key={item.href} item={item} isSubItem />
+              ))}
+            </>
+          )}
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`btn btn-block justify-start btn-sm ml-4 ${
-                      isActive
-                        ? 'btn-primary'
-                        : 'btn-ghost'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+          {isDashboardsPage && (
+            <>
+              <div className="divider my-4"></div>
+              <div className="text-sm font-medium text-base-content/70 mb-2 px-2">
+                Dashboards
+              </div>
+              {dashboardsSubNavItems.map((item: NavItem) => (
+                <DrawerNavLink key={item.href} item={item} isSubItem />
+              ))}
             </>
           )}
         </div>

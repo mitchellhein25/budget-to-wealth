@@ -8,12 +8,14 @@ import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 import { DateRange } from '../../components/DatePicker';
 import { DatePicker } from '@/app/components/DatePicker';
 import TrendGraph, { TrendGraphDataset } from '../components/TrendGraph';
+import { useMobileDetection } from '@/app/hooks';
 
 export default function NetWorthTrendGraph() {
   const [netWorthTrendGraph, setNetWorthTrendGraph] = useState<NetWorthTrendGraphData | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const isMobile = useMobileDetection();
 
   const getNetWorthTrendGraph = useCallback(async () => {
     setIsLoading(true);
@@ -90,7 +92,7 @@ export default function NetWorthTrendGraph() {
 
   return (
     <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
-      <DashboardSideBar />
+      {!isMobile && <DashboardSideBar />}
       <div className="flex flex-1 flex-col gap-2">
         <DatePicker
           dateRange={dateRange}

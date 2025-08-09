@@ -8,12 +8,14 @@ import { DateRange } from '../../components/DatePicker';
 import { DatePicker } from '@/app/components/DatePicker';
 import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/CashFlowTrendGraphData';
 import TrendGraph, { TrendGraphDataset } from '../components/TrendGraph';
+import { useMobileDetection } from '@/app/hooks';
 
 export default function CashFlowTrendGraph() {
   const [cashFlowTrendGraph, setCashFlowTrendGraph] = useState<CashFlowTrendGraphData | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const isMobile = useMobileDetection();
 
   const getCashFlowTrendGraph = useCallback(async () => {
     setIsLoading(true);
@@ -90,7 +92,7 @@ export default function CashFlowTrendGraph() {
 
   return (
     <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
-      <DashboardSideBar />
+      {!isMobile && <DashboardSideBar />}
       <div className="flex flex-1 flex-col gap-2">
         <DatePicker
           dateRange={dateRange}
