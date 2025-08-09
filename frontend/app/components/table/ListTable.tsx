@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import TablePagination from './TablePagination';
 import { useMobileDetection } from '@/app/hooks';
+import { HOLDING_SNAPSHOT_ITEM_NAME } from '@/app/net-worth/components/constants';
+import { HoldingSnapshot } from '@/app/net-worth/components/HoldingSnapshot';
 
 export type ListTableItem = (
   | { name: string }
@@ -25,6 +27,11 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 
 	const sortedItems = useMemo(() => {
 		return [...props.items].sort((a, b) => {
+
+			if (props.title.includes(HOLDING_SNAPSHOT_ITEM_NAME)) {
+				return (b as HoldingSnapshot).balance - (a as HoldingSnapshot).balance;
+			}
+
 			if ('date' in a && 'date' in b) {
 				const dateA = new Date(a.date);
 				const dateB = new Date(b.date);

@@ -11,6 +11,10 @@ export async function getHoldingSnapshotsByDateRange(dateRange: DateRange) {
   return await getRequestList<HoldingSnapshot>(`${HOLDING_SNAPSHOTS_ENDPOINT}?${getQueryStringForDateRange(dateRange)}`);
 }
 
+export async function getLatestHoldingSnapshots() {
+  return await getRequestList<HoldingSnapshot>(`${HOLDING_SNAPSHOTS_ENDPOINT}?latestOnly=true`);
+}
+
 export async function deleteHoldingSnapshot(id: number) {
   return await deleteRequest<HoldingSnapshot>(HOLDING_SNAPSHOTS_ENDPOINT, id);
 }

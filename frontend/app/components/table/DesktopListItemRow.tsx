@@ -6,15 +6,17 @@ interface DesktopListItemRowProps {
 	onEdit: () => void;
 	onDelete: () => void;
 	className?: string;
+  customActionButton?: React.ReactNode;
 }
 
-export function DesktopListItemRow({ children, onEdit, onDelete, className = '' }: DesktopListItemRowProps) {
+export function DesktopListItemRow({ children, onEdit, onDelete, customActionButton, className = '' }: DesktopListItemRowProps) {
 	return (
 		<tr className={`hover ${className}`}>
 			{children}
 			<td className="text-right">
 				<div className="flex items-center justify-end space-x-2">
-					<EditButton onClick={onEdit} />
+          {customActionButton}
+          <EditButton onClick={onEdit} />
 					<DeleteButton onClick={onDelete} />
 				</div>
 			</td>

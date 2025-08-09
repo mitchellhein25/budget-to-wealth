@@ -12,7 +12,7 @@ type HoldingSnapshotsListProps = {
 	onSnapshotDeleted: () => void,
 	onSnapshotIsEditing: (snapshot: HoldingSnapshot) => void,
 	isLoading: boolean,
-	isError: boolean
+  isError: boolean
 }
 
 export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
@@ -40,6 +40,10 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 			snapshot={snapshot}
 			onEdit={props.onSnapshotIsEditing}
 			onDelete={handleDelete}
+      onUpdate={(s) => {
+        const todayIso = new Date().toISOString();
+        props.onSnapshotIsEditing({ ...s, id: undefined, date: todayIso, balance: 0 } as HoldingSnapshot);
+      }}
 		/>
 	);
 
