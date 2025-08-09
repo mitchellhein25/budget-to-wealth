@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { FormTemplate } from '@/app/components/form';
+import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { CashFlowEntriesInputs, CashFlowEntryFormData } from './';
 import { CashFlowEntry, CashFlowType } from '..';
@@ -26,7 +26,7 @@ export function CashFlowEntriesForm({formState, cashFlowType} : {formState: Form
         />
         <ResetButton 
           onClick={formState.onReset}
-          isHidden={true}
+          isHidden={!formHasAnyValue(formState)}
         />
       </>
     )

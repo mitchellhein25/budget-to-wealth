@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { FormTemplate } from '@/app/components/form';
+import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { HOLDING_ITEM_NAME, HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingInputs, HoldingFormData } from '../';
 
@@ -25,7 +25,7 @@ export function HoldingForm(
         />
         <ResetButton 
           onClick={formState.onReset}
-          isHidden={true}
+          isHidden={!formHasAnyValue(formState)}
         />
       </>
     )

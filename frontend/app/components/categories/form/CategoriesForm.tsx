@@ -2,7 +2,7 @@
 
 import React from "react"
 import { FormState } from "@/app/hooks";
-import { FormTemplate } from "../../form";
+import { formHasAnyValue, FormTemplate } from "../../form";
 import { UpdateCreateButton, ResetButton } from "../../buttons";
 import { Category, CategoryFormData } from "..";
 import { CategoriesInputs } from "./CategoriesInputs";
@@ -30,7 +30,7 @@ export function CategoriesForm<T extends Category>({formState, categoryTypeName}
         />
         <ResetButton 
           onClick={formState.onReset}
-          isHidden={formState.editingFormData == null || formState.editingFormData.name == ""}
+          isHidden={!formHasAnyValue(formState)}
         />
       </>
     )
