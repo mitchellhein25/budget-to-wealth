@@ -4,3 +4,4 @@ export * from './TotalDisplay';
 export * from './Utils';
 export * from './cards/MobileListItemCard';
 export * from './table/DesktopListItemRow';
+export * from './table/ListTable';

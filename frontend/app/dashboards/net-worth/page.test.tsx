@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import NetWorthTrendGraph from './page';
-import { NetWorthTrendGraphData } from './NetWorthTrendGraphData';
+import { NetWorthTrendGraphData } from './components/NetWorthTrendGraphData';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 
 jest.mock('next/navigation', () => ({

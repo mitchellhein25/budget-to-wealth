@@ -15,6 +15,7 @@ export type TrendGraphProps = {
   title: string;
   labels: string[];
   datasets: TrendGraphDataset[];
+  height?: number;
 }
 
 export type TrendGraphDataset = {
@@ -35,9 +36,14 @@ export default function TrendGraph(props: TrendGraphProps) {
     return point;
   });
 
+  const height = props.height ?? 360;
+
   return (
     <div className="flex-1 flex flex-col">
-      <div className="h-3/4 w-full">
+      <div className="mb-2">
+        <h3 className="text-base sm:text-lg font-semibold text-base-content">{props.title}</h3>
+      </div>
+      <div className="w-full" style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 16, right: 16, bottom: 8, left: 8 }}>
             <CartesianGrid strokeDasharray="3 3" />

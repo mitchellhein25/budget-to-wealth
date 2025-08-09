@@ -1,105 +1,126 @@
-'use client'
+"use client"
 
-import DashboardSideBar from '../components/DashboardSideBar'
-import React, { useCallback, useEffect, useState } from 'react'
-import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/NetWorthTrendGraphData';
-import { formatDate, getCurrentYearRange } from '@/app/components/Utils';
-import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
-import { DateRange } from '../../components/DatePicker';
-import { DatePicker } from '@/app/components/DatePicker';
-import TrendGraph, { TrendGraphDataset } from '../components/TrendGraph';
-import { useMobileDetection } from '@/app/hooks';
+import React, { useCallback, useState } from 'react'
+import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components/NetWorthTrendGraphData';
+import { convertCentsToDollars, formatDate } from '@/app/components/Utils';
+import TrendGraph from '../components/TrendGraph';
+import { DashboardPage } from '../components/DashboardPage';
+import { ListTable, TotalDisplay } from '@/app/components';
+import { getHoldingSnapshotsDateRange } from '@/app/lib/api/data-methods/holdingSnapshotRequests';
+import { ASSET_ITEM_NAME_PLURAL, ASSET_ITEM_NAME_PLURAL_LOWERCASE, DEBT_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL_LOWERCASE, NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
+import { NetWorthTrendDatasets } from './components/NetWorthTrendDatasets';
+import { getNetWorthTrendGraphDateRange } from '@/app/lib/api/data-methods/trendGraphRequests';
 
 export default function NetWorthTrendGraph() {
   const [netWorthTrendGraph, setNetWorthTrendGraph] = useState<NetWorthTrendGraphData | null>(null);
-  const [dateRange, setDateRange] = useState<DateRange>(getCurrentYearRange(new Date()));
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const isMobile = useMobileDetection();
-
-  const getNetWorthTrendGraph = useCallback(async () => {
-    setIsLoading(true);
-    setIsError(false);
+  const getNetWorthTrendGraph = useCallback(async (range: { from: Date; to: Date }) => {
     try {
-      const response = await getRequestSingle<NetWorthTrendGraphData>(`NetWorthTrendGraph?startDate=${formatDate(dateRange.from)}&endDate=${formatDate(dateRange.to)}`);
+      const response = await getNetWorthTrendGraphDateRange(range);
       if (!response.successful) {
-        setIsError(true);
+        return false;
       }
       setNetWorthTrendGraph(response.data as NetWorthTrendGraphData);
+      return true;
     } catch (error) {
-      setIsError(true);
       console.error('Error fetching net worth dashboard:', error);
-    } finally {
-      setIsLoading(false);
+      return false;
     }
-  }, [dateRange]);
+  }, []);
 
-  useEffect(() => {
-    getNetWorthTrendGraph();
-  }, [getNetWorthTrendGraph]);
+  const renderContent = (isMobile: boolean) => {
+    const graphHeight = isMobile ? 240 : 420;
+    if (!netWorthTrendGraph?.entries) return null;
 
-  const renderContent = () => {
-    if (isError) {
-      return (
-        <p className="alert alert-error alert-soft">Failed to load Net Worth Dashboard.</p>
-      );
-    }
-  
-    if (isLoading) {
-      return (
-        <p className="alert alert-info alert-soft">Loading Net Worth Dashboard...</p>
-      );
-    }
+    const datasets = NetWorthTrendDatasets(netWorthTrendGraph);
 
-    if (!netWorthTrendGraph?.entries || netWorthTrendGraph.entries.length === 0) {
-      return (
-        <div className="alert alert-info alert-soft">No data found. Add some assets and debts to see your net worth.</div>
-      );
-    }
-
-    const datasets: TrendGraphDataset[] = [
-      {
-        type: 'line' as const,
-        label: 'Assets',
-        data: netWorthTrendGraph.entries.map(entry => entry.assetValueInCents / 100),
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.5)',
-      },
-      {
-        type: 'line' as const,
-        label: 'Debt',
-        data: netWorthTrendGraph.entries.map(entry => entry.debtValueInCents / 100),
-        borderColor: 'rgb(239, 68, 68)',
-        backgroundColor: 'rgba(239, 68, 68, 0.5)',
-      },
-      {
-        type: 'line' as const,
-        label: 'Net Worth',
-        data: netWorthTrendGraph.entries.map(entry => entry.netWorthInCents / 100),
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246)',
-      }
-    ];
+    const assets = netWorthTrendGraph.entries.map(e => e.assetValueInCents);
+    const debts = netWorthTrendGraph.entries.map(e => e.debtValueInCents);
+    const netWorths = netWorthTrendGraph.entries.map(e => e.netWorthInCents);
+    const avg = (values: number[]) => (values.length ? Math.round(values.reduce((a, b) => a + b, 0) / values.length) : 0);
+    const min = (values: number[]) => (values.length ? Math.min(...values) : 0);
+    const max = (values: number[]) => (values.length ? Math.max(...values) : 0);
+    const median = (values: number[]) => {
+      if (!values.length) return 0;
+      const sorted = [...values].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      return sorted.length % 2 === 0 ? Math.round((sorted[mid - 1] + sorted[mid]) / 2) : sorted[mid];
+    };
 
     return (
-      <TrendGraph 
-        title='Net Worth' 
-        labels={netWorthTrendGraph.entries.map(entry => formatDate(new Date(entry.date)) ?? '')}
-        datasets={datasets}
-      />
+      <>
+        <TrendGraph 
+          title={NET_WORTH_ITEM_NAME} 
+          labels={netWorthTrendGraph.entries.map(entry => formatDate(new Date(entry.date)) ?? '')}
+          datasets={datasets}
+          height={graphHeight}
+        />
+
+        <div className="mt-4 space-y-3">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <TotalDisplay compact label={`${ASSET_ITEM_NAME_PLURAL} - Min`} amount={min(assets)} />
+            <TotalDisplay compact label={`${ASSET_ITEM_NAME_PLURAL} - Median`} amount={median(assets)} />
+            <TotalDisplay compact label={`${ASSET_ITEM_NAME_PLURAL} - Average`} amount={avg(assets)} />
+            <TotalDisplay compact label={`${ASSET_ITEM_NAME_PLURAL} - Max`} amount={max(assets)} />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <TotalDisplay compact label={`${DEBT_ITEM_NAME_PLURAL} - Min`} amount={min(debts)} />
+            <TotalDisplay compact label={`${DEBT_ITEM_NAME_PLURAL} - Median`} amount={median(debts)} />
+            <TotalDisplay compact label={`${DEBT_ITEM_NAME_PLURAL} - Average`} amount={avg(debts)} />
+            <TotalDisplay compact label={`${DEBT_ITEM_NAME_PLURAL} - Max`} amount={max(debts)} />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <TotalDisplay compact label={`${NET_WORTH_ITEM_NAME} - Min`} amount={min(netWorths)} />
+            <TotalDisplay compact label={`${NET_WORTH_ITEM_NAME} - Median`} amount={median(netWorths)} />
+            <TotalDisplay compact label={`${NET_WORTH_ITEM_NAME} - Average`} amount={avg(netWorths)} />
+            <TotalDisplay compact label={`${NET_WORTH_ITEM_NAME} - Max`} amount={max(netWorths)} />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <ListTable
+            title={`${NET_WORTH_ITEM_NAME} Entries`}
+            items={netWorthTrendGraph.entries.map(e => ({ date: e.date })) as any}
+            headerRow={(
+              <tr>
+                <th>Date</th>
+                <th className="text-right">{ASSET_ITEM_NAME_PLURAL}</th>
+                <th className="text-right">{DEBT_ITEM_NAME_PLURAL}</th>
+                <th className="text-right">{NET_WORTH_ITEM_NAME}</th>
+              </tr>
+            )}
+            bodyRow={(item) => {
+              const entry = netWorthTrendGraph.entries.find(e => e.date === (item as any).date)!;
+              return (
+                <tr>
+                  <td>{formatDate(new Date(entry.date))}</td>
+                  <td className="text-right">{convertCentsToDollars(entry.assetValueInCents)}</td>
+                  <td className="text-right">{convertCentsToDollars(entry.debtValueInCents)}</td>
+                  <td className="text-right">{convertCentsToDollars(entry.netWorthInCents)}</td>
+                </tr>
+              );
+            }}
+          />
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
-      {!isMobile && <DashboardSideBar />}
-      <div className="flex flex-1 flex-col gap-2">
-        <DatePicker
-          dateRange={dateRange}
-          setDateRange={setDateRange}
-        />
-        {renderContent()}
-      </div>
-    </div>
+    <DashboardPage
+      getAvailableDateRange={async () => {
+        const res = await getHoldingSnapshotsDateRange();
+        return res.successful ? res.data! : null;
+      }}
+      onFetch={async (range) => {
+        const ok = await getNetWorthTrendGraph({ from: range.from!, to: range.to! });
+        const count = ok && netWorthTrendGraph ? netWorthTrendGraph.entries.length : (netWorthTrendGraph?.entries.length ?? 0);
+        return { ok, itemCount: count };
+      }}
+      loadingMessage={`Loading ${NET_WORTH_ITEM_NAME} Trend Graph...`}
+      errorMessage={`Failed to load ${NET_WORTH_ITEM_NAME} Trend Graph.`}
+      emptyMessage={`No data found. Add some ${ASSET_ITEM_NAME_PLURAL_LOWERCASE} and ${DEBT_ITEM_NAME_PLURAL_LOWERCASE} to see your ${NET_WORTH_ITEM_NAME} trends.`}
+    >
+      {({ isMobile }) => renderContent(isMobile)}
+    </DashboardPage>
   )
 }

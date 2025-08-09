@@ -17,8 +17,25 @@ public class HoldingSnapshotsController : ControllerBase
         _context = context;
     }
 
+    [HttpGet("AvailableDateRange")]
+    public async Task<IActionResult> GetAvailableDateRange()
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        var allSnapshots = _context.HoldingSnapshots.Where(snapshot => snapshot.UserId == userId);
+        var minDate = await allSnapshots.MinAsync(snapshot => (DateOnly?)snapshot.Date);
+        var maxDate = await allSnapshots.MaxAsync(snapshot => (DateOnly?)snapshot.Date);
+        return Ok(new DateRangeResponse { StartDate = minDate, EndDate = maxDate });
+    }
+
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid? holdingId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null, [FromQuery] bool latestOnly = false)
+    public async Task<IActionResult> Get(
+        [FromQuery] Guid? holdingId = null, 
+        [FromQuery] DateOnly? startDate = null, 
+        [FromQuery] DateOnly? endDate = null, 
+        [FromQuery] bool latestOnly = false)
     {
         string? userId = User.GetUserId();
         if (userId == null)

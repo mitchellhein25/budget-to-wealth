@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo } from 'react';
 import TablePagination from './TablePagination';
 import { useMobileDetection } from '@/app/hooks';
@@ -68,9 +70,9 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 	};
 
 	return (
-		<div className="card bg-base-100 shadow-xl border border-base-300">
+		<div className="card bg-base-100 shadow-xl border border-base-300 w-full max-w-full overflow-hidden">
 			<div className="card-body p-0">
-				<div className="px-6 py-4 border-b border-base-300 bg-base-200/50">
+				<div className="px-4 py-3 border-b border-base-300 bg-base-200/50">
 					<h2 className="card-title text-xl text-base-content">{props.title}</h2>
 					{props.items.length > 0 && (
 						<p className="text-sm text-base-content/70 mt-1">
@@ -79,7 +81,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 					)}
 				</div>
 				
-				<div className="p-6">
+				<div className="p-4 sm:p-6">
 					{props.isError && (
 						<div className="alert alert-error mb-6">
 							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -119,9 +121,9 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 											))}
 										</div>
 									) : (
-										<div className="overflow-hidden rounded-lg border border-base-300">
-											<div className="overflow-x-auto">
-												<table className="table table-zebra w-full">
+								<div className="overflow-hidden rounded-lg border border-base-300">
+									<div className="overflow-x-auto w-full">
+									<table className="table table-zebra table-fixed w-full text-xs sm:text-sm" style={{ wordBreak: 'break-word' }}>
 													<thead>
 														{props.headerRow}
 													</thead>

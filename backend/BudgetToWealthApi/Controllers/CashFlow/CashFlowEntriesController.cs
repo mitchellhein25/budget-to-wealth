@@ -18,8 +18,24 @@ public class CashFlowEntriesController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("AvailableDateRange")]
+    public async Task<IActionResult> GetAvailableDateRange()
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        var allEntries = _context.CashFlowEntries.Where(entry => entry.UserId == userId);
+        var minDate = await allEntries.MinAsync(entry => (DateOnly?)entry.Date);
+        var maxDate = await allEntries.MaxAsync(entry => (DateOnly?)entry.Date);
+        return Ok(new { StartDate = minDate, EndDate = maxDate });
+    }
+
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] CashFlowType? entryType = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null)
+    public async Task<IActionResult> Get(
+        [FromQuery] CashFlowType? entryType = null, 
+        [FromQuery] DateOnly? startDate = null, 
+        [FromQuery] DateOnly? endDate = null)
     {
         string? userId = User.GetUserId();
         if (userId == null)

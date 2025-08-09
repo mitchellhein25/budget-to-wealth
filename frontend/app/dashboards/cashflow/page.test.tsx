@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import CashFlowTrendGraph from './page';
-import { CashFlowTrendGraphData } from './CashFlowTrendGraphData';
+import { CashFlowTrendGraphData } from './components/CashFlowTrendGraphData';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 
 jest.mock('next/navigation', () => ({
