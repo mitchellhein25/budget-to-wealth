@@ -26,6 +26,7 @@ interface CashFlowEntriesInputsProps {
 }
 
 jest.mock('@/app/components/form', () => ({
+  formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: FormTemplateProps) => (
     <div data-testid={formTemplateTestId}>
       <div>{formTemplateTestId}</div>

@@ -20,6 +20,7 @@ jest.mock('@/app/components/buttons', () => ({
 }));
 
 jest.mock('@/app/components/form', () => ({
+  formHasAnyValue: () => true,
   FormTemplate: ({ formHeader, inputs, buttons, message }: { formHeader: string; inputs: React.ReactNode; buttons: React.ReactNode; message?: { type: string | null; text: string } }) => (
     <form data-testid="form-template">
       <h2>{formHeader}</h2>

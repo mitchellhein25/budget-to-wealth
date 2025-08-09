@@ -12,6 +12,7 @@ const messageTestId = 'message';
 
 jest.mock('@/app/components/form', () => ({
   __esModule: true,
+  formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { 
     formId: string; 
     formHeader: string; 

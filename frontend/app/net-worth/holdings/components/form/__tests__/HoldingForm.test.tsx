@@ -11,6 +11,7 @@ const updateCreateButtonText = 'Update/Create Button';
 const resetButtonText = 'Reset Button';
 
 jest.mock('@/app/components/form', () => ({
+  formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { formId: string, formHeader: string, inputs: React.ReactNode, buttons: React.ReactNode, message: { type: string | null, text: string } }) => (
     <div data-testid={formTemplateTestId}>
       <div>{formTemplateText}</div>
