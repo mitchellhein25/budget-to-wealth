@@ -3,7 +3,11 @@ import DashboardsPage from './page';
 
 jest.mock('./components/DashboardSideBar', () => ({
   __esModule: true,
-  default: () => <div data-testid="dashboard-sidebar">DashboardSideBar Component</div>,
+  DashboardSideBar: () => <div data-testid="dashboard-sidebar">DashboardSideBar Component</div>,
+}));
+
+jest.mock('@/app/hooks', () => ({
+  useMobileDetection: () => false,
 }));
 
 describe('DashboardsPage', () => {

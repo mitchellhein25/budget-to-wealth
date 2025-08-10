@@ -12,7 +12,9 @@ export function MobileDrawer(
   const isDashboardsPage = pathname.startsWith('/dashboards');
 
   const DrawerNavLink = ({ item, isSubItem = false }: { item: NavItem; isSubItem?: boolean }) => {
-    const isActive = pathname.startsWith(item.href);
+    const isActive = isSubItem 
+      ? pathname.startsWith(item.href)
+      : (pathname === item.href || pathname.startsWith(item.href.split('/').slice(0, 2).join('/') + '/'));
     const baseClasses = 'btn btn-block justify-start';
     const sizeClasses = isSubItem ? ' btn-sm ml-4' : '';
     const stateClasses = isActive ? ' btn-primary' : ' btn-ghost';

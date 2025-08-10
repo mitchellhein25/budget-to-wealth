@@ -1,6 +1,6 @@
-import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components/NetWorthTrendGraphData';
-import { TrendGraphDataset } from '../../components/TrendGraph';
 import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
+import { TrendGraphDataset } from '../../components';
+import { NetWorthTrendGraphData } from './';
 
 export function NetWorthTrendDatasets(data: NetWorthTrendGraphData | null): TrendGraphDataset[] {
   if (!data?.entries) return [];

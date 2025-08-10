@@ -1,4 +1,4 @@
-import { TrendGraphData, TrendGraphEntry } from "../../components/TrendGraphEntry";
+import { TrendGraphData, TrendGraphEntry } from "../../components";
 
 export type NetWorthTrendGraphData = TrendGraphData<NetWorthTrendGraphEntry>;
 

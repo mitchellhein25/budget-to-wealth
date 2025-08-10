@@ -5,8 +5,7 @@ import { DateRange } from "@/app/components/DatePicker";
 import { HoldingSnapshot } from "@/app/net-worth/components/HoldingSnapshot";
 import { getQueryStringForDateRange } from "./queryHelpers";
 import { deleteRequest } from "../rest-methods/deleteRequest";
-import { HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT } from "./endpoints";
-export type DateRangeResponse = { startDate?: string; endDate?: string };
+import { DateRangeResponse, HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT } from "./";
 
 export async function getHoldingSnapshotsByDateRange(dateRange: DateRange) {
   return await getRequestList<HoldingSnapshot>(`${HOLDING_SNAPSHOTS_ENDPOINT}?${getQueryStringForDateRange(dateRange)}`);

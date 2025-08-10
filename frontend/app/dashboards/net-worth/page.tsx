@@ -1,17 +1,11 @@
 "use client"
 
 import React, { useCallback } from 'react'
-import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components/NetWorthTrendGraphData';
-import { formatDate } from '@/app/components/Utils';
-import TrendGraph from '../components/TrendGraph';
-import { DashboardPage } from '../components/DashboardPage';
-import { getHoldingSnapshotsDateRange } from '@/app/lib/api/data-methods/holdingSnapshotRequests';
+import { getNetWorthTrendGraphForDateRange, getHoldingSnapshotsDateRange } from '@/app/lib/api/data-methods';
+import { formatDate, DateRange } from '@/app/components';
 import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
-import { NetWorthTrendDatasets } from './components/NetWorthTrendDatasets';
-import { getNetWorthTrendGraphForDateRange } from '@/app/lib/api/data-methods/trendGraphRequests';
-import { NetWorthTotalDisplays } from './components/NetWorthTotalDisplays';
-import { NetWorthTrendGraphListTable } from './components/NetWorthTrendGraphListTable';
-import { DateRange } from '@/app/components';
+import { DashboardPage, TrendGraph } from '../components';
+import { NetWorthTrendDatasets, NetWorthTotalDisplays, NetWorthTrendGraphListTable, NetWorthTrendGraphData } from './components';
 
 export default function NetWorthTrendGraph() {
   const renderContent = (trendGraphData: NetWorthTrendGraphData | null) => {

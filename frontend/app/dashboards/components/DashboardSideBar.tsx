@@ -1,7 +1,7 @@
 import React from 'react'
-import { SideBar } from '@/app/components/SideBar'
+import { SideBar } from '@/app/components'
 
-export default function DashboardSideBar() {
+export function DashboardSideBar() {
   return (
     <SideBar 
       navItems={[

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useMobileDetection } from '@/app/hooks';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -10,7 +11,6 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts';
-import { useMobileDetection } from '@/app/hooks';
 
 export type TrendGraphProps = {
   title: string;
@@ -27,7 +27,7 @@ export type TrendGraphDataset = {
   backgroundColor: string;
 }
 
-export default function TrendGraph(props: TrendGraphProps) {
+export function TrendGraph(props: TrendGraphProps) {
   const isMobile = useMobileDetection();
   // Transform into Recharts-friendly data
   const chartData = props.labels.map((label, index) => {

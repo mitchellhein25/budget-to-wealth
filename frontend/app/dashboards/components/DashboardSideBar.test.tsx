@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import DashboardSideBar from './DashboardSideBar';
+import { DashboardSideBar } from './DashboardSideBar';
 
 jest.mock('next/navigation', () => ({
   usePathname: () => '/dashboards/net-worth',

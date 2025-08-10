@@ -20,7 +20,7 @@ jest.mock('.', () => ({
   navItems: [
     { href: '/cashflow/expenses', label: 'Cashflow' },
     { href: '/net-worth', label: 'Net Worth' },
-    { href: '/dashboards', label: 'Dashboards' },
+    { href: '/dashboards/net-worth', label: 'Dashboards' },
   ],
 }));
 
@@ -43,7 +43,7 @@ describe('MobileDrawer', () => {
 
     expect(screen.getByTestId('mobile-nav-link-/cashflow/expenses')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-nav-link-/net-worth')).toBeInTheDocument();
-    expect(screen.getByTestId('mobile-nav-link-/dashboards')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-nav-link-/dashboards/net-worth')).toBeInTheDocument();
   });
 
   it('renders navigation items with correct labels', () => {
@@ -101,16 +101,37 @@ describe('MobileDrawer', () => {
   it('marks dashboards as active when pathname starts with /dashboards', () => {
     render(<MobileDrawer pathname="/dashboards/cashflow" onClose={mockOnClose} />);
 
-    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards');
-    expect(dashboardsLink).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
+    const dashboardsLinks = screen.getAllByTestId('mobile-nav-link-/dashboards/net-worth');
+    expect(dashboardsLinks[0]).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
   });
 
-  it('marks items as inactive when pathname does not match', () => {
+  it('marks main cashflow nav as active when on cashflow sub-pages', () => {
+    render(<MobileDrawer pathname="/cashflow/income" onClose={mockOnClose} />);
+
+    const cashFlowLinks = screen.getAllByTestId('mobile-nav-link-/cashflow/expenses');
+    expect(cashFlowLinks[0]).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
+  });
+
+  it('marks main cashflow nav as active when on cashflow budget page', () => {
+    render(<MobileDrawer pathname="/cashflow/budget" onClose={mockOnClose} />);
+
+    const cashFlowLinks = screen.getAllByTestId('mobile-nav-link-/cashflow/expenses');
+    expect(cashFlowLinks[0]).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
+  });
+
+  it('marks main dashboards nav as active when on dashboards cashflow page', () => {
+    render(<MobileDrawer pathname="/dashboards/cashflow" onClose={mockOnClose} />);
+
+    const dashboardsLinks = screen.getAllByTestId('mobile-nav-link-/dashboards/net-worth');
+    expect(dashboardsLinks[0]).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-primary');
+  });
+
+  it('marks main nav items as inactive when on unrelated pages', () => {
     render(<MobileDrawer pathname="/profile" onClose={mockOnClose} />);
 
     const cashFlowLink = screen.getByTestId('mobile-nav-link-/cashflow/expenses');
     const netWorthLink = screen.getByTestId('mobile-nav-link-/net-worth');
-    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards');
+    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards/net-worth');
 
     expect(cashFlowLink).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-ghost');
     expect(netWorthLink).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-ghost');
@@ -131,7 +152,7 @@ describe('MobileDrawer', () => {
 
     const cashFlowLink = screen.getByTestId('mobile-nav-link-/cashflow/expenses');
     const netWorthLink = screen.getByTestId('mobile-nav-link-/net-worth');
-    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards');
+    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards/net-worth');
 
     fireEvent.click(cashFlowLink);
     fireEvent.click(netWorthLink);
@@ -152,7 +173,7 @@ describe('MobileDrawer', () => {
 
     const cashFlowLink = screen.getByTestId('mobile-nav-link-/cashflow/expenses');
     const netWorthLink = screen.getByTestId('mobile-nav-link-/net-worth');
-    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards');
+    const dashboardsLink = screen.getByTestId('mobile-nav-link-/dashboards/net-worth');
 
     expect(cashFlowLink).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-ghost');
     expect(netWorthLink).toHaveClass('btn', 'btn-block', 'justify-start', 'btn-ghost');

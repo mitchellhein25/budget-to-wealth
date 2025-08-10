@@ -1,4 +1,4 @@
-import { DateRange } from '@/app/components/DatePicker';
+import { DateRange } from '@/app/components';
 
 export const getCompletedMonthsDefaultRange = (today: Date): DateRange => {
   const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);

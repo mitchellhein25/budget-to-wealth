@@ -1,6 +1,6 @@
-import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/components/CashFlowTrendGraphData';
-import { TrendGraphDataset } from '../../components/TrendGraph';
 import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import { TrendGraphDataset } from '../../components';
+import { CashFlowTrendGraphData } from './';
 
 export function CashFlowTrendDatasets(data: CashFlowTrendGraphData | null): TrendGraphDataset[] {
   if (!data?.entries) return [];

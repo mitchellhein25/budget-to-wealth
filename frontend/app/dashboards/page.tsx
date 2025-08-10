@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react'
-import DashboardSideBar from './components/DashboardSideBar'
 import { useMobileDetection } from '@/app/hooks'
+import { DashboardSideBar } from './components';
 
 export default function DashboardsPage() {
   const isMobile = useMobileDetection();

@@ -1,8 +1,7 @@
-import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL } from '@/app/net-worth/components'
-import { TotalDisplay } from '@/app/components'
-import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/components'
 import React from 'react'
-import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '../../components/Utils'
+import { TotalDisplay } from '@/app/components'
+import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/components'
+import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '../../components'
 
 export function NetWorthTotalDisplays({ assets, debts, netWorths }: { assets: number[], debts: number[], netWorths: number[] }) {
   return (

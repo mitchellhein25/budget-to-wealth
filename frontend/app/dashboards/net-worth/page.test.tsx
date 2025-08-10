@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import NetWorthTrendGraph from './page';
 import { NetWorthTrendGraphData } from './components/NetWorthTrendGraphData';
 import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
+import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
 
 jest.mock('next/navigation', () => ({
   usePathname: () => '/dashboards/net-worth',
@@ -9,7 +10,7 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('../components/DashboardSideBar', () => ({
   __esModule: true,
-  default: () => <div data-testid="dashboard-sidebar">DashboardSideBar Component</div>,
+  DashboardSideBar: () => <div data-testid="dashboard-sidebar">DashboardSideBar Component</div>,
 }));
 
 jest.mock('@/app/components/DatePicker', () => ({
@@ -23,7 +24,7 @@ jest.mock('@/app/components/DatePicker', () => ({
 
 jest.mock('../components/TrendGraph', () => ({
   __esModule: true,
-  default: ({ title, labels, datasets }: { title: string; labels: string[]; datasets: unknown[] }) => (
+  TrendGraph: ({ title, labels, datasets }: { title: string; labels: string[]; datasets: unknown[] }) => (
     <div data-testid="trend-graph" data-title={title} data-labels={JSON.stringify(labels)} data-datasets={JSON.stringify(datasets)}>
       TrendGraph Component
     </div>
@@ -32,6 +33,10 @@ jest.mock('../components/TrendGraph', () => ({
 
 jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestSingle: jest.fn(),
+}));
+
+jest.mock('@/app/hooks', () => ({
+  useMobileDetection: () => false,
 }));
 
 jest.mock('@/app/components/Utils', () => ({
@@ -94,7 +99,7 @@ describe('NetWorthTrendGraph', () => {
 
     render(<NetWorthTrendGraph />);
 
-    expect(screen.getByText('Loading Net Worth Dashboard...')).toBeInTheDocument();
+    expect(screen.getByText(`Loading ${NET_WORTH_ITEM_NAME} trend graph...`)).toBeInTheDocument();
   });
 
   it('shows error state when API call fails', async () => {
@@ -103,7 +108,7 @@ describe('NetWorthTrendGraph', () => {
     render(<NetWorthTrendGraph />);
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load Net Worth Dashboard.')).toBeInTheDocument();
+      expect(screen.getByText(`Failed to load ${NET_WORTH_ITEM_NAME} trend graph.`)).toBeInTheDocument();
     });
   });
 
@@ -113,7 +118,7 @@ describe('NetWorthTrendGraph', () => {
     render(<NetWorthTrendGraph />);
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load Net Worth Dashboard.')).toBeInTheDocument();
+      expect(screen.getByText(`Failed to load ${NET_WORTH_ITEM_NAME} trend graph.`)).toBeInTheDocument();
     });
   });
 
@@ -123,17 +128,17 @@ describe('NetWorthTrendGraph', () => {
     render(<NetWorthTrendGraph />);
 
     await waitFor(() => {
-      expect(screen.getByText('No data found. Add some assets and debts to see your net worth.')).toBeInTheDocument();
+      expect(screen.getByText(`No data found. Add some entries to see your ${NET_WORTH_ITEM_NAME} trends.`)).toBeInTheDocument();
     });
   });
 
   it('shows no data message when entries are null', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: null }, successful: true, responseMessage: 'Success' });
+    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true, responseMessage: 'Success' });
 
     render(<NetWorthTrendGraph />);
 
     await waitFor(() => {
-      expect(screen.getByText('No data found. Add some assets and debts to see your net worth.')).toBeInTheDocument();
+      expect(screen.getByText(`No data found. Add some entries to see your ${NET_WORTH_ITEM_NAME} trends.`)).toBeInTheDocument();
     });
   });
 
@@ -168,7 +173,7 @@ describe('NetWorthTrendGraph', () => {
     render(<NetWorthTrendGraph />);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching net worth dashboard:', expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching trend graph:', expect.any(Error));
     });
 
     consoleSpy.mockRestore();

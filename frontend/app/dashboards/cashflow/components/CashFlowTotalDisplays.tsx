@@ -1,12 +1,12 @@
 import React from 'react'
 import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components'
-import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '@/app/dashboards/components/Utils'
+import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '../../components'
 import { TotalDisplay } from '@/app/components'
 
 export function CashFlowTotalDisplays({ incomes, expenses, netCashFlows }: 
   { incomes: number[], expenses: number[], netCashFlows: number[] }) {
   return (
-    <div className="mt-4 space-y-3">
+    <div className="mt-4 space-y-3">  
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <TotalDisplay compact label={`${INCOME_ITEM_NAME} - Min`} amount={minNumberList(incomes)} />
         <TotalDisplay compact label={`${INCOME_ITEM_NAME} - Median`} amount={medianNumberList(incomes)} />
