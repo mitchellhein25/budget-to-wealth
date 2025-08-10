@@ -1,15 +1,15 @@
 import { convertCentsToDollars } from '@/app/components/Utils';
 import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
-import { formatDate, ListTable } from '@/app/components';
+import { formatDate, ListTable, ListTableItem } from '@/app/components';
 import React from 'react'
-import { CashFlowTrendGraphData } from './CashFlowTrendGraphData';
+import { CashFlowTrendGraphData, CashFlowTrendGraphEntry } from './CashFlowTrendGraphData';
 
 export function CashFlowTrendGraphListTable({ cashFlowTrendGraph }: { cashFlowTrendGraph: CashFlowTrendGraphData }) {
   return (
     <div className="mt-4">
       <ListTable
         title={`${CASHFLOW_ITEM_NAME} Entries`}
-        items={cashFlowTrendGraph.entries.map(e => ({ date: e.date })) as any}
+        items={cashFlowTrendGraph.entries.map(e => ({ date: e.date })) as ListTableItem[]}
         headerRow={(
           <tr>
             <th>Month</th>
@@ -19,7 +19,7 @@ export function CashFlowTrendGraphListTable({ cashFlowTrendGraph }: { cashFlowTr
           </tr>
         )}
         bodyRow={(item) => {
-          const entry = cashFlowTrendGraph.entries.find(e => e.date === (item as any).date)!;
+          const entry = cashFlowTrendGraph.entries.find(e => e.date === (item as CashFlowTrendGraphEntry).date)!;
           return (
             <tr>
               <td>{formatDate(new Date(entry.date), true)}</td>

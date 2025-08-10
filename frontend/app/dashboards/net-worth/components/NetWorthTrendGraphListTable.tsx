@@ -1,15 +1,15 @@
 import { convertCentsToDollars } from '@/app/components/Utils';
-import { formatDate, ListTable } from '@/app/components';
+import { formatDate, ListTable, ListTableItem } from '@/app/components';
 import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
 import React from 'react'
-import { NetWorthTrendGraphData } from './NetWorthTrendGraphData';
+import { NetWorthTrendGraphData, NetWorthTrendGraphEntry } from './NetWorthTrendGraphData';
 
 export function NetWorthTrendGraphListTable({ netWorthTrendGraph }: { netWorthTrendGraph: NetWorthTrendGraphData }) {
   return (
     <div className="mt-4">
       <ListTable
         title={`${NET_WORTH_ITEM_NAME} Entries`}
-        items={netWorthTrendGraph.entries.map(e => ({ date: e.date })) as any}
+        items={netWorthTrendGraph.entries.map(e => ({ date: e.date })) as ListTableItem[]}
         headerRow={(
           <tr>
             <th>Date</th>
@@ -19,7 +19,7 @@ export function NetWorthTrendGraphListTable({ netWorthTrendGraph }: { netWorthTr
           </tr>
         )}
         bodyRow={(item) => {
-          const entry = netWorthTrendGraph.entries.find(e => e.date === (item as any).date)!;
+          const entry = netWorthTrendGraph.entries.find(e => e.date === (item as NetWorthTrendGraphEntry).date)!;
           return (
             <tr>
               <td>{formatDate(new Date(entry.date))}</td>

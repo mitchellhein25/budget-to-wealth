@@ -6,66 +6,56 @@ import DashboardSideBar from './DashboardSideBar';
 import { DatePicker, DateRange } from '@/app/components/DatePicker';
 import { HistoryToggle } from './HistoryToggle';
 import { getCompletedMonthsDefaultRange } from './Utils';
+import { GetRequestResultSingle } from '@/app/lib/api/rest-methods/getRequest';
+import { TrendGraphData, TrendGraphEntry } from './TrendGraphEntry';
+import { DateRangeResponse } from '@/app/lib/api/data-methods/endpoints';
 
-export type AvailableDateRangeFetcher = () => Promise<{ startDate?: string; endDate?: string } | null>;
+export type DashboardPageProps<T extends TrendGraphData<TrendGraphEntry>> = {
+  getAvailableDateRange: () => Promise<GetRequestResultSingle<DateRangeResponse>>;
+  getTrendGraph: (range: DateRange) => Promise<GetRequestResultSingle<T>>;
+  itemName: string;
+  children: (args: { trendGraphData: T | null }) => React.ReactNode;
+}
 
-export function DashboardPage({
-  initialDateRange,
+export function DashboardPage<T extends TrendGraphData<TrendGraphEntry>>({
   getAvailableDateRange,
-  onFetch,
-  children,
-  sideBar = <DashboardSideBar />,
-  onDateRangeChange,
-  loadingMessage,
-  errorMessage,
-  emptyMessage,
-}: {
-  initialDateRange?: DateRange;
-  getAvailableDateRange: AvailableDateRangeFetcher;
-  onFetch: (range: DateRange) => Promise<{ ok: boolean; itemCount: number }>;
-  children: (args: { isMobile: boolean }) => React.ReactNode;
-  sideBar?: React.ReactNode;
-  onDateRangeChange?: (range: DateRange) => void;
-  loadingMessage: string;
-  errorMessage: string;
-  emptyMessage: string;
-}) {
+  getTrendGraph,
+  itemName,
+  children
+}: DashboardPageProps<T>) {
+  const [trendGraphData, setTrendGraphData] = useState<T | null>(null);
   const isMobile = useMobileDetection();
-  const [dateRange, setDateRange] = useState<DateRange>(initialDateRange ?? getCompletedMonthsDefaultRange(new Date()));
+  const [dateRange, setDateRange] = useState<DateRange>(getCompletedMonthsDefaultRange(new Date()));
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
   useEffect(() => {
-    onDateRangeChange?.(dateRange);
-  }, [dateRange]);
-
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      setIsLoading(true);
-      setIsError(false);
-      try {
-        const result = await onFetch(dateRange);
-        if (isMounted) {
-          setIsError(!result.ok);
-          setIsEmpty(result.itemCount === 0);
+    const getTrendGraphData = async () => {
+    setIsLoading(true);
+    setIsError(false);
+    try {
+      const response = await getTrendGraph(dateRange);
+        if (!response.successful) {
+          setIsError(true);
+          return;
         }
-      } catch {
-        if (isMounted) setIsError(true);
+        setTrendGraphData(response.data);
+        setIsEmpty(response.data?.entries?.length === 0);
+      } catch (error) {
+        console.error('Error fetching trend graph:', error);
+        setIsError(true);
       } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    })();
-    return () => {
-      isMounted = false;
+          setIsLoading(false);
+        }
     };
-  }, [dateRange]);
+    getTrendGraphData();
+  }, [dateRange, getTrendGraph]);
 
   return (
     <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
-      {!isMobile && sideBar}
+      {!isMobile && <DashboardSideBar />}
       <div className="flex flex-1 flex-col gap-2">
         <div className="flex items-center gap-4">
           <DatePicker dateRange={dateRange} setDateRange={setDateRange} />
@@ -75,11 +65,15 @@ export function DashboardPage({
               if (checked) {
                 setIsHistoryLoading(true);
                 setDateRange({ from: new Date(2000, 0, 1), to: new Date() });
-                try {
+                try {                  
                   const res = await getAvailableDateRange();
-                  if (res?.startDate && res?.endDate) {
-                    setDateRange({ from: new Date(res.startDate), to: new Date(res.endDate) });
+                  if (!res?.successful)
+                  {
+                    setDateRange(getCompletedMonthsDefaultRange(new Date()));
+                    return;
                   }
+                  if (res?.data?.startDate && res?.data?.endDate) 
+                    setDateRange({ from: new Date(res.data.startDate), to: new Date(res.data.endDate) });
                 } finally {
                   setIsHistoryLoading(false);
                 }
@@ -90,13 +84,13 @@ export function DashboardPage({
           />
         </div>
         {isError ? (
-          <p className="alert alert-error alert-soft">{errorMessage}</p>
+          <p className="alert alert-error alert-soft">{`Failed to load ${itemName} trend graph.`}</p>
         ) : isLoading ? (
-          <p className="alert alert-info alert-soft">{loadingMessage}</p>
+          <p className="alert alert-info alert-soft">{`Loading ${itemName} trend graph...`}</p>
         ) : isEmpty ? (
-          <div className="alert alert-info alert-soft">{emptyMessage}</div>
+          <div className="alert alert-info alert-soft">{`No data found. Add some entries to see your ${itemName} trends.`}</div>
         ) : (
-          children({ isMobile })
+          children({ trendGraphData })
         )}
       </div>
     </div>

@@ -10,6 +10,7 @@ import {
   Legend,
   CartesianGrid,
 } from 'recharts';
+import { useMobileDetection } from '@/app/hooks';
 
 export type TrendGraphProps = {
   title: string;
@@ -27,6 +28,7 @@ export type TrendGraphDataset = {
 }
 
 export default function TrendGraph(props: TrendGraphProps) {
+  const isMobile = useMobileDetection();
   // Transform into Recharts-friendly data
   const chartData = props.labels.map((label, index) => {
     const point: Record<string, unknown> = { name: label };
@@ -36,7 +38,7 @@ export default function TrendGraph(props: TrendGraphProps) {
     return point;
   });
 
-  const height = props.height ?? 360;
+  const height = isMobile ? 240 : 420;
 
   return (
     <div className="flex-1 flex flex-col">

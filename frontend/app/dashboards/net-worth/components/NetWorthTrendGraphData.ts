@@ -1,9 +1,8 @@
-export type NetWorthTrendGraphData = {
-    entries: NetWorthTrendGraphEntry[];
-}
+import { TrendGraphData, TrendGraphEntry } from "../../components/TrendGraphEntry";
 
-export type NetWorthTrendGraphEntry = {
-    date: string;
+export type NetWorthTrendGraphData = TrendGraphData<NetWorthTrendGraphEntry>;
+
+export type NetWorthTrendGraphEntry = TrendGraphEntry & {
     assetValueInCents: number;
     debtValueInCents: number;
     netWorthInCents: number;
