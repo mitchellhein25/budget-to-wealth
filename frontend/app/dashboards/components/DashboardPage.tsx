@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMobileDetection } from '@/app/hooks';
 import DashboardSideBar from './DashboardSideBar';
 import { DatePicker, DateRange } from '@/app/components/DatePicker';
@@ -37,11 +37,11 @@ export function DashboardPage({
   const [isError, setIsError] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     onDateRangeChange?.(dateRange);
   }, [dateRange]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isMounted = true;
     (async () => {
       setIsLoading(true);

@@ -11,6 +11,7 @@ import { getCashFlowTrendGraphDateRange } from '@/app/lib/api/data-methods/trend
 import { CashFlowTrendDatasets } from './components/CashFlowTrendDatasets';
 import { CashFlowTotalDisplays } from './components/CashFlowTotalDisplays';
 import { CashFlowTrendGraphListTable } from './components/CashFlowTrendGraphListTable';
+import { DateRange } from '@/app/components/DatePicker';
 
 export default function CashFlowTrendGraph() {
   const [cashFlowTrendGraph, setCashFlowTrendGraph] = useState<CashFlowTrendGraphData | null>(null);
@@ -53,24 +54,26 @@ export default function CashFlowTrendGraph() {
     );
   };
 
+  const getAvailableDateRange = async () => {
+    const res = await getCashFlowEntriesDateRange();
+    return res.successful ? res.data! : null;
+  };
+
+  const onFetch = async (range: DateRange) => {
+    const ok = await getCashFlowTrendGraph({ from: range.from!, to: range.to! });
+    const count = ok && cashFlowTrendGraph ? cashFlowTrendGraph.entries.length : (cashFlowTrendGraph?.entries.length ?? 0);
+    return { ok, itemCount: count };
+  };
+
   return (
     <DashboardPage
-      getAvailableDateRange={async () => {
-        const res = await getCashFlowEntriesDateRange();
-        return res.successful ? res.data! : null;
-      }}
-      onFetch={async (range) => {
-        const ok = await getCashFlowTrendGraph({ from: range.from!, to: range.to! });
-        const count = ok && cashFlowTrendGraph ? cashFlowTrendGraph.entries.length : (cashFlowTrendGraph?.entries.length ?? 0);
-        return { ok, itemCount: count };
-      }}
+      getAvailableDateRange={getAvailableDateRange}
+      onFetch={onFetch}
       loadingMessage={`Loading ${CASHFLOW_ITEM_NAME} Trend Graph...`}
       errorMessage={`Failed to load ${CASHFLOW_ITEM_NAME} Trend Graph.`}
       emptyMessage={`No data found. Add some ${CASHFLOW_ITEM_NAME} entries to see your ${CASHFLOW_ITEM_NAME} trends.`}
     >
-      {({ isMobile }) => {
-        return renderContent(isMobile);
-      }}
+      {({ isMobile }) => renderContent(isMobile)}
     </DashboardPage>
   )
 }
