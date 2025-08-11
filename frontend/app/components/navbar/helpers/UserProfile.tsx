@@ -56,6 +56,7 @@ export function UserProfile({ session, pathname }: { session: SessionData | null
                     width={32}
                     height={32}
                     className="rounded-full object-cover"
+                    unoptimized
                     onError={(e) => {
                       console.error('UserProfile - Avatar image failed to load:', session.user.picture);
                       console.error('UserProfile - Image error:', e);

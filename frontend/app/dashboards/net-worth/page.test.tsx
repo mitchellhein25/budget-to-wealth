@@ -39,6 +39,27 @@ jest.mock('./components', () => ({
   NetWorthTrendGraphData: jest.fn(),
 }));
 
+jest.mock('@/app/components', () => ({
+  DateRange: jest.fn(),
+  formatDate: jest.fn((date: Date, noDay: boolean = false) => {
+    if (!date) return undefined;
+    
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const month = monthNames[date.getUTCMonth()];
+    const day = noDay ? undefined : date.getUTCDate();
+    const year = date.getUTCFullYear();
+    
+    if (day === undefined) {
+      return `${month} ${year}`;
+    }
+    return `${month} ${day}, ${year}`;
+  }),
+}));
+
 const mockTrendGraphData = {
   entries: [
     {
@@ -71,7 +92,7 @@ describe('NetWorthTrendGraph', () => {
     
     expect(screen.getByTestId('trend-graph')).toBeInTheDocument();
     expect(screen.getByTestId('trend-graph-title')).toHaveTextContent(NET_WORTH_ITEM_NAME);
-    expect(screen.getByTestId('trend-graph-labels')).toHaveTextContent('December 31, 2023, January 1, 2024');
+    expect(screen.getByTestId('trend-graph-labels')).toHaveTextContent('January 1, 2024, January 2, 2024');
     expect(screen.getByTestId('trend-graph-datasets')).toHaveTextContent('1 datasets');
   });
 

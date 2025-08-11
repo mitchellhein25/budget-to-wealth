@@ -41,6 +41,27 @@ jest.mock('./components', () => ({
   CashFlowTrendGraphData: jest.fn(),
 }));
 
+jest.mock('@/app/components', () => ({
+  DateRange: jest.fn(),
+  formatDate: jest.fn((date: Date, noDay: boolean = false) => {
+    if (!date) return undefined;
+    
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const month = monthNames[date.getUTCMonth()];
+    const day = noDay ? undefined : date.getUTCDate();
+    const year = date.getUTCFullYear();
+    
+    if (day === undefined) {
+      return `${month} ${year}`;
+    }
+    return `${month} ${day}, ${year}`;
+  }),
+}));
+
 const mockTrendGraphData = {
   entries: [
     {
@@ -50,7 +71,7 @@ const mockTrendGraphData = {
       netCashFlowInCents: 500
     },
     {
-      date: '2024-01-02',
+      date: '2024-02-02',
       incomeInCents: 1500,
       expensesInCents: 600,
       netCashFlowInCents: 900
@@ -77,7 +98,7 @@ describe('CashFlowTrendGraph', () => {
     
     expect(screen.getByTestId('trend-graph')).toBeInTheDocument();
     expect(screen.getByTestId('trend-graph-title')).toHaveTextContent(CASHFLOW_ITEM_NAME);
-    expect(screen.getByTestId('trend-graph-labels')).toHaveTextContent('December 2023, January 2024');
+    expect(screen.getByTestId('trend-graph-labels')).toHaveTextContent('January 2024, February 2024');
     expect(screen.getByTestId('trend-graph-datasets')).toHaveTextContent('1 datasets');
   });
 
