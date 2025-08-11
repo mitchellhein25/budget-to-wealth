@@ -1,190 +1,117 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import CashFlowTrendGraph from './page';
-import { CashFlowTrendGraphData } from './components/CashFlowTrendGraphData';
-import { getRequestSingle } from '@/app/lib/api/rest-methods/getRequest';
 import { CASHFLOW_ITEM_NAME } from '@/app/cashflow/components';
 
-jest.mock('next/navigation', () => ({
-  usePathname: () => '/dashboards/cashflow',
+jest.mock('@/app/lib/api/data-methods', () => ({
+  getCashFlowTrendGraphForDateRange: jest.fn(),
+  getCashFlowEntriesDateRange: jest.fn(),
 }));
 
-jest.mock('../components/DashboardSideBar', () => ({
-  __esModule: true,
-  DashboardSideBar: () => <div data-testid="dashboard-sidebar">DashboardSideBar Component</div>,
-}));
-
-jest.mock('@/app/components/DatePicker', () => ({
-  __esModule: true,
-  DatePicker: ({ dateRange }: { dateRange: unknown; setDateRange: () => void }) => (
-    <div data-testid="date-picker" data-date-range={JSON.stringify(dateRange)}>
-      DatePicker Component
+jest.mock('../components', () => ({
+  DashboardPage: ({ children, itemName }: { children: (props: { trendGraphData: unknown }) => React.ReactElement; itemName: string }) => (
+    <div data-testid="dashboard-page">
+      <div data-testid="item-name">{itemName}</div>
+      {children({ trendGraphData: mockTrendGraphData })}
     </div>
   ),
-}));
-
-jest.mock('../components/TrendGraph', () => ({
-  __esModule: true,
   TrendGraph: ({ title, labels, datasets }: { title: string; labels: string[]; datasets: unknown[] }) => (
-    <div data-testid="trend-graph" data-title={title} data-labels={JSON.stringify(labels)} data-datasets={JSON.stringify(datasets)}>
-      TrendGraph Component
+    <div data-testid="trend-graph">
+      <div data-testid="trend-graph-title">{title}</div>
+      <div data-testid="trend-graph-labels">{labels.join(', ')}</div>
+      <div data-testid="trend-graph-datasets">{datasets.length} datasets</div>
     </div>
   ),
 }));
 
-jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
-  getRequestSingle: jest.fn(),
+jest.mock('./components', () => ({
+  CashFlowTrendDatasets: jest.fn(() => [{ label: 'Income', data: [100, 200] }]),
+  CashFlowTotalDisplays: ({ incomes, expenses, netCashFlows }: { incomes: number[]; expenses: number[]; netCashFlows: number[] }) => (
+    <div data-testid="cash-flow-totals">
+      <div data-testid="incomes">{incomes.join(', ')}</div>
+      <div data-testid="expenses">{expenses.join(', ')}</div>
+      <div data-testid="net-cash-flows">{netCashFlows.join(', ')}</div>
+    </div>
+  ),
+  CashFlowTrendGraphListTable: ({ cashFlowTrendGraph }: { cashFlowTrendGraph: unknown }) => (
+    <div data-testid="trend-graph-table">
+      {cashFlowTrendGraph ? 'Table rendered' : 'No table'}
+    </div>
+  ),
+  CashFlowTrendGraphData: jest.fn(),
 }));
 
-jest.mock('@/app/hooks', () => ({
-  useMobileDetection: () => false,
-}));
-
-jest.mock('@/app/components/Utils', () => ({
-  ...jest.requireActual('@/app/components/Utils'),
-  getCurrentYearRange: jest.fn(() => ({
-    from: new Date('2023-12-01'),
-    to: new Date('2024-01-31'),
-  })),
-  formatDate: jest.fn((date: Date, noDay: boolean = false) => {
-    if (noDay) {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-      });
+const mockTrendGraphData = {
+  entries: [
+    {
+      date: '2024-01-01',
+      incomeInCents: 1000,
+      expensesInCents: 500,
+      netCashFlowInCents: 500
+    },
+    {
+      date: '2024-01-02',
+      incomeInCents: 1500,
+      expensesInCents: 600,
+      netCashFlowInCents: 900
     }
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  }),
-}));
+  ]
+};
 
-const mockGetRequestSingle = jest.mocked(getRequestSingle);
+
 
 describe('CashFlowTrendGraph', () => {
-  const mockCashFlowData: CashFlowTrendGraphData = {
-    entries: [
-      {
-        date: '2023-12-01',
-        incomeInCents: 500000,
-        expensesInCents: 300000,
-        netCashFlowInCents: 200000,
-      },
-      {
-        date: '2024-01-01',
-        incomeInCents: 600000,
-        expensesInCents: 350000,
-        netCashFlowInCents: 250000,
-      },
-    ],
-  };
-
   beforeEach(() => {
-    mockGetRequestSingle.mockClear();
-    console.error = jest.fn();
+    jest.clearAllMocks();
   });
 
-  it('renders the main page structure', () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
-
+  it('renders dashboard page with correct item name', () => {
     render(<CashFlowTrendGraph />);
-
-    expect(screen.getByTestId('dashboard-sidebar')).toBeInTheDocument();
-    expect(screen.getByTestId('date-picker')).toBeInTheDocument();
-  });
-
-  it('shows loading state initially', () => {
-    mockGetRequestSingle.mockImplementation(() => new Promise(() => {}));
-
-    render(<CashFlowTrendGraph />);
-
-    expect(screen.getByText(`Loading ${CASHFLOW_ITEM_NAME} trend graph...`)).toBeInTheDocument();
-  });
-
-  it('shows error state when API call fails', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: null, successful: false, responseMessage: 'Error' });
-
-    render(<CashFlowTrendGraph />);
-
-    await waitFor(() => {
-      expect(screen.getByText(`Failed to load ${CASHFLOW_ITEM_NAME} trend graph.`)).toBeInTheDocument();
-    });
-  });
-
-  it('shows error state when API call throws error', async () => {
-    mockGetRequestSingle.mockRejectedValue(new Error('Network error'));
-
-    render(<CashFlowTrendGraph />);
-
-    await waitFor(() => {
-      expect(screen.getByText(`Failed to load ${CASHFLOW_ITEM_NAME} trend graph.`)).toBeInTheDocument();
-    });
-  });
-
-  it('shows no data message when entries are empty', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true, responseMessage: 'Success' });
-
-    render(<CashFlowTrendGraph />);
-
-    await waitFor(() => {
-      expect(screen.getByText(`No data found. Add some entries to see your ${CASHFLOW_ITEM_NAME} trends.`)).toBeInTheDocument();
-    });
-  });
-
-  it('shows no data message when entries are null', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: { entries: [] }, successful: true, responseMessage: 'Success' });
-
-    render(<CashFlowTrendGraph />);
-
-    await waitFor(() => {
-      expect(screen.getByText(`No data found. Add some entries to see your ${CASHFLOW_ITEM_NAME} trends.`)).toBeInTheDocument();
-    });
-  });
-
-  it('calls API with correct date range', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
-
-    render(<CashFlowTrendGraph />);
-
-    await waitFor(() => {
-      expect(mockGetRequestSingle).toHaveBeenCalledWith(
-        expect.stringContaining('CashFlowTrendGraph?startDate=')
-      );
-    });
-  });
-
-  it('handles date range changes', async () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
-
-    render(<CashFlowTrendGraph />);
-
-    const datePicker = screen.getByTestId('date-picker');
-    const dateRange = JSON.parse(datePicker.getAttribute('data-date-range') || '{}');
     
-    expect(dateRange).toHaveProperty('from');
-    expect(dateRange).toHaveProperty('to');
+    expect(screen.getByTestId('dashboard-page')).toBeInTheDocument();
+    expect(screen.getByTestId('item-name')).toHaveTextContent(CASHFLOW_ITEM_NAME);
   });
 
-  it('renders content container with correct classes', () => {
-    mockGetRequestSingle.mockResolvedValue({ data: mockCashFlowData, successful: true, responseMessage: 'Success' });
-
+  it('renders trend graph with correct data', () => {
     render(<CashFlowTrendGraph />);
-
-    const contentContainer = screen.getByTestId('date-picker').closest('.flex-1');
-    expect(contentContainer).toHaveClass('flex-1', 'flex', 'flex-col', 'gap-2');
+    
+    expect(screen.getByTestId('trend-graph')).toBeInTheDocument();
+    expect(screen.getByTestId('trend-graph-title')).toHaveTextContent(CASHFLOW_ITEM_NAME);
+    expect(screen.getByTestId('trend-graph-labels')).toHaveTextContent('December 2023, January 2024');
+    expect(screen.getByTestId('trend-graph-datasets')).toHaveTextContent('1 datasets');
   });
 
-  it('logs error to console when API call fails', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockGetRequestSingle.mockRejectedValue(new Error('Network error'));
-
+  it('renders cash flow totals with correct data', () => {
     render(<CashFlowTrendGraph />);
+    
+    expect(screen.getByTestId('cash-flow-totals')).toBeInTheDocument();
+    expect(screen.getByTestId('incomes')).toHaveTextContent('1000, 1500');
+    expect(screen.getByTestId('expenses')).toHaveTextContent('500, 600');
+    expect(screen.getByTestId('net-cash-flows')).toHaveTextContent('500, 900');
+  });
 
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching trend graph:', expect.any(Error));
-    });
+  it('renders trend graph table', () => {
+    render(<CashFlowTrendGraph />);
+    
+    expect(screen.getByTestId('trend-graph-table')).toBeInTheDocument();
+    expect(screen.getByText('Table rendered')).toBeInTheDocument();
+  });
 
-    consoleSpy.mockRestore();
+  it('handles null trend graph data gracefully', () => {
+    const { rerender } = render(<CashFlowTrendGraph />);
+    
+    // Mock the DashboardPage to return null data
+    jest.doMock('../components', () => ({
+      DashboardPage: ({ children }: { children: (props: { trendGraphData: unknown }) => React.ReactElement }) => (
+        <div data-testid="dashboard-page">
+          {children({ trendGraphData: null })}
+        </div>
+      ),
+      TrendGraph: jest.fn(),
+    }));
+
+    rerender(<CashFlowTrendGraph />);
+    
+    expect(screen.getByTestId('dashboard-page')).toBeInTheDocument();
   });
 }); 

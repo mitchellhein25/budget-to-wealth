@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useParentPath } from '@/app/hooks';
 import { CategoriesPage } from '@/app/components/categories/CategoriesPage';
@@ -7,7 +8,7 @@ import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components/components/constant
 import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
 import { BackArrow } from '@/app/components/buttons/BackArrow';
 
-export default function ExpenseCategories() {
+function ExpenseCategoriesContent() {
   const searchParams = useSearchParams();  
   const parentPath = useParentPath();
   const returnUrl = searchParams.get('returnUrl') || parentPath;
@@ -26,4 +27,12 @@ export default function ExpenseCategories() {
       />
     </div>
   )	
+}
+
+export default function ExpenseCategories() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <ExpenseCategoriesContent />
+    </Suspense>
+  );
 }

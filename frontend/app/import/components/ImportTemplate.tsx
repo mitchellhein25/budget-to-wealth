@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { ImportDataTypeStrings } from './models/ImportDataTypeStrings';
+import { ImportDataTypeStringMappings } from './models/ImportDataTypeStringMappings';
 import { Download, X } from 'lucide-react';
 import { getImportTemplateData } from './functions/getImportTemplateData';
 
 interface ImportTemplateProps {
-  dataTypeString: ImportDataTypeStrings;
+  dataTypeString: (typeof ImportDataTypeStringMappings)[keyof typeof ImportDataTypeStringMappings];
   onClose: () => void;
 }
 
