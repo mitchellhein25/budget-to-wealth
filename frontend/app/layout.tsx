@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavBar from "./components/navbar/NavBar";
-import { DebugInfo } from "./components/DebugInfo";
 import { SessionData } from "@auth0/nextjs-auth0/types";
 import { auth0 } from "./lib/auth/auth0";
 
@@ -22,7 +21,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <main className="flex-1">
             {children}
           </main>
-          <DebugInfo />
         </div>
       </body>
     </html>
