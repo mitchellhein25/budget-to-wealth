@@ -32,6 +32,7 @@ export default async function Profile() {
                     width={128}
                     height={128}
                     className="rounded-full object-cover"
+                    unoptimized
                   />
                 </>
               ) : (
