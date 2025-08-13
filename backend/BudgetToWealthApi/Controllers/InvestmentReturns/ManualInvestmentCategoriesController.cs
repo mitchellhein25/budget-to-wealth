@@ -52,7 +52,7 @@ public class ManualInvestmentCategoriesController : ControllerBase
         _context.ManualInvestmentCategories.Add(category);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
+        return StatusCode(StatusCodes.Status201Created, category);
     }
 
     [HttpPut("{id}")]
