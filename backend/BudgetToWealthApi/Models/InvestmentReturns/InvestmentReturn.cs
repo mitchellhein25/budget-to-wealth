@@ -15,19 +15,30 @@ public class InvestmentReturn : BaseEntity
     public required long TotalWithdrawals { get; set; }
     public string? UserId { get; set; }
 
+    public bool IsManualInvestment => ManualInvestmentCategory != null;
+
+    public DateOnly? GetStartDate()
+    {
+        if (IsManualInvestment)
+            return ManualInvestmentStartDate;
+        return StartSnapshot?.Date;
+    }
+
+    public DateOnly? GetEndDate()
+    {
+        if (IsManualInvestment)
+            return ManualInvestmentEndDate;
+        return EndSnapshot?.Date;
+    }
+
     public decimal? GetReturnPercentage()
     {
-        if (StartSnapshot != null && EndSnapshot != null)
-        {
-            if (StartSnapshot.Balance == 0)
-                return null;
-            
-            return (decimal)(EndSnapshot.Balance - TotalContributions - StartSnapshot.Balance + TotalWithdrawals) / StartSnapshot.Balance;
-        }
-        else if (ManualInvestmentCategory != null)
-        {
+        if (IsManualInvestment)
             return ManualInvestmentPercentageReturn;
-        }
-        return null;
+
+        if (StartSnapshot ==  null || EndSnapshot == null || StartSnapshot.Balance == 0)
+            return null;
+        
+        return (decimal)(EndSnapshot.Balance - TotalContributions - StartSnapshot.Balance + TotalWithdrawals) / StartSnapshot.Balance;
     }
 }
