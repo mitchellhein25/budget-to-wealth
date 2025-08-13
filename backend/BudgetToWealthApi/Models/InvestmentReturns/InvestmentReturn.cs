@@ -1,9 +1,9 @@
 public class InvestmentReturn : BaseEntity
 {
-    public Guid? StartSnapshotId { get; set; }
-    public HoldingSnapshot? StartSnapshot { get; set; }
-    public Guid? EndSnapshotId { get; set; }
-    public HoldingSnapshot? EndSnapshot { get; set; }
+    public Guid? StartHoldingSnapshotId { get; set; }
+    public HoldingSnapshot? StartHoldingSnapshot { get; set; }
+    public Guid? EndHoldingSnapshotId { get; set; }
+    public HoldingSnapshot? EndHoldingSnapshot { get; set; }
 
     public Guid? ManualInvestmentCategoryId { get; set; }
     public ManualInvestmentCategory? ManualInvestmentCategory { get; set; }
@@ -13,22 +13,26 @@ public class InvestmentReturn : BaseEntity
 
     public required long TotalContributions { get; set; }
     public required long TotalWithdrawals { get; set; }
+    
+    public RecurrenceFrequency? RecurrenceFrequency { get; set; }
+    public DateOnly? RecurrenceEndDate { get; set; }
+
     public string? UserId { get; set; }
 
-    public bool IsManualInvestment => ManualInvestmentCategory != null;
+    public bool IsManualInvestment => ManualInvestmentCategoryId != null;
 
     public DateOnly? GetStartDate()
     {
         if (IsManualInvestment)
             return ManualInvestmentStartDate;
-        return StartSnapshot?.Date;
+        return StartHoldingSnapshot?.Date;
     }
 
     public DateOnly? GetEndDate()
     {
         if (IsManualInvestment)
             return ManualInvestmentEndDate;
-        return EndSnapshot?.Date;
+        return EndHoldingSnapshot?.Date;
     }
 
     public decimal? GetReturnPercentage()
@@ -36,9 +40,9 @@ public class InvestmentReturn : BaseEntity
         if (IsManualInvestment)
             return ManualInvestmentPercentageReturn;
 
-        if (StartSnapshot ==  null || EndSnapshot == null || StartSnapshot.Balance == 0)
+        if (StartHoldingSnapshot ==  null || EndHoldingSnapshot == null || StartHoldingSnapshot.Balance == 0)
             return null;
         
-        return (decimal)(EndSnapshot.Balance - TotalContributions - StartSnapshot.Balance + TotalWithdrawals) / StartSnapshot.Balance;
+        return (decimal)(EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals) / StartHoldingSnapshot.Balance;
     }
 }
