@@ -9,6 +9,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<HoldingCategory> HoldingCategories { get; set; }
     public DbSet<Holding> Holdings { get; set; }
     public DbSet<HoldingSnapshot> HoldingSnapshots { get; set; }
+    public DbSet<InvestmentReturn> InvestmentReturns { get; set; }
+    public DbSet<ManualInvestmentCategory> ManualInvestmentCategories { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
