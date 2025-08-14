@@ -29,14 +29,9 @@ public class InvestmentReturnsController : ControllerBase
                                                      .Include(investmentReturn => investmentReturn.EndHoldingSnapshot)
                                                      .Where(investmentReturn => investmentReturn.UserId == userId);
 
-        if (startDate.HasValue)
-            query = query.Where(investmentReturn => investmentReturn.GetStartDate() >= startDate);
-
-        if (endDate.HasValue)
-            query = query.Where(investmentReturn => investmentReturn.GetEndDate() <= endDate);
+        query = ApplyDateFilter(query, startDate, endDate);
 
         List<InvestmentReturn> investmentReturns = await query.ToListAsync();
-
         return Ok(investmentReturns);
     }
 
@@ -88,6 +83,8 @@ public class InvestmentReturnsController : ControllerBase
 
         existingInvestmentReturn.RecurrenceFrequency = updatedInvestmentReturn.RecurrenceFrequency;
         existingInvestmentReturn.RecurrenceEndDate = updatedInvestmentReturn.RecurrenceEndDate;
+
+        existingInvestmentReturn.UpdatedAt = DateTime.UtcNow;
 
         _context.InvestmentReturns.Update(existingInvestmentReturn);
         await _context.SaveChangesAsync();
@@ -164,5 +161,20 @@ public class InvestmentReturnsController : ControllerBase
         }
     
         return null;
+    }
+
+    private static IQueryable<InvestmentReturn> ApplyDateFilter(IQueryable<InvestmentReturn> query, DateOnly? startDate, DateOnly? endDate)
+    {
+        if (startDate.HasValue)
+            query = query.Where(investmentReturn => 
+                (investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentStartDate != null && investmentReturn.ManualInvestmentStartDate >= startDate) ||
+                (investmentReturn.ManualInvestmentCategoryId == null && investmentReturn.StartHoldingSnapshot != null && investmentReturn.StartHoldingSnapshot.Date >= startDate));
+
+        if (endDate.HasValue)
+            query = query.Where(investmentReturn => 
+                (investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentEndDate != null && investmentReturn.ManualInvestmentEndDate <= endDate) ||
+                (investmentReturn.ManualInvestmentCategoryId == null && investmentReturn.EndHoldingSnapshot != null && investmentReturn.EndHoldingSnapshot.Date <= endDate));
+
+        return query;
     }
 }
