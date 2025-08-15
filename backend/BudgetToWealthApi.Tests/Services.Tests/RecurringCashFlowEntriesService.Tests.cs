@@ -205,26 +205,6 @@ public class RecurringCashFlowEntriesServiceTests : IDisposable
         Assert.NotNull(createdEntry);
     }
 
-    // [Fact]
-    // public async Task ProcessRecurringEntries_MonthlyRecurrenceEndOfMonth_AdjustsForShorterMonth()
-    // {
-    //     int currentYear = DateTime.UtcNow.Year;
-    //     DateOnly january31 = new DateOnly(currentYear, 1, 31);
-    //     CashFlowEntry recurringEntry = CreateCashFlowEntry(
-    //         date: january31,
-    //         recurrenceFrequency: RecurrenceFrequency.Monthly
-    //     );
-
-    //     _context.CashFlowEntries.Add(recurringEntry);
-    //     await _context.SaveChangesAsync();
-
-    //     // We need to mock the current date to be in February
-    //     // Since we can't easily mock DateTime.UtcNow, this test demonstrates the concept
-    //     // In a real scenario, you might want to inject a date provider
-
-    //     Assert.True(result.Success); // Placeholder assertion
-    // }
-
     [Fact]
     public async Task ProcessRecurringEntries_ExpiredRecurrence_DoesNotCreateEntry()
     {

@@ -1,13 +1,20 @@
 public class RecurrenceService
 {
-    public DateOnly GetProcessingDate()
+    private DateOnly _currentProcessingDate;
+
+    public RecurrenceService()
     {
-        return DateOnly.FromDateTime(DateTime.UtcNow);
+        _currentProcessingDate = DateOnly.FromDateTime(DateTime.UtcNow);
+    }
+
+    public void SetProcessingDate(DateOnly date)
+    {
+        _currentProcessingDate = date;
     }
 
     public bool ShouldCreateRecurrenceForToday(DateOnly recurrenceDate, RecurrenceFrequency recurrenceFrequency)
     {
-        DateOnly today = GetProcessingDate();
+        DateOnly today = _currentProcessingDate;
         return recurrenceFrequency switch
         {
             RecurrenceFrequency.Weekly => IsWeeklyRecurrenceDate(recurrenceDate, today),
@@ -19,12 +26,12 @@ public class RecurrenceService
 
     public bool IsRecurrenceActive(DateOnly? recurrenceEndDate)
     {
-        return recurrenceEndDate == null || recurrenceEndDate >= GetProcessingDate();
+        return recurrenceEndDate == null || recurrenceEndDate >= _currentProcessingDate;
     }
 
     public bool IsRecurrenceDue(DateOnly recurrenceDate)
     {
-        return recurrenceDate <= GetProcessingDate();
+        return recurrenceDate <= _currentProcessingDate;
     }
 
     private bool IsWeeklyRecurrenceDate(DateOnly recurrenceDate, DateOnly today)

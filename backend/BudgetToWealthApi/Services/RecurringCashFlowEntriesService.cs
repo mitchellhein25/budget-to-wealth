@@ -4,18 +4,20 @@ public class RecurringCashFlowEntriesService
 {
     private readonly ApplicationDbContext _context;
     private readonly RecurrenceService _recurrenceService;
+    private readonly DateOnly _today;
 
     public RecurringCashFlowEntriesService(ApplicationDbContext context)
     {
         _context = context;
         _recurrenceService = new RecurrenceService();
+        _today = DateOnly.FromDateTime(DateTime.UtcNow);
     }
 
     public async Task<ProcessingResult> ProcessRecurringEntries()
     {
         ProcessingResult result = new ProcessingResult
         {
-            ProcessedDate = _recurrenceService.GetProcessingDate(),
+            ProcessedDate = _today,
             Success = true
         };
         
@@ -49,8 +51,6 @@ public class RecurringCashFlowEntriesService
 
     private async Task<List<CashFlowEntry>> GetActiveRecurringEntries()
     {
-        DateOnly today = _recurrenceService.GetProcessingDate();
-        
         var entries = await _context.CashFlowEntries
             .Where(entry => entry.RecurrenceFrequency != null)
             .ToListAsync();
@@ -64,10 +64,9 @@ public class RecurringCashFlowEntriesService
             return new List<CashFlowEntry>();
 
         List<string> userIds = allRecurringEntries.Select(entry => entry.UserId ?? "").Distinct().ToList();
-        DateOnly today = _recurrenceService.GetProcessingDate();
 
         List<CashFlowEntry> existingEntriesToday = await _context.CashFlowEntries
-            .Where(entry => entry.Date == today && userIds.Contains(entry.UserId ?? ""))
+            .Where(entry => entry.Date == _today && userIds.Contains(entry.UserId ?? ""))
             .ToListAsync();
 
         List<CashFlowEntry> filteredEntries = allRecurringEntries
@@ -89,7 +88,7 @@ public class RecurringCashFlowEntriesService
             Amount = template.Amount,
             EntryType = template.EntryType,
             CategoryId = template.CategoryId,
-            Date = _recurrenceService.GetProcessingDate(),
+            Date = _today,
             Description = template.Description,
             UserId = template.UserId,
         }).ToList();

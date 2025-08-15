@@ -74,15 +74,13 @@ public class InvestmentReturnsController : ControllerBase
         existingInvestmentReturn.EndHoldingSnapshotId = updatedInvestmentReturn.EndHoldingSnapshotId;
 
         existingInvestmentReturn.ManualInvestmentCategoryId = updatedInvestmentReturn.ManualInvestmentCategoryId;
-        existingInvestmentReturn.ManualInvestmentStartDate = updatedInvestmentReturn.ManualInvestmentStartDate;
-        existingInvestmentReturn.ManualInvestmentEndDate = updatedInvestmentReturn.ManualInvestmentEndDate;
+        existingInvestmentReturn.ManualInvestmentRecurrenceFrequency = updatedInvestmentReturn.ManualInvestmentRecurrenceFrequency;
+        existingInvestmentReturn.ManualInvestmentRecurrenceEndDate = updatedInvestmentReturn.ManualInvestmentRecurrenceEndDate;
         existingInvestmentReturn.ManualInvestmentPercentageReturn = updatedInvestmentReturn.ManualInvestmentPercentageReturn;
+        existingInvestmentReturn.ManualInvestmentReturnDate = updatedInvestmentReturn.ManualInvestmentReturnDate;
 
         existingInvestmentReturn.TotalContributions = updatedInvestmentReturn.TotalContributions;
         existingInvestmentReturn.TotalWithdrawals = updatedInvestmentReturn.TotalWithdrawals;
-
-        existingInvestmentReturn.RecurrenceFrequency = updatedInvestmentReturn.RecurrenceFrequency;
-        existingInvestmentReturn.RecurrenceEndDate = updatedInvestmentReturn.RecurrenceEndDate;
 
         existingInvestmentReturn.UpdatedAt = DateTime.UtcNow;
 
@@ -127,17 +125,11 @@ public class InvestmentReturnsController : ControllerBase
             if (!categoryExistsForUser)
                 return BadRequest("Invalid or unauthorized ManualInvestmentCategoryId.");
 
-            if (investmentReturn.ManualInvestmentStartDate == null)
-                return BadRequest("ManualInvestmentStartDate is required for manual investment.");
-
-            if (investmentReturn.ManualInvestmentEndDate == null)
-                return BadRequest("ManualInvestmentEndDate is required for manual investment.");
-
             if (investmentReturn.ManualInvestmentPercentageReturn == null)
                 return BadRequest("ManualInvestmentPercentageReturn is required for manual investment.");
 
-            if (investmentReturn.ManualInvestmentStartDate > investmentReturn.ManualInvestmentEndDate)
-                return BadRequest("ManualInvestmentStartDate must be before ManualInvestmentEndDate.");
+            if (investmentReturn.ManualInvestmentReturnDate == null)
+                return BadRequest("ManualInvestmentReturnDate is required for manual investment.");
         }
         else
         {
@@ -167,12 +159,12 @@ public class InvestmentReturnsController : ControllerBase
     {
         if (startDate.HasValue)
             query = query.Where(investmentReturn => 
-                (investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentStartDate != null && investmentReturn.ManualInvestmentStartDate >= startDate) ||
+                (investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentReturnDate != null && investmentReturn.ManualInvestmentReturnDate >= startDate) ||
                 (investmentReturn.ManualInvestmentCategoryId == null && investmentReturn.StartHoldingSnapshot != null && investmentReturn.StartHoldingSnapshot.Date >= startDate));
 
         if (endDate.HasValue)
             query = query.Where(investmentReturn => 
-                (investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentEndDate != null && investmentReturn.ManualInvestmentEndDate <= endDate) ||
+                (investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentReturnDate != null && investmentReturn.ManualInvestmentReturnDate <= endDate) ||
                 (investmentReturn.ManualInvestmentCategoryId == null && investmentReturn.EndHoldingSnapshot != null && investmentReturn.EndHoldingSnapshot.Date <= endDate));
 
         return query;

@@ -10,89 +10,65 @@ public class RecurrenceServiceTests
     [Fact]
     public void ShouldCreateRecurrenceForToday_WeeklyRecurrence_ReturnsTrue()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-01");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Weekly);
-
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)), RecurrenceFrequency.Weekly);
         Assert.True(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_WeeklyRecurrenceNotDue_ReturnsFalse()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-01");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Weekly);
-
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-6)), RecurrenceFrequency.Weekly);
         Assert.False(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_Every2WeeksRecurrence_ReturnsTrue()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-01");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Every2Weeks);
-
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-14)), RecurrenceFrequency.Every2Weeks);
         Assert.True(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_Every2WeeksRecurrenceNotDue_ReturnsFalse()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-01");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Every2Weeks);
-
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-13)), RecurrenceFrequency.Every2Weeks);
         Assert.False(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_MonthlyRecurrence_ReturnsTrue()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-15");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Monthly);
-
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)), RecurrenceFrequency.Monthly);
         Assert.True(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_MonthlyRecurrenceNotDue_ReturnsFalse()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-15");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Monthly);
-
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1).AddDays(-1)), RecurrenceFrequency.Monthly);
         Assert.False(result);
     }
 
     [Fact]
-    public void ShouldCreateRecurrenceForToday_MonthlyRecurrenceLastDayOfMonth_HandlesCorrectly()
+    public void ShouldCreateRecurrenceForToday_MonthlyRecurrenceLastDayOfMonth_LongerMonth_HandlesCorrectly()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-31");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Monthly);
-
+        _service.SetProcessingDate(DateOnly.Parse("2023-05-31"));
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.Parse("2023-04-30"), RecurrenceFrequency.Monthly);
         Assert.True(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_MonthlyRecurrenceLastDayOfMonth_ShorterMonth_HandlesCorrectly()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-30");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, RecurrenceFrequency.Monthly);
-
+        _service.SetProcessingDate(DateOnly.Parse("2023-04-30"));
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.Parse("2023-03-31"), RecurrenceFrequency.Monthly);
         Assert.True(result);
     }
 
     [Fact]
     public void ShouldCreateRecurrenceForToday_InvalidRecurrenceFrequency_ReturnsFalse()
     {
-        DateOnly recurrenceDate = DateOnly.Parse("2023-01-01");
-
-        bool result = _service.ShouldCreateRecurrenceForToday(recurrenceDate, (RecurrenceFrequency)999);
+        bool result = _service.ShouldCreateRecurrenceForToday(DateOnly.FromDateTime(DateTime.UtcNow), (RecurrenceFrequency)999);
 
         Assert.False(result);
     }
@@ -108,7 +84,7 @@ public class RecurrenceServiceTests
     [Fact]
     public void IsRecurrenceActive_EndDateInFuture_ReturnsTrue()
     {
-        bool result = _service.IsRecurrenceActive(DateOnly.Parse("2023-12-31"));
+        bool result = _service.IsRecurrenceActive(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)));
 
         Assert.True(result);
     }
@@ -116,7 +92,7 @@ public class RecurrenceServiceTests
     [Fact]
     public void IsRecurrenceActive_EndDateToday_ReturnsTrue()
     {
-        bool result = _service.IsRecurrenceActive(DateOnly.Parse("2023-01-15"));
+        bool result = _service.IsRecurrenceActive(DateOnly.FromDateTime(DateTime.UtcNow));
 
         Assert.True(result);
     }
@@ -140,7 +116,7 @@ public class RecurrenceServiceTests
     [Fact]
     public void IsRecurrenceDue_StartDateToday_ReturnsTrue()
     {
-        bool result = _service.IsRecurrenceDue(DateOnly.Parse("2023-01-15"));
+        bool result = _service.IsRecurrenceDue(DateOnly.FromDateTime(DateTime.UtcNow));
 
         Assert.True(result);
     }
@@ -148,29 +124,8 @@ public class RecurrenceServiceTests
     [Fact]
     public void IsRecurrenceDue_StartDateInFuture_ReturnsFalse()
     {
-        bool result = _service.IsRecurrenceDue(DateOnly.Parse("2023-01-16"));
+        bool result = _service.IsRecurrenceDue(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)));
 
         Assert.False(result);
-    }
-
-    [Fact]
-    public void GetProcessingDate_ReturnsSetDate()
-    {
-        DateOnly expectedDate = DateOnly.Parse("2023-01-15");
-
-        DateOnly result = _service.GetProcessingDate();
-
-        Assert.Equal(expectedDate, result);
-    }
-
-    [Fact]
-    public void SetProcessingDate_UpdatesProcessingDate()
-    {
-        DateOnly initialDate = DateOnly.Parse("2023-01-01");
-        DateOnly newDate = DateOnly.Parse("2023-02-01");
-        
-        Assert.Equal(initialDate, _service.GetProcessingDate());
-        
-        Assert.Equal(newDate, _service.GetProcessingDate());
     }
 }
