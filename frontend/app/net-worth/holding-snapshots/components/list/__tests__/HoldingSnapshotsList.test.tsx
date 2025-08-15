@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HoldingSnapshotsList } from '../HoldingSnapshotsList';
-import { HoldingSnapshot } from '@/app/net-worth/components';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
 
 jest.mock('@/app/hooks/useMobileDetection', () => ({

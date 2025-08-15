@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/components';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
 import { MobileHoldingSnapshotCard } from './MobileHoldingSnapshotCard';

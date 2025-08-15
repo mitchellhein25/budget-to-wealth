@@ -2,7 +2,7 @@ import { getHoldingSnapshotsByDateRange, deleteHoldingSnapshot } from '../holdin
 import { getRequestList, GetRequestResultList } from '../../rest-methods/getRequest';
 import { deleteRequest } from '../../rest-methods/deleteRequest';
 import { DateRange } from '@/app/components/DatePicker';
-import { HoldingSnapshot } from '@/app/net-worth/components/HoldingSnapshot';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components/HoldingSnapshot';
 
 jest.mock('../../rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),

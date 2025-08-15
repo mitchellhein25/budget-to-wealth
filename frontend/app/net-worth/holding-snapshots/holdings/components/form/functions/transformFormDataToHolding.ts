@@ -1,6 +1,6 @@
 import { getHoldingValidationResult } from "./getHoldingValidationResult";
-import { Holding } from "@/app/net-worth/holdings/components";
-import { HoldingType } from "@/app/net-worth/holdings/components/HoldingType";
+import { Holding } from "@/app/net-worth/holding-snapshots/holdings/components";
+import { HoldingType } from "@/app/net-worth/holding-snapshots/holdings/components/HoldingType";
 
 export const transformFormDataToHolding = (formData: FormData): { item: Holding | null; errors: string[] } => {
   try {

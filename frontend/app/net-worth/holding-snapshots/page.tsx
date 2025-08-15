@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { DatePicker, DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
 import {  useForm, useMobileDetection } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api/data-methods';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/components';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));

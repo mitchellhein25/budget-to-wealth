@@ -1,6 +1,6 @@
 import { SessionData } from "@auth0/nextjs-auth0/types";
 import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from "@/app/cashflow/components";
-import { NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from "@/app/net-worth/components";
+import { NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from "@/app/net-worth/holding-snapshots/components";
 import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from "@/app/dashboards/components/constants";
 import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE } from "@/app/cashflow/budget/components/constants";
 import { INCOME_ITEM_NAME_LOWERCASE } from "@/app/cashflow/components/";

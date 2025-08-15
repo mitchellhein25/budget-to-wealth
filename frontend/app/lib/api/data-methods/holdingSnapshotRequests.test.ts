@@ -8,7 +8,7 @@ import { getRequestList, getRequestSingle } from '../rest-methods/getRequest';
 import { deleteRequest } from '../rest-methods/deleteRequest';
 import { getQueryStringForDateRange } from './queryHelpers';
 import { DateRange } from '@/app/components/DatePicker';
-import { HoldingSnapshot } from '@/app/net-worth/components/HoldingSnapshot';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components/HoldingSnapshot';
 import { DateRangeResponse, HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT } from './';
 
 jest.mock('../rest-methods/getRequest', () => ({

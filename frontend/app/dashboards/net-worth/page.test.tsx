@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import NetWorthTrendGraph from './page';
-import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
+import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
 
 jest.mock('@/app/lib/api/data-methods', () => ({
   getNetWorthTrendGraphForDateRange: jest.fn(),

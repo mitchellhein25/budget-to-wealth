@@ -1,4 +1,4 @@
-import { cleanCurrencyInput } from "../../../../components/Utils";
+import { cleanCurrencyInput } from "../../../../../components/Utils";
 import { HoldingSnapshotFormData } from "../HoldingSnapshotFormData";
 
 export const holdingSnapshotFormOnChange = (

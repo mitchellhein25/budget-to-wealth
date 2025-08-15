@@ -1,6 +1,6 @@
 import { getAllHoldings } from '../holdingRequests';
 import { getRequestList, GetRequestResultList } from '../../rest-methods';
-import { Holding } from '@/app/net-worth/holdings/components/Holding';
+import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components/Holding';
 
 jest.mock('../../rest-methods', () => ({
   getRequestList: jest.fn(),

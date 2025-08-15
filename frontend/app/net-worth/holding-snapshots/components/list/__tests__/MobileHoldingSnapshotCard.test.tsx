@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MobileHoldingSnapshotCard } from '../MobileHoldingSnapshotCard';
-import { HoldingSnapshot } from '@/app/net-worth/components';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 
 jest.mock('@/app/components/Utils', () => ({
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`),

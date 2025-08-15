@@ -1,4 +1,4 @@
-import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/components';
+import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
 import { TrendGraphDataset } from '../../components';
 import { NetWorthTrendGraphData } from './';
 

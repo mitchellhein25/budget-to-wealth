@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
-import { HOLDING_ITEM_NAME, HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingInputs, HoldingFormData } from '../';
+import { formHasAnyValue, FormTemplate } from '@/app/components/form';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshot, HoldingSnapshotInputs, HoldingSnapshotFormData } from '..';
 
-export function HoldingForm(
-  {formState} : {formState: FormState<Holding, HoldingFormData>}
- ) {
+export function HoldingSnapshotForm(
+  {formState} : {formState: FormState<HoldingSnapshot, HoldingSnapshotFormData>}
+) {
   const [isLoading, setIsLoading] = useState(false);
-  const formHeader: string = formState.editingFormData?.id ? `Edit ${HOLDING_ITEM_NAME}` : `New ${HOLDING_ITEM_NAME}`;
+  const formHeader: string = formState.editingFormData?.id ? `Edit ${HOLDING_SNAPSHOT_ITEM_NAME}` : `New ${HOLDING_SNAPSHOT_ITEM_NAME}`;
 
   const inputs: React.ReactElement = 
-    <HoldingInputs
+    <HoldingSnapshotInputs
       editingFormData={formState.editingFormData}
       onChange={formState.onChange}
       setIsLoading={setIsLoading}
@@ -32,7 +32,7 @@ export function HoldingForm(
 
   return (
     <FormTemplate
-      formId={`${HOLDING_ITEM_NAME_LOWERCASE}-form`}
+      formId={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-form`}
       handleSubmit={formState.handleSubmit}
       formHeader={formHeader}
       inputs={inputs}

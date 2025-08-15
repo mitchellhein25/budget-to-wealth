@@ -40,11 +40,14 @@ public class ApplicationDbContext : DbContext
             .ValueGeneratedOnAdd()
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-        if (entityType.GetProperty("Amount") != null)
+        foreach (var property in entityType.GetProperties())
         {
-            modelBuilder.Entity(entityType)
-                .Property("Amount")
-                .HasColumnType("BIGINT");
+            if (property.PropertyType == typeof(long) || property.PropertyType == typeof(long?))
+            {
+                modelBuilder.Entity(entityType)
+                    .Property(property.Name)
+                    .HasColumnType("BIGINT");
+            }
         }
     }
 

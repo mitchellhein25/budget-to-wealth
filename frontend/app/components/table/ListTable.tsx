@@ -3,8 +3,8 @@
 import React, { useState, useMemo } from 'react';
 import TablePagination from './TablePagination';
 import { useMobileDetection } from '@/app/hooks';
-import { HOLDING_SNAPSHOT_ITEM_NAME } from '@/app/net-worth/components/constants';
-import { HoldingSnapshot } from '@/app/net-worth/components/HoldingSnapshot';
+import { HOLDING_SNAPSHOT_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components/constants';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components/HoldingSnapshot';
 
 export type ListTableItem = (
   | { name: string }

@@ -1,6 +1,6 @@
 import { ListTableItem } from "@/app/components/table/ListTable";
 import { Category } from "@/app/components/categories/Category";
-import { HoldingType } from "./";
+import { HoldingType } from ".";
 
 export type Holding = ListTableItem & {
   id?: number;
