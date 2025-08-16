@@ -1,8 +1,9 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { CategoriesPage } from './CategoriesPage';
 import { useForm } from '@/app/hooks';
-import { getRequestList } from '@/app/lib/api/rest-methods/getRequest';
+import { getRequestList } from '@/app/lib/api/rest-methods';
 import { messageTypeIsError } from '../Utils';
+import { Category, CategoryFormData } from './Category';
 
 const categoriesFormTestId = 'categories-form';
 const categoriesListTestId = 'categories-list';
@@ -14,7 +15,7 @@ jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods', () => ({
   getRequestList: jest.fn(),
 }));
 
@@ -52,7 +53,7 @@ jest.mock('../Utils', () => ({
 }));
 
 describe('CategoriesPage', () => {
-  const mockUseForm = jest.mocked(useForm);
+  const mockUseForm = jest.mocked(useForm<Category, CategoryFormData>);
   const mockGetRequestList = jest.mocked(getRequestList);
   const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
 
@@ -67,16 +68,18 @@ describe('CategoriesPage', () => {
     jest.clearAllMocks();
     
     mockUseForm.mockReturnValue({
-      formData: {},
-      onInputChange: jest.fn(),
-      onSubmit: jest.fn(),
+      editingFormData: {} as Partial<CategoryFormData>,
+      onChange: jest.fn(),
+      handleSubmit: jest.fn(),
       onItemIsEditing: jest.fn(),
+      onReset: jest.fn(),
       isSubmitting: false,
-      message: null,
+      message: { type: null, text: '' },
     });
     
     mockGetRequestList.mockResolvedValue({
       successful: true,
+      responseMessage: '',
       data: [],
     });
     
@@ -203,14 +206,14 @@ describe('CategoriesPage', () => {
 
     const mockTransformFormDataToItem = jest.fn();
     mockUseForm.mockReturnValue({
-      formData: {},
-      onInputChange: jest.fn(),
-      onSubmit: jest.fn(),
+      editingFormData: {} as Partial<CategoryFormData>,
+      onChange: jest.fn(),
+      handleSubmit: jest.fn(),
       onItemIsEditing: jest.fn(),
+      onReset: jest.fn(),
       isSubmitting: false,
-      message: null,
-      transformFormDataToItem: mockTransformFormDataToItem,
-    });
+      message: { type: null, text: '' },
+    } as unknown as ReturnType<typeof useForm<Category, CategoryFormData>>);
 
     await act(async () => {
       render(<CategoriesPage {...incomeProps} />);
@@ -233,14 +236,14 @@ describe('CategoriesPage', () => {
 
     const mockTransformFormDataToItem = jest.fn();
     mockUseForm.mockReturnValue({
-      formData: {},
-      onInputChange: jest.fn(),
-      onSubmit: jest.fn(),
+      editingFormData: {} as Partial<CategoryFormData>,
+      onChange: jest.fn(),
+      handleSubmit: jest.fn(),
       onItemIsEditing: jest.fn(),
+      onReset: jest.fn(),
       isSubmitting: false,
-      message: null,
-      transformFormDataToItem: mockTransformFormDataToItem,
-    });
+      message: { type: null, text: '' },
+    } as unknown as ReturnType<typeof useForm<Category, CategoryFormData>>);
 
     await act(async () => {
       render(<CategoriesPage {...expenseProps} />);
@@ -263,13 +266,13 @@ describe('CategoriesPage', () => {
 
     const mockTransformFormDataToItem = jest.fn();
     mockUseForm.mockReturnValue({
-      formData: {},
-      onInputChange: jest.fn(),
-      onSubmit: jest.fn(),
+      editingFormData: {} as Partial<CategoryFormData>,
+      onChange: jest.fn(),
+      handleSubmit: jest.fn(),
       onItemIsEditing: jest.fn(),
+      onReset: jest.fn(),
       isSubmitting: false,
-      message: null,
-      transformFormDataToItem: mockTransformFormDataToItem,
+      message: { type: null, text: '' },
     });
 
     await act(async () => {
@@ -288,13 +291,13 @@ describe('CategoriesPage', () => {
   it('tests convertCategoryToFormData function', async () => {
     const mockConvertItemToFormData = jest.fn();
     mockUseForm.mockReturnValue({
-      formData: {},
-      onInputChange: jest.fn(),
-      onSubmit: jest.fn(),
+      editingFormData: {} as Partial<CategoryFormData>,
+      onChange: jest.fn(),
+      handleSubmit: jest.fn(),
       onItemIsEditing: jest.fn(),
+      onReset: jest.fn(),
       isSubmitting: false,
-      message: null,
-      convertItemToFormData: mockConvertItemToFormData,
+      message: { type: null, text: '' },
     });
 
     await act(async () => {
@@ -337,17 +340,18 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Income',
     };
 
-    let capturedTransformFunction: (formData: FormData) => unknown;
-    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => unknown }) => {
+    let capturedTransformFunction: (formData: FormData) => { item: any; errors: string[] } = () => ({ item: null, errors: [] });
+    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => { item: any; errors: string[] } }) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
-        formData: {},
-        onInputChange: jest.fn(),
-        onSubmit: jest.fn(),
+        editingFormData: {} as Partial<CategoryFormData>,
+        onChange: jest.fn(),
+        handleSubmit: jest.fn(),
         onItemIsEditing: jest.fn(),
+        onReset: jest.fn(),
         isSubmitting: false,
-        message: null,
-      };
+        message: { type: null, text: '' },
+      } as unknown as ReturnType<typeof useForm<Category, CategoryFormData>>;
     });
 
     await act(async () => {
@@ -355,7 +359,7 @@ describe('CategoriesPage', () => {
     });
     
     const formData = new FormData();
-    formData.append('Name', 'Test Income Category');
+    formData.append('income-name', 'Test Income Category');
     
     const result = capturedTransformFunction(formData);
     
@@ -370,17 +374,18 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Expense',
     };
 
-    let capturedTransformFunction: (formData: FormData) => unknown;
-    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => unknown }) => {
+    let capturedTransformFunction: (formData: FormData) => { item: any; errors: string[] } = () => ({ item: null, errors: [] });
+    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => { item: any; errors: string[] } }) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
-        formData: {},
-        onInputChange: jest.fn(),
-        onSubmit: jest.fn(),
+        editingFormData: {} as Partial<CategoryFormData>,
+        onChange: jest.fn(),
+        handleSubmit: jest.fn(),
         onItemIsEditing: jest.fn(),
+        onReset: jest.fn(),
         isSubmitting: false,
-        message: null,
-      };
+        message: { type: null, text: '' },
+      } as unknown as ReturnType<typeof useForm<Category, CategoryFormData>>;
     });
 
     await act(async () => {
@@ -388,7 +393,7 @@ describe('CategoriesPage', () => {
     });
     
     const formData = new FormData();
-    formData.append('Name', 'Test Expense Category');
+    formData.append('expense-name', 'Test Expense Category');
     
     const result = capturedTransformFunction(formData);
     
@@ -403,17 +408,18 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Other',
     };
 
-    let capturedTransformFunction: (formData: FormData) => unknown;
-    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => unknown }) => {
+    let capturedTransformFunction: (formData: FormData) => { item: any; errors: string[] } = () => ({ item: null, errors: [] });
+    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => { item: any; errors: string[] } }) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
-        formData: {},
-        onInputChange: jest.fn(),
-        onSubmit: jest.fn(),
+        editingFormData: {} as Partial<CategoryFormData>,
+        onChange: jest.fn(),
+        handleSubmit: jest.fn(),
         onItemIsEditing: jest.fn(),
+        onReset: jest.fn(),
         isSubmitting: false,
-        message: null,
-      };
+        message: { type: null, text: '' },
+      } as unknown as ReturnType<typeof useForm<Category, CategoryFormData>>;
     });
 
     await act(async () => {
@@ -421,7 +427,7 @@ describe('CategoriesPage', () => {
     });
     
     const formData = new FormData();
-    formData.append('Name', 'Test Other Category');
+    formData.append('other-name', 'Test Other Category');
     
     const result = capturedTransformFunction(formData);
     
@@ -431,17 +437,18 @@ describe('CategoriesPage', () => {
   });
 
   it('tests convertCategoryToFormData function', async () => {
-    let capturedConvertFunction: (item: unknown) => FormData;
-    mockUseForm.mockImplementation((config: { convertItemToFormData: (item: unknown) => FormData }) => {
+    let capturedConvertFunction: (item: unknown) => CategoryFormData = () => ({ name: '' });
+    mockUseForm.mockImplementation((config: any) => {
       capturedConvertFunction = config.convertItemToFormData;
       return {
-        formData: {},
-        onInputChange: jest.fn(),
-        onSubmit: jest.fn(),
+        editingFormData: {} as Partial<CategoryFormData>,
+        onChange: jest.fn(),
+        handleSubmit: jest.fn(),
         onItemIsEditing: jest.fn(),
+        onReset: jest.fn(),
         isSubmitting: false,
-        message: null,
-      };
+        message: { type: null, text: '' },
+      } as unknown as ReturnType<typeof useForm<Category, CategoryFormData>>;
     });
 
     await act(async () => {
@@ -451,6 +458,6 @@ describe('CategoriesPage', () => {
     const mockCategory = { id: 1, name: 'Test Category' };
     const result = capturedConvertFunction(mockCategory);
     
-    expect(result).toEqual({ name: 'Test Category' });
+    expect(result).toEqual({ id: '1', name: 'Test Category' });
   });
 }); 

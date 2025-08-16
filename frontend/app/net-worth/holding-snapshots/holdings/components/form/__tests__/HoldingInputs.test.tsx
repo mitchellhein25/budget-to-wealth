@@ -1,7 +1,8 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { HoldingInputs } from '../HoldingInputs';
 import { getAllHoldingCategories } from '@/app/lib/api/data-methods';
-import { HOLDING_ITEM_NAME_LOWERCASE, HOLDING_TYPE_ASSET } from '../../constants';
+import { HOLDING_CATEGORY_ITEM_NAME_LINK, HOLDING_ITEM_NAME_LOWERCASE, HOLDING_ITEM_NAME_LOWERCASE_PLURAL, HOLDING_TYPE_ASSET } from '../../constants';
+import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots/components';
 
 const editCategoriesLinkTestId = 'edit-categories-link';
 
@@ -159,7 +160,7 @@ describe('HoldingInputs', () => {
     });
 
     const editLink = screen.getByTestId(editCategoriesLinkTestId);
-    expect(editLink).toHaveAttribute('href', '/net-worth/holdings/holding-categories');
+    expect(editLink).toHaveAttribute('href', `/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_SNAPSHOT_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}/${HOLDING_CATEGORY_ITEM_NAME_LINK}`);
     expect(editLink).toHaveAttribute('title', 'Edit Holding Categories');
   });
 

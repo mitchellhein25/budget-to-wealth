@@ -4,6 +4,9 @@ import { HoldingSnapshotInputs } from '../HoldingSnapshotInputs';
 import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
 import { waitFor } from '@testing-library/react';
 import { getAllHoldings } from '@/app/lib/api/data-methods';
+import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '../../constants';
+import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '../../../holdings/components';
+import { GetRequestResultList } from '@/app/lib/api/rest-methods';
 
 // Mock getAllHoldings globally before imports
 jest.mock('@/app/lib/api/data-methods', () => ({
@@ -80,7 +83,7 @@ describe('HoldingSnapshotInputs', () => {
     
     const editLink = screen.getByRole('link', { name: /edit/i });
     expect(editLink).toBeInTheDocument();
-    expect(editLink).toHaveAttribute('href', '/net-worth/holdings');
+    expect(editLink).toHaveAttribute('href', `/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_SNAPSHOT_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}`);
   });
 
   it('displays edit icon', async () => {
@@ -180,8 +183,8 @@ describe('HoldingSnapshotInputs', () => {
       { id: 'h1', name: 'Account 1', institution: 'Bank', holdingCategory: { name: 'Cat' }, type: 'Cash' },
       { id: 'h2', name: 'Account 2', institution: '', holdingCategory: { name: 'Cat2' }, type: 'Stock' },
     ];
-    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<{ successful: boolean; data: unknown[] }>>;
-    mockGetAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings });
+    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<GetRequestResultList<Holding>>>;
+    mockGetAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings, responseMessage: '' });
     
     await act(async () => {
       render(<HoldingSnapshotInputs {...mockProps} />);
@@ -196,8 +199,8 @@ describe('HoldingSnapshotInputs', () => {
   });
 
   it('does not set holdings if fetch is unsuccessful', async () => {
-    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<{ successful: boolean; data: unknown[] }>>;
-    mockGetAllHoldings.mockResolvedValueOnce({ successful: false, data: [] });
+    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<GetRequestResultList<Holding>>>;
+    mockGetAllHoldings.mockResolvedValueOnce({ successful: false, data: [], responseMessage: '' });
     
     await act(async () => {
       render(<HoldingSnapshotInputs {...mockProps} />);

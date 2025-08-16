@@ -3,7 +3,7 @@ import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENS
 
 jest.mock('@/app/components/Utils', () => ({
   convertDollarsToCents: jest.fn(),
-  numberRegex: /^\d+(\.\d{0,2})?$/,
+  currencyRegex: /^\d+(\.\d{0,2})?$/,
 }));
 
 import { convertDollarsToCents } from '@/app/components/Utils';

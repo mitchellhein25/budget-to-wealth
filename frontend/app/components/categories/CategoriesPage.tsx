@@ -50,7 +50,6 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
       id: formData.get(`${categoryTypeNameForId}-id`) as string || undefined,
       name: nameValue 
     } as T;
-    console.log("category", category);
     if (props.categoryTypeName === INCOME_ITEM_NAME)
       (category as unknown as CashFlowCategory).categoryType = INCOME_ITEM_NAME;
     else if (props.categoryTypeName === EXPENSE_ITEM_NAME) {

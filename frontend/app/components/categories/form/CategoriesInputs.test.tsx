@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CategoriesInputs } from './CategoriesInputs';
+import { INCOME_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components';
 
 jest.mock('../../form', () => ({
   InputFieldSetTemplate: jest.fn(({ label, isRequired, inputChild }) => (
@@ -29,13 +30,13 @@ describe('CategoriesInputs', () => {
   });
 
   it('renders the component with name input', () => {
-    render(<CategoriesInputs {...defaultProps} />);
+    render(<CategoriesInputs {...defaultProps} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     expect(screen.getByDisplayValue('Test Category')).toBeInTheDocument();
   });
 
   it('renders hidden id input', () => {
-    render(<CategoriesInputs {...defaultProps} />);
+    render(<CategoriesInputs {...defaultProps} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const idInput = screen.getByDisplayValue('123e4567-e89b-12d3-a456-426614174000');
     expect(idInput).toHaveAttribute('hidden');
@@ -43,7 +44,7 @@ describe('CategoriesInputs', () => {
   });
 
   it('displays name field with correct label', () => {
-    render(<CategoriesInputs {...defaultProps} />);
+    render(<CategoriesInputs {...defaultProps} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     expect(screen.getByText('Name')).toBeInTheDocument();
   });
@@ -57,7 +58,7 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithUndefinedId} />);
+    render(<CategoriesInputs {...propsWithUndefinedId} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const idInput = screen.getByDisplayValue('');
     expect(idInput).toHaveAttribute('hidden');
@@ -73,7 +74,7 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithNullId} />);
+    render(<CategoriesInputs {...propsWithNullId} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const idInput = screen.getByDisplayValue('');
     expect(idInput).toHaveAttribute('hidden');
@@ -89,7 +90,7 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithUndefinedName} />);
+    render(<CategoriesInputs {...propsWithUndefinedName} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const nameInput = screen.getByDisplayValue('');
     expect(nameInput).toBeInTheDocument();
@@ -104,7 +105,7 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithNullName} />);
+    render(<CategoriesInputs {...propsWithNullName} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const nameInput = screen.getByDisplayValue('');
     expect(nameInput).toBeInTheDocument();
@@ -116,11 +117,11 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithEmptyData} />);
+    render(<CategoriesInputs {...propsWithEmptyData} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const inputs = screen.getAllByDisplayValue('');
-    const idInput = inputs.find(input => input.getAttribute('name') === 'id');
-    const nameInput = inputs.find(input => input.getAttribute('name') === 'name');
+    const idInput = inputs.find(input => input.getAttribute('id') === `${INCOME_ITEM_NAME_LOWERCASE}-id`);
+    const nameInput = inputs.find(input => input.getAttribute('id') === `${INCOME_ITEM_NAME_LOWERCASE}-name`);
     
     expect(idInput).toHaveAttribute('hidden');
     expect(idInput).toHaveAttribute('readonly');
@@ -133,11 +134,11 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithUndefinedData} />);
+    render(<CategoriesInputs {...propsWithUndefinedData} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const inputs = screen.getAllByDisplayValue('');
-    const idInput = inputs.find(input => input.getAttribute('name') === 'id');
-    const nameInput = inputs.find(input => input.getAttribute('name') === 'name');
+    const idInput = inputs.find(input => input.getAttribute('id') === `${INCOME_ITEM_NAME_LOWERCASE}-id`);
+    const nameInput = inputs.find(input => input.getAttribute('id') === `${INCOME_ITEM_NAME_LOWERCASE}-name`);
     
     expect(idInput).toHaveAttribute('hidden');
     expect(idInput).toHaveAttribute('readonly');
@@ -150,11 +151,11 @@ describe('CategoriesInputs', () => {
       onChange: mockOnChange,
     };
 
-    render(<CategoriesInputs {...propsWithNullData} />);
+    render(<CategoriesInputs {...propsWithNullData} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const inputs = screen.getAllByDisplayValue('');
-    const idInput = inputs.find(input => input.getAttribute('name') === 'id');
-    const nameInput = inputs.find(input => input.getAttribute('name') === 'name');
+    const idInput = inputs.find(input => input.getAttribute('id') === `${INCOME_ITEM_NAME_LOWERCASE}-id`);
+    const nameInput = inputs.find(input => input.getAttribute('id') === `${INCOME_ITEM_NAME_LOWERCASE}-name`);
     
     expect(idInput).toHaveAttribute('hidden');
     expect(idInput).toHaveAttribute('readonly');
@@ -162,7 +163,7 @@ describe('CategoriesInputs', () => {
   });
 
   it('calls onChange when name input changes', () => {
-    render(<CategoriesInputs {...defaultProps} />);
+    render(<CategoriesInputs {...defaultProps} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     const nameInput = screen.getByDisplayValue('Test Category');
     fireEvent.change(nameInput, { target: { value: 'New Category Name' } });
@@ -177,13 +178,13 @@ describe('CategoriesInputs', () => {
   });
 
   it('displays required indicator for name field', () => {
-    render(<CategoriesInputs {...defaultProps} />);
+    render(<CategoriesInputs {...defaultProps} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     expect(screen.getByText('Required')).toBeInTheDocument();
   });
 
   it('renders InputFieldSetTemplate with correct props', () => {
-    render(<CategoriesInputs {...defaultProps} />);
+    render(<CategoriesInputs {...defaultProps} categoryTypeName={INCOME_ITEM_NAME_LOWERCASE} />);
     
     expect(screen.getByTestId('input-field-set')).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
