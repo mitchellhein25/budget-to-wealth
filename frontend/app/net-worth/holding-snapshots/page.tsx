@@ -5,6 +5,7 @@ import { DatePicker, DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, Messag
 import {  useForm, useMobileDetection } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api/data-methods';
 import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
+import { NetWorthSideBar } from './components/NetWorthSideBar';
 
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
@@ -57,7 +58,8 @@ export default function HoldingSnapshotsPage() {
 	}, [fetchItems]);
   
   return (
-    <div className="flex gap-6 p-6 h-full min-h-screen">
+    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
+      {!isMobile && <NetWorthSideBar />}
       <div className={`flex flex-1 gap-6 ${isMobile ? 'flex-col' : ''}`}>
         <div className="flex-shrink-0">
           <HoldingSnapshotForm

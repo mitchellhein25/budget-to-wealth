@@ -3,13 +3,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
-import { navItems, cashflowSubNavItems, dashboardsSubNavItems, NavItem } from './utils';
+import { NavItems, CashflowSubNavItems, DashboardsSubNavItems, NavItem, NetWorthSubNavItems } from './utils';
+import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components/components/constants';
+import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from '@/app/dashboards/components/constants';
+import { NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots/components';
 
 export function MobileDrawer(
   { pathname, onClose }: { pathname: string, onClose: () => void }) 
 {
-  const isCashflowPage = pathname.startsWith('/cashflow');
-  const isDashboardsPage = pathname.startsWith('/dashboards');
+  const isCashflowPage = pathname.startsWith(`/${CASHFLOW_ITEM_NAME_LOWERCASE}`);
+  const isNetWorthPage = pathname.startsWith(`/${NET_WORTH_ITEM_NAME_LINK}`);
+  const isDashboardsPage = pathname.startsWith(`/${DASHBOARDS_ITEM_NAME_LOWERCASE}`);
+
+  const showSubDrawer = isCashflowPage || isNetWorthPage || isDashboardsPage;
 
   const DrawerNavLink = ({ item, isSubItem = false }: { item: NavItem; isSubItem?: boolean }) => {
     const isActive = isSubItem 
@@ -42,29 +48,17 @@ export function MobileDrawer(
           </label>
         </div>
         <div className="flex flex-col space-y-2">
-          {navItems.map((item) => (
+          {NavItems.map((item) => (
             <DrawerNavLink key={item.href} item={item} />
           ))}
           
-          {isCashflowPage && (
+          {showSubDrawer && (
             <>
               <div className="divider my-4"></div>
               <div className="text-sm font-medium text-base-content/70 mb-2 px-2">
-                Cashflow
+                {isCashflowPage ? CASHFLOW_ITEM_NAME : isNetWorthPage ? NET_WORTH_ITEM_NAME : DASHBOARDS_ITEM_NAME}
               </div>
-              {cashflowSubNavItems.map((item: NavItem) => (
-                <DrawerNavLink key={item.href} item={item} isSubItem />
-              ))}
-            </>
-          )}
-
-          {isDashboardsPage && (
-            <>
-              <div className="divider my-4"></div>
-              <div className="text-sm font-medium text-base-content/70 mb-2 px-2">
-                Dashboards
-              </div>
-              {dashboardsSubNavItems.map((item: NavItem) => (
+              {(isCashflowPage ? CashflowSubNavItems : isNetWorthPage ? NetWorthSubNavItems : DashboardsSubNavItems).map((item: NavItem) => (
                 <DrawerNavLink key={item.href} item={item} isSubItem />
               ))}
             </>

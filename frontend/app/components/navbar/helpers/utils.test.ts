@@ -1,4 +1,4 @@
-import { isTokenExpired, isAuthenticated, closeDrawer, navItems } from './';
+import { isTokenExpired, isAuthenticated, closeDrawer, NavItems } from './';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
 describe('utils', () => {
@@ -141,11 +141,11 @@ describe('utils', () => {
 
   describe('navItems', () => {
     it('contains the expected navigation items', () => {
-      expect(navItems).toHaveLength(3);
+      expect(NavItems).toHaveLength(3);
     });
 
     it('has correct structure for each navigation item', () => {
-      navItems.forEach(item => {
+      NavItems.forEach(item => {
         expect(item).toHaveProperty('href');
         expect(item).toHaveProperty('label');
         expect(typeof item.href).toBe('string');
@@ -154,19 +154,19 @@ describe('utils', () => {
     });
 
     it('has cash flow as first navigation item', () => {
-      const cashFlowItem = navItems[0];
+      const cashFlowItem = NavItems[0];
       expect(cashFlowItem.href).toContain('/cashflow/expenses');
       expect(cashFlowItem.label).toBe('Cashflow');
     });
 
     it('has net worth as second navigation item', () => {
-      const netWorthItem = navItems[1];
+      const netWorthItem = NavItems[1];
       expect(netWorthItem.href).toContain('/net-worth');
       expect(netWorthItem.label).toBe('Net Worth');
     });
 
     it('has dashboards as third navigation item', () => {
-      const dashboardsItem = navItems[2];
+      const dashboardsItem = NavItems[2];
       expect(dashboardsItem.href).toContain('/dashboards');
       expect(dashboardsItem.label).toBe('Dashboards');
     });
