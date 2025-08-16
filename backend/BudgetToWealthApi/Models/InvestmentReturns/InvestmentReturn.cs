@@ -19,14 +19,17 @@ public class InvestmentReturn : BaseEntity
 
     public bool IsManualInvestment => ManualInvestmentCategoryId != null;
 
-    public decimal? GetReturnPercentage()
+    public decimal? ReturnPercentage
     {
-        if (IsManualInvestment)
-            return ManualInvestmentPercentageReturn;
+        get
+        {
+            if (IsManualInvestment)
+                return ManualInvestmentPercentageReturn;
 
-        if (StartHoldingSnapshot ==  null || EndHoldingSnapshot == null || StartHoldingSnapshot.Balance == 0)
-            return null;
-        
-        return (decimal)(EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals) / StartHoldingSnapshot.Balance;
+            if (StartHoldingSnapshot ==  null || EndHoldingSnapshot == null || StartHoldingSnapshot.Balance == 0)
+                return null;
+            
+            return (decimal)(EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals) / StartHoldingSnapshot.Balance;
+        }
     }
 }
