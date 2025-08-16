@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react'
 import { useMobileDetection } from '../hooks';
 import { NetWorthSideBar } from './holding-snapshots/components/NetWorthSideBar';

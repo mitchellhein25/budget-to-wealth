@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { DashboardSideBar } from './DashboardSideBar';
+import { DASHBOARDS_CASHFLOW_LINK, DASHBOARDS_NET_WORTH_LINK } from '@/app/components/navbar/helpers/utils';
+import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
+import { CASHFLOW_ITEM_NAME } from '@/app/cashflow/components';
 
 jest.mock('next/navigation', () => ({
-  usePathname: () => '/dashboards/net-worth',
+  usePathname: () => DASHBOARDS_NET_WORTH_LINK,
 }));
 
 jest.mock('../../components/SideBar', () => ({
@@ -34,19 +37,7 @@ describe('DashboardSideBar', () => {
     const navItems = JSON.parse(sidebar.getAttribute('data-nav-items') || '[]');
 
     expect(navItems).toHaveLength(2);
-    expect(navItems[0]).toEqual({ href: '/dashboards/net-worth', label: 'Net Worth' });
-    expect(navItems[1]).toEqual({ href: '/dashboards/cashflow', label: 'Cash Flow' });
-  });
-
-  it('has correct navigation structure', () => {
-    render(<DashboardSideBar />);
-
-    const sidebar = screen.getByTestId('sidebar');
-    const navItems = JSON.parse(sidebar.getAttribute('data-nav-items') || '[]');
-
-    expect(navItems[0].href).toBe('/dashboards/net-worth');
-    expect(navItems[0].label).toBe('Net Worth');
-    expect(navItems[1].href).toBe('/dashboards/cashflow');
-    expect(navItems[1].label).toBe('Cash Flow');
+    expect(navItems[0]).toEqual({ href: DASHBOARDS_NET_WORTH_LINK, label: NET_WORTH_ITEM_NAME });
+    expect(navItems[1]).toEqual({ href: DASHBOARDS_CASHFLOW_LINK, label: CASHFLOW_ITEM_NAME });
   });
 }); 

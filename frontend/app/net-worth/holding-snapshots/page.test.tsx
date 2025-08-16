@@ -35,9 +35,10 @@ jest.mock('@/app/components', () => ({
   DatePicker: () => <div data-testid={datePickerTestId}>{datePickerText}</div>,
   messageTypeIsError: jest.fn(() => false),
   getCurrentMonthRange: jest.fn(() => ({ start: new Date(), end: new Date() })),
+  SideBar: (props: { children: React.ReactNode }) => <div data-testid="sidebar">{props.children}</div>,
 }));
 
-jest.mock('@/app/net-worth/components', () => ({
+jest.mock('@/app/net-worth/holding-snapshots/components', () => ({
   HoldingSnapshotsList: () => <div data-testid={holdingSnapshotsListTestId}>{holdingSnapshotsListText}</div>,
   HoldingSnapshotForm: () => <div data-testid={holdingSnapshotFormTestId}>{holdingSnapshotFormText}</div>,
   HoldingSnapshotFormData: {},

@@ -9,7 +9,7 @@ export function DesktopNav({ pathname }: { pathname: string }) {
     <div className="navbar-center hidden lg:flex">
       <div className="flex space-x-1">
         {NavItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href.split('/').slice(0, 2).join('/') + '/');
+          const isActive = pathname === item.href || pathname.startsWith(item.href.split('/').slice(0, 2).join('/'));
           return (
             <Link
               key={item.href}
