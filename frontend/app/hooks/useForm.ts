@@ -1,5 +1,5 @@
 import { ChangeEventHandler, useState } from "react";
-import { cleanCurrencyInput, MessageState, replaceSpacesWithDashes } from "../components/Utils";
+import { cleanCurrencyInput, cleanPercentageInput, MessageState, replaceSpacesWithDashes } from "../components/Utils";
 import { handleFormSubmit } from "../components/form/functions/handleFormSubmit";
 
 export type FormState<T, FormDataT> = {
@@ -31,8 +31,14 @@ export const useForm = <T, FormDataT>(
     const { value, name } = event.target;
     const fieldName = name.replace(`${replaceSpacesWithDashes(args.itemName).toLocaleLowerCase()}-`, '');
     let cleanedValue: string | null = value;
-    if (fieldName === "amount" || fieldName === "balance") {
+    const currencyFields = ["amount", "balance", "endHoldingSnapshotBalance", "totalContributions", "totalWithdrawals"];
+    if (currencyFields.includes(fieldName)) {
       cleanedValue = cleanCurrencyInput(value);
+      if (cleanedValue == null)
+        return;
+    }
+    if (fieldName === "manualInvestmentPercentageReturn") {
+      cleanedValue = cleanPercentageInput(value);
       if (cleanedValue == null)
         return;
     }

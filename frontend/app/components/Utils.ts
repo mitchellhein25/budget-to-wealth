@@ -1,4 +1,5 @@
-export const numberRegex = /^\d+(\.\d{0,2})?$/;
+export const currencyRegex = /^\d+(\.\d{0,2})?$/;
+export const percentageRegex = /^-?\d+(\.\d*)?$/;
 
 export const MESSAGE_TYPE_ERROR = "ERROR";
 export const MESSAGE_TYPE_INFO = "INFO";
@@ -58,9 +59,25 @@ export const cleanCurrencyInput = (value: string): string | null => {
     value = value.substring(1);
   }
 
-  if (value !== '' && !numberRegex.test(value)) {
+  if (value !== '' && !currencyRegex.test(value)) {
     return null;
   }
+  return value;
+}
+
+export const cleanPercentageInput = (value: string): string | null => {
+  console.log("value", value);
+  value = value.replace(/[^\d.-]/g, '');
+
+  if (value !== '' && !percentageRegex.test(value)) {
+    return null;
+  }
+
+  const num = Number(value);
+  if (isNaN(num) || num < -100 || num > 100) {
+    return null;
+  }
+
   return value;
 }
 

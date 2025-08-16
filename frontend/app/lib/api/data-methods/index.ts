@@ -7,3 +7,5 @@ export * from './holdingSnapshotRequests';
 export * from './holdingRequests';
 export * from './holdingCategoriesRequests';
 export * from './trendGraphRequests';
+export * from './investmentReturnRequests';
+export * from './manualInvestmentCategoriesRequests';
