@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/holding-snapshots/components';
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../constants';
 import { InvestmentReturnFormData, ManualInvestmentInputs, HoldingInvestmentReturnInputs } from './';
 import { DateRange } from '@/app/components/';
 import { getAllHoldings, getHoldingSnapshotsByDateRange, getManualInvestmentCategories } from '@/app/lib/api/data-methods';

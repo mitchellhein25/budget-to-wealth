@@ -1,5 +1,5 @@
 import { InputFieldSetTemplate } from '@/app/components/form'
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/holding-snapshots/components'
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../constants'
 import React, { useMemo } from 'react'
 import { InvestmentReturnFormData } from './InvestmentReturnFormData';
 import { Category } from '@/app/components/categories/Category';

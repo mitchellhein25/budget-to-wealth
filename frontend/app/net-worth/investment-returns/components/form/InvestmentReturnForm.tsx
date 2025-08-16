@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { formHasAnyValue, FormTemplate } from '@/app/components/form';
-import { INVESTMENT_RETURN_ITEM_NAME, INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/holding-snapshots/components';
+import { INVESTMENT_RETURN_ITEM_NAME, INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../constants';
 import { InvestmentReturn } from '../InvestmentReturn';
 import { InvestmentReturnFormData } from './InvestmentReturnFormData';
 import { InvestmentReturnInputs } from './InvestmentReturnInputs';

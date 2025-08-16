@@ -5,14 +5,15 @@ import { CategoryFormData } from '@/app/components/categories/Category';
 interface CategoriesInputsProps {
   editingFormData: Partial<CategoryFormData>;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  categoryTypeName: string;
 }
 
 export function CategoriesInputs(props : CategoriesInputsProps) {
   return (
     <>
       <input
-        id="id"
-        name="id"
+        id={`${props.categoryTypeName}-id`}
+        name={`${props.categoryTypeName}-id`}
         readOnly
         type="text"
         value={props.editingFormData?.id ?? ''}
@@ -23,8 +24,8 @@ export function CategoriesInputs(props : CategoriesInputsProps) {
         isRequired={true}
         inputChild={
           <input
-            id="name"
-            name="name"
+            id={`${props.categoryTypeName}-name`}
+            name={`${props.categoryTypeName}-name`}
             type="text"
             required
             value={props.editingFormData?.name ?? ""}

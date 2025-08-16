@@ -1,4 +1,4 @@
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "@/app/net-worth/holding-snapshots/components/constants";
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../constants";
 import { InvestmentReturnFormSchema } from "../InvestmentReturnFormData";
 
 export const getInvestmentReturnValidationResult = (formData: FormData) => {

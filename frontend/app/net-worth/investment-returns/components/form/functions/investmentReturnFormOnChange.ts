@@ -1,5 +1,5 @@
 import { InvestmentReturnFormData } from "../InvestmentReturnFormData";
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "@/app/net-worth/holding-snapshots/components/constants";
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../constants";
 import { cleanCurrencyInput, cleanPercentageInput } from "@/app/components";
 
 export const investmentReturnFormOnChange = (

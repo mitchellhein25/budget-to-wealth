@@ -1,5 +1,5 @@
 import z from "zod";
-import { numberRegex } from "@/app/components";
+import { currencyRegex } from "@/app/components";
 
 export const budgetFormSchema = z.object({
   id: z.string().uuid().optional(),
@@ -7,7 +7,7 @@ export const budgetFormSchema = z.object({
     .refine(
       (val) => {
         const cleaned = val.replace(/[,\s]/g, '');
-        return numberRegex.test(cleaned);
+        return currencyRegex.test(cleaned);
       },
       { message: "Amount must be a valid currency format (e.g., 100.50)" }
     )

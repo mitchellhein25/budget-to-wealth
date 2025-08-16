@@ -6,7 +6,7 @@ import { useForm, useMobileDetection } from '@/app/hooks';
 import { INVESTMENT_RETURNS_ENDPOINT, getInvestmentReturns } from '@/app/lib/api/data-methods';
 import { InvestmentReturn, InvestmentReturnForm, InvestmentReturnFormData } from './components';
 import { transformFormDataToInvestmentReturn } from './components/form';
-import { INVESTMENT_RETURN_ITEM_NAME } from '../holding-snapshots/components/constants';
+import { INVESTMENT_RETURN_ITEM_NAME } from './components';
 
 export default function InvestmentReturnsPage() {
   const isMobile = useMobileDetection();

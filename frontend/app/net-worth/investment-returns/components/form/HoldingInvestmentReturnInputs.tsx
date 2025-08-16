@@ -1,6 +1,6 @@
 import { InputFieldSetTemplate } from '@/app/components/form/InputFieldSetTemplate'
 import React from 'react'
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../../holding-snapshots/components/constants'
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../constants'
 import { convertDateToISOString } from '@/app/components/Utils'
 import Link from 'next/link'
 import { Edit } from 'lucide-react'

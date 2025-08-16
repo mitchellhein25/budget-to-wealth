@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { getAllHoldings } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate } from '@/app/components/form';
-import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
-import { HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshotFormData } from '..';
+import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings/components';
+import { HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HOLDING_SNAPSHOT_ITEM_NAME_LINK, HoldingSnapshotFormData, NET_WORTH_ITEM_NAME_LINK } from '..';
 
 interface HoldingSnapshotInputsProps {
   editingFormData: Partial<HoldingSnapshotFormData>;
@@ -61,7 +61,7 @@ export function HoldingSnapshotInputs({ editingFormData, onChange, setIsLoading 
               ))}
             </select>
             <Link
-              href="/net-worth/holdings"
+              href={`/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_SNAPSHOT_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}`}
               className="btn btn-ghost btn-sm btn-circle"
               title="Edit Holdings"
             >

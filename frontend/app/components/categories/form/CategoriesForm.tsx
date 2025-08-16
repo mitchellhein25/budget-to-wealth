@@ -20,6 +20,7 @@ export function CategoriesForm<T extends Category>({formState, categoryTypeName}
     <CategoriesInputs 
       editingFormData={formState.editingFormData}
       onChange={formState.onChange}
+      categoryTypeName={categoryTypeName.toLowerCase().replace(" ", "-")}
     />;
 
     const buttons: React.ReactElement = (

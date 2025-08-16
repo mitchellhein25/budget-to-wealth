@@ -1,7 +1,7 @@
 import { convertDollarsToCents } from "@/app/components/Utils";
 import { InvestmentReturn } from "../../InvestmentReturn";
 import { getInvestmentReturnValidationResult } from "./getInvestmentReturnValidationResult";
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "@/app/net-worth/holding-snapshots/components/constants";
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../constants";
 
 export const transformFormDataToInvestmentReturn = (formData: FormData): { item: InvestmentReturn | null; errors: string[] } => {
   try {

@@ -21,6 +21,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
   const isMobile = useMobileDetection();
+  const categoryTypeNameForId = props.categoryTypeName.toLowerCase().replace(" ", "-");
 
   const fetchCategories = useCallback(() => getRequestList<T>(props.getEndpoint), [props.getEndpoint]);
 
@@ -44,8 +45,12 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   }, [fetchCategories, props.categoryTypeName]);  
 
   const transformFormDataToCategory = (formData: FormData) => {
-    const nameValue = formData.get("Name") as string;
-    const category: T = { name: nameValue } as T;
+    const nameValue = formData.get(`${categoryTypeNameForId}-name`) as string;
+    const category: T = { 
+      id: formData.get(`${categoryTypeNameForId}-id`) as string || undefined,
+      name: nameValue 
+    } as T;
+    console.log("category", category);
     if (props.categoryTypeName === INCOME_ITEM_NAME)
       (category as unknown as CashFlowCategory).categoryType = INCOME_ITEM_NAME;
     else if (props.categoryTypeName === EXPENSE_ITEM_NAME) {
@@ -55,6 +60,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   }
 
   const convertCategoryToFormData = (category: T) => ({ 
+      id: category.id?.toString(),
       name: category.name 
     });
 
