@@ -43,7 +43,7 @@ describe('MobileDrawer', () => {
     expect(closeIcon).toHaveClass('w-5', 'h-5');
   });
 
-  it('marks items as active when pathname starts with just first level', () => {
+  it('marks main nav item as active when pathname starts with just first level but not sub-items', () => {
     const sectionRoot = `${NavItems[0].href.split('/').slice(0, 2).join('/')}/`;
     render(<MobileDrawer pathname={sectionRoot} onClose={mockOnClose} />);
 
@@ -52,7 +52,7 @@ describe('MobileDrawer', () => {
 
     const cashflowSubLabel = CashflowSubNavItems.find(i => i.href === NavItems[0].href)!.label;
     const cashflowSubLink = screen.getByRole('link', { name: cashflowSubLabel });
-    expect(cashflowSubLink).toHaveClass('btn', 'btn-primary');
+    expect(cashflowSubLink).toHaveClass('btn', 'btn-ghost');
   });
 
   it('marks items as active when pathname starts with exact match', () => {
