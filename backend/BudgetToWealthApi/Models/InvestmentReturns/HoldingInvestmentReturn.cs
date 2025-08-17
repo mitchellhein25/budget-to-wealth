@@ -1,8 +1,8 @@
 public class HoldingInvestmentReturn : BaseEntity
 {
-    public Guid StartHoldingSnapshotId { get; set; }
+    public required Guid StartHoldingSnapshotId { get; set; }
     public HoldingSnapshot? StartHoldingSnapshot { get; set; }
-    public Guid EndHoldingSnapshotId { get; set; }
+    public required Guid EndHoldingSnapshotId { get; set; }
     public HoldingSnapshot? EndHoldingSnapshot { get; set; }
     public required long TotalContributions { get; set; }
     public required long TotalWithdrawals { get; set; }
@@ -16,7 +16,7 @@ public class HoldingInvestmentReturn : BaseEntity
             if (StartHoldingSnapshot == null || EndHoldingSnapshot == null || StartHoldingSnapshot.Balance == 0)
                 return null;
             
-            return (decimal)((EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals) / StartHoldingSnapshot.Balance);
+            return (EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals) / StartHoldingSnapshot.Balance;
         }
     }
 }

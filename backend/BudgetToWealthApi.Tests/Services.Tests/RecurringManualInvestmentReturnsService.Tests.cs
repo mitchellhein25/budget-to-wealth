@@ -1,59 +1,55 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-public class RecurringInvestmentReturnsServiceTests : IDisposable
+public class RecurringManualInvestmentReturnsServiceTests : IDisposable
 {
 	private readonly string _user1Id = "auth0|user1";
-	private const long _defaultContributions = 1000;
-	private const long _defaultWithdrawals = 0;
 	private const decimal _defaultPercentage = 0.1m;
 	private ApplicationDbContext _context;
 	private readonly IDbContextTransaction _transaction;
-	private readonly RecurringInvestmentReturnsService _service;
+	private readonly RecurringManualInvestmentReturnsService _service;
 	private readonly RecurrenceService _recurrenceService;
-	private RecurringInvestmentReturnsServiceTestObjects _testObjects = null!;
+	private RecurringManualInvestmentReturnsServiceTestObjects _testObjects = null!;
 
-	public RecurringInvestmentReturnsServiceTests()
+	public RecurringManualInvestmentReturnsServiceTests()
 	{
 		_context = DatabaseSetup.GetDbContext();
 		_transaction = DatabaseSetup.GetTransaction(_context);
 		_recurrenceService = new RecurrenceService();
-		_service = new RecurringInvestmentReturnsService(_context, _recurrenceService);
+		_service = new RecurringManualInvestmentReturnsService(_context, _recurrenceService);
 		SetupTestData();
 	}
 
 	private void SetupTestData()
 	{
 		_testObjects = new(_context);
-		_context.InvestmentReturns.Add(_testObjects.User1WeeklyRecurringInvestmentReturn);
-		_context.InvestmentReturns.Add(_testObjects.User1MonthlyRecurringInvestmentReturn);
-		_context.InvestmentReturns.Add(_testObjects.User2Every2WeeksRecurringInvestmentReturn);
-		_context.InvestmentReturns.Add(_testObjects.DefaultNonRecurringInvestmentReturn);
-		_context.InvestmentReturns.Add(_testObjects.User2ExpiredRecurringInvestmentReturn);
+		_context.ManualInvestmentReturns.Add(_testObjects.User1WeeklyRecurringInvestmentReturn);
+		_context.ManualInvestmentReturns.Add(_testObjects.User1MonthlyRecurringInvestmentReturn);
+		_context.ManualInvestmentReturns.Add(_testObjects.User2Every2WeeksRecurringInvestmentReturn);
+		_context.ManualInvestmentReturns.Add(_testObjects.DefaultNonRecurringInvestmentReturn);
+		_context.ManualInvestmentReturns.Add(_testObjects.User2ExpiredRecurringInvestmentReturn);
 		_context.SaveChanges();
 	}
 
 	private async Task ClearExistingRecurringTemplates()
 	{
-		var existing = _context.InvestmentReturns.Where(ir => ir.ManualInvestmentRecurrenceFrequency != null).ToList();
+		var existing = _context.ManualInvestmentReturns.Where(ir => ir.ManualInvestmentRecurrenceFrequency != null).ToList();
 		if (existing.Any())
 		{
-			_context.InvestmentReturns.RemoveRange(existing);
+			_context.ManualInvestmentReturns.RemoveRange(existing);
 			await _context.SaveChangesAsync();
 		}
 	}
 
-	private InvestmentReturn CreateInvestmentReturn(
+	private ManualInvestmentReturn CreateManualInvestmentReturn(
 		ManualInvestmentCategory category,
-		DateOnly? returnDate,
+		DateOnly returnDate,
 		DateOnly? recurrenceEndDate,
 		RecurrenceFrequency? recurrenceFrequency,
-		long contributions = _defaultContributions,
-		long withdrawals = _defaultWithdrawals,
 		decimal percentage = _defaultPercentage,
 		string? userId = null)
 	{
-		return new InvestmentReturn
+		return new ManualInvestmentReturn
 		{
 			ManualInvestmentCategoryId = category.Id,
             ManualInvestmentCategory = category,
@@ -61,14 +57,12 @@ public class RecurringInvestmentReturnsServiceTests : IDisposable
             ManualInvestmentRecurrenceFrequency= recurrenceFrequency,
             ManualInvestmentRecurrenceEndDate = recurrenceEndDate,
 			ManualInvestmentPercentageReturn = percentage,
-			TotalContributions = contributions,
-			TotalWithdrawals = withdrawals,
 			UserId = userId
 		};
 	}
 
-	private async Task<InvestmentReturn?> GetManualInvestmentFromToday(Guid categoryId) =>
-		await _context.InvestmentReturns.FirstOrDefaultAsync(ir =>
+	private async Task<ManualInvestmentReturn?> GetManualInvestmentFromToday(Guid categoryId) =>
+		await _context.ManualInvestmentReturns.FirstOrDefaultAsync(ir =>
 			ir.ManualInvestmentCategoryId == categoryId &&
 			ir.ManualInvestmentReturnDate == DateOnly.FromDateTime(DateTime.UtcNow));
 
@@ -80,12 +74,12 @@ public class RecurringInvestmentReturnsServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_NoRecurringEntries_ReturnsSuccessWithZeroCreatedEntries()
+	public async Task ProcessRecurringManualInvestmentReturns_NoRecurringEntries_ReturnsSuccessWithZeroCreatedEntries()
 	{
-		_context.InvestmentReturns.RemoveRange(_context.InvestmentReturns.ToList());
+		_context.ManualInvestmentReturns.RemoveRange(_context.ManualInvestmentReturns.ToList());
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(0, result.CreatedEntriesCount);
@@ -94,213 +88,188 @@ public class RecurringInvestmentReturnsServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_OnlyNonRecurringEntries_ReturnsSuccessWithZeroCreatedEntries()
+	public async Task ProcessRecurringManualInvestmentReturns_OnlyNonRecurringEntries_ReturnsSuccessWithZeroCreatedEntries()
 	{
-		InvestmentReturn nonRecurring = CreateInvestmentReturn(
+		ManualInvestmentReturn nonRecurring = CreateManualInvestmentReturn(
 			_testObjects.DefaultManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow),
 			null,
 			null,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
-		_context.InvestmentReturns.Add(nonRecurring);
+		_context.ManualInvestmentReturns.Add(nonRecurring);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(0, result.CreatedEntriesCount);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_OnlyExpiredRecurringEntries_ReturnsSuccessWithZeroCreatedEntries()
+	public async Task ProcessRecurringManualInvestmentReturns_OnlyExpiredRecurringEntries_ReturnsSuccessWithZeroCreatedEntries()
 	{
-		InvestmentReturn expired = CreateInvestmentReturn(
+		ManualInvestmentReturn expired = CreateManualInvestmentReturn(
 			_testObjects.TestUser2ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _testObjects.TestUser2ManualCategory.UserId!);
-		_context.InvestmentReturns.Add(expired);
+		_context.ManualInvestmentReturns.Add(expired);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(0, result.CreatedEntriesCount);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_WeeklyRecurrenceDue_CreatesNewInvestmentReturn()
+	public async Task ProcessRecurringManualInvestmentReturns_WeeklyRecurrenceDue_CreatesNewManualInvestmentReturn()
 	{
-		InvestmentReturn recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser1ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
-		_context.InvestmentReturns.Add(recurring);
+		_context.ManualInvestmentReturns.Add(recurring);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(1, result.CreatedEntriesCount);
 
-		InvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser1ManualCategory.Id);
+		ManualInvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser1ManualCategory.Id);
 		Assert.NotNull(created);
-		Assert.Equal(recurring.TotalContributions, created.TotalContributions);
-		Assert.Equal(recurring.TotalWithdrawals, created.TotalWithdrawals);
 		Assert.Equal(recurring.ManualInvestmentPercentageReturn, created.ManualInvestmentPercentageReturn);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_MonthlyRecurrenceDue_CreatesNewInvestmentReturn()
+	public async Task ProcessRecurringManualInvestmentReturns_MonthlyRecurrenceDue_CreatesNewManualInvestmentReturn()
 	{
-		InvestmentReturn recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser1ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Monthly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
-		_context.InvestmentReturns.Add(recurring);
+		_context.ManualInvestmentReturns.Add(recurring);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(1, result.CreatedEntriesCount);
 
-		InvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser1ManualCategory.Id);
+		ManualInvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser1ManualCategory.Id);
 		Assert.NotNull(created);
-		Assert.Equal(recurring.TotalContributions, created.TotalContributions);
-		Assert.Equal(recurring.TotalWithdrawals, created.TotalWithdrawals);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_Every2WeeksRecurrenceDue_CreatesNewInvestmentReturn()
+	public async Task ProcessRecurringManualInvestmentReturns_Every2WeeksRecurrenceDue_CreatesNewManualInvestmentReturn()
 	{
-		InvestmentReturn recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser2ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-14)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(14)),
 			RecurrenceFrequency.Every2Weeks,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _testObjects.TestUser2ManualCategory.UserId!);
-		_context.InvestmentReturns.Add(recurring);
+		_context.ManualInvestmentReturns.Add(recurring);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(1, result.CreatedEntriesCount);
 
-		InvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser2ManualCategory.Id);
+		ManualInvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser2ManualCategory.Id);
 		Assert.NotNull(created);
-		Assert.Equal(recurring.TotalContributions, created.TotalContributions);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_RecurrenceNotDue_DoesNotCreateNewInvestmentReturn()
+	public async Task ProcessRecurringManualInvestmentReturns_RecurrenceNotDue_DoesNotCreateNewManualInvestmentReturn()
 	{
-		InvestmentReturn recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser1ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-6)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
-		_context.InvestmentReturns.Add(recurring);
+		_context.ManualInvestmentReturns.Add(recurring);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(0, result.CreatedEntriesCount);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_RecurrenceAlreadyExistsForToday_DoesNotCreateDuplicate()
+	public async Task ProcessRecurringManualInvestmentReturns_RecurrenceAlreadyExistsForToday_DoesNotCreateDuplicate()
 	{
-		InvestmentReturn recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser1ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
 
-		InvestmentReturn existingToday = new()
+		ManualInvestmentReturn existingToday = new()
 		{
 			ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
 			ManualInvestmentCategory = _testObjects.TestUser1ManualCategory,
 			ManualInvestmentReturnDate = DateOnly.FromDateTime(DateTime.UtcNow),
 			ManualInvestmentRecurrenceEndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(30),
 			ManualInvestmentPercentageReturn = _defaultPercentage,
-			TotalContributions = _defaultContributions,
-			TotalWithdrawals = _defaultWithdrawals,
 			ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Weekly,
 			UserId = _user1Id
 		};
 
-		_context.InvestmentReturns.AddRange(recurring, existingToday);
+		_context.ManualInvestmentReturns.AddRange(recurring, existingToday);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(0, result.CreatedEntriesCount);
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_MultipleRecurrencesDue_CreatesAllNewInvestmentReturns()
+	public async Task ProcessRecurringManualInvestmentReturns_MultipleRecurrencesDue_CreatesAllNewManualInvestmentReturns()
 	{
-		InvestmentReturn user1Recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn user1Recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser1ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
-		InvestmentReturn user2Recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn user2Recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser2ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _testObjects.TestUser2ManualCategory.UserId!);
 
-		_context.InvestmentReturns.AddRange(user1Recurring, user2Recurring);
+		_context.ManualInvestmentReturns.AddRange(user1Recurring, user2Recurring);
 		await _context.SaveChangesAsync();
 
-		ProcessingResult result = await _service.ProcessRecurringInvestmentReturns();
+		ProcessingResult result = await _service.ProcessRecurringManualInvestmentReturns();
 
 		Assert.True(result.Success);
 		Assert.Equal(2, result.CreatedEntriesCount);
 
 		DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
-		List<InvestmentReturn> created = await _context.InvestmentReturns
+		List<ManualInvestmentReturn> created = await _context.ManualInvestmentReturns
 			.Where(ir => ir.ManualInvestmentReturnDate == today)
 			.ToListAsync();
 
@@ -310,23 +279,21 @@ public class RecurringInvestmentReturnsServiceTests : IDisposable
 	}
 
 	[Fact]
-	public async Task ProcessRecurringInvestmentReturns_NewInvestmentReturnHasNoRecurrence()
+	public async Task ProcessRecurringManualInvestmentReturns_NewManualInvestmentReturnHasNoRecurrence()
 	{
-		InvestmentReturn recurring = CreateInvestmentReturn(
+		ManualInvestmentReturn recurring = CreateManualInvestmentReturn(
 			_testObjects.TestUser1ManualCategory,
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-7)),
 			DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
 			RecurrenceFrequency.Weekly,
-			_defaultContributions,
-			_defaultWithdrawals,
 			_defaultPercentage,
 			userId: _user1Id);
-		_context.InvestmentReturns.Add(recurring);
+		_context.ManualInvestmentReturns.Add(recurring);
 		await _context.SaveChangesAsync();
 
-		await _service.ProcessRecurringInvestmentReturns();
+		await _service.ProcessRecurringManualInvestmentReturns();
 
-		InvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser1ManualCategory.Id);
+		ManualInvestmentReturn? created = await GetManualInvestmentFromToday(_testObjects.TestUser1ManualCategory.Id);
 		Assert.NotNull(created);
 		Assert.Null(created.ManualInvestmentRecurrenceFrequency);
 		Assert.Null(created.ManualInvestmentRecurrenceEndDate);

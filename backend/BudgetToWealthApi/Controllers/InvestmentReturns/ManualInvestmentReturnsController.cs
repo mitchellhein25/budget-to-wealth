@@ -102,20 +102,11 @@ public class ManualInvestmentReturnsController : ControllerBase
 
     private async Task<IActionResult?> ValidateManualInvestmentReturn(ManualInvestmentReturn investmentReturn, string userId)
     {
-        if (investmentReturn.ManualInvestmentCategoryId == null)
-            return BadRequest("ManualInvestmentCategoryId is required.");
-
         bool categoryExistsForUser = await _context.ManualInvestmentCategories
             .AnyAsync(category => category.Id == investmentReturn.ManualInvestmentCategoryId &&
                     (category.UserId == userId || category.UserId == null));
         if (!categoryExistsForUser)
             return BadRequest("Invalid or unauthorized ManualInvestmentCategoryId.");
-
-        if (investmentReturn.ManualInvestmentPercentageReturn == null)
-            return BadRequest("ManualInvestmentPercentageReturn is required for manual investment.");
-
-        if (investmentReturn.ManualInvestmentReturnDate == null)
-            return BadRequest("ManualInvestmentReturnDate is required for manual investment.");
 
         return null;
     }
@@ -123,12 +114,10 @@ public class ManualInvestmentReturnsController : ControllerBase
     private static IQueryable<ManualInvestmentReturn> ApplyDateFilter(IQueryable<ManualInvestmentReturn> query, DateOnly? startDate, DateOnly? endDate)
     {
         if (startDate.HasValue)
-            query = query.Where(investmentReturn => 
-                investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentReturnDate != null && investmentReturn.ManualInvestmentReturnDate >= startDate);
+            query = query.Where(investmentReturn => investmentReturn.ManualInvestmentReturnDate >= startDate);
 
         if (endDate.HasValue)
-            query = query.Where(investmentReturn => 
-                investmentReturn.ManualInvestmentCategoryId != null && investmentReturn.ManualInvestmentReturnDate != null && investmentReturn.ManualInvestmentReturnDate <= endDate);
+            query = query.Where(investmentReturn => investmentReturn.ManualInvestmentReturnDate <= endDate);
 
         return query;
     }

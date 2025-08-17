@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-public class InvestmentReturnsController : ControllerBase
+public class HoldingInvestmentReturnsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
 
-    public InvestmentReturnsController(ApplicationDbContext context)
+    public HoldingInvestmentReturnsController(ApplicationDbContext context)
     {
         _context = context;
     }

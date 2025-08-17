@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 
-public class RecurringInvestmentReturnsService
+public class RecurringManualInvestmentReturnsService
 {
     private readonly ApplicationDbContext _context;
     private readonly RecurrenceService _recurrenceService;
     private readonly DateOnly _today;
 
-    public RecurringInvestmentReturnsService(ApplicationDbContext context, RecurrenceService recurrenceService)
+    public RecurringManualInvestmentReturnsService(ApplicationDbContext context, RecurrenceService recurrenceService)
     {
         _context = context;
         _recurrenceService = recurrenceService;
         _today = DateOnly.FromDateTime(DateTime.UtcNow);
     }
 
-    public async Task<ProcessingResult> ProcessRecurringInvestmentReturns()
+    public async Task<ProcessingResult> ProcessRecurringManualInvestmentReturns()
     {
         ProcessingResult result = new ProcessingResult
         {
@@ -23,18 +23,18 @@ public class RecurringInvestmentReturnsService
 
         try
         {
-            List<InvestmentReturn> allRecurringInvestmentReturns = await GetActiveRecurringInvestmentReturns();
-            List<InvestmentReturn> recurringInvestmentReturnsNotAlreadyCreated = await GetRecurrencesNotAlreadyCreated(allRecurringInvestmentReturns);
-            List<InvestmentReturn> recurringInvestmentReturnsToCreateToday = recurringInvestmentReturnsNotAlreadyCreated
+            List<ManualInvestmentReturn> allRecurringInvestmentReturns = await GetActiveRecurringInvestmentReturns();
+            List<ManualInvestmentReturn> recurringInvestmentReturnsNotAlreadyCreated = await GetRecurrencesNotAlreadyCreated(allRecurringInvestmentReturns);
+            List<ManualInvestmentReturn> recurringInvestmentReturnsToCreateToday = recurringInvestmentReturnsNotAlreadyCreated
                 .Where(ShouldCreateInvestmentReturnForToday)
                 .ToList();
 
             if (!recurringInvestmentReturnsToCreateToday.Any())
                 return result;
 
-            List<InvestmentReturn> newInvestmentReturns = CreateInvestmentReturnsFromTemplates(recurringInvestmentReturnsToCreateToday);
+            List<ManualInvestmentReturn> newInvestmentReturns = CreateInvestmentReturnsFromTemplates(recurringInvestmentReturnsToCreateToday);
 
-            _context.InvestmentReturns.AddRange(newInvestmentReturns);
+            _context.ManualInvestmentReturns.AddRange(newInvestmentReturns);
             await _context.SaveChangesAsync();
 
             result.CreatedEntriesCount = newInvestmentReturns.Count;
@@ -49,30 +49,26 @@ public class RecurringInvestmentReturnsService
         return result;
     }
 
-    private async Task<List<InvestmentReturn>> GetActiveRecurringInvestmentReturns()
+    private async Task<List<ManualInvestmentReturn>> GetActiveRecurringInvestmentReturns()
     {
-        var entries = await _context.InvestmentReturns
-            .Where(investmentReturn => 
-                investmentReturn.ManualInvestmentCategoryId != null &&
-                investmentReturn.ManualInvestmentRecurrenceFrequency != null)
+        var entries = await _context.ManualInvestmentReturns
+            .Where(investmentReturn => investmentReturn.ManualInvestmentRecurrenceFrequency != null)
             .Include(investmentReturn => investmentReturn.ManualInvestmentCategory)
             .ToListAsync();
             
         return entries.Where(entry => _recurrenceService.IsRecurrenceActive(entry.ManualInvestmentRecurrenceEndDate)).ToList();
     }
 
-    private async Task<List<InvestmentReturn>> GetRecurrencesNotAlreadyCreated(List<InvestmentReturn> allRecurringInvestmentReturns)
+    private async Task<List<ManualInvestmentReturn>> GetRecurrencesNotAlreadyCreated(List<ManualInvestmentReturn> allRecurringInvestmentReturns)
     {
         if (!allRecurringInvestmentReturns.Any())
-            return new List<InvestmentReturn>();
+            return new List<ManualInvestmentReturn>();
 
-        List<InvestmentReturn> existingInvestmentReturnsToday = await _context.InvestmentReturns
-            .Where(ir => 
-                ir.ManualInvestmentCategoryId != null &&
-                ir.ManualInvestmentReturnDate == _today)
+        List<ManualInvestmentReturn> existingInvestmentReturnsToday = await _context.ManualInvestmentReturns
+            .Where(ir => ir.ManualInvestmentReturnDate == _today)
             .ToListAsync();
 
-        List<InvestmentReturn> filteredInvestmentReturns = allRecurringInvestmentReturns
+        List<ManualInvestmentReturn> filteredInvestmentReturns = allRecurringInvestmentReturns
             .Where(recurringInvestmentReturn => !existingInvestmentReturnsToday.Any(existing => 
                 existing.ManualInvestmentCategoryId == recurringInvestmentReturn.ManualInvestmentCategoryId &&
                 existing.UserId == recurringInvestmentReturn.UserId &&
@@ -82,26 +78,21 @@ public class RecurringInvestmentReturnsService
         return filteredInvestmentReturns;
     }
 
-    private bool ShouldCreateInvestmentReturnForToday(InvestmentReturn recurrence)
+    private bool ShouldCreateInvestmentReturnForToday(ManualInvestmentReturn recurrence)
     {
-        if (recurrence.ManualInvestmentReturnDate == null)
-            return false;
-
         return _recurrenceService.ShouldCreateRecurrenceForToday(
-            recurrence.ManualInvestmentReturnDate.Value, 
+            recurrence.ManualInvestmentReturnDate, 
             recurrence.ManualInvestmentRecurrenceFrequency!.Value);
     }
 
-    private List<InvestmentReturn> CreateInvestmentReturnsFromTemplates(List<InvestmentReturn> templates)
+    private List<ManualInvestmentReturn> CreateInvestmentReturnsFromTemplates(List<ManualInvestmentReturn> templates)
     {
-        return templates.Select(template => new InvestmentReturn
+        return templates.Select(template => new ManualInvestmentReturn
         {
             ManualInvestmentCategoryId = template.ManualInvestmentCategoryId,
             ManualInvestmentCategory = template.ManualInvestmentCategory,
             ManualInvestmentReturnDate = _today,
             ManualInvestmentPercentageReturn = template.ManualInvestmentPercentageReturn,
-            TotalContributions = template.TotalContributions,
-            TotalWithdrawals = template.TotalWithdrawals,
             UserId = template.UserId
         }).ToList();
     }
