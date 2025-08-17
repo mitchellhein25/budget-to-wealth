@@ -3,45 +3,62 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
 import { useForm, useMobileDetection } from '@/app/hooks';
-import { INVESTMENT_RETURNS_ENDPOINT, getInvestmentReturns } from '@/app/lib/api/data-methods';
-import { InvestmentReturn, InvestmentReturnForm, InvestmentReturnFormData } from './components';
-import { transformFormDataToInvestmentReturn } from './components/form';
-import { INVESTMENT_RETURN_ITEM_NAME } from './components';
+import { HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
+import { ManualInvestmentReturn, ManualInvestmentReturnForm, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from './components/form';
+import { InvestmentReturnForm } from './components/form/InvestmentReturnForm';
+import { HoldingInvestmentReturn, HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
 
 export default function InvestmentReturnsPage() {
   const isMobile = useMobileDetection();
-  const [items, setItems] = useState<InvestmentReturn[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isManualActive, setIsManualActive] = useState<boolean>(false);
 
-  const fetchItems = useCallback(async () => {
-    setIsLoading(true);
-    const response = await getInvestmentReturns();
-    if (response.successful && response.data) setItems(response.data);
-    setIsLoading(false);
-  }, [getInvestmentReturns]);
+  const fetchManualInvestmentReturnItems = useCallback(async () => {
+  }, []);
 
-  const convertItemToFormData = (item: InvestmentReturn): InvestmentReturnFormData => {
+  const fetchHoldingInvestmentReturnItems = useCallback(async () => {
+  }, []);
+
+  const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn): ManualInvestmentReturnFormData => {
     return {} as any;
   };
 
-  const formState = useForm<InvestmentReturn, InvestmentReturnFormData>({
-    itemName: INVESTMENT_RETURN_ITEM_NAME,
-    itemEndpoint: INVESTMENT_RETURNS_ENDPOINT,
-    transformFormDataToItem: transformFormDataToInvestmentReturn,
-    convertItemToFormData,
-    fetchItems,
+  const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvestmentReturn): HoldingInvestmentReturnFormData => {
+    return {} as any;
+  };
+
+  const manualInvestmentReturnFormState = useForm<ManualInvestmentReturn, ManualInvestmentReturnFormData>({
+    itemName: MANUAL_INVESTMENT_RETURN_ITEM_NAME,
+    itemEndpoint: MANUAL_INVESTMENT_RETURNS_ENDPOINT,
+    transformFormDataToItem: transformFormDataToManualInvestmentReturn,
+    convertItemToFormData: convertManualInvestmentReturnItemToFormData,
+    fetchItems: fetchManualInvestmentReturnItems,
+  });
+
+  const holdingInvestmentReturnFormState = useForm<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>({
+    itemName: HOLDING_INVESTMENT_RETURN_ITEM_NAME,
+    itemEndpoint: HOLDING_INVESTMENT_RETURNS_ENDPOINT,
+    transformFormDataToItem: transformFormDataToHoldingInvestmentReturn,
+    convertItemToFormData: convertHoldingInvestmentReturnItemToFormData,
+    fetchItems: fetchHoldingInvestmentReturnItems,
   });
 
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    fetchManualInvestmentReturnItems();
+    fetchHoldingInvestmentReturnItems();
+  }, [fetchManualInvestmentReturnItems, fetchHoldingInvestmentReturnItems]);
   
   return (
     <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
       {!isMobile && <NetWorthSideBar />}
       <div className="flex flex-1 gap-6">
         <div className="flex-shrink-0">
-          <InvestmentReturnForm formState={formState} />
+          <InvestmentReturnForm 
+            isManualActive={isManualActive}
+            setIsManualActive={setIsManualActive}
+            manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
+            holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
+          />
         </div>
         <div className="flex-1">{/* TODO: list view */}</div>
       </div>

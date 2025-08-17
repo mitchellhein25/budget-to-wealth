@@ -1,26 +1,35 @@
+import React from 'react'
 import { InputFieldSetTemplate } from '@/app/components/form'
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../constants'
-import React, { useMemo } from 'react'
-import { InvestmentReturnFormData } from './InvestmentReturnFormData';
-import { Category } from '@/app/components/categories/Category';
 import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { Category } from '@/app/components/categories/Category';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
+import { ManualInvestmentReturnFormData } from '.';
 
 interface ManualInvestmentInputsProps {
-  editingFormData: Partial<InvestmentReturnFormData>;
+  editingFormData: Partial<ManualInvestmentReturnFormData>;
   onChange: React.ChangeEventHandler;
   manualCategories: Category[];
 }
 
 export function ManualInvestmentInputs({ editingFormData, onChange, manualCategories }: ManualInvestmentInputsProps) {
+  const formId = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
   return (
     <>
+      <input
+        id={`${formId}-id`}
+        name={`${formId}-id`}
+        readOnly
+        type="text"
+        value={editingFormData?.id ?? ''}
+        hidden={true}
+      />
       <InputFieldSetTemplate
         label="Manual Investment Category"
         isRequired={true}
         inputChild={
           <select
-            id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentCategoryId`}
-            name={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentCategoryId`}
+            id={`${formId}-manualInvestmentCategoryId`}
+            name={`${formId}-manualInvestmentCategoryId`}
             value={editingFormData.manualInvestmentCategoryId || ""}
             onChange={onChange}
             className="select w-full"
@@ -37,8 +46,8 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
         isRequired={true}
         inputChild={
           <input
-            id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentReturnDate`}
-            name={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentReturnDate`}
+            id={`${formId}-manualInvestmentReturnDate`}
+            name={`${formId}-manualInvestmentReturnDate`}
             type="date"
             value={editingFormData.manualInvestmentReturnDate || ""}
             onChange={onChange}
@@ -51,8 +60,8 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
         isRequired={true}
         inputChild={
           <input
-            id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentPercentageReturn`}
-            name={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentPercentageReturn`}
+            id={`${formId}-manualInvestmentPercentageReturn`}
+            name={`${formId}-manualInvestmentPercentageReturn`}
             type="number"
             step="0.01"
             value={editingFormData.manualInvestmentPercentageReturn || ""}
@@ -67,8 +76,8 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
         isRequired={false}
         inputChild={
           <select
-            id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentRecurrenceFrequency`}
-            name={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentRecurrenceFrequency`}
+            id={`${formId}-manualInvestmentRecurrenceFrequency`}
+            name={`${formId}-manualInvestmentRecurrenceFrequency`}
             value={editingFormData.manualInvestmentRecurrenceFrequency || ""}
             onChange={onChange}
             className="select w-full"
@@ -86,8 +95,8 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
           isRequired={false}
           inputChild={
             <input
-              id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentRecurrenceEndDate`}
-              name={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-manualInvestmentRecurrenceEndDate`}
+              id={`${formId}-manualInvestmentRecurrenceEndDate`}
+              name={`${formId}-manualInvestmentRecurrenceEndDate`}
               type="date"
               value={editingFormData.manualInvestmentRecurrenceEndDate || ""}
               onChange={onChange}

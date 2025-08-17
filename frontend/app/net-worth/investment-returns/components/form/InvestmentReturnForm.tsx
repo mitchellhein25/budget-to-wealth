@@ -1,49 +1,41 @@
-'use client';
+import React from 'react'
+import { HoldingInvestmentReturn, HoldingInvestmentReturnForm, HoldingInvestmentReturnFormData } from './holding-investment-return-form';
+import { ManualInvestmentReturn, ManualInvestmentReturnForm, ManualInvestmentReturnFormData } from './manual-investment-return-form';
+import { FormState } from '@/app/hooks/useForm';
+import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '.';
 
-import React, { useState } from 'react'
-import { FormState } from '@/app/hooks';
-import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
-import { formHasAnyValue, FormTemplate } from '@/app/components/form';
-import { INVESTMENT_RETURN_ITEM_NAME, INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../constants';
-import { InvestmentReturn } from '../InvestmentReturn';
-import { InvestmentReturnFormData } from './InvestmentReturnFormData';
-import { InvestmentReturnInputs } from './InvestmentReturnInputs';
+interface InvestmentReturnFormProps {
+  isManualActive: boolean;
+  setIsManualActive: React.Dispatch<React.SetStateAction<boolean>>;
+  manualInvestmentReturnFormState: FormState<ManualInvestmentReturn, ManualInvestmentReturnFormData>;
+  holdingInvestmentReturnFormState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>;
+}
 
-export function InvestmentReturnForm(
-  {formState} : {formState: FormState<InvestmentReturn, InvestmentReturnFormData>}
-) {
-  const [isLoading, setIsLoading] = useState(false);
-  const formHeader: string = formState.editingFormData?.id ? `Edit ${INVESTMENT_RETURN_ITEM_NAME}` : `New ${INVESTMENT_RETURN_ITEM_NAME}`;
-
-  const inputs: React.ReactElement = 
-    <InvestmentReturnInputs
-      editingFormData={formState.editingFormData as InvestmentReturnFormData}
-      onChange={formState.onChange}
-      setIsLoading={setIsLoading}
-    />;
-
-  const buttons: React.ReactElement = (
-    <>
-      <UpdateCreateButton 
-        isUpdateState={formState.editingFormData?.id != null} 
-        isDisabled={isLoading || formState.isSubmitting}
-      />
-      <ResetButton 
-        onClick={formState.onReset}
-        isHidden={!formHasAnyValue(formState)}
-      />
-    </>
-  )
-
+export function InvestmentReturnForm({ 
+  isManualActive, 
+  setIsManualActive, 
+  manualInvestmentReturnFormState, 
+  holdingInvestmentReturnFormState }: InvestmentReturnFormProps) 
+{
   return (
-    <FormTemplate
-      formId={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-form`}
-      handleSubmit={formState.handleSubmit}
-      formHeader={formHeader}
-      inputs={inputs}
-      buttons={buttons}
-      message={formState.message}
-    />
+    <>
+      <div className="flex items-center gap-2">
+        <input
+          id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-isManualInvestment`}
+          name={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-isManualInvestment`}
+          type="checkbox"
+          className="checkbox"
+          checked={isManualActive}
+          onChange={(e) => setIsManualActive(e.target.checked)}
+        />
+        <label htmlFor={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-isManualInvestment`}>Is Non-Holding Investment</label>
+      </div>
+      {isManualActive ? (
+        <ManualInvestmentReturnForm formState={manualInvestmentReturnFormState} />
+      ) : (
+        <HoldingInvestmentReturnForm formState={holdingInvestmentReturnFormState} />
+      )}
+    </>
   )
 }
 
