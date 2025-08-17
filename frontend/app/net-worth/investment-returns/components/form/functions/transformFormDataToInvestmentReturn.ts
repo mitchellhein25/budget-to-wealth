@@ -12,41 +12,32 @@ export const transformFormDataToInvestmentReturn = (formData: FormData): { item:
     }
 
     const data = validation.data;
-    const isManual = !!data.isManualInvestment;
+    const isManual = Boolean(data.isManualInvestment);
 
-    const totalContribCents = data.totalContributions ? convertDollarsToCents(data.totalContributions) : 0;
-    const totalWithdrawCents = data.totalWithdrawals ? convertDollarsToCents(data.totalWithdrawals) : 0;
-    if (totalContribCents == null || totalWithdrawCents == null) {
-      return { item: null, errors: ["Invalid currency input."] };
-    }
-
-    const item: InvestmentReturn = {
-      manualInvestmentCategoryId: "",
-      manualInvestmentReturnDate: "",
-      manualInvestmentPercentageReturn: 0,
-      manualInvestmentRecurrenceFrequency: undefined as any,
-      manualInvestmentRecurrenceEndDate: undefined as any,
-      startHoldingSnapshotId: "",
-      endHoldingSnapshotId: "",
-      totalContributions: totalContribCents ?? 0,
-      totalWithdrawals: totalWithdrawCents ?? 0,
-      returnPercentage: 0,
-    } as unknown as InvestmentReturn;
+    const item: InvestmentReturn = {} as InvestmentReturn;
 
     if (isManual) {
-      if (!data.manualInvestmentCategoryId) return { item: null, errors: ["Manual investment category is required."] };
-      if (!data.manualInvestmentReturnDate) return { item: null, errors: ["Manual investment date is required."] };
-      if (!data.manualInvestmentPercentageReturn) return { item: null, errors: ["Manual investment % return is required."] };
+      if (!data.manualInvestmentCategoryId) 
+        return { item: null, errors: ["Manual investment category is required."] };
+      if (!data.manualInvestmentReturnDate) 
+        return { item: null, errors: ["Manual investment date is required."] };
+      if (!data.manualInvestmentPercentageReturn) 
+        return { item: null, errors: ["Manual investment % return is required."] };
 
       item.manualInvestmentCategoryId = data.manualInvestmentCategoryId;
       item.manualInvestmentReturnDate = data.manualInvestmentReturnDate;
       item.manualInvestmentPercentageReturn = parseFloat(data.manualInvestmentPercentageReturn);
       if (data.manualInvestmentRecurrenceFrequency) {
-        item.manualInvestmentRecurrenceFrequency = data.manualInvestmentRecurrenceFrequency as any;
-        if (data.manualInvestmentRecurrenceEndDate) item.manualInvestmentRecurrenceEndDate = data.manualInvestmentRecurrenceEndDate;
+        item.manualInvestmentRecurrenceFrequency = data.manualInvestmentRecurrenceFrequency;
+        if (data.manualInvestmentRecurrenceEndDate) 
+          item.manualInvestmentRecurrenceEndDate = data.manualInvestmentRecurrenceEndDate;
       }
-      delete (item as any).startHoldingSnapshotId;
-      delete (item as any).endHoldingSnapshotId;
+      if (item.startHoldingSnapshotId) 
+        item.startHoldingSnapshotId = undefined;
+      if (item.endHoldingSnapshotId) item.endHoldingSnapshotId = undefined;
+      item.totalContributions = undefined;
+      item.totalWithdrawals = undefined;
+      item.returnPercentage = undefined;
     } else {
       if (!data.startHoldingSnapshotId) return { item: null, errors: ["Start snapshot is required."] };
       if (!data.endHoldingSnapshotHoldingId || !data.endHoldingSnapshotDate || !data.endHoldingSnapshotBalance) return { item: null, errors: ["End snapshot fields are required."] };
@@ -56,6 +47,12 @@ export const transformFormDataToInvestmentReturn = (formData: FormData): { item:
       const endId = formData.get(`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`) as string | null;
       if (endId) 
         item.endHoldingSnapshotId = endId;
+    }
+
+    const totalContribCents = data.totalContributions ? convertDollarsToCents(data.totalContributions) : null;
+    const totalWithdrawCents = data.totalWithdrawals ? convertDollarsToCents(data.totalWithdrawals) : null;
+    if (isManual && (totalContribCents == null || totalWithdrawCents == null)) {
+      return { item: null, errors: ["Invalid currency input."] };
     }
 
     return { item, errors: [] };

@@ -66,7 +66,6 @@ export const cleanCurrencyInput = (value: string): string | null => {
 }
 
 export const cleanPercentageInput = (value: string): string | null => {
-  console.log("value", value);
   value = value.replace(/[^\d.-]/g, '');
 
   if (value !== '' && !percentageRegex.test(value)) {

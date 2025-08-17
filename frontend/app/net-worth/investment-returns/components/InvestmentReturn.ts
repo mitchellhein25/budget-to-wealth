@@ -4,18 +4,18 @@ import { Category } from "@/app/components/categories";
 
 export type InvestmentReturn = {
   id?: number;
-  startHoldingSnapshotId: string;
+  startHoldingSnapshotId?: string;
   startHoldingSnapshot?: HoldingSnapshot;
-  endHoldingSnapshotId: string;
+  endHoldingSnapshotId?: string;
   endHoldingSnapshot?: HoldingSnapshot;
-  manualInvestmentCategoryId: string;
+  manualInvestmentCategoryId?: string;
   manualInvestmentCategory?: Category;
   manualInvestmentReturnDate: string;
-  manualInvestmentPercentageReturn: number;
-  manualInvestmentRecurrenceFrequency: RecurrenceFrequency;
-  manualInvestmentRecurrenceEndDate: string;
-  totalContributions: number;
-  totalWithdrawals: number;
-  returnPercentage: number;
+  manualInvestmentPercentageReturn?: number;
+  manualInvestmentRecurrenceFrequency?: RecurrenceFrequency;
+  manualInvestmentRecurrenceEndDate?: string;
+  totalContributions?: number;
+  totalWithdrawals?: number;
+  returnPercentage?: number;
   userId?: string;
 }
