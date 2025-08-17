@@ -3,6 +3,7 @@ import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENS
 
 jest.mock('@/app/components/Utils', () => ({
   cleanCurrencyInput: jest.fn(),
+  replaceSpacesWithDashes: jest.fn(),
 }));
 
 import { cleanCurrencyInput } from '@/app/components/Utils';

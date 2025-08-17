@@ -4,6 +4,7 @@ import { useForm } from '@/app/hooks';
 import { getRequestList } from '@/app/lib/api/rest-methods';
 import { messageTypeIsError } from '../Utils';
 import { Category, CategoryFormData } from './Category';
+import { CashFlowCategory } from '@/app/cashflow/components';
 
 const categoriesFormTestId = 'categories-form';
 const categoriesListTestId = 'categories-list';
@@ -50,6 +51,7 @@ jest.mock('./list/CategoriesList', () => ({
 
 jest.mock('../Utils', () => ({
   messageTypeIsError: jest.fn(),
+  replaceSpacesWithDashes: jest.fn(),
 }));
 
 describe('CategoriesPage', () => {
@@ -203,8 +205,7 @@ describe('CategoriesPage', () => {
       ...mockProps,
       categoryTypeName: 'Income',
     };
-
-    const mockTransformFormDataToItem = jest.fn();
+  
     mockUseForm.mockReturnValue({
       editingFormData: {} as Partial<CategoryFormData>,
       onChange: jest.fn(),
@@ -234,7 +235,6 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Expense',
     };
 
-    const mockTransformFormDataToItem = jest.fn();
     mockUseForm.mockReturnValue({
       editingFormData: {} as Partial<CategoryFormData>,
       onChange: jest.fn(),
@@ -264,7 +264,6 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Other',
     };
 
-    const mockTransformFormDataToItem = jest.fn();
     mockUseForm.mockReturnValue({
       editingFormData: {} as Partial<CategoryFormData>,
       onChange: jest.fn(),
@@ -289,7 +288,6 @@ describe('CategoriesPage', () => {
   });
 
   it('tests convertCategoryToFormData function', async () => {
-    const mockConvertItemToFormData = jest.fn();
     mockUseForm.mockReturnValue({
       editingFormData: {} as Partial<CategoryFormData>,
       onChange: jest.fn(),
@@ -340,8 +338,8 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Income',
     };
 
-    let capturedTransformFunction: (formData: FormData) => { item: any; errors: string[] } = () => ({ item: null, errors: [] });
-    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => { item: any; errors: string[] } }) => {
+    let capturedTransformFunction: (formData: FormData) => unknown = () => ({});
+    mockUseForm.mockImplementation((config: import('@/app/hooks/useForm').useFormArgs<Category, CategoryFormData>) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
         editingFormData: {} as Partial<CategoryFormData>,
@@ -361,7 +359,7 @@ describe('CategoriesPage', () => {
     const formData = new FormData();
     formData.append('income-name', 'Test Income Category');
     
-    const result = capturedTransformFunction(formData);
+    const result = capturedTransformFunction(formData) as { item: CashFlowCategory; errors: string[] };
     
     expect(result.item.name).toBe('Test Income Category');
     expect(result.item.categoryType).toBe('Income');
@@ -374,8 +372,8 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Expense',
     };
 
-    let capturedTransformFunction: (formData: FormData) => { item: any; errors: string[] } = () => ({ item: null, errors: [] });
-    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => { item: any; errors: string[] } }) => {
+    let capturedTransformFunction: (formData: FormData) => unknown = () => ({});
+    mockUseForm.mockImplementation((config: import('@/app/hooks/useForm').useFormArgs<Category, CategoryFormData>) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
         editingFormData: {} as Partial<CategoryFormData>,
@@ -395,7 +393,7 @@ describe('CategoriesPage', () => {
     const formData = new FormData();
     formData.append('expense-name', 'Test Expense Category');
     
-    const result = capturedTransformFunction(formData);
+    const result = capturedTransformFunction(formData) as { item: CashFlowCategory; errors: string[] };
     
     expect(result.item.name).toBe('Test Expense Category');
     expect(result.item.categoryType).toBe('Expense');
@@ -408,8 +406,8 @@ describe('CategoriesPage', () => {
       categoryTypeName: 'Other',
     };
 
-    let capturedTransformFunction: (formData: FormData) => { item: any; errors: string[] } = () => ({ item: null, errors: [] });
-    mockUseForm.mockImplementation((config: { transformFormDataToItem: (formData: FormData) => { item: any; errors: string[] } }) => {
+    let capturedTransformFunction: (formData: FormData) => unknown = () => ({});
+    mockUseForm.mockImplementation((config: import('@/app/hooks/useForm').useFormArgs<Category, CategoryFormData>) => {
       capturedTransformFunction = config.transformFormDataToItem;
       return {
         editingFormData: {} as Partial<CategoryFormData>,
@@ -429,7 +427,7 @@ describe('CategoriesPage', () => {
     const formData = new FormData();
     formData.append('other-name', 'Test Other Category');
     
-    const result = capturedTransformFunction(formData);
+    const result = capturedTransformFunction(formData) as { item: CashFlowCategory; errors: string[] };
     
     expect(result.item.name).toBe('Test Other Category');
     expect(result.item.categoryType).toBeUndefined();
@@ -437,8 +435,8 @@ describe('CategoriesPage', () => {
   });
 
   it('tests convertCategoryToFormData function', async () => {
-    let capturedConvertFunction: (item: unknown) => CategoryFormData = () => ({ name: '' });
-    mockUseForm.mockImplementation((config: any) => {
+    let capturedConvertFunction: (item: CashFlowCategory) => CategoryFormData = () => ({ name: '' });
+    mockUseForm.mockImplementation((config: { convertItemToFormData: (item: CashFlowCategory) => CategoryFormData }) => {
       capturedConvertFunction = config.convertItemToFormData;
       return {
         editingFormData: {} as Partial<CategoryFormData>,
@@ -455,7 +453,7 @@ describe('CategoriesPage', () => {
       render(<CategoriesPage {...mockProps} />);
     });
     
-    const mockCategory = { id: 1, name: 'Test Category' };
+    const mockCategory = { id: 1, name: 'Test Category' } as CashFlowCategory;
     const result = capturedConvertFunction(mockCategory);
     
     expect(result).toEqual({ id: '1', name: 'Test Category' });

@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
 import { useForm, useMobileDetection } from '@/app/hooks';
 import { HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
-import { ManualInvestmentReturn, ManualInvestmentReturnForm, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
+import { ManualInvestmentReturn, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from './components/form';
 import { InvestmentReturnForm } from './components/form/InvestmentReturnForm';
 import { HoldingInvestmentReturn, HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
@@ -20,11 +20,13 @@ export default function InvestmentReturnsPage() {
   }, []);
 
   const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn): ManualInvestmentReturnFormData => {
-    return {} as any;
+    console.log(item);
+    return {} as ManualInvestmentReturnFormData;
   };
 
   const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvestmentReturn): HoldingInvestmentReturnFormData => {
-    return {} as any;
+    console.log(item);
+    return {} as HoldingInvestmentReturnFormData;
   };
 
   const manualInvestmentReturnFormState = useForm<ManualInvestmentReturn, ManualInvestmentReturnFormData>({
