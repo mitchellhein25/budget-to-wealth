@@ -26,7 +26,26 @@ public class HoldingInvestmentReturnsController : ControllerBase
         IQueryable<HoldingInvestmentReturn> query = _context.HoldingInvestmentReturns
                                                      .Where(investmentReturn => investmentReturn.UserId == userId);
 
-        query = ApplyDateFilter(query, startDate, endDate);
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            query = query.Where(investmentReturn =>
+                investmentReturn.StartHoldingSnapshot != null &&
+                investmentReturn.EndHoldingSnapshot != null &&
+                investmentReturn.StartHoldingSnapshot.Date >= startDate &&
+                investmentReturn.EndHoldingSnapshot.Date <= endDate);
+        }
+        else if (startDate.HasValue)
+        {
+            query = query.Where(investmentReturn =>
+                investmentReturn.EndHoldingSnapshot != null &&
+                investmentReturn.EndHoldingSnapshot.Date >= startDate);
+        }
+        else if (endDate.HasValue)
+        {
+            query = query.Where(investmentReturn =>
+                investmentReturn.StartHoldingSnapshot != null &&
+                investmentReturn.StartHoldingSnapshot.Date <= endDate);
+        }
 
         List<HoldingInvestmentReturn> investmentReturns = await query.ToListAsync();
         return Ok(investmentReturns);
@@ -124,21 +143,8 @@ public class HoldingInvestmentReturnsController : ControllerBase
             return BadRequest("StartHoldingId and EndHoldingId must be for the same Holding.");
 
         if (startSnapshot.Date > endSnapshot.Date)
-            return BadRequest("StartHoldingId date must be before EndHoldingId.");
+            return BadRequest("StartHoldingSnapshotId date must be before EndHoldingSnapshotId.");
 
         return null;    
-    }
-
-    private static IQueryable<HoldingInvestmentReturn> ApplyDateFilter(IQueryable<HoldingInvestmentReturn> query, DateOnly? startDate, DateOnly? endDate)
-    {
-        if (startDate.HasValue)
-            query = query.Where(investmentReturn => 
-                investmentReturn.StartHoldingSnapshot != null && investmentReturn.StartHoldingSnapshot.Date >= startDate);
-
-        if (endDate.HasValue)
-            query = query.Where(investmentReturn => 
-                investmentReturn.EndHoldingSnapshot != null && investmentReturn.EndHoldingSnapshot.Date <= endDate);
-
-        return query;
     }
 }
