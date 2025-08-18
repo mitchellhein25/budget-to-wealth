@@ -49,40 +49,28 @@ export function HoldingInvestmentReturnForm(
     fetchStartSnapshots();
   }, [fetchHoldings, fetchStartSnapshots]);
 
-  const selectedStartSnapshotHoldingId: number | null = useMemo(() => {
-    const startId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.startHoldingSnapshotId;
-    if (!startId)
-      return null;
-    const snapshot = startSnapshots.find(s => Number(s.id) === Number(startId));
-    const holdingIdFromSnapshot = snapshot?.holdingId;
-    if (!holdingIdFromSnapshot)
-      return snapshot?.holding?.id ?? null;
-    const numericHoldingId = Number(holdingIdFromSnapshot);
-    if (!Number.isNaN(numericHoldingId)) return numericHoldingId;
-    return snapshot?.holding?.id ?? null;
-  }, [formState.editingFormData, startSnapshots]);
+  const startSnapshotId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.startHoldingSnapshotId;
 
-  const isEndHoldingLocked = useMemo(() => {
-    const startSnapshotId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.startHoldingSnapshotId;
-    return !!startSnapshotId;
-  }, [formState.editingFormData]);
+  const endHoldingId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.endHoldingSnapshotHoldingId;
+
+  const hasStartSnapshot = useMemo(() => !!startSnapshotId, [startSnapshotId]);
+
+  const selectedStartSnapshotHoldingId: string | null = useMemo(() => {
+    const snapshot = startSnapshots.find(s => s.id?.toString() === startSnapshotId?.toString());
+    return snapshot?.holdingId ?? null;
+  }, [startSnapshotId, startSnapshots]);
 
   const filteredEndHoldings = useMemo(() => {
-    if (!isEndHoldingLocked)
-      return holdings;
-    const endHoldingFromForm = (formState.editingFormData as HoldingInvestmentReturnFormData)?.endHoldingSnapshotHoldingId;
-    const targetId = selectedStartSnapshotHoldingId ?? (endHoldingFromForm ? Number(endHoldingFromForm) : null);
+    const targetId = selectedStartSnapshotHoldingId ?? endHoldingId;
     if (!targetId)
       return holdings;
-    return holdings.filter(h => Number(h.id) === Number(targetId));
-  }, [holdings, isEndHoldingLocked, selectedStartSnapshotHoldingId, formState.editingFormData]);
+    return holdings.filter(h => h.id?.toString() === targetId.toString());
+  }, [holdings, selectedStartSnapshotHoldingId, endHoldingId]);
 
   useEffect(() => {
-    if (!selectedStartSnapshotHoldingId) 
+    if (!hasStartSnapshot || endHoldingId === selectedStartSnapshotHoldingId) 
       return;
-    const currentEndHoldingId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.endHoldingSnapshotHoldingId;
-    if (Number(currentEndHoldingId) === Number(selectedStartSnapshotHoldingId)) 
-      return;
+
     const syntheticEvent = {
       target: {
         name: `${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotHoldingId`,
@@ -98,7 +86,7 @@ export function HoldingInvestmentReturnForm(
       onChange={formState.onChange}
       startSnapshots={startSnapshots}
       holdings={filteredEndHoldings}
-      isEndHoldingLocked={isEndHoldingLocked}
+      isEndHoldingLocked={hasStartSnapshot}
     />
 
   const buttons: React.ReactElement = (
