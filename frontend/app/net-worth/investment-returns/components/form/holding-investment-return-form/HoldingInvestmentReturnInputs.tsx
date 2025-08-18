@@ -13,6 +13,7 @@ interface HoldingInvestmentReturnInputsProps {
   onChange: React.ChangeEventHandler;
   startSnapshots: HoldingSnapshot[];
   holdings: Holding[];
+  isEndHoldingLocked?: boolean;
 }
 
 export function HoldingInvestmentReturnInputs({
@@ -20,8 +21,24 @@ export function HoldingInvestmentReturnInputs({
   onChange,
   startSnapshots,
   holdings,
+  isEndHoldingLocked,
 }: HoldingInvestmentReturnInputsProps) {
   const formId = HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
+
+  const startSnapshotOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      onChange(e);
+      const holdingId = startSnapshots.find(s => s.id?.toString() === e.target.value)?.holdingId;
+    if (holdingId) {
+      const syntheticEvent = {
+        target: {
+          name: `${formId}-endHoldingSnapshotHoldingId`,
+          value: String(holdingId)
+        }
+      } as React.ChangeEvent<HTMLInputElement>;
+      onChange(syntheticEvent);
+    }
+  }
+
   return (
     <>
       <input
@@ -54,7 +71,7 @@ export function HoldingInvestmentReturnInputs({
             id={`${formId}-startHoldingSnapshotId`}
             name={`${formId}-startHoldingSnapshotId`}
             value={editingFormData.startHoldingSnapshotId || ""}
-            onChange={onChange}
+            onChange={startSnapshotOnChange}
             className="select w-full"
           >
             <option value="" disabled>Pick a snapshot</option>
@@ -77,6 +94,7 @@ export function HoldingInvestmentReturnInputs({
               value={editingFormData.endHoldingSnapshotHoldingId || ""}
               onChange={onChange}
               className="select flex-1"
+              disabled={!!isEndHoldingLocked}
             >
               <option value="" disabled>Pick a holding</option>
               {holdings.map((h) => (
@@ -120,7 +138,7 @@ export function HoldingInvestmentReturnInputs({
       />
       <InputFieldSetTemplate
         label="Total Contributions"
-        isRequired={true}
+        isRequired={false}
         inputChild={
           <input
             id={`${formId}-totalContributions`}
@@ -135,7 +153,7 @@ export function HoldingInvestmentReturnInputs({
       />
       <InputFieldSetTemplate
         label="Total Withdrawals"
-        isRequired={true}
+        isRequired={false}
         inputChild={
           <input
             id={`${formId}-totalWithdrawals`}

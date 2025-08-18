@@ -9,9 +9,10 @@ type InputFieldSetTemplateProps = {
 export function InputFieldSetTemplate(props: InputFieldSetTemplateProps) {
   return (
     <fieldset className="fieldset mb-2">
-      <legend className="fieldset-legend text-sm m-0 p-0">{props.label}</legend>
+      <legend className="fieldset-legend text-sm m-0 p-0">
+        {props.label}{props.isRequired && '*'}
+      </legend>
       {props.inputChild}
-      {props.isRequired && <p className="label">Required</p>}
     </fieldset>
   )
 }

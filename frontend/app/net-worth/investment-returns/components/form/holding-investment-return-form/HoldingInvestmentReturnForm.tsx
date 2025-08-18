@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { getAllHoldings, getHoldingSnapshotsByDateRange } from '@/app/lib/api/data-methods';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
-import { DateRange } from '@/app/components';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../';
 import { HoldingInvestmentReturn, HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
 
@@ -36,7 +35,7 @@ export function HoldingInvestmentReturnForm(
     }
     setIsLoading(true);
     const date = formState.editingFormData.startHoldingSnapshotDate;
-    const dateRange = { startDate: new Date(date), endDate: new Date(date) } as DateRange;
+    const dateRange = { from: new Date(date), to: new Date(date) };
     const response = await getHoldingSnapshotsByDateRange(dateRange);
     if (response.successful && response.data) {
       setStartSnapshots(response.data);
@@ -50,12 +49,56 @@ export function HoldingInvestmentReturnForm(
     fetchStartSnapshots();
   }, [fetchHoldings, fetchStartSnapshots]);
 
+  const selectedStartSnapshotHoldingId: number | null = useMemo(() => {
+    const startId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.startHoldingSnapshotId;
+    if (!startId)
+      return null;
+    const snapshot = startSnapshots.find(s => Number(s.id) === Number(startId));
+    const holdingIdFromSnapshot = snapshot?.holdingId;
+    if (!holdingIdFromSnapshot)
+      return snapshot?.holding?.id ?? null;
+    const numericHoldingId = Number(holdingIdFromSnapshot);
+    if (!Number.isNaN(numericHoldingId)) return numericHoldingId;
+    return snapshot?.holding?.id ?? null;
+  }, [formState.editingFormData, startSnapshots]);
+
+  const isEndHoldingLocked = useMemo(() => {
+    const startSnapshotId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.startHoldingSnapshotId;
+    return !!startSnapshotId;
+  }, [formState.editingFormData]);
+
+  const filteredEndHoldings = useMemo(() => {
+    if (!isEndHoldingLocked)
+      return holdings;
+    const endHoldingFromForm = (formState.editingFormData as HoldingInvestmentReturnFormData)?.endHoldingSnapshotHoldingId;
+    const targetId = selectedStartSnapshotHoldingId ?? (endHoldingFromForm ? Number(endHoldingFromForm) : null);
+    if (!targetId)
+      return holdings;
+    return holdings.filter(h => Number(h.id) === Number(targetId));
+  }, [holdings, isEndHoldingLocked, selectedStartSnapshotHoldingId, formState.editingFormData]);
+
+  useEffect(() => {
+    if (!selectedStartSnapshotHoldingId) 
+      return;
+    const currentEndHoldingId = (formState.editingFormData as HoldingInvestmentReturnFormData)?.endHoldingSnapshotHoldingId;
+    if (Number(currentEndHoldingId) === Number(selectedStartSnapshotHoldingId)) 
+      return;
+    const syntheticEvent = {
+      target: {
+        name: `${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotHoldingId`,
+        value: String(selectedStartSnapshotHoldingId)
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+    formState.onChange(syntheticEvent);
+  }, [selectedStartSnapshotHoldingId]);
+
   const inputs: React.ReactElement = 
     <HoldingInvestmentReturnInputs
       editingFormData={formState.editingFormData as HoldingInvestmentReturnFormData}
       onChange={formState.onChange}
       startSnapshots={startSnapshots}
-      holdings={holdings}
+      holdings={filteredEndHoldings}
+      isEndHoldingLocked={isEndHoldingLocked}
     />
 
   const buttons: React.ReactElement = (
