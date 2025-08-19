@@ -53,13 +53,6 @@ public class HoldingSnapshotsControllerTests : IDisposable
         };
     }
 
-    private async Task<HoldingSnapshot> CreateTestHoldingSnapshots(HoldingSnapshot holdingSnapshot)
-    {
-        _context.HoldingSnapshots.Add(holdingSnapshot);
-        await _context.SaveChangesAsync();
-        return holdingSnapshot;
-    }
-
     public void Dispose()
     {
         _transaction.Rollback();
@@ -113,6 +106,50 @@ public class HoldingSnapshotsControllerTests : IDisposable
         var snapshot = snapshots.First();
         Assert.Equal(_testObjects.TestUser1Holding1.Id, snapshot.HoldingId);
         Assert.Equal(_testObjects.TestHoldingSnapshotHolding1User1A.Date, snapshot.Date);
+    }
+
+    [Fact]
+    public async Task Get_FilterByDateRange_ReturnsSnapshotsInRange()
+    {
+        OkObjectResult? result = await _controller.Get(startDate: new DateOnly(2025, 3, 1), endDate: new DateOnly(2025, 4, 5)) as OkObjectResult;
+        IEnumerable<HoldingSnapshot> snapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
+
+        Assert.Equal(2, snapshots.Count());
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 4, 3));
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 3, 3));
+    }
+
+    [Fact]
+    public async Task Get_FilterByDateRangeSameDay_ReturnsSnapshotsInRange()
+    {
+        OkObjectResult? result = await _controller.Get(startDate: new DateOnly(2025, 3, 3), endDate: new DateOnly(2025, 3, 3)) as OkObjectResult;
+        IEnumerable<HoldingSnapshot> snapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
+
+        Assert.Single(snapshots);
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 3, 3));
+    }
+
+    [Fact]
+    public async Task Get_FilterByStartDateOnlySameDay_ReturnsSnapshotsInRange()
+    {
+        OkObjectResult? result = await _controller.Get(startDate: new DateOnly(2025, 3, 3)) as OkObjectResult;
+        IEnumerable<HoldingSnapshot> snapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
+
+        Assert.Equal(3, snapshots.Count());
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 3, 3));
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 4, 3));
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 5, 3));
+
+    }
+
+    [Fact]
+    public async Task Get_FilterByEndDateOnlySameDay_ReturnsSnapshotsInRange()
+    {
+        OkObjectResult? result = await _controller.Get(endDate: new DateOnly(2025, 3, 3)) as OkObjectResult;
+        IEnumerable<HoldingSnapshot> snapshots = Assert.IsAssignableFrom<IEnumerable<HoldingSnapshot>>(result!.Value);
+
+        Assert.Single(snapshots);
+        Assert.Contains(snapshots, snapshot => snapshot.Date == new DateOnly(2025, 3, 3));
     }
 
     [Fact]
