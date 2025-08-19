@@ -2,13 +2,14 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { getAllHoldings, getHoldingSnapshotsByDateRange } from '@/app/lib/api/data-methods';
+import { createHoldingSnapshot, getAllHoldings, getHoldingSnapshotsByDateRange } from '@/app/lib/api/data-methods';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../';
 import { HoldingInvestmentReturn, HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
+import { convertDateToISOString, convertDollarsToCents, formatDate } from '@/app/components';
 
 export function HoldingInvestmentReturnForm(
   {formState} : {formState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>}
@@ -74,11 +75,38 @@ export function HoldingInvestmentReturnForm(
     const syntheticEvent = {
       target: {
         name: `${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotHoldingId`,
-        value: String(selectedStartSnapshotHoldingId)
+        value: selectedStartSnapshotHoldingId
       }
     } as React.ChangeEvent<HTMLInputElement>;
     formState.onChange(syntheticEvent);
   }, [selectedStartSnapshotHoldingId]);
+
+  const onFormSubmit = async (formData: FormData) => {
+    const date = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotDate`) as string;
+    const balance = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotBalance`) as string;
+
+    const endHoldingSnapshot = {
+      holdingId: endHoldingId,
+      date: convertDateToISOString(new Date(date)),
+      balance: convertDollarsToCents(balance) ?? 0,
+    }
+    const result = await createHoldingSnapshot(endHoldingSnapshot);
+    // Build a new FormData to avoid mutating a potentially read-only FormData
+    const updatedFormData = new FormData();
+    for (const [key, value] of formData.entries()) {
+      updatedFormData.set(key, value as string);
+    }
+    if (endHoldingId) {
+      updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotHoldingId`, endHoldingId);
+    }
+    if (result.successful) {
+      const newId = result.data?.id?.toString() ?? '';
+      updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`, newId);
+    } else {
+      formState.message = { text: result.responseMessage, type: 'ERROR'};
+      }
+    formState.handleSubmit(updatedFormData);
+  }
 
   const inputs: React.ReactElement = 
     <HoldingInvestmentReturnInputs
@@ -105,7 +133,7 @@ export function HoldingInvestmentReturnForm(
   return (
     <FormTemplate
       formId={`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-form`}
-      handleSubmit={formState.handleSubmit}
+      handleSubmit={onFormSubmit}
       formHeader={formHeader}
       inputs={inputs}
       buttons={buttons}

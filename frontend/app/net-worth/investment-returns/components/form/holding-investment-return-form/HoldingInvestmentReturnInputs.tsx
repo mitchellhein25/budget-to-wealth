@@ -32,7 +32,7 @@ export function HoldingInvestmentReturnInputs({
       const syntheticEvent = {
         target: {
           name: `${formId}-endHoldingSnapshotHoldingId`,
-          value: String(holdingId)
+          value: holdingId
         }
       } as React.ChangeEvent<HTMLInputElement>;
       onChange(syntheticEvent);
@@ -135,6 +135,14 @@ export function HoldingInvestmentReturnInputs({
             className="input w-full"
           />
         }
+      />
+      <input
+        id={`${formId}-endHoldingSnapshotId`}
+        name={`${formId}-endHoldingSnapshotId`}
+        type="text"
+        value={editingFormData?.endHoldingSnapshotId ?? ''}
+        readOnly
+        hidden={true}
       />
       <InputFieldSetTemplate
         label="Total Contributions"

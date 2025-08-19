@@ -1,5 +1,5 @@
 import { getHoldingSnapshotValidationResult } from "./getHoldingSnapshotValidationResult";
-import { convertDollarsToCents } from "../../../../../components/Utils";
+import { convertDateToISOString, convertDollarsToCents } from "../../../../../components/Utils";
 import { HoldingSnapshot } from "../..";
 
 export const transformFormDataToHoldingSnapshot = (formData: FormData): { item: HoldingSnapshot | null; errors: string[] } => {
@@ -19,7 +19,7 @@ export const transformFormDataToHoldingSnapshot = (formData: FormData): { item: 
 
     const item: HoldingSnapshot = {
       holdingId: validatedData.holdingId as string,
-      date: validatedData.date.toISOString().split('T')[0],
+      date: convertDateToISOString(validatedData.date),
       balance: balanceInCents,
     };
 

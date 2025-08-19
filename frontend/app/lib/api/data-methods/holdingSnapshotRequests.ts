@@ -6,6 +6,7 @@ import { HoldingSnapshot } from "@/app/net-worth/holding-snapshots/components/Ho
 import { getQueryStringForDateRange } from "./queryHelpers";
 import { deleteRequest } from "../rest-methods/deleteRequest";
 import { DateRangeResponse, HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT } from "./";
+import { postRequest } from "../rest-methods/postRequest";
 
 export async function getHoldingSnapshotsByDateRange(dateRange: DateRange) {
   return await getRequestList<HoldingSnapshot>(`${HOLDING_SNAPSHOTS_ENDPOINT}?${getQueryStringForDateRange(dateRange)}`);
@@ -21,4 +22,8 @@ export async function deleteHoldingSnapshot(id: number) {
 
 export async function getHoldingSnapshotsDateRange() {
   return await getRequestSingle<DateRangeResponse>(HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT);
+}
+
+export async function createHoldingSnapshot(holdingSnapshot: HoldingSnapshot) {
+  return await postRequest<HoldingSnapshot>(HOLDING_SNAPSHOTS_ENDPOINT, holdingSnapshot);
 }

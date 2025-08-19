@@ -6,12 +6,12 @@ export const getHoldingInvestmentReturnValidationResult = (formData: FormData) =
   const raw = {
     id: formData.get(`${investRetFormId}-id`) as string || undefined,
 
-    startHoldingSnapshotDate: formData.get(`${investRetFormId}-startHoldingSnapshotDate`) as string || undefined,
-    startHoldingSnapshotId: formData.get(`${investRetFormId}-startHoldingSnapshotId`) as string || undefined,
-
-    endHoldingSnapshotHoldingId: formData.get(`${investRetFormId}-endHoldingSnapshotHoldingId`) as string || undefined,
-    endHoldingSnapshotDate: formData.get(`${investRetFormId}-endHoldingSnapshotDate`) as string || undefined,
-    endHoldingSnapshotBalance: formData.get(`${investRetFormId}-endHoldingSnapshotBalance`) as string || undefined,
+    startHoldingSnapshotDate: (formData.get(`${investRetFormId}-startHoldingSnapshotDate`) as string) || '',
+    startHoldingSnapshotId: (formData.get(`${investRetFormId}-startHoldingSnapshotId`) as string) || '',
+    endHoldingSnapshotId: (formData.get(`${investRetFormId}-endHoldingSnapshotId`) as string) || '',
+    endHoldingSnapshotHoldingId: (formData.get(`${investRetFormId}-endHoldingSnapshotHoldingId`) as string) || '',
+    endHoldingSnapshotDate: (formData.get(`${investRetFormId}-endHoldingSnapshotDate`) as string) || '',
+    endHoldingSnapshotBalance: (formData.get(`${investRetFormId}-endHoldingSnapshotBalance`) as string) || '',
 
     totalContributions: formData.get(`${investRetFormId}-totalContributions`) as string || undefined,
     totalWithdrawals: formData.get(`${investRetFormId}-totalWithdrawals`) as string || undefined,
