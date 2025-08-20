@@ -43,8 +43,8 @@ describe('BudgetInputs', () => {
       render(<BudgetInputs {...defaultProps} />);
     });
 
-    expect(screen.getByText('Amount')).toBeInTheDocument();
-    expect(screen.getByText('Category')).toBeInTheDocument();
+    expect(screen.getByText('Amount*')).toBeInTheDocument();
+    expect(screen.getByText('Category*')).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 

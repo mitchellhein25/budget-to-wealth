@@ -51,9 +51,9 @@ describe('CashFlowEntriesInputs', () => {
       render(<CashFlowEntriesInputs {...defaultProps} />);
     });
 
-    expect(screen.getByText('Amount')).toBeInTheDocument();
-    expect(screen.getByText('Date')).toBeInTheDocument();
-    expect(screen.getByText('Category')).toBeInTheDocument();
+    expect(screen.getByText('Amount*')).toBeInTheDocument();
+    expect(screen.getByText('Date*')).toBeInTheDocument();
+    expect(screen.getByText('Category*')).toBeInTheDocument();
     expect(screen.getByText('Description')).toBeInTheDocument();
     expect(screen.getByText('Recurrence Frequency')).toBeInTheDocument();
   });

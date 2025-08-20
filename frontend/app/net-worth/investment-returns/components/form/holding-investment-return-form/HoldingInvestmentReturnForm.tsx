@@ -9,7 +9,7 @@ import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../';
 import { HoldingInvestmentReturn, HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
-import { convertDateToISOString, convertDollarsToCents, formatDate } from '@/app/components';
+import { convertDateToISOString, convertDollarsToCents, convertToDate } from '@/app/components';
 
 export function HoldingInvestmentReturnForm(
   {formState} : {formState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>}
@@ -36,7 +36,7 @@ export function HoldingInvestmentReturnForm(
     }
     setIsLoading(true);
     const date = formState.editingFormData.startHoldingSnapshotDate;
-    const dateRange = { from: new Date(date), to: new Date(date) };
+    const dateRange = { from: convertToDate(date), to: convertToDate(date) };
     const response = await getHoldingSnapshotsByDateRange(dateRange);
     if (response.successful && response.data) {
       setStartSnapshots(response.data);
@@ -79,7 +79,7 @@ export function HoldingInvestmentReturnForm(
       }
     } as React.ChangeEvent<HTMLInputElement>;
     formState.onChange(syntheticEvent);
-  }, [selectedStartSnapshotHoldingId]);
+  }, [selectedStartSnapshotHoldingId, endHoldingId, formState, hasStartSnapshot]);
 
   const onFormSubmit = async (formData: FormData) => {
     const date = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotDate`) as string;

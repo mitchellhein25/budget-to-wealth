@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Edit } from 'lucide-react'
 import { InputFieldSetTemplate } from '@/app/components/form/InputFieldSetTemplate'
-import { convertDateToISOString } from '@/app/components/Utils'
+import { convertDateToISOString, convertToDate, formatDate } from '@/app/components/Utils'
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '../../../../holding-snapshots/holdings/components'
 import { HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '../../../../holding-snapshots/components'
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
@@ -76,7 +76,7 @@ export function HoldingInvestmentReturnInputs({
           >
             <option value="" disabled>Pick a snapshot</option>
             {startSnapshots.map((s) => (
-              <option key={s.id} value={s.id}>{`${s.holding?.name ?? ''} ${s.holding?.institution ? `- ${s.holding?.institution}` : ''} - ${new Date(s.date).toLocaleDateString()} ($${(s.balance/100).toFixed(2)})`}</option>
+              <option key={s.id} value={s.id}>{`${s.holding?.name ?? ''} ${s.holding?.institution ? `- ${s.holding?.institution}` : ''} - ${formatDate(convertToDate(s.date))} ($${(s.balance/100).toFixed(2)})`}</option>
             ))}
           </select>
         }

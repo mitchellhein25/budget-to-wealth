@@ -1,4 +1,4 @@
-import { convertCentsToDollars } from '@/app/components/Utils';
+import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
 import { CashFlowEntry } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
@@ -15,7 +15,7 @@ export function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
   return (
     <DesktopListItemRow key={props.entry.id} onEdit={handleEdit} onDelete={handleDelete}>
 			<DesktopListItemCell>
-				{props.entry.date.toLocaleLowerCase('en-US')}
+				{formatDate(convertToDate(props.entry.date))}
 			</DesktopListItemCell>
 			<DesktopListItemCell className="whitespace-nowrap font-medium">
 				{convertCentsToDollars(props.entry.amount)}

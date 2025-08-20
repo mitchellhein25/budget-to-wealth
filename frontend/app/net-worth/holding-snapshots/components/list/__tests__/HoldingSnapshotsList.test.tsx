@@ -146,8 +146,8 @@ describe('HoldingSnapshotsList', () => {
 
     expect(screen.getByText('Test Holding - Test Bank - Investment (Asset)')).toBeInTheDocument();
     expect(screen.getByText('Another Holding - Credit Union - Credit Card (Debt)')).toBeInTheDocument();
-    expect(screen.getByText('2024-01-15')).toBeInTheDocument();
-    expect(screen.getByText('2024-01-16')).toBeInTheDocument();
+    expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
+    expect(screen.getByText('January 16, 2024')).toBeInTheDocument();
   });
 
   it('handles edit button click', () => {

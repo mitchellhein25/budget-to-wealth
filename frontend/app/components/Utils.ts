@@ -42,6 +42,11 @@ export const getCurrentYearRange = (date: Date) => {
   };
 };
 
+export const convertToDate = (date: string): Date => {
+  const [year, month, day] = date.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export const cleanCurrencyInput = (value: string): string | null => {
   value = value.replace(/[^\d.]/g, '');
 

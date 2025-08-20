@@ -5,7 +5,7 @@ import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
 import { waitFor } from '@testing-library/react';
 import { getAllHoldings } from '@/app/lib/api/data-methods';
 import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '../../constants';
-import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '../../../holdings/components';
+import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL, HoldingType } from '../../../holdings/components';
 import { GetRequestResultList } from '@/app/lib/api/rest-methods';
 
 // Mock getAllHoldings globally before imports
@@ -53,17 +53,9 @@ describe('HoldingSnapshotInputs', () => {
     await act(async () => {
       render(<HoldingSnapshotInputs {...mockProps} />);
     });
-    expect(screen.getByText('Holding')).toBeInTheDocument();
-    expect(screen.getByText('Date')).toBeInTheDocument();
-    expect(screen.getByText('Balance')).toBeInTheDocument();
-  });
-
-  it('marks all fields as required', async () => {
-    await act(async () => {
-      render(<HoldingSnapshotInputs {...mockProps} />);
-    });
-    const requiredLabels = screen.getAllByText('Required');
-    expect(requiredLabels).toHaveLength(3);
+    expect(screen.getByText('Holding*')).toBeInTheDocument();
+    expect(screen.getByText('Date*')).toBeInTheDocument();
+    expect(screen.getByText('Balance*')).toBeInTheDocument();
   });
 
   it('displays correct field labels', async () => {
@@ -71,9 +63,9 @@ describe('HoldingSnapshotInputs', () => {
       render(<HoldingSnapshotInputs {...mockProps} />);
     });
     
-    expect(screen.getByText('Holding')).toBeInTheDocument();
-    expect(screen.getByText('Date')).toBeInTheDocument();
-    expect(screen.getByText('Balance')).toBeInTheDocument();
+    expect(screen.getByText('Holding*')).toBeInTheDocument();
+    expect(screen.getByText('Date*')).toBeInTheDocument();
+    expect(screen.getByText('Balance*')).toBeInTheDocument();
   });
 
   it('displays edit holdings link', async () => {
@@ -139,9 +131,9 @@ describe('HoldingSnapshotInputs', () => {
     await act(async () => {
       render(<HoldingSnapshotInputs {...mockProps} />);
     });
-    expect(screen.getByText('Holding')).toBeInTheDocument();
-    expect(screen.getByText('Date')).toBeInTheDocument();
-    expect(screen.getByText('Balance')).toBeInTheDocument();
+    expect(screen.getByText('Holding*')).toBeInTheDocument();
+    expect(screen.getByText('Date*')).toBeInTheDocument();
+    expect(screen.getByText('Balance*')).toBeInTheDocument();
   });
 
   it('displays id value when provided', async () => {
@@ -179,9 +171,9 @@ describe('HoldingSnapshotInputs', () => {
   });
 
   it('renders holding options when holdings are returned', async () => {
-    const holdings = [
-      { id: 'h1', name: 'Account 1', institution: 'Bank', holdingCategory: { name: 'Cat' }, type: 'Cash' },
-      { id: 'h2', name: 'Account 2', institution: '', holdingCategory: { name: 'Cat2' }, type: 'Stock' },
+    const holdings: Holding[] = [
+      { id: 1, name: 'Account 1', institution: 'Bank', holdingCategory: { name: 'Cat' }, type: 'Asset' as HoldingType, holdingCategoryId: 'cat1' },
+      { id: 2, name: 'Account 2', institution: '', holdingCategory: { name: 'Cat2' }, type: 'Debt' as HoldingType, holdingCategoryId: 'cat2' },
     ];
     const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<GetRequestResultList<Holding>>>;
     mockGetAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings, responseMessage: '' });

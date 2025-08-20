@@ -1,4 +1,4 @@
-import { convertCentsToDollars } from '@/app/components/Utils';
+import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
 import { HoldingSnapshot } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
@@ -25,7 +25,7 @@ export function DesktopHoldingSnapshotRow(props: DesktopHoldingSnapshotRowProps)
 				{props.snapshot.holding?.name} - {props.snapshot.holding?.institution} - {props.snapshot.holding?.holdingCategory?.name} ({props.snapshot.holding?.type})
 			</DesktopListItemCell>
 			<DesktopListItemCell>
-				{props.snapshot.date.toLocaleLowerCase('en-US')}
+				{formatDate(convertToDate(props.snapshot.date))}
 			</DesktopListItemCell>
 			<DesktopListItemCell className="whitespace-nowrap font-medium">
 				{convertCentsToDollars(props.snapshot.balance)}

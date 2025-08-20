@@ -3,7 +3,13 @@ import { getHoldingSnapshotValidationResult } from '../getHoldingSnapshotValidat
 import { convertDollarsToCents } from '@/app/components/Utils';
 
 jest.mock('../getHoldingSnapshotValidationResult');
-jest.mock('@/app/components/Utils');
+jest.mock('@/app/components/Utils', () => {
+  const actual = jest.requireActual('@/app/components/Utils');
+  return {
+    ...actual,
+    convertDollarsToCents: jest.fn(),
+  };
+});
 
 const mockGetHoldingSnapshotValidationResult = getHoldingSnapshotValidationResult as jest.MockedFunction<typeof getHoldingSnapshotValidationResult>;
 const mockConvertDollarsToCents = convertDollarsToCents as jest.MockedFunction<typeof convertDollarsToCents>;
@@ -44,11 +50,9 @@ describe('transformFormDataToHoldingSnapshot', () => {
 
   it('returns errors when validation fails', () => {
     const mockValidationError = {
-      success: false,
-      error: {
-        errors: [{ message: 'Invalid holding ID' }]
-      }
-    };
+      success: false as const,
+      error: { errors: [{ message: 'Invalid holding ID' }] }
+    } as unknown as ReturnType<typeof getHoldingSnapshotValidationResult>;
 
     mockGetHoldingSnapshotValidationResult.mockReturnValue(mockValidationError);
 
