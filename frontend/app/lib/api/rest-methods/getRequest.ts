@@ -1,18 +1,7 @@
 'use server';
-import { fetchWithAuth, HttpMethod } from '@/app/lib/api/apiClient';
+import { FetchResult, fetchWithAuth, HttpMethod } from '@/app/lib/api/apiClient';
 
-export type GetRequestResultSingle<T> = {
-  data: T | null,
-  responseMessage: string,
-  successful: boolean
-}
-export type GetRequestResultList<T> = {
-  data: T[] | null,
-  responseMessage: string,
-  successful: boolean
-}
-
-export async function getRequestList<T>(endpoint: string): Promise<GetRequestResultList<T>> {
+export async function getRequestList<T>(endpoint: string): Promise<FetchResult<T[]>> {
   return await fetchWithAuth<T[]>(
     {
       endpoint: endpoint,
@@ -21,7 +10,7 @@ export async function getRequestList<T>(endpoint: string): Promise<GetRequestRes
   );
 }
 
-export async function getRequestSingle<T>(endpoint: string): Promise<GetRequestResultSingle<T>> {
+export async function getRequestSingle<T>(endpoint: string): Promise<FetchResult<T>> {
   return await fetchWithAuth<T>(
     {
       endpoint: endpoint,

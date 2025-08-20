@@ -12,6 +12,27 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
+// Mock chart dimensions to prevent zero width/height warnings
+Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
+  configurable: true,
+  value: 800,
+});
+Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+  configurable: true,
+  value: 400,
+});
+Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
+  configurable: true,
+  value: () => ({
+    width: 800,
+    height: 400,
+    top: 0,
+    left: 0,
+    right: 800,
+    bottom: 400,
+  }),
+});
+
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
 }));
@@ -49,6 +70,7 @@ describe('TrendGraph', () => {
         title={titleText}
         labels={mockLabels}
         datasets={mockDatasets}
+        height={100}
       />
     );
     

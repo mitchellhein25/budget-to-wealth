@@ -62,7 +62,9 @@ export default function InvestmentReturnsPage() {
             holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
           />
         </div>
-        <div className="flex-1">{/* TODO: list view */}</div>
+        <div className="flex flex-1 flex-col gap-2">
+          
+        </div>
       </div>
     </div>
   )

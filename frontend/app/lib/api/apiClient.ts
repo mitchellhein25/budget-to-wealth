@@ -14,7 +14,13 @@ type FetchOptions = {
   body?: object;
 };
 
-export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<{ data: T | null; responseMessage: string, successful: boolean }> {
+export type FetchResult<T> = { 
+  data: T | null;
+  responseMessage: string; 
+  successful: boolean;
+};
+
+export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<FetchResult<T>> {
   const token = await getAccessToken();
 
   if (!token) 
