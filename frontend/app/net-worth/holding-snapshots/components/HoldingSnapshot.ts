@@ -9,3 +9,7 @@ export type HoldingSnapshot = ListTableItem & {
   balance: number;
   userId?: string;
 }
+
+export const getHoldingSnapshotDisplayName = (snapshot: HoldingSnapshot | undefined,) => {
+  return snapshot ? `${snapshot.holding?.name} - ${snapshot.holding?.institution} - ${snapshot.holding?.holdingCategory?.name} (${snapshot.holding?.type})` : '';
+}

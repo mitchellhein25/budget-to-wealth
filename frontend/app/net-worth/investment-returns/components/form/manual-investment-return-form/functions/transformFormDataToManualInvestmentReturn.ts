@@ -1,4 +1,5 @@
-import { ManualInvestmentReturn, getManualInvestmentReturnValidationResult } from "..";
+import { getManualInvestmentReturnValidationResult } from "..";
+import { ManualInvestmentReturn } from "../../../ManualInvestmentReturn";
 
 export const transformFormDataToManualInvestmentReturn = (formData: FormData): { item: ManualInvestmentReturn | null; errors: string[] } => {
   try {

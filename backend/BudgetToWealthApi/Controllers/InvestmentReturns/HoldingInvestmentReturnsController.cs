@@ -47,6 +47,13 @@ public class HoldingInvestmentReturnsController : ControllerBase
                 investmentReturn.StartHoldingSnapshot.Date <= endDate);
         }
 
+        query = query.Include(investmentReturn => investmentReturn.StartHoldingSnapshot)
+                     .ThenInclude(snapshot => snapshot.Holding)
+                     .ThenInclude(holding => holding.HoldingCategory)
+                     .Include(investmentReturn => investmentReturn.EndHoldingSnapshot)
+                     .ThenInclude(snapshot => snapshot.Holding)
+                     .ThenInclude(holding => holding.HoldingCategory);
+
         List<HoldingInvestmentReturn> investmentReturns = await query.ToListAsync();
         return Ok(investmentReturns);
     }

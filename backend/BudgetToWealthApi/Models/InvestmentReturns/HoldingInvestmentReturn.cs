@@ -16,7 +16,8 @@ public class HoldingInvestmentReturn : BaseEntity
             if (StartHoldingSnapshot == null || EndHoldingSnapshot == null || StartHoldingSnapshot.Balance == 0)
                 return null;
             
-            return (EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals) / StartHoldingSnapshot.Balance;
+            var numerator = EndHoldingSnapshot.Balance - TotalContributions - StartHoldingSnapshot.Balance + TotalWithdrawals;
+            return decimal.Round((decimal)numerator / (decimal)StartHoldingSnapshot.Balance * 100, 2);
         }
     }
 }

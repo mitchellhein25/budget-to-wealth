@@ -1,9 +1,11 @@
 import React from 'react'
-import { deleteHolding } from '@/app/lib/api/data-methods';
+import { deleteHolding, deleteHoldingInvestmentReturn } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
-import { HoldingInvestmentReturn } from '../form/holding-investment-return-form/HoldingInvestmentReturn';
-import { ManualInvestmentReturn } from '../form/manual-investment-return-form/ManualInvestmentReturn';
+import { HoldingInvestmentReturn } from '../HoldingInvestmentReturn';
+import { ManualInvestmentReturn } from '../ManualInvestmentReturn';
 import { FetchResult } from '@/app/lib/api/apiClient';
+import { DesktopHoldingInvestmentReturnRow } from './holding-investment-return-list/DesktopHoldingInvestmentReturnRow';
+import { HoldingInvestmentReturnList } from './holding-investment-return-list/HoldingInvestmentReturnList';
 
 type InvestmentReturnListProps = {
   manualInvestmentReturns: ManualInvestmentReturn[],
@@ -17,13 +19,6 @@ type InvestmentReturnListProps = {
 }
 
 export function InvestmentReturnList(props: InvestmentReturnListProps) {
-  const tableHeaderRow = (
-    <tr>
-      <th className="w-3/5">Investment</th>
-      <th className="w-1/5">Return</th>
-      <th className="w-1/5">Month</th>
-    </tr>
-  );
 
   async function handleDelete<T>(
     id: number, 
@@ -37,13 +32,21 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
 		}
 	};
 
-  // const desktopRow = (holding: Holding) => (
-    // <DesktopHoldingRow
-    //   key={holding.id}
-    //   holding={holding}
-    //   onEdit={props.onHoldingIsEditing}
-    //   onDelete={handleDelete}
-    // />
+  const tableHeaderRow = (
+    <tr>
+      <th className="w-3/5">Investment</th>
+    <th className="w-1/5">Return</th>
+      <th className="w-1/5">Month</th>
+    </tr>
+  );
+
+  // const holdingInvestmentReturnDesktopRow = (investmentReturn: HoldingInvestmentReturn) => (
+  //   <DesktopHoldingInvestmentReturnRow
+  //     key={investmentReturn.id}
+  //     investmentReturn={investmentReturn}
+  //     onEdit={props.onHoldingInvestmentReturnIsEditing}
+  //     onDelete={() => handleDelete(investmentReturn.id as number, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
+  //   />
   // );
 
   // const mobileRow = (holding: Holding) => (
@@ -56,7 +59,15 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
   // );
 
   return (
-    <div></div>
+    <HoldingInvestmentReturnList
+      holdingInvestmentReturns={props.holdingInvestmentReturns}
+      onHoldingInvestmentReturnDeleted={props.onHoldingInvestmentReturnDeleted}
+      onHoldingInvestmentReturnIsEditing={props.onHoldingInvestmentReturnIsEditing}
+      tableHeaderRow={tableHeaderRow}
+      handleDelete={(id: number) => handleDelete(id, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
+      isLoading={props.isLoading}
+      isError={props.isError}
+    />
     // <ListTable
     //   items={props.holdings}
     //   bodyRow={desktopRow}

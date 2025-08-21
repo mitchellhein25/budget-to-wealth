@@ -1,5 +1,5 @@
 import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
-import { HoldingSnapshot } from '..';
+import { getHoldingSnapshotDisplayName, HoldingSnapshot } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
 interface DesktopHoldingSnapshotRowProps {
@@ -21,8 +21,8 @@ export function DesktopHoldingSnapshotRow(props: DesktopHoldingSnapshotRowProps)
       onDelete={handleDelete}
       customActionButton={<button className="btn btn-sm" onClick={handleUpdate}>Update</button>}
     >
-			<DesktopListItemCell title={`${props.snapshot.holding?.name} - ${props.snapshot.holding?.institution} - ${props.snapshot.holding?.holdingCategory?.name} (${props.snapshot.holding?.type})`}>
-				{props.snapshot.holding?.name} - {props.snapshot.holding?.institution} - {props.snapshot.holding?.holdingCategory?.name} ({props.snapshot.holding?.type})
+			<DesktopListItemCell title={getHoldingSnapshotDisplayName(props.snapshot)}>
+				{getHoldingSnapshotDisplayName(props.snapshot)}
 			</DesktopListItemCell>
 			<DesktopListItemCell>
 				{formatDate(convertToDate(props.snapshot.date))}

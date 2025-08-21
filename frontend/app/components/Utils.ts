@@ -42,7 +42,9 @@ export const getCurrentYearRange = (date: Date) => {
   };
 };
 
-export const convertToDate = (date: string): Date => {
+export const convertToDate = (date: string | undefined): Date => {
+  if (!date)
+    return new Date();
   const [year, month, day] = date.split('-').map(Number);
   return new Date(year, month - 1, day);
 }
@@ -90,6 +92,13 @@ export const formatDate = (date: Date | undefined, noDay: boolean = false): stri
     year: 'numeric',
     month: 'long',
     day: noDay ? undefined : 'numeric'
+  });
+}
+
+export const convertToDateMonthYear = (date: Date): string => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
   });
 }
 

@@ -3,20 +3,46 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
 import { useForm, useMobileDetection } from '@/app/hooks';
-import { HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
-import { ManualInvestmentReturn, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from './components/form';
+import { getHoldingInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
+import { ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from './components/form';
 import { InvestmentReturnForm } from './components/form/InvestmentReturnForm';
-import { HoldingInvestmentReturn, HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
+import { HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
+import { ManualInvestmentReturn } from './components/ManualInvestmentReturn';
+import { HoldingInvestmentReturn } from './components/HoldingInvestmentReturn';
+import { InvestmentReturnList } from './components/list/InvestmentReturnList';
+import { DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
 
 export default function InvestmentReturnsPage() {
-  const isMobile = useMobileDetection();
+	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+  const [manualInvestmentReturns, setManualInvestmentReturns] = useState<ManualInvestmentReturn[]>([]);
+  const [holdingInvestmentReturns, setHoldingInvestmentReturns] = useState<HoldingInvestmentReturn[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
-
-  const fetchManualInvestmentReturnItems = useCallback(async () => {
-  }, []);
+  const isMobile = useMobileDetection();
 
   const fetchHoldingInvestmentReturnItems = useCallback(async () => {
+    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoading(true);
+      setMessage({ type: null, text: '' });
+    const response = await getHoldingInvestmentReturnsByDateRange(dateRange);
+    if (!response.successful) {
+      setErrorMessage(`Failed to load ${HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
+        return;
+      }
+      setHoldingInvestmentReturns(response.data as HoldingInvestmentReturn[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchManualInvestmentReturnItems = useCallback(async () => {
+    console.log('fetching manual investment return items');
   }, []);
 
   const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn): ManualInvestmentReturnFormData => {
@@ -63,7 +89,16 @@ export default function InvestmentReturnsPage() {
           />
         </div>
         <div className="flex flex-1 flex-col gap-2">
-          
+          <InvestmentReturnList
+            manualInvestmentReturns={manualInvestmentReturns}
+            holdingInvestmentReturns={holdingInvestmentReturns}
+            onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
+            onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
+            onManualInvestmentReturnIsEditing={manualInvestmentReturnFormState.onItemIsEditing}
+            onHoldingInvestmentReturnIsEditing={holdingInvestmentReturnFormState.onItemIsEditing}
+            isLoading={isLoading}
+            isError={messageTypeIsError(message)}
+          />
         </div>
       </div>
     </div>

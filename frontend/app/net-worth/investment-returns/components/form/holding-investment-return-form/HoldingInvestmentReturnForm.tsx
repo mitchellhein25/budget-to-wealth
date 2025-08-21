@@ -8,8 +8,9 @@ import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../';
-import { HoldingInvestmentReturn, HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
+import { HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
 import { convertDateToISOString, convertDollarsToCents, convertToDate } from '@/app/components';
+import { HoldingInvestmentReturn } from '../../HoldingInvestmentReturn';
 
 export function HoldingInvestmentReturnForm(
   {formState} : {formState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>}

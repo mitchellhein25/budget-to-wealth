@@ -5,8 +5,9 @@ import { FormState } from '@/app/hooks';
 import { getManualInvestmentCategories, ManualInvestmentCategory } from '@/app/lib/api/data-methods';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { formHasAnyValue, FormTemplate } from '@/app/components/form';
-import { ManualInvestmentReturn, ManualInvestmentReturnFormData, ManualInvestmentInputs } from '.';
+import { ManualInvestmentReturnFormData, ManualInvestmentInputs } from '.';
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from '../';
+import { ManualInvestmentReturn } from '../../ManualInvestmentReturn';
 
 export function ManualInvestmentReturnForm(
   {formState} : {formState: FormState<ManualInvestmentReturn, ManualInvestmentReturnFormData>}
