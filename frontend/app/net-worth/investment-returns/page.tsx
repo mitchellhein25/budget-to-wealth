@@ -57,15 +57,26 @@ export default function InvestmentReturnsPage() {
     setManualInvestmentReturns, 
     MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [dateRange]);
     
-  const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn): ManualInvestmentReturnFormData => {
-    console.log(item);
-    return {} as ManualInvestmentReturnFormData;
-  };
+  const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn) : ManualInvestmentReturnFormData => ({
+      id: item.id?.toString(),
+      manualInvestmentCategoryId: item.manualInvestmentCategoryId,
+      manualInvestmentReturnDate: new Date(item.manualInvestmentReturnDate),
+      manualInvestmentPercentageReturn: item.manualInvestmentPercentageReturn.toString(),
+      manualInvestmentRecurrenceFrequency: item.manualInvestmentRecurrenceFrequency,
+      manualInvestmentRecurrenceEndDate: item.manualInvestmentRecurrenceEndDate,
+    });
 
-  const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvestmentReturn): HoldingInvestmentReturnFormData => {
-    console.log(item);
-    return {} as HoldingInvestmentReturnFormData;
-  };
+  const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvestmentReturn) : HoldingInvestmentReturnFormData => ({
+    id: item.id?.toString(),
+    startHoldingSnapshotDate: new Date(item.startHoldingSnapshot?.date ?? ''),
+    startHoldingSnapshotId: item.startHoldingSnapshotId,
+    endHoldingSnapshotId: item.endHoldingSnapshotId,
+    endHoldingSnapshotHoldingId: item.endHoldingSnapshot?.holdingId ?? '',
+    endHoldingSnapshotDate: new Date(item.endHoldingSnapshot?.date ?? ''),
+    endHoldingSnapshotBalance: (item.endHoldingSnapshot?.balance ?? 0 / 100).toFixed(2),
+    totalContributions: (item.totalContributions / 100).toFixed(2),
+    totalWithdrawals: (item.totalWithdrawals / 100).toFixed(2),
+  });
 
   const manualInvestmentReturnFormState = useForm<ManualInvestmentReturn, ManualInvestmentReturnFormData>({
     itemName: MANUAL_INVESTMENT_RETURN_ITEM_NAME,
@@ -82,6 +93,16 @@ export default function InvestmentReturnsPage() {
     convertItemToFormData: convertHoldingInvestmentReturnItemToFormData,
     fetchItems: fetchHoldingInvestmentReturnItems,
   });
+
+  const onManualInvestmentReturnIsEditing = (investmentReturn: ManualInvestmentReturn) => {
+    setIsManualActive(true);
+    manualInvestmentReturnFormState.onItemIsEditing(investmentReturn);
+  };
+
+  const onHoldingInvestmentReturnIsEditing = (investmentReturn: HoldingInvestmentReturn) => {
+    setIsManualActive(false);
+    holdingInvestmentReturnFormState.onItemIsEditing(investmentReturn);
+  };
 
   useEffect(() => {
     fetchManualInvestmentReturnItems();
@@ -110,8 +131,8 @@ export default function InvestmentReturnsPage() {
             holdingInvestmentReturns={holdingInvestmentReturns}
             onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
             onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
-            onManualInvestmentReturnIsEditing={manualInvestmentReturnFormState.onItemIsEditing}
-            onHoldingInvestmentReturnIsEditing={holdingInvestmentReturnFormState.onItemIsEditing}
+            onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
+            onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
             isLoading={isLoading}
             isError={messageTypeIsError(message)}
           />
