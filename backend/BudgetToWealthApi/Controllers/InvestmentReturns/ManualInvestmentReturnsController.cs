@@ -28,6 +28,8 @@ public class ManualInvestmentReturnsController : ControllerBase
 
         query = ApplyDateFilter(query, startDate, endDate);
 
+        query = query.Include(investmentReturn => investmentReturn.ManualInvestmentCategory);
+
         List<ManualInvestmentReturn> investmentReturns = await query.ToListAsync();
         return Ok(investmentReturns);
     }

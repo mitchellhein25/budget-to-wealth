@@ -1,11 +1,10 @@
 import React from 'react'
-import { deleteHolding, deleteHoldingInvestmentReturn } from '@/app/lib/api/data-methods';
-import { ListTable } from '@/app/components/table/ListTable';
+import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn } from '@/app/lib/api/data-methods';
 import { HoldingInvestmentReturn } from '../HoldingInvestmentReturn';
 import { ManualInvestmentReturn } from '../ManualInvestmentReturn';
 import { FetchResult } from '@/app/lib/api/apiClient';
-import { DesktopHoldingInvestmentReturnRow } from './holding-investment-return-list/DesktopHoldingInvestmentReturnRow';
 import { HoldingInvestmentReturnList } from './holding-investment-return-list/HoldingInvestmentReturnList';
+import { ManualInvestmentReturnList } from './investment-return-list/ManualInvestmentReturnList';
 
 type InvestmentReturnListProps = {
   manualInvestmentReturns: ManualInvestmentReturn[],
@@ -34,48 +33,32 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
 
   const tableHeaderRow = (
     <tr>
-      <th className="w-3/5">Investment</th>
-    <th className="w-1/5">Return</th>
-      <th className="w-1/5">Month</th>
+      <th className="w-1/2 text-left">Investment</th>
+      <th className="text-left">Return</th>
+      <th className="text-left">Month</th>
     </tr>
   );
 
-  // const holdingInvestmentReturnDesktopRow = (investmentReturn: HoldingInvestmentReturn) => (
-  //   <DesktopHoldingInvestmentReturnRow
-  //     key={investmentReturn.id}
-  //     investmentReturn={investmentReturn}
-  //     onEdit={props.onHoldingInvestmentReturnIsEditing}
-  //     onDelete={() => handleDelete(investmentReturn.id as number, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
-  //   />
-  // );
-
-  // const mobileRow = (holding: Holding) => (
-  //   <MobileHoldingCard
-  //     key={holding.id}
-  //     holding={holding}
-  //     onEdit={props.onHoldingIsEditing}
-  //     onDelete={handleDelete}
-  //   />
-  // );
-
   return (
-    <HoldingInvestmentReturnList
-      holdingInvestmentReturns={props.holdingInvestmentReturns}
-      onHoldingInvestmentReturnDeleted={props.onHoldingInvestmentReturnDeleted}
-      onHoldingInvestmentReturnIsEditing={props.onHoldingInvestmentReturnIsEditing}
-      tableHeaderRow={tableHeaderRow}
-      handleDelete={(id: number) => handleDelete(id, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
-      isLoading={props.isLoading}
-      isError={props.isError}
-    />
-    // <ListTable
-    //   items={props.holdings}
-    //   bodyRow={desktopRow}
-    //   mobileRow={mobileRow}
-    //   headerRow={tableHeaderRow}
-    //   isLoading={props.isLoading}
-    //   isError={props.isError}
-    //   title={`${HOLDING_ITEM_NAME}s`}
-    // />
+    <>
+      <HoldingInvestmentReturnList
+        holdingInvestmentReturns={props.holdingInvestmentReturns}
+        onHoldingInvestmentReturnDeleted={props.onHoldingInvestmentReturnDeleted}
+        onHoldingInvestmentReturnIsEditing={props.onHoldingInvestmentReturnIsEditing}
+        tableHeaderRow={tableHeaderRow}
+        handleDelete={(id: number) => handleDelete(id, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
+        isLoading={props.isLoading}
+        isError={props.isError}
+      />
+      <ManualInvestmentReturnList
+        manualInvestmentReturns={props.manualInvestmentReturns}
+        onManualInvestmentReturnDeleted={props.onManualInvestmentReturnDeleted}
+        onManualInvestmentReturnIsEditing={props.onManualInvestmentReturnIsEditing}
+        tableHeaderRow={tableHeaderRow}
+        handleDelete={(id: number) => handleDelete(id, deleteManualInvestmentReturn, props.onManualInvestmentReturnDeleted)}
+        isLoading={props.isLoading}
+        isError={props.isError}
+      />
+    </>
   )
 }

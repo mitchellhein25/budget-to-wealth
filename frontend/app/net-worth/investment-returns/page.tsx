@@ -3,9 +3,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
 import { useForm, useMobileDetection } from '@/app/hooks';
-import { getHoldingInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
+import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
 import { ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from './components/form';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE } from './components/form';
 import { InvestmentReturnForm } from './components/form/InvestmentReturnForm';
 import { HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
 import { ManualInvestmentReturn } from './components/ManualInvestmentReturn';
@@ -39,11 +39,26 @@ export default function InvestmentReturnsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dateRange]);
 
   const fetchManualInvestmentReturnItems = useCallback(async () => {
-    console.log('fetching manual investment return items');
-  }, []);
+    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
+    try {
+      setIsLoading(true);
+      setMessage({ type: null, text: '' });
+    const response = await getManualInvestmentReturnsByDateRange(dateRange);
+    if (!response.successful) {
+      setErrorMessage(`Failed to load ${MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
+        return;
+      }
+      setManualInvestmentReturns(response.data as ManualInvestmentReturn[]);
+    } catch (error) {
+      setErrorMessage(`An error occurred while loading ${HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      console.error("Fetch error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dateRange]);
 
   const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn): ManualInvestmentReturnFormData => {
     console.log(item);

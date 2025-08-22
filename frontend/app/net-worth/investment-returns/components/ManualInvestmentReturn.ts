@@ -1,7 +1,8 @@
 import { RecurrenceFrequency } from "@/app/cashflow/components";
+import { ListTableItem } from "@/app/components";
 import { Category } from "@/app/components/categories";
 
-export type ManualInvestmentReturn = {
+export type ManualInvestmentReturn = ListTableItem & {
   id?: number;
   manualInvestmentCategoryId: string;
   manualInvestmentCategory?: Category;
@@ -10,4 +11,10 @@ export type ManualInvestmentReturn = {
   manualInvestmentRecurrenceFrequency?: RecurrenceFrequency;
   manualInvestmentRecurrenceEndDate?: string;
   userId?: string;
+  name?: string;
+}
+
+
+export const getManualInvestmentReturnDisplayName = (investmentReturn: ManualInvestmentReturn) => {
+  return `${investmentReturn.manualInvestmentCategory?.name}`;
 }

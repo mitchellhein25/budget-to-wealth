@@ -19,15 +19,15 @@ export function DesktopHoldingInvestmentReturnRow(props: DesktopHoldingInvestmen
       onEdit={handleEdit}
       onDelete={handleDelete}
     >
-			<DesktopListItemCell title={getHoldingInvestmentReturnDisplayName(props.investmentReturn)}>
-				{getHoldingInvestmentReturnDisplayName(props.investmentReturn)}
-			</DesktopListItemCell>
-			<DesktopListItemCell className="whitespace-nowrap font-medium">
-				{props.investmentReturn.returnPercentage}%
-			</DesktopListItemCell>
-			<DesktopListItemCell>
-				{convertToDateMonthYear(convertToDate(props.investmentReturn.endHoldingSnapshot?.date))}
-			</DesktopListItemCell>
+		<DesktopListItemCell title={getHoldingInvestmentReturnDisplayName(props.investmentReturn)}>
+			{getHoldingInvestmentReturnDisplayName(props.investmentReturn)}
+		</DesktopListItemCell>
+		<DesktopListItemCell className="font-medium">
+			{props.investmentReturn.returnPercentage}%
+		</DesktopListItemCell>
+		<DesktopListItemCell>
+			{convertToDateMonthYear(convertToDate(props.investmentReturn.endHoldingSnapshot?.date))}
+		</DesktopListItemCell>
 		</DesktopListItemRow>
   )
 }
