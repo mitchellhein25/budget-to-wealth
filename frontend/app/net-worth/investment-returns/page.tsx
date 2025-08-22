@@ -11,7 +11,8 @@ import { HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentRe
 import { ManualInvestmentReturn } from './components/ManualInvestmentReturn';
 import { HoldingInvestmentReturn } from './components/HoldingInvestmentReturn';
 import { InvestmentReturnList } from './components/list/InvestmentReturnList';
-import { DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
+import { DatePicker, DateRange, getCurrentMonthRange, ListTableItem, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
+import { FetchResult } from '@/app/lib/api/apiClient';
 
 export default function InvestmentReturnsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
@@ -22,44 +23,40 @@ export default function InvestmentReturnsPage() {
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
   const isMobile = useMobileDetection();
 
-  const fetchHoldingInvestmentReturnItems = useCallback(async () => {
+  const fetchReturnItems = async <T extends ListTableItem>(
+    fetchItems: (dateRange: DateRange) => Promise<FetchResult<T[]>>, 
+    setItems: (items: T[]) => void, 
+    itemName: string
+  ) => {
     const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
     try {
       setIsLoading(true);
       setMessage({ type: null, text: '' });
-    const response = await getHoldingInvestmentReturnsByDateRange(dateRange);
+    const response = await fetchItems(dateRange);
     if (!response.successful) {
-      setErrorMessage(`Failed to load ${HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      setErrorMessage(`Failed to load ${itemName}s. Please try again.`);
         return;
       }
-      setHoldingInvestmentReturns(response.data as HoldingInvestmentReturn[]);
+      setItems(response.data as T[]);
     } catch (error) {
-      setErrorMessage(`An error occurred while loading ${HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
+      setErrorMessage(`An error occurred while loading ${itemName}s. Please try again.`);
       console.error("Fetch error:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [dateRange]);
+  };
 
-  const fetchManualInvestmentReturnItems = useCallback(async () => {
-    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
-    try {
-      setIsLoading(true);
-      setMessage({ type: null, text: '' });
-    const response = await getManualInvestmentReturnsByDateRange(dateRange);
-    if (!response.successful) {
-      setErrorMessage(`Failed to load ${MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
-        return;
-      }
-      setManualInvestmentReturns(response.data as ManualInvestmentReturn[]);
-    } catch (error) {
-      setErrorMessage(`An error occurred while loading ${HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE}s. Please try again.`);
-      console.error("Fetch error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [dateRange]);
+  const fetchHoldingInvestmentReturnItems = useCallback(() => fetchReturnItems(
+    getHoldingInvestmentReturnsByDateRange, 
+    setHoldingInvestmentReturns, 
+    HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [dateRange]);
 
+    
+  const fetchManualInvestmentReturnItems = useCallback(() => fetchReturnItems(
+    getManualInvestmentReturnsByDateRange, 
+    setManualInvestmentReturns, 
+    MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [dateRange]);
+    
   const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn): ManualInvestmentReturnFormData => {
     console.log(item);
     return {} as ManualInvestmentReturnFormData;
@@ -104,6 +101,10 @@ export default function InvestmentReturnsPage() {
           />
         </div>
         <div className="flex flex-1 flex-col gap-2">
+          <DatePicker
+            dateRange={dateRange}
+            setDateRange={setDateRange}
+          />
           <InvestmentReturnList
             manualInvestmentReturns={manualInvestmentReturns}
             holdingInvestmentReturns={holdingInvestmentReturns}
