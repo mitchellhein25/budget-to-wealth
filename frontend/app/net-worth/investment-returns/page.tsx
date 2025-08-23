@@ -108,35 +108,62 @@ export default function InvestmentReturnsPage() {
     fetchManualInvestmentReturnItems();
     fetchHoldingInvestmentReturnItems();
   }, [fetchManualInvestmentReturnItems, fetchHoldingInvestmentReturnItems]);
-  
+
+  const form = 
+    <InvestmentReturnForm 
+      isManualActive={isManualActive}
+      setIsManualActive={setIsManualActive}
+      manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
+      holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
+    />
+
+  const list = 
+    <InvestmentReturnList
+      manualInvestmentReturns={manualInvestmentReturns}
+      holdingInvestmentReturns={holdingInvestmentReturns}
+      onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
+      onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
+      onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
+      onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
+      isLoading={isLoading}
+      isError={messageTypeIsError(message)}
+    />
+
+  const datePicker = 
+    <DatePicker
+      dateRange={dateRange}
+      setDateRange={setDateRange}
+    />
+
   return (
     <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
       {!isMobile && <NetWorthSideBar />}
       <div className="flex flex-1 gap-6">
-        <div className="flex-shrink-0">
-          <InvestmentReturnForm 
-            isManualActive={isManualActive}
-            setIsManualActive={setIsManualActive}
-            manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
-            holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
-          />
-        </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <DatePicker
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-          />
-          <InvestmentReturnList
-            manualInvestmentReturns={manualInvestmentReturns}
-            holdingInvestmentReturns={holdingInvestmentReturns}
-            onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
-            onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
-            onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
-            onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
-            isLoading={isLoading}
-            isError={messageTypeIsError(message)}
-          />
-        </div>
+        {isMobile ? (
+          <div className="flex-1 flex flex-col gap-6">
+            <div className="w-full">
+                {form}
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="w-full">
+                {datePicker}
+              </div>
+            </div>
+            <div className="flex-1">
+              {list}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex-shrink-0">
+              {form}
+            </div>
+            <div className="flex flex-1 flex-col gap-2">
+              {datePicker}
+              {list}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
