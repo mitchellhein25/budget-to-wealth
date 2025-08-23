@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { createHoldingSnapshot, getAllHoldings, getHoldingSnapshotsByDateRange } from '@/app/lib/api/data-methods';
+import { createHoldingSnapshot, getAllHoldings, getHoldingSnapshotsByDateRange, updateHoldingSnapshot } from '@/app/lib/api/data-methods';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
 import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
@@ -11,6 +11,7 @@ import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAM
 import { HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
 import { convertDateToISOString, convertDollarsToCents, convertToDate } from '@/app/components';
 import { HoldingInvestmentReturn } from '../../HoldingInvestmentReturn';
+import { FetchResult } from '@/app/lib/api/apiClient';
 
 export function HoldingInvestmentReturnForm(
   {formState} : {formState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>}
@@ -83,15 +84,25 @@ export function HoldingInvestmentReturnForm(
   }, [selectedStartSnapshotHoldingId, endHoldingId, formState, hasStartSnapshot]);
 
   const onFormSubmit = async (formData: FormData) => {
+    const endHoldingSnapshotId = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`) as string;
     const date = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotDate`) as string;
     const balance = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotBalance`) as string;
 
     const endHoldingSnapshot = {
       holdingId: endHoldingId,
       date: convertDateToISOString(new Date(date)),
-      balance: convertDollarsToCents(balance) ?? 0,
+      balance: Number(balance) ?? 0,
     }
-    const result = await createHoldingSnapshot(endHoldingSnapshot);
+    let result: FetchResult<HoldingSnapshot> | null = null;
+    if (endHoldingSnapshotId) {
+      result = await updateHoldingSnapshot(endHoldingSnapshotId, endHoldingSnapshot);
+    } else {
+      result = await createHoldingSnapshot(endHoldingSnapshot);
+    }
+    if (!result.successful) {
+      formState.message = { text: result.responseMessage, type: 'ERROR'};
+      return;
+    }
     // Build a new FormData to avoid mutating a potentially read-only FormData
     const updatedFormData = new FormData();
     for (const [key, value] of formData.entries()) {
@@ -100,12 +111,8 @@ export function HoldingInvestmentReturnForm(
     if (endHoldingId) {
       updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotHoldingId`, endHoldingId);
     }
-    if (result.successful) {
-      const newId = result.data?.id?.toString() ?? '';
-      updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`, newId);
-    } else {
-      formState.message = { text: result.responseMessage, type: 'ERROR'};
-      }
+    const newId = result.data?.id?.toString() ?? '';
+    updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`, newId);
     formState.handleSubmit(updatedFormData);
   }
 
