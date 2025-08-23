@@ -1,5 +1,6 @@
 import { getManualInvestmentReturnValidationResult } from "..";
 import { ManualInvestmentReturn } from "../../../ManualInvestmentReturn";
+import { convertDateToISOString } from "@/app/components/Utils";
 
 export const transformFormDataToManualInvestmentReturn = (formData: FormData): { item: ManualInvestmentReturn | null; errors: string[] } => {
   try {
@@ -13,7 +14,7 @@ export const transformFormDataToManualInvestmentReturn = (formData: FormData): {
     const item: ManualInvestmentReturn = {} as ManualInvestmentReturn;
 
     item.manualInvestmentCategoryId = data.manualInvestmentCategoryId;
-    item.manualInvestmentReturnDate = data.manualInvestmentReturnDate;
+    item.manualInvestmentReturnDate = convertDateToISOString(data.manualInvestmentReturnDate);
     item.manualInvestmentPercentageReturn = parseFloat(data.manualInvestmentPercentageReturn);
     if (data.manualInvestmentRecurrenceFrequency) {
       item.manualInvestmentRecurrenceFrequency = data.manualInvestmentRecurrenceFrequency;

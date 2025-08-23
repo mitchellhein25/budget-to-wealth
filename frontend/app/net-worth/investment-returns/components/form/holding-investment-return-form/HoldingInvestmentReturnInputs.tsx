@@ -57,7 +57,9 @@ export function HoldingInvestmentReturnInputs({
             id={`${formId}-startHoldingSnapshotDate`}
             name={`${formId}-startHoldingSnapshotDate`}
             type="date"
-            value={editingFormData.startHoldingSnapshotDate || convertDateToISOString(new Date())}
+            value={editingFormData.startHoldingSnapshotDate 
+              ? convertDateToISOString(new Date(editingFormData.startHoldingSnapshotDate)) 
+              : convertDateToISOString(new Date())}
             onChange={onChange}
             className="input w-full"
           />
@@ -115,7 +117,9 @@ export function HoldingInvestmentReturnInputs({
             id={`${formId}-endHoldingSnapshotDate`}
             name={`${formId}-endHoldingSnapshotDate`}
             type="date"
-            value={editingFormData.endHoldingSnapshotDate || convertDateToISOString(new Date())}
+            value={editingFormData.endHoldingSnapshotDate 
+              ? convertDateToISOString(new Date(editingFormData.endHoldingSnapshotDate)) 
+              : convertDateToISOString(new Date())}
             onChange={onChange}
             className="input w-full"
           />

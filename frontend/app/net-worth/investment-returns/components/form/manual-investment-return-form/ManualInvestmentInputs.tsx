@@ -4,6 +4,7 @@ import { RecurrenceFrequency } from '@/app/cashflow/components/components/Recurr
 import { Category } from '@/app/components/categories/Category';
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
 import { ManualInvestmentReturnFormData } from '.';
+import { convertDateToISOString } from '@/app/components/Utils';
 
 interface ManualInvestmentInputsProps {
   editingFormData: Partial<ManualInvestmentReturnFormData>;
@@ -49,7 +50,9 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
             id={`${formId}-manualInvestmentReturnDate`}
             name={`${formId}-manualInvestmentReturnDate`}
             type="date"
-            value={editingFormData.manualInvestmentReturnDate || ""}
+            value={editingFormData.manualInvestmentReturnDate 
+              ? convertDateToISOString(new Date(editingFormData.manualInvestmentReturnDate)) 
+              : convertDateToISOString(new Date())}
             onChange={onChange}
             className="input w-full"
           />

@@ -36,8 +36,8 @@ export function HoldingInvestmentReturnForm(
       return;
     }
     setIsLoading(true);
-    const date = formState.editingFormData.startHoldingSnapshotDate;
-    const dateRange = { from: convertToDate(date), to: convertToDate(date) };
+    const date = new Date(formState.editingFormData.startHoldingSnapshotDate);
+    const dateRange = { from: date, to: date };
     const response = await getHoldingSnapshotsByDateRange(dateRange);
     if (response.successful && response.data) {
       setStartSnapshots(response.data);

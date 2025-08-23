@@ -48,7 +48,7 @@ export const useForm = <T, FormDataT>(
         { [fieldName]: cleanedValue } as FormDataT)
   }
 
-  const handleSubmit = (formData: FormData) => 
+  const handleSubmit = (formData: FormData) => {
 		handleFormSubmit<T | null, FormDataT>(
       {
         formData,
@@ -61,6 +61,7 @@ export const useForm = <T, FormDataT>(
         itemEndpoint: args.itemEndpoint
       }
 	);
+  };
 
   const onItemIsEditing = (item: T) => {
 		setEditingFormData(args.convertItemToFormData(item));
