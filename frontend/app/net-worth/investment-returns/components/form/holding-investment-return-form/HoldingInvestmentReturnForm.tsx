@@ -9,7 +9,7 @@ import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../';
 import { HoldingInvestmentReturnInputs, HoldingInvestmentReturnFormData } from '.';
-import { convertDateToISOString, convertDollarsToCents, convertToDate } from '@/app/components';
+import { convertDateToISOString } from '@/app/components';
 import { HoldingInvestmentReturn } from '../../HoldingInvestmentReturn';
 import { FetchResult } from '@/app/lib/api/apiClient';
 

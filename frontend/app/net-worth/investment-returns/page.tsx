@@ -23,7 +23,7 @@ export default function InvestmentReturnsPage() {
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
   const isMobile = useMobileDetection();
 
-  const fetchReturnItems = async <T extends ListTableItem>(
+  const fetchReturnItems = useCallback(async <T extends ListTableItem>(
     fetchItems: (dateRange: DateRange) => Promise<FetchResult<T[]>>, 
     setItems: (items: T[]) => void, 
     itemName: string
@@ -44,18 +44,18 @@ export default function InvestmentReturnsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [dateRange]);
 
   const fetchHoldingInvestmentReturnItems = useCallback(() => fetchReturnItems(
     getHoldingInvestmentReturnsByDateRange, 
     setHoldingInvestmentReturns, 
-    HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [dateRange]);
+    HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [fetchReturnItems]);
 
     
   const fetchManualInvestmentReturnItems = useCallback(() => fetchReturnItems(
     getManualInvestmentReturnsByDateRange, 
     setManualInvestmentReturns, 
-    MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [dateRange]);
+    MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [fetchReturnItems]);
     
   const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn) : ManualInvestmentReturnFormData => ({
       id: item.id?.toString(),
