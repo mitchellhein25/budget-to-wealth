@@ -40,7 +40,10 @@ jest.mock('@/app/components/buttons', () => ({
 }));
 
 jest.mock('../ManualInvestmentInputs', () => ({
-  ManualInvestmentInputs: ({ editingFormData, onChange, manualCategories }: any) => (
+  ManualInvestmentInputs: ({ editingFormData, manualCategories }: {
+    editingFormData: unknown;
+    manualCategories: unknown[];
+  }) => (
     <div data-testid={manualInvestmentInputsTestId}>
       {manualInvestmentInputsText}
       <div data-testid="editing-form-data">{JSON.stringify(editingFormData)}</div>
@@ -53,7 +56,7 @@ jest.mock('@/app/lib/api/data-methods', () => ({
   getManualInvestmentCategories: jest.fn(),
 }));
 
-const mockGetManualInvestmentCategories = require('@/app/lib/api/data-methods').getManualInvestmentCategories;
+const mockGetManualInvestmentCategories = jest.requireMock('@/app/lib/api/data-methods').getManualInvestmentCategories;
 
 describe('ManualInvestmentReturnForm', () => {
   const mockFormState: FormState<ManualInvestmentReturn, ManualInvestmentReturnFormData> = {
@@ -62,7 +65,7 @@ describe('ManualInvestmentReturnForm', () => {
       manualInvestmentReturnDate: new Date('2024-01-01'),
       manualInvestmentPercentageReturn: '',
     },
-    onChange: jest.fn(),
+    onChange: jest.fn() as jest.MockedFunction<() => void>,
     handleSubmit: jest.fn(),
     onReset: jest.fn(),
     onItemIsEditing: jest.fn(),

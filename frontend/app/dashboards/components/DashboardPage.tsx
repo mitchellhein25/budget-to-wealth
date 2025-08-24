@@ -4,12 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useMobileDetection } from '@/app/hooks';
 import { DatePicker, DateRange } from '@/app/components';
 import { DashboardSideBar, HistoryToggle, TrendGraphData, TrendGraphEntry, getCompletedMonthsDefaultRange } from './';
-import { GetRequestResultSingle } from '@/app/lib/api/rest-methods';
 import { DateRangeResponse } from '@/app/lib/api/data-methods';
+import { FetchResult } from '@/app/lib/api/apiClient';
 
 export type DashboardPageProps<T extends TrendGraphData<TrendGraphEntry>> = {
-  getAvailableDateRange: () => Promise<GetRequestResultSingle<DateRangeResponse>>;
-  getTrendGraph: (range: DateRange) => Promise<GetRequestResultSingle<T>>;
+  getAvailableDateRange: () => Promise<FetchResult<DateRangeResponse>>;
+  getTrendGraph: (range: DateRange) => Promise<FetchResult<T>>;
   itemName: string;
   children: (args: { trendGraphData: T | null }) => React.ReactNode;
 }

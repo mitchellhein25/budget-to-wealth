@@ -40,7 +40,7 @@ export default function CashFlowTrendGraph() {
       getTrendGraph={getTrendGraph}
       itemName={CASHFLOW_ITEM_NAME}
     >
-      {({ trendGraphData }) => renderContent(trendGraphData)}
+      {({ trendGraphData }) => renderContent(trendGraphData as CashFlowTrendGraphData | null)}
     </DashboardPage>
   )
 }

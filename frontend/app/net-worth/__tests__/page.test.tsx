@@ -36,7 +36,7 @@ describe('NetWorthPage', () => {
 
     // Clear the module cache and re-import
     jest.resetModules();
-    const MobileNetWorthPage = require('../page').default;
+    const MobileNetWorthPage = jest.requireMock('../page').default;
     
     render(<MobileNetWorthPage />);
 

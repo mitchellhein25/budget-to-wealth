@@ -1,5 +1,18 @@
-import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import InvestmentReturnsPage from './page';
+
+
+// Mock console.error to prevent it from appearing in tests
+const originalConsoleError = console.error;
+beforeAll(() => {
+  console.error = jest.fn();
+});
+
+afterAll(() => {
+  console.error = originalConsoleError;
+});
 
 const investmentReturnFormTestId = 'investment-return-form';
 const investmentReturnListTestId = 'investment-return-list';

@@ -48,11 +48,11 @@ public class HoldingInvestmentReturnsController : ControllerBase
         }
 
         query = query.Include(investmentReturn => investmentReturn.StartHoldingSnapshot)
-                     .ThenInclude(snapshot => snapshot.Holding)
-                     .ThenInclude(holding => holding.HoldingCategory)
+                     .ThenInclude(snapshot => snapshot != null ? snapshot.Holding : null)
+                     .ThenInclude(holding => holding != null ? holding.HoldingCategory : null)
                      .Include(investmentReturn => investmentReturn.EndHoldingSnapshot)
-                     .ThenInclude(snapshot => snapshot.Holding)
-                     .ThenInclude(holding => holding.HoldingCategory);
+                     .ThenInclude(snapshot => snapshot != null ? snapshot.Holding : null)
+                     .ThenInclude(holding => holding != null ? holding.HoldingCategory : null);
 
         List<HoldingInvestmentReturn> investmentReturns = await query.ToListAsync();
         return Ok(investmentReturns);

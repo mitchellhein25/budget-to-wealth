@@ -1,4 +1,4 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { HoldingInvestmentReturnForm } from '../HoldingInvestmentReturnForm';
 import { FormState } from '@/app/hooks';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../constants';
@@ -42,7 +42,12 @@ jest.mock('@/app/components/buttons', () => ({
 }));
 
 jest.mock('../HoldingInvestmentReturnInputs', () => ({
-  HoldingInvestmentReturnInputs: ({ editingFormData, onChange, startSnapshots, holdings, isEndHoldingLocked }: any) => (
+  HoldingInvestmentReturnInputs: ({ editingFormData, startSnapshots, holdings, isEndHoldingLocked }: {
+    editingFormData: unknown;
+    startSnapshots: unknown[];
+    holdings: unknown[];
+    isEndHoldingLocked: boolean;
+  }) => (
     <div data-testid={holdingInvestmentReturnInputsTestId}>
       {holdingInvestmentReturnInputsText}
       <div data-testid="editing-form-data">{JSON.stringify(editingFormData)}</div>
@@ -60,10 +65,10 @@ jest.mock('@/app/lib/api/data-methods', () => ({
   updateHoldingSnapshot: jest.fn(),
 }));
 
-const mockGetAllHoldings = require('@/app/lib/api/data-methods').getAllHoldings;
-const mockGetHoldingSnapshotsByDateRange = require('@/app/lib/api/data-methods').getHoldingSnapshotsByDateRange;
-const mockCreateHoldingSnapshot = require('@/app/lib/api/data-methods').createHoldingSnapshot;
-const mockUpdateHoldingSnapshot = require('@/app/lib/api/data-methods').updateHoldingSnapshot;
+const mockGetAllHoldings = jest.requireMock('@/app/lib/api/data-methods').getAllHoldings;
+const mockGetHoldingSnapshotsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingSnapshotsByDateRange;
+const mockCreateHoldingSnapshot = jest.requireMock('@/app/lib/api/data-methods').createHoldingSnapshot;
+const mockUpdateHoldingSnapshot = jest.requireMock('@/app/lib/api/data-methods').updateHoldingSnapshot;
 
 describe('HoldingInvestmentReturnForm', () => {
   const mockFormState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData> = {
@@ -77,7 +82,7 @@ describe('HoldingInvestmentReturnForm', () => {
       totalContributions: '',
       totalWithdrawals: ''
     },
-    onChange: jest.fn() as jest.MockedFunction<any>,
+    onChange: jest.fn() as jest.MockedFunction<() => void>,
     handleSubmit: jest.fn(),
     onReset: jest.fn(),
     onItemIsEditing: jest.fn(),
@@ -318,7 +323,7 @@ describe('HoldingInvestmentReturnForm', () => {
       Object.defineProperty(submitEvent, 'target', { value: form });
       
       // Mock the form submission
-      const formElement = form as any;
+      const formElement = form as HTMLFormElement;
       formElement.dispatchEvent(submitEvent);
     });
 

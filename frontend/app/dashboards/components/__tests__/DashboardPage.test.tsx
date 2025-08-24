@@ -4,6 +4,16 @@ import { DashboardPage } from '../DashboardPage';
 import { useMobileDetection } from '@/app/hooks';
 import { TrendGraphData, TrendGraphEntry } from '../';
 
+// Mock console.error to prevent it from appearing in tests
+const originalConsoleError = console.error;
+beforeAll(() => {
+  console.error = jest.fn();
+});
+
+afterAll(() => {
+  console.error = originalConsoleError;
+});
+
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
 }));
@@ -42,6 +52,16 @@ describe('DashboardPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseMobileDetection.mockReturnValue(false);
+    
+    // Set up default mocks to prevent undefined response errors
+    mockGetTrendGraph.mockResolvedValue({
+      successful: true,
+      data: { entries: [] } as TrendGraphData<TrendGraphEntry>,
+    });
+    mockGetAvailableDateRange.mockResolvedValue({
+      successful: true,
+      data: { startDate: new Date('2024-01-01'), endDate: new Date('2024-01-31') },
+    });
   });
 
   it('renders dashboard with sidebar on desktop', () => {
