@@ -1,15 +1,16 @@
+'use client';
+
 import { useState } from "react";
 import { useEffect } from "react";
 
 export function useMobileDetection() {
   const [isMobile, setIsMobile] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    setIsDesktop(true);
+    setIsMobile(false);
     
     const checkMobile = () => {
-      const width = window.screen.width;
+      const width = window.innerWidth;
       const mobile = width < 768;
       setIsMobile(mobile);  
     };
@@ -19,5 +20,5 @@ export function useMobileDetection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  return isDesktop ? isMobile : false;
+  return isMobile;
 }
