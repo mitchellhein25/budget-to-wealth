@@ -71,7 +71,7 @@ describe('manualInvestmentReturnFormOnChange', () => {
     const event = {
       target: {
         name: `${formID}-manualInvestmentRecurrenceFrequency`,
-        value: RecurrenceFrequency.Monthly
+        value: RecurrenceFrequency.MONTHLY
       }
     } as React.ChangeEvent<HTMLSelectElement>;
 
@@ -81,12 +81,12 @@ describe('manualInvestmentReturnFormOnChange', () => {
     
     const updateFunction = mockSetEditingFormData.mock.calls[0][0];
     const result = updateFunction({ 
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly,
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
     });
     
     expect(result).toEqual({
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly,
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
     });
   });
@@ -105,7 +105,7 @@ describe('manualInvestmentReturnFormOnChange', () => {
     
     const updateFunction = mockSetEditingFormData.mock.calls[0][0];
     const result = updateFunction({ 
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly,
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
     });
     
@@ -145,7 +145,7 @@ describe('manualInvestmentReturnFormOnChange', () => {
     const event = {
       target: {
         name: `${formID}-manualInvestmentRecurrenceFrequency`,
-        value: RecurrenceFrequency.Weekly
+        value: RecurrenceFrequency.WEEKLY
       }
     } as React.ChangeEvent<HTMLSelectElement>;
 
@@ -157,7 +157,7 @@ describe('manualInvestmentReturnFormOnChange', () => {
     const result = updateFunction({});
     
     expect(result).toEqual({
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
     });
   });
 

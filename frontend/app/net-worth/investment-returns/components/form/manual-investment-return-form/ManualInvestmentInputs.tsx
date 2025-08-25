@@ -1,10 +1,11 @@
 import React from 'react'
 import { InputFieldSetTemplate } from '@/app/components/form'
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+
 import { Category } from '@/app/components/categories/Category';
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
 import { ManualInvestmentReturnFormData } from '.';
 import { convertDateToISOString } from '@/app/components/Utils';
+import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
 
 interface ManualInvestmentInputsProps {
   editingFormData: Partial<ManualInvestmentReturnFormData>;
@@ -87,7 +88,7 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
           >
             <option value="">No recurrence</option>
             {Object.values(RecurrenceFrequency).map((f) => (
-              <option key={f} value={f}>{f === 'Every2Weeks' ? 'Every 2 Weeks' : f}</option>
+              <option key={f} value={f}>{f === RecurrenceFrequency.EVERY_2_WEEKS ? 'Every 2 Weeks' : f}</option>
             ))}
           </select>
         }

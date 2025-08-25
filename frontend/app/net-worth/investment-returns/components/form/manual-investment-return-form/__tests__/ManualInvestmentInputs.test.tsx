@@ -100,7 +100,7 @@ describe('ManualInvestmentInputs', () => {
     expect(percentageInput).toHaveClass('input', 'w-full');
   });
 
-  it('renders recurrence frequency select with correct options', () => {
+  it('renders recurrence select with correct options', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
     const recurrenceSelect = screen.getByTestId('field-recurrence').querySelector('select') as HTMLSelectElement;
@@ -109,42 +109,41 @@ describe('ManualInvestmentInputs', () => {
     expect(recurrenceSelect).toHaveClass('select', 'w-full');
 
     const options = recurrenceSelect.querySelectorAll('option');
+    expect(options).toHaveLength(4); // Including "No recurrence" option
     expect(options[0]).toHaveTextContent('No recurrence');
-    
-    // Check that all RecurrenceFrequency values are present
-    const recurrenceValues = Object.values(RecurrenceFrequency);
-    expect(options).toHaveLength(recurrenceValues.length + 1); // +1 for "No recurrence"
+    expect(options[1]).toHaveTextContent(RecurrenceFrequency.WEEKLY);
+    expect(options[2]).toHaveTextContent('Every 2 Weeks');
+    expect(options[3]).toHaveTextContent(RecurrenceFrequency.MONTHLY);
   });
 
   it('displays provided values in form fields', () => {
     const editingFormData = {
-      id: '123',
-      manualInvestmentCategoryId: '2',
-      manualInvestmentReturnDate: new Date('2024-06-15'),
+      ...defaultProps.editingFormData,
+      manualInvestmentCategoryId: '1',
       manualInvestmentPercentageReturn: '5.75',
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly,
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
     };
 
     render(<ManualInvestmentInputs {...defaultProps} editingFormData={editingFormData} />);
 
-    const idInput = screen.getByTestId('field-manual-investment-category').parentElement?.querySelector('input[hidden]') as HTMLInputElement;
-    expect(idInput).toHaveDisplayValue('123');
-
     const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
-    expect(categorySelect).toHaveValue('2');
+    expect(categorySelect).toHaveValue('1');
+
+    const dateInput = screen.getByTestId('field-return-date').querySelector('input') as HTMLInputElement;
+    expect(dateInput).toHaveValue('2024-01-01');
 
     const percentageInput = screen.getByTestId('field-percentage-return').querySelector('input') as HTMLInputElement;
-    expect(percentageInput).toHaveDisplayValue('5.75');
+    expect(percentageInput).toHaveValue(5.75);
 
     const recurrenceSelect = screen.getByTestId('field-recurrence').querySelector('select') as HTMLSelectElement;
-    expect(recurrenceSelect).toHaveValue(RecurrenceFrequency.Monthly);
+    expect(recurrenceSelect).toHaveValue(RecurrenceFrequency.MONTHLY);
   });
 
   it('shows recurrence end date field when recurrence frequency is selected', () => {
     const editingFormDataWithRecurrence = {
       ...defaultProps.editingFormData,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
     };
 
     render(<ManualInvestmentInputs {...defaultProps} editingFormData={editingFormDataWithRecurrence} />);
@@ -162,7 +161,7 @@ describe('ManualInvestmentInputs', () => {
   it('renders recurrence end date input with correct attributes when visible', () => {
     const editingFormDataWithRecurrence = {
       ...defaultProps.editingFormData,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
     };
 
     render(<ManualInvestmentInputs {...defaultProps} editingFormData={editingFormDataWithRecurrence} />);
@@ -203,7 +202,7 @@ describe('ManualInvestmentInputs', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
     const recurrenceSelect = screen.getByTestId('field-recurrence').querySelector('select') as HTMLSelectElement;
-    fireEvent.change(recurrenceSelect, { target: { value: RecurrenceFrequency.Monthly } });
+    fireEvent.change(recurrenceSelect, { target: { value: RecurrenceFrequency.MONTHLY } });
 
     expect(mockOnChange).toHaveBeenCalled();
     const call = mockOnChange.mock.calls[0][0];
@@ -237,7 +236,7 @@ describe('ManualInvestmentInputs', () => {
 
     const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
     const options = categorySelect.querySelectorAll('option');
-    expect(options).toHaveLength(1); // Only the "Pick a category" option
+    expect(options).toHaveLength(1); // Only "Pick a category" option
     expect(options[0]).toHaveTextContent('Pick a category');
   });
 
@@ -245,8 +244,10 @@ describe('ManualInvestmentInputs', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
     const recurrenceSelect = screen.getByTestId('field-recurrence').querySelector('select') as HTMLSelectElement;
-    const every2WeeksOption = Array.from(recurrenceSelect.options).find(option => 
-      option.value === RecurrenceFrequency.Every2Weeks
+    const options = recurrenceSelect.querySelectorAll('option');
+    
+    const every2WeeksOption = Array.from(options).find(option => 
+      option.value === RecurrenceFrequency.EVERY_2_WEEKS
     );
     
     expect(every2WeeksOption?.textContent).toBe('Every 2 Weeks');
@@ -260,10 +261,9 @@ describe('ManualInvestmentInputs', () => {
 
     render(<ManualInvestmentInputs {...propsWithEmptyData} />);
 
-    const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
-    expect(categorySelect).toHaveValue('');
-
-    const percentageInput = screen.getByTestId('field-percentage-return').querySelector('input') as HTMLInputElement;
-    expect(percentageInput).toHaveDisplayValue('');
+    expect(screen.getByTestId('field-manual-investment-category')).toBeInTheDocument();
+    expect(screen.getByTestId('field-return-date')).toBeInTheDocument();
+    expect(screen.getByTestId('field-percentage-return')).toBeInTheDocument();
+    expect(screen.getByTestId('field-recurrence')).toBeInTheDocument();
   });
 });

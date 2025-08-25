@@ -7,7 +7,8 @@ import { getCategoriesList } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate } from '@/app/components/form';
 import { CashFlowEntryFormData } from './';
-import { CashFlowType, CashFlowCategory, RecurrenceFrequency, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL } from '..';
+import { CashFlowType, CashFlowCategory, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL } from '..';
+import { RecurrenceFrequency } from '../components/RecurrenceFrequency';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;
@@ -133,7 +134,7 @@ export function CashFlowEntriesInputs({ editingFormData, onChange, cashFlowType,
             <option value="">No recurrence</option>
             {Object.values(RecurrenceFrequency).map((frequency) => (
               <option key={frequency} value={frequency}>
-                {frequency === RecurrenceFrequency.Every2Weeks ? 'Every 2 Weeks' : frequency}
+                {frequency === RecurrenceFrequency.EVERY_2_WEEKS ? 'Every 2 Weeks' : frequency}
               </option>
             ))}
           </select>

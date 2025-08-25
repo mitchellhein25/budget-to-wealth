@@ -30,7 +30,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
         manualInvestmentCategoryId: 'category-1',
         manualInvestmentReturnDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75',
-        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly,
+        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
         manualInvestmentRecurrenceEndDate: '2024-12-31'
       }
     };
@@ -45,7 +45,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       manualInvestmentCategoryId: 'category-1',
       manualInvestmentReturnDate: '2024-01-15',
       manualInvestmentPercentageReturn: 5.75,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly,
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
     });
   });
@@ -82,7 +82,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
         manualInvestmentCategoryId: 'category-1',
         manualInvestmentReturnDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75',
-        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly
+        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
       }
     };
 
@@ -96,7 +96,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       manualInvestmentCategoryId: 'category-1',
       manualInvestmentReturnDate: '2024-01-15',
       manualInvestmentPercentageReturn: 5.75,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
     });
   });
 

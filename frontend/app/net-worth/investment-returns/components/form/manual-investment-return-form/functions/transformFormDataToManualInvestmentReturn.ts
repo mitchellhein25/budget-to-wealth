@@ -1,4 +1,5 @@
-import { getManualInvestmentReturnValidationResult } from "..";
+import { RecurrenceFrequency } from "@/app/cashflow/components/components/RecurrenceFrequency";
+import { getManualInvestmentReturnValidationResult, ManualInvestmentReturnFormData } from "..";
 import { ManualInvestmentReturn } from "../../../ManualInvestmentReturn";
 import { convertDateToISOString } from "@/app/components/Utils";
 
@@ -10,14 +11,14 @@ export const transformFormDataToManualInvestmentReturn = (formData: FormData): {
       return { item: null, errors: [errors[0]] };
     }
 
-    const data = validation.data;
+    const data: ManualInvestmentReturnFormData = validation.data;
     const item: ManualInvestmentReturn = {} as ManualInvestmentReturn;
 
     item.manualInvestmentCategoryId = data.manualInvestmentCategoryId;
     item.manualInvestmentReturnDate = convertDateToISOString(data.manualInvestmentReturnDate);
     item.manualInvestmentPercentageReturn = parseFloat(data.manualInvestmentPercentageReturn);
     if (data.manualInvestmentRecurrenceFrequency) {
-      item.manualInvestmentRecurrenceFrequency = data.manualInvestmentRecurrenceFrequency;
+      item.manualInvestmentRecurrenceFrequency = data.manualInvestmentRecurrenceFrequency as RecurrenceFrequency;
       if (data.manualInvestmentRecurrenceEndDate) 
         item.manualInvestmentRecurrenceEndDate = data.manualInvestmentRecurrenceEndDate;
     }

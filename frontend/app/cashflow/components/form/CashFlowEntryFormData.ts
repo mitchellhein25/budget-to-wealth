@@ -1,6 +1,6 @@
 import z from "zod";
-import { RecurrenceFrequency } from "../components/RecurrenceFrequency";
 import { currencyRegex } from "@/app/components";
+import { RecurrenceFrequency } from "../components/RecurrenceFrequency";
 
 export const cashFlowEntryFormSchema = z.object({
   id: z.string().uuid().optional(),
@@ -26,7 +26,7 @@ export const cashFlowEntryFormSchema = z.object({
   date: z.date({ message: "Date field is required." }).nullable().refine((val) => val !== null, { message: "Date field is required." }),
   categoryId: z.string().trim().min(1, { message: "Category field is required" }),
   description: z.string().trim().optional(),
-  recurrenceFrequency: z.nativeEnum(RecurrenceFrequency).optional(),
+  recurrenceFrequency: z.enum(Object.values(RecurrenceFrequency) as [string, ...string[]]).optional(),
   recurrenceEndDate: z.string().optional(),
 });
 

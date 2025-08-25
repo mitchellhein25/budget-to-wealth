@@ -11,7 +11,7 @@ describe('getManualInvestmentReturnValidationResult', () => {
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
     formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
-    formData.append(`${formID}-manualInvestmentRecurrenceFrequency`, RecurrenceFrequency.Monthly);
+    formData.append(`${formID}-manualInvestmentRecurrenceFrequency`, RecurrenceFrequency.MONTHLY);
     formData.append(`${formID}-manualInvestmentRecurrenceEndDate`, '2024-12-31');
 
     const result = getManualInvestmentReturnValidationResult(formData);
@@ -23,7 +23,7 @@ describe('getManualInvestmentReturnValidationResult', () => {
         manualInvestmentCategoryId: 'category-1',
         manualInvestmentReturnDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75',
-        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly,
+        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
         manualInvestmentRecurrenceEndDate: '2024-12-31'
       });
     }
@@ -55,14 +55,14 @@ describe('getManualInvestmentReturnValidationResult', () => {
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
     formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
-    formData.append(`${formID}-manualInvestmentRecurrenceFrequency`, RecurrenceFrequency.Weekly);
+    formData.append(`${formID}-manualInvestmentRecurrenceFrequency`, RecurrenceFrequency.WEEKLY);
     formData.append(`${formID}-manualInvestmentRecurrenceEndDate`, '2024-06-30');
 
     const result = getManualInvestmentReturnValidationResult(formData);
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.manualInvestmentRecurrenceFrequency).toBe(RecurrenceFrequency.Weekly);
+      expect(result.data.manualInvestmentRecurrenceFrequency).toBe(RecurrenceFrequency.WEEKLY);
       expect(result.data.manualInvestmentRecurrenceEndDate).toBe('2024-06-30');
     }
   });

@@ -1,4 +1,4 @@
-import { RecurrenceFrequency } from "@/app/cashflow/components";
+import { RecurrenceFrequency } from "@/app/cashflow/components/components/RecurrenceFrequency";
 import { ListTableItem } from "@/app/components";
 import { Category } from "@/app/components/categories";
 

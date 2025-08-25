@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { getCategoriesList } from '@/app/lib/api/data-methods';
-import { CashFlowCategory, CashFlowType, RecurrenceFrequency } from '@/app/cashflow/components';
+import { CashFlowCategory, CashFlowType } from '@/app/cashflow/components';
+import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
 import { CashFlowEntriesInputs } from './CashFlowEntriesInputs';
 import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '../../components';
 
@@ -151,7 +152,7 @@ describe('CashFlowEntriesInputs', () => {
 
   it('shows recurrence end date when recurrence frequency is selected', async () => {
     const editingFormData = { 
-      recurrenceFrequency: RecurrenceFrequency.Monthly
+      recurrenceFrequency: RecurrenceFrequency.MONTHLY
     };
     await act(async () => {
       render(<CashFlowEntriesInputs {...defaultProps} editingFormData={editingFormData} />);

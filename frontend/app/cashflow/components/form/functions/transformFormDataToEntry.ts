@@ -2,6 +2,7 @@ import { CashFlowEntry } from "@/app/cashflow/components/components/CashFlowEntr
 import { CashFlowType } from "@/app/cashflow/components/components/CashFlowType";
 import { getCashFlowValidationResult } from "./getCashFlowValidationResult";
 import { convertDollarsToCents } from "@/app/components/Utils";
+import { RecurrenceFrequency } from "../../components/RecurrenceFrequency";
 
 export const transformCashFlowFormDataToEntry = (formData: FormData, cashFlowType: CashFlowType): { item: CashFlowEntry | null; errors: string[] } => {
   try {
@@ -27,7 +28,7 @@ export const transformCashFlowFormDataToEntry = (formData: FormData, cashFlowTyp
     };
 
     if (validatedData.recurrenceFrequency) {
-      item.recurrenceFrequency = validatedData.recurrenceFrequency;
+      item.recurrenceFrequency = validatedData.recurrenceFrequency as RecurrenceFrequency;
     }
     
     if (validatedData.recurrenceEndDate) {
