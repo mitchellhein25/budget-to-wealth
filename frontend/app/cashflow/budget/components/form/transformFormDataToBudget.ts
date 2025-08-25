@@ -1,11 +1,11 @@
 import { convertDollarsToCents } from "@/app/components";
-import { Budget, BUDGET_ITEM_NAME, budgetFormSchema } from "../";
+import { Budget, BUDGET_ITEM_NAME_LOWERCASE, budgetFormSchema } from "../";
 
 export const transformFormDataToBudget = (formData: FormData): { item: Budget | null; errors: string[] } => {
   try {
     const rawData = {
-      amount: formData.get(`${BUDGET_ITEM_NAME}-amount`) as string || "",
-      categoryId: formData.get(`${BUDGET_ITEM_NAME}-categoryId`) as string || ""
+      amount: formData.get(`${BUDGET_ITEM_NAME_LOWERCASE}-amount`) as string || "",
+      categoryId: formData.get(`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`) as string || ""
     };
 
     const validationResult =  budgetFormSchema.safeParse(rawData);
