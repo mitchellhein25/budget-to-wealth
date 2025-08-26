@@ -19,7 +19,7 @@ public class CashFlowEntriesController : ControllerBase
     }
 
     [HttpGet("Recurring")]
-    public async Task<IActionResult> GetRecurringEntries([FromQuery] bool activeOnly = true)
+    public async Task<IActionResult> GetRecurringEntries([FromQuery] bool activeOnly = true, [FromQuery] CashFlowType? entryType = null)
     {
         string? userId = User.GetUserId();
         if (userId == null)
@@ -33,6 +33,9 @@ public class CashFlowEntriesController : ControllerBase
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             query = query.Where(entry => entry.RecurrenceEndDate == null || entry.RecurrenceEndDate >= today);
         }
+
+        if (entryType != null)
+            query = query.Where(entry => entry.EntryType == entryType);
 
         var recurringEntries = await query
             .Include(e => e.Category)

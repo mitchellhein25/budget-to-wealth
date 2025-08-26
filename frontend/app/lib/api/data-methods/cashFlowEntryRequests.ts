@@ -3,7 +3,7 @@
 import { DateRange } from "@/app/components";
 import { CashFlowEntry, CashFlowType } from "@/app/cashflow/components";
 import { getQueryStringForDateRange } from "./queryHelpers";
-import { CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT, CASH_FLOW_ENTRIES_ENDPOINT, DateRangeResponse } from "./endpoints";
+import { CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT, CASH_FLOW_ENTRIES_ENDPOINT, CASH_FLOW_ENTRIES_RECURRING_ENDPOINT, DateRangeResponse } from "./endpoints";
 import { deleteRequest, getRequestList, getRequestSingle } from "@/app/lib/api/rest-methods";
 
 export async function getCashFlowEntriesByDateRangeAndType(dateRange: DateRange, cashFlowType: CashFlowType) {
@@ -17,4 +17,12 @@ export async function deleteCashFlowEntry(id: number) {
 
 export async function getCashFlowEntriesDateRange() {
   return await getRequestSingle<DateRangeResponse>(CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT);
+}
+
+export async function getRecurringCashFlowEntries(cashFlowType: CashFlowType | null = null) {
+  let fetchEndpoint = `${CASH_FLOW_ENTRIES_RECURRING_ENDPOINT}?activeOnly=true`;
+  if (cashFlowType) {
+    fetchEndpoint += `&entryType=${cashFlowType}`;
+  }
+  return await getRequestList<CashFlowEntry>(fetchEndpoint);
 }
