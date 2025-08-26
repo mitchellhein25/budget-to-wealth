@@ -18,6 +18,29 @@ public class CashFlowEntriesController : ControllerBase
         _logger = logger;
     }
 
+    [HttpGet("Recurring")]
+    public async Task<IActionResult> GetRecurringEntries([FromQuery] bool activeOnly = true)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        var query = _context.CashFlowEntries
+            .Where(entry => entry.UserId == userId && entry.RecurrenceFrequency != null);
+
+        if (activeOnly)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            query = query.Where(entry => entry.RecurrenceEndDate == null || entry.RecurrenceEndDate >= today);
+        }
+
+        var recurringEntries = await query
+            .Include(e => e.Category)
+            .ToListAsync();
+        
+        return Ok(recurringEntries);
+    }
+
     [HttpGet("AvailableDateRange")]
     public async Task<IActionResult> GetAvailableDateRange()
     {
@@ -42,8 +65,8 @@ public class CashFlowEntriesController : ControllerBase
             return Unauthorized();
 
         IQueryable<CashFlowEntry> query = _context.CashFlowEntries
-                                          .Include(e => e.Category)
-                                          .Where(cashFlowEntry => cashFlowEntry.UserId == userId);
+                                          .Where(cashFlowEntry => cashFlowEntry.UserId == userId)
+                                          .Include(e => e.Category);
 
         if (entryType != null)
             query = query.Where(cashFlowEntry => cashFlowEntry.EntryType == entryType);

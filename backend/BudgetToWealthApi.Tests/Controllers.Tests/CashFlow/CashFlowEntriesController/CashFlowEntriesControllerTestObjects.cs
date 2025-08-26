@@ -150,4 +150,43 @@ public class CashFlowEntryControllerTestObjects
     Description = "Test description 4",
     UserId = _user2Id
   };
+
+  public CashFlowEntry TestRecurringEntry1 => new()
+  {
+    Amount = 5000,
+    EntryType = CashFlowType.Expense,
+    CategoryId = DefaultCategoryExpense.Id,
+    Category = DefaultCategoryExpense,
+    Date = DateOnly.Parse("2023-01-01"),
+    Description = "Monthly rent payment",
+    UserId = _user1Id,
+    RecurrenceFrequency = RecurrenceFrequency.Monthly,
+    RecurrenceEndDate = null
+  };
+
+  public CashFlowEntry TestRecurringEntry2 => new()
+  {
+    Amount = 2500,
+    EntryType = CashFlowType.Expense,
+    CategoryId = TestUser1CategoryExpense.Id,
+    Category = TestUser1CategoryExpense,
+    Date = DateOnly.Parse("2023-01-15"),
+    Description = "Bi-weekly grocery shopping",
+    UserId = _user1Id,
+    RecurrenceFrequency = RecurrenceFrequency.Every2Weeks,
+    RecurrenceEndDate = null
+  };
+
+  public CashFlowEntry TestRecurringEntry3 => new()
+  {
+    Amount = 10000,
+    EntryType = CashFlowType.Income,
+    CategoryId = DefaultCategoryIncome.Id,
+    Category = DefaultCategoryIncome,
+    Date = DateOnly.Parse("2023-01-01"),
+    Description = "Weekly freelance work",
+    UserId = _user1Id,
+    RecurrenceFrequency = RecurrenceFrequency.Weekly,
+    RecurrenceEndDate = null
+  };
 }

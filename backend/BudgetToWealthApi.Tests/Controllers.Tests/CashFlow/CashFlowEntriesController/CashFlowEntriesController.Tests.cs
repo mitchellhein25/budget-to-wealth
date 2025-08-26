@@ -633,4 +633,95 @@ public class CashFlowEntriesControllerTests : IDisposable
         await ValidateImportResponse(response, 0, 3, false);
         await ValidateSavedEntries(entriesToImport, 0);
     }
+
+    [Fact]
+    public async Task GetRecurring_ReturnsOnlyRecurringEntriesForUser()
+    {
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry1);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry2);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry3);
+        await _context.SaveChangesAsync();
+
+        var result = await _controller.GetRecurringEntries() as OkObjectResult;
+        var recurringEntries = Assert.IsAssignableFrom<IEnumerable<CashFlowEntry>>(result!.Value);
+
+        Assert.Equal(3, recurringEntries.Count());
+        Assert.All(recurringEntries, entry => Assert.NotNull(entry.RecurrenceFrequency));
+        Assert.All(recurringEntries, entry => Assert.Equal(_user1Id, entry.UserId));
+        Assert.Contains(recurringEntries, entry => entry.Amount == _testObjects.TestRecurringEntry1.Amount);
+        Assert.Contains(recurringEntries, entry => entry.Amount == _testObjects.TestRecurringEntry2.Amount);
+        Assert.Contains(recurringEntries, entry => entry.Amount == _testObjects.TestRecurringEntry3.Amount);
+    }
+
+    [Fact]
+    public async Task GetRecurring_ActiveOnlyTrue_ReturnsOnlyActiveRecurringEntries()
+    {
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry1);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry2);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry3);
+        await _context.SaveChangesAsync();
+
+        var result = await _controller.GetRecurringEntries(activeOnly: true) as OkObjectResult;
+        var recurringEntries = Assert.IsAssignableFrom<IEnumerable<CashFlowEntry>>(result!.Value);
+
+        Assert.Equal(3, recurringEntries.Count());
+        foreach (var entry in recurringEntries)
+        {
+            Assert.True(entry.RecurrenceEndDate == null || entry.RecurrenceEndDate >= DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+    }
+
+    [Fact]
+    public async Task GetRecurring_ActiveOnlyFalse_ReturnsAllRecurringEntries()
+    {
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry1);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry2);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry3);
+        await _context.SaveChangesAsync();
+
+        var result = await _controller.GetRecurringEntries(activeOnly: false) as OkObjectResult;
+        var recurringEntries = Assert.IsAssignableFrom<IEnumerable<CashFlowEntry>>(result!.Value);
+
+        Assert.Equal(3, recurringEntries.Count());
+        Assert.Contains(recurringEntries, entry => entry.Amount == _testObjects.TestRecurringEntry1.Amount);
+        Assert.Contains(recurringEntries, entry => entry.Amount == _testObjects.TestRecurringEntry2.Amount);
+        Assert.Contains(recurringEntries, entry => entry.Amount == _testObjects.TestRecurringEntry3.Amount);
+    }
+
+    [Fact]
+    public async Task GetRecurring_IncludesCategoryInformation()
+    {
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry1);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry2);
+        _context.CashFlowEntries.Add(_testObjects.TestRecurringEntry3);
+        await _context.SaveChangesAsync();
+
+        var result = await _controller.GetRecurringEntries() as OkObjectResult;
+        var recurringEntries = Assert.IsAssignableFrom<IEnumerable<CashFlowEntry>>(result!.Value);
+
+        Assert.All(recurringEntries, entry => Assert.NotNull(entry.Category));
+        Assert.All(recurringEntries, entry => Assert.NotEqual(Guid.Empty, entry?.Category?.Id));
+    }
+
+    [Fact]
+    public async Task GetRecurring_UnauthorizedUserCannotAccess()
+    {
+        SetUserUnauthorized();
+        var result = await _controller.GetRecurringEntries();
+        Assert.IsType<UnauthorizedResult>(result);
+        
+        SetupUserContext(_user1Id);
+    }
+
+    [Fact]
+    public async Task GetRecurring_ReturnsEmptyListWhenNoRecurringEntries()
+    {
+        SetupUserContext(_user2Id);
+        var result = await _controller.GetRecurringEntries() as OkObjectResult;
+        var recurringEntries = Assert.IsAssignableFrom<IEnumerable<CashFlowEntry>>(result!.Value);
+
+        Assert.Empty(recurringEntries);
+        
+        SetupUserContext(_user1Id);
+    }
 }
