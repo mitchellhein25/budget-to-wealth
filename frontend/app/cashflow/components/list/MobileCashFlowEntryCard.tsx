@@ -1,5 +1,5 @@
 import { convertCentsToDollars } from "@/app/components/Utils";
-import { CashFlowEntry } from "..";
+import { CashFlowEntry, CashFlowType, getRecurrenceText } from "..";
 import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
 
 interface MobileCashFlowEntryCardProps {

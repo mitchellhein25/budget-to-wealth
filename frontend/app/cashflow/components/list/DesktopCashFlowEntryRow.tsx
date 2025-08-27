@@ -1,5 +1,5 @@
 import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
-import { CashFlowEntry } from '..';
+import { CashFlowEntry, CashFlowType, getRecurrenceText } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
 
 interface DesktopCashFlowEntryRowProps {
@@ -30,6 +30,11 @@ export function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
 			<DesktopListItemCell title={props.entry.description}>
 				{props.entry.description}
 			</DesktopListItemCell>
+			{/* {!props.cashFlowType && (
+				<DesktopListItemCell>
+					{getRecurrenceText(props.entry)}
+				</DesktopListItemCell>
+			)} */}
 		</DesktopListItemRow>
   )
 }

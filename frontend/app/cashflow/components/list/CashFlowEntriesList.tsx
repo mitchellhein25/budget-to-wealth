@@ -26,26 +26,13 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		}
 	};
 
-	// const getRecurrenceText = (entry: CashFlowEntry) => {
-	// 	if (!entry.recurrenceFrequency) {
-	// 		return '';
-	// 	}
-		
-	// 	let text = entry.recurrenceFrequency === RecurrenceFrequency.Every2Weeks ? 'Every 2 Weeks' : entry.recurrenceFrequency.toString();
-	// 	if (entry.recurrenceEndDate) {
-	// 		text += ` until ${new Date(entry.recurrenceEndDate).toLocaleDateString()}`;
-	// 	}
-		
-	// 	return text;
-	// };
-
 	const tableHeaderRow = (
 		<tr>
 			<th className="w-1/6">Date</th>
 			<th className="w-1/6">Amount</th>
 			<th className="w-1/5">Category</th>
 			<th className="w-1/5">Description</th>
-			{/* <th className="w-1/5">Recurrence</th> */}
+			{/* {!props.cashFlowType && <th className="w-1/5">Recurrence</th>} */}
 			<th className="text-right">Actions</th>
 		</tr>
 	);

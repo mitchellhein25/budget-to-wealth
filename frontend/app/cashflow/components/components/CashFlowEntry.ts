@@ -15,3 +15,16 @@ export type CashFlowEntry = ListTableItem & {
     recurrenceFrequency?: RecurrenceFrequency;
     recurrenceEndDate?: string;
 };
+
+export const getRecurrenceText = (entry: CashFlowEntry) => {
+    if (!entry.recurrenceFrequency) {
+        return '';
+    }
+    
+    let text = entry.recurrenceFrequency === RecurrenceFrequency.EVERY_2_WEEKS ? 'Every 2 Weeks' : entry.recurrenceFrequency.toString();
+    if (entry.recurrenceEndDate) {
+        text += ` until ${new Date(entry.recurrenceEndDate).toLocaleDateString()}`;
+    }
+    
+    return text;
+};
