@@ -1,14 +1,15 @@
 import { convertCentsToDollars } from "@/app/components/Utils";
-import { CashFlowEntry, CashFlowType, getRecurrenceText } from "..";
+import { CashFlowEntry, getRecurrenceText } from "..";
 import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
 
 interface MobileCashFlowEntryCardProps {
 	entry: CashFlowEntry;
 	onEdit: (entry: CashFlowEntry) => void;
 	onDelete: (id: number) => void;
+	recurringOnly?: boolean;
 }
 
-export function MobileCashFlowEntryCard({ entry, onEdit, onDelete }: MobileCashFlowEntryCardProps) {
+export function MobileCashFlowEntryCard({ entry, onEdit, onDelete, recurringOnly }: MobileCashFlowEntryCardProps) {
 	const handleEdit = () => onEdit(entry);
 	const handleDelete = () => onDelete(entry.id as number);
 
@@ -35,8 +36,8 @@ export function MobileCashFlowEntryCard({ entry, onEdit, onDelete }: MobileCashF
 			/>
 			<MobileListItemCardContent
 				description={
-					<p className="text-sm text-base-content break-words" title={entry.description}>
-						{entry.description}
+					<p className="text-sm text-base-content break-words" title={recurringOnly ? entry.description + ' - ' + getRecurrenceText(entry) : entry.description}>
+						{recurringOnly ? entry.description + ' - ' + getRecurrenceText(entry) : entry.description}
 					</p>
 				}
 				onEdit={handleEdit}

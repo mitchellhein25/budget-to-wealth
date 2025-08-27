@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react'
-import { CashFlowPage, CashFlowType, EXPENSE_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import { CashFlowPage, CashFlowType, INCOME_ITEM_NAME } from '@/app/cashflow/components';
 import CashFlowTypeRadioButtons from './components/CashFlowTypeRadioButtons';
 
 export default function RecurringCashFlowPage() {
@@ -10,7 +10,7 @@ export default function RecurringCashFlowPage() {
 	return (
 		<div className="flex flex-col">
 			<CashFlowTypeRadioButtons selectedType={selectedType} setSelectedType={setSelectedType} />
-			<CashFlowPage cashFlowType={selectedType} />
+			<CashFlowPage cashFlowType={selectedType} recurringOnly={true} />
 		</div>
 	)
 }

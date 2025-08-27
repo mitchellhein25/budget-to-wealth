@@ -14,6 +14,7 @@ interface CashFlowEntriesListProps {
 	isLoading: boolean,
 	isError: boolean,
 	cashFlowType: CashFlowType,
+	recurringOnly?: boolean,
 }
 
 export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
@@ -32,7 +33,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			<th className="w-1/6">Amount</th>
 			<th className="w-1/5">Category</th>
 			<th className="w-1/5">Description</th>
-			{/* {!props.cashFlowType && <th className="w-1/5">Recurrence</th>} */}
+			{props.recurringOnly && <th className="w-1/5">Recurrence</th>}
 			<th className="text-right">Actions</th>
 		</tr>
 	);
@@ -43,6 +44,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			entry={entry}
 			onEdit={props.onEntryIsEditing}
 			onDelete={handleDelete}
+			recurringOnly={props.recurringOnly}
 		/>
 	);
 
@@ -52,6 +54,7 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			entry={entry}
 			onEdit={props.onEntryIsEditing}
 			onDelete={handleDelete}
+			recurringOnly={props.recurringOnly}
 		/>
 	);
 

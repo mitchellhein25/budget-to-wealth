@@ -2,20 +2,26 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm, useMobileDetection } from '@/app/hooks';
-import { CASH_FLOW_ENTRIES_ENDPOINT, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
+import { CASH_FLOW_ENTRIES_ENDPOINT, getCashFlowEntriesByDateRangeAndType, getRecurringCashFlowEntries } from '@/app/lib/api/data-methods';
 import { DatePicker, DateRange, MESSAGE_TYPE_ERROR, MessageState, TotalDisplay, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
 import { CashFlowType, CashFlowEntry, CashFlowSideBar } from '@/app/cashflow/components';
 import { CashFlowEntriesForm, CashFlowEntryFormData, transformCashFlowFormDataToEntry } from './form';
 import CashFlowEntriesList from './list/CashFlowEntriesList';
 
-export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
+export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashFlowType, recurringOnly?: boolean}) {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [items, setItems] = useState<CashFlowEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
   const isMobile = useMobileDetection();
 
-  const fetchCashFlowEntries = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, cashFlowType), [dateRange, cashFlowType]);
+  const fetchCashFlowEntries = useCallback(() => {
+    if (recurringOnly) {
+      return getRecurringCashFlowEntries(cashFlowType);
+    } else {
+      return getCashFlowEntriesByDateRangeAndType(dateRange, cashFlowType);
+    }
+  }, [dateRange, cashFlowType, recurringOnly]);
 
   const fetchItems = useCallback(async () => {
     const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
@@ -79,7 +85,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
               />
             </div>
             
-            <div className="flex flex-col gap-4">
+            {!recurringOnly && <div className="flex flex-col gap-4">
               <div className="w-full">
                 <DatePicker
                   dateRange={dateRange}
@@ -93,7 +99,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
                   isLoading={isLoading}
                 />
               </div>
-            </div>
+            </div>}
             
             <div className="flex-1">
               <CashFlowEntriesList
@@ -103,6 +109,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
                 onEntryIsEditing={formState.onItemIsEditing}
                 isLoading={isLoading}
                 isError={messageTypeIsError(message)}
+                recurringOnly={recurringOnly}
               />
             </div>
           </div>
@@ -115,7 +122,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
               />
             </div>
             <div className="flex flex-1 flex-col gap-4">
-              <div className="flex items-center justify-between">
+              {!recurringOnly && <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <DatePicker
                     dateRange={dateRange}
@@ -130,7 +137,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
                   />
                 </div>
                 <div className="flex-1"></div>
-              </div>
+              </div>}
               <CashFlowEntriesList
                 cashFlowType={cashFlowType}
                 entries={items}
@@ -138,6 +145,7 @@ export function CashFlowPage({cashFlowType}: {cashFlowType: CashFlowType}) {
                 onEntryIsEditing={formState.onItemIsEditing}
                 isLoading={isLoading}
                 isError={messageTypeIsError(message)}
+                recurringOnly={recurringOnly}
               />
             </div>
           </>
