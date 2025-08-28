@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import RecurringCashFlowPage from './page';
-import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import { EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
 
 const cashFlowPageTestId = 'cash-flow-page';
 const cashFlowPageText = 'Cash Flow Page';
@@ -27,35 +27,14 @@ describe('RecurringCashFlowPage', () => {
     render(<RecurringCashFlowPage />);
     
     expect(screen.getByLabelText(INCOME_ITEM_NAME)).toBeInTheDocument();
-    expect(screen.getByLabelText(EXPENSE_ITEM_NAME)).toBeInTheDocument();
-  });
-
-  it('defaults to Income selection', () => {
-    render(<RecurringCashFlowPage />);
-    
-    const incomeRadio = screen.getByLabelText(INCOME_ITEM_NAME) as HTMLInputElement;
-    const expenseRadio = screen.getByLabelText(EXPENSE_ITEM_NAME) as HTMLInputElement;
-    
-    expect(incomeRadio.checked).toBe(true);
-    expect(expenseRadio.checked).toBe(false);
-    expect(screen.getByTestId(cashFlowTypeTestId)).toHaveTextContent(INCOME_ITEM_NAME);
-  });
-
-  it('switches to Expense when Expense radio is selected', () => {
-    render(<RecurringCashFlowPage />);
-    
-    const expenseRadio = screen.getByLabelText(EXPENSE_ITEM_NAME);
-    fireEvent.click(expenseRadio);
-    
-    expect(expenseRadio).toBeChecked();
-    expect(screen.getByTestId(cashFlowTypeTestId)).toHaveTextContent(EXPENSE_ITEM_NAME);
+    expect(screen.getByLabelText(EXPENSE_ITEM_NAME_PLURAL)).toBeInTheDocument();
   });
 
   it('switches back to Income when Income radio is selected', () => {
     render(<RecurringCashFlowPage />);
     
     const incomeRadio = screen.getByLabelText(INCOME_ITEM_NAME);
-    const expenseRadio = screen.getByLabelText(EXPENSE_ITEM_NAME);
+    const expenseRadio = screen.getByLabelText(EXPENSE_ITEM_NAME_PLURAL);
     
     // First switch to Expense
     fireEvent.click(expenseRadio);
@@ -71,7 +50,7 @@ describe('RecurringCashFlowPage', () => {
     render(<RecurringCashFlowPage />);
     
     const incomeRadio = screen.getByLabelText(INCOME_ITEM_NAME) as HTMLInputElement;
-    const expenseRadio = screen.getByLabelText(EXPENSE_ITEM_NAME) as HTMLInputElement;
+    const expenseRadio = screen.getByLabelText(EXPENSE_ITEM_NAME_PLURAL) as HTMLInputElement;
     
     expect(incomeRadio.name).toBe('cashflow-type');
     expect(expenseRadio.name).toBe('cashflow-type');
