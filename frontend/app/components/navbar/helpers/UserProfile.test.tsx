@@ -67,7 +67,7 @@ describe('UserProfile', () => {
 
       const loginButton = screen.getByRole('link', { name: /login/i });
       expect(loginButton).toBeInTheDocument();
-      expect(loginButton).toHaveAttribute('href', '/auth/login');
+      expect(loginButton).toHaveAttribute('href', '/auth/login?returnTo=%2Ftest');
     });
 
     it('renders login button with correct classes', () => {
@@ -75,6 +75,20 @@ describe('UserProfile', () => {
 
       const loginButton = screen.getByRole('link', { name: /login/i });
       expect(loginButton).toHaveClass('btn', 'btn-primary');
+    });
+
+    it('includes returnTo parameter in login URL', () => {
+      render(<UserProfile session={mockSession} pathname="/cashflow/budget" />);
+
+      const loginButton = screen.getByRole('link', { name: /login/i });
+      expect(loginButton).toHaveAttribute('href', '/auth/login?returnTo=%2Fcashflow%2Fbudget');
+    });
+
+    it('handles root pathname correctly', () => {
+      render(<UserProfile session={mockSession} pathname="/" />);
+
+      const loginButton = screen.getByRole('link', { name: /login/i });
+      expect(loginButton).toHaveAttribute('href', '/auth/login?returnTo=%2F');
     });
 
     it('renders in navbar-end container', () => {

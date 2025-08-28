@@ -11,7 +11,7 @@ export function UserProfile({ session, pathname }: { session: SessionData | null
   if (!isAuthenticated(session)) {
     return (
       <div className="navbar-end">
-        <a href="/auth/login" className="btn btn-primary">
+        <a href={`/auth/login?returnTo=${encodeURIComponent(pathname)}`} className="btn btn-primary">
           Login 
         </a>
       </div>
