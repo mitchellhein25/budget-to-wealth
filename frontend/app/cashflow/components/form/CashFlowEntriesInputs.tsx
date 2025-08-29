@@ -5,7 +5,7 @@ import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { getCategoriesList } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
-import { InputFieldSetTemplate } from '@/app/components/form';
+import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
 import { CashFlowEntryFormData } from './';
 import { CashFlowType, CashFlowCategory, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL } from '..';
 import { RecurrenceFrequency } from '../components/RecurrenceFrequency';
@@ -51,14 +51,13 @@ export function CashFlowEntriesInputs({ editingFormData, onChange, cashFlowType,
         label="Amount" 
         isRequired={true}
         inputChild={
-          <input
+          <CurrencyInputField
             id={`${cashFlowTypeLower}-amount`}
             name={`${cashFlowTypeLower}-amount`}
-            type="text"
             value={editingFormData?.amount ?? ""}
             onChange={onChange}
-            placeholder="0.00" 
-            className="input m-0 w-full" 
+            placeholder="0.00"
+            className="input m-0 w-full"
           />}
       />
       <InputFieldSetTemplate 

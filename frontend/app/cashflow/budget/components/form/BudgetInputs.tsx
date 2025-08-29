@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods';
-import { InputFieldSetTemplate } from '@/app/components/form';
+import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
 import { CashFlowCategory } from '@/app/cashflow/components';
 import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from '..';
 
@@ -44,14 +44,13 @@ export function BudgetInputs({ editingFormData, onChange, setIsLoading }: Budget
         label="Amount" 
         isRequired={true}
         inputChild={
-          <input
+          <CurrencyInputField
             id={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
             name={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
-            type="text"
             value={editingFormData?.amount ?? ""}
             onChange={onChange}
-            placeholder="0.00" 
-            className="input m-0 w-full" 
+            placeholder="0.00"
+            className="input m-0 w-full"
           />}
       />
       <InputFieldSetTemplate 
