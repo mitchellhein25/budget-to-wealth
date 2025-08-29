@@ -14,7 +14,7 @@ function ExpenseCategoriesContent() {
   const returnUrl = searchParams.get('returnUrl') || parentPath;
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-6">
       <div className="mb-6">
         <BackArrow link={returnUrl} />
       </div>
@@ -31,7 +31,7 @@ function ExpenseCategoriesContent() {
 
 export default function ExpenseCategories() {
   return (
-    <Suspense fallback={<div className="p-6">Loading...</div>}>
+    <Suspense fallback={<div className="p-3 sm:p-6">Loading...</div>}>
       <ExpenseCategoriesContent />
     </Suspense>
   );

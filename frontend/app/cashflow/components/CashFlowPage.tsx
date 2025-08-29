@@ -73,11 +73,11 @@ export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashF
   const totalAmount = useMemo(() => items.reduce((sum, entry) => sum + entry.amount, 0), [items]);
   
   return (
-    <div className="flex gap-6 p-6 h-full min-h-screen">
+    <div className="page-layout">
       {!isMobile && <CashFlowSideBar />}
-      <div className="flex flex-1 gap-6">
+      <div className="flex flex-1 gap-3 sm:gap-6">
         {isMobile ? (
-          <div className="flex-1 flex flex-col gap-6">
+          <div className="flex-1 flex flex-col gap-3 sm:gap-6">
             <div className="w-full">
               <CashFlowEntriesForm
                 cashFlowType={cashFlowType}
@@ -85,7 +85,7 @@ export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashF
               />
             </div>
             
-            {!recurringOnly && <div className="flex flex-col gap-4">
+            {!recurringOnly && <div className="flex flex-col gap-3 sm:gap-4">
               <div className="w-full">
                 <DatePicker
                   dateRange={dateRange}
@@ -121,7 +121,7 @@ export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashF
                 formState={formState}
               />
             </div>
-            <div className="flex flex-1 flex-col gap-4">
+            <div className="flex flex-1 flex-col gap-3 sm:gap-4">
               {!recurringOnly && <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <DatePicker

@@ -81,7 +81,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 					)}
 				</div>
 				
-				<div className="p-4 sm:p-6">
+				<div className="p-3 sm:p-4 lg:p-6">
 					{props.isError && (
 						<div className="alert alert-error mb-6">
 							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -113,7 +113,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 							) : (
 								<>
 									{isMobile && props.mobileRow ? (
-										<div className="space-y-4">
+										<div className="space-y-3 sm:space-y-4">
 											{currentItems.map((item, index) => (
 												<React.Fragment key={index}>
 													{props.mobileRow!(item)}
@@ -123,7 +123,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 									) : (
 								<div className="overflow-hidden rounded-lg border border-base-300">
 									<div className="overflow-x-auto w-full">
-									<table className="table table-zebra table-fixed w-full text-xs sm:text-sm" style={{ wordBreak: 'break-word' }}>
+									<table className="table table-zebra table-fixed w-full text-xs sm:text-sm lg:text-base" style={{ wordBreak: 'break-word' }}>
 													<thead>
 														{props.headerRow}
 													</thead>
@@ -140,7 +140,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 									)}
 									
 									{totalPages > 1 && (
-										<div className="mt-6">
+										<div className="mt-4 sm:mt-6">
 											<TablePagination
 												currentPage={currentPage}
 												totalPages={totalPages}

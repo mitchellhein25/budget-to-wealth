@@ -28,7 +28,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
   const totalColumns = props.data.length > 0 ? Object.keys(props.data[0]).length : 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">
           Preview ({props.data.length} items)
@@ -107,4 +107,4 @@ export default function ImportPreview(props: ImportPreviewProps) {
       </div>
     </div>
   );
-} 
+}  

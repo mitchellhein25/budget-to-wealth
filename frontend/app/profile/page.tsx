@@ -9,8 +9,8 @@ export default async function Profile() {
     return (
       <div className="section-padding container-max">
         <div className="card bg-base-100 shadow-sm w-full max-w-md mx-auto">
-          <div className="card-body p-6 text-center">
-            <h2 className="card-title text-lg mb-4">Profile</h2>
+          <div className="card-body p-3 sm:p-6 text-center">
+            <h2 className="card-title text-lg mb-3 sm:mb-4">Profile</h2>
             <p>Please log in to view your profile.</p>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default async function Profile() {
               )}
             </div>
           </div>
-          <div className="text-center space-y-4 w-full">
+          <div className="text-center space-y-3 sm:space-y-4 w-full">
             <h3 className="text-xl font-semibold">{session.user.name}</h3>
             <p className="text-base-content/70">{session.user.email}</p>
             <a href="/auth/logout" className="btn btn-error mx-auto">

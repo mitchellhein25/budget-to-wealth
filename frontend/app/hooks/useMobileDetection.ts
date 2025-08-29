@@ -11,7 +11,7 @@ export function useMobileDetection() {
     
     const checkMobile = () => {
       const width = window.innerWidth;
-      const mobile = width < 768;
+      const mobile = width <= 412;
       setIsMobile(mobile);  
     };
 

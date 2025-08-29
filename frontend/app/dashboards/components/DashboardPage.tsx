@@ -51,10 +51,10 @@ export function DashboardPage<T extends TrendGraphData<TrendGraphEntry>>({
   }, [dateRange, getTrendGraph]);
 
   return (
-    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
+    <div className="flex gap-3 sm:gap-6 pt-3 sm:pt-6 px-3 sm:px-6 pb-0 h-full min-h-screen">
       {!isMobile && <DashboardSideBar />}
       <div className="flex flex-1 flex-col gap-2">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <DatePicker dateRange={dateRange} setDateRange={setDateRange} />
           <HistoryToggle
             isLoading={isHistoryLoading}

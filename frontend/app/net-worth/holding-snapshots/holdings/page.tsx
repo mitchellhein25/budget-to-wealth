@@ -56,13 +56,13 @@ export default function HoldingsPage() {
 	}, [fetchItems]);
   
   return (
-    <div className="p-6">
-      <div className="mb-6">
+    <div className="p-3 sm:p-6">
+      <div className="mb-3 sm:mb-4">
         <BackArrow link={parentPath} />
       </div>
       
-      <div className="flex gap-6 h-full min-h-screen">
-        <div className={`flex flex-1 gap-6 ${isMobile ? 'flex-col' : ''}`}>
+      <div className="flex gap-3 sm:gap-6 h-full min-h-screen">
+        <div className={`flex flex-1 gap-3 sm:gap-6 ${isMobile ? 'flex-col' : ''}`}>
           <div className="flex-shrink-0">
             <HoldingForm
               formState={formState}

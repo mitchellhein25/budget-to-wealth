@@ -7,7 +7,7 @@ import { DashboardSideBar } from './components';
 export default function DashboardsPage() {
   const isMobile = useMobileDetection();
   return (
-    <div className="flex gap-6 p-6 h-full min-h-screen">
+    <div className="page-layout">
       {!isMobile && <DashboardSideBar />}
     </div>
   )

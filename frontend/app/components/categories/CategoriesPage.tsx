@@ -76,7 +76,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   }, [fetchItems]);
 
   return (
-    <div className={`flex gap-6 p-6 ${isMobile ? 'flex-col' : ''}`}>
+    <div className={`flex gap-3 sm:gap-6 p-3 sm:p-6 ${isMobile ? 'flex-col' : ''}`}>
       <CategoriesForm
         formState={formState}
         categoryTypeName={props.categoryTypeName}

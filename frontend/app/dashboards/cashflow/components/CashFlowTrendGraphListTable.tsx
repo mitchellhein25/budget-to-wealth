@@ -5,7 +5,7 @@ import { CashFlowTrendGraphData, CashFlowTrendGraphEntry } from './';
 
 export function CashFlowTrendGraphListTable({ cashFlowTrendGraph }: { cashFlowTrendGraph: CashFlowTrendGraphData }) {
   return (
-    <div className="mt-4">
+    <div className="mt-3 sm:mt-4">
       <ListTable
         title={`${CASHFLOW_ITEM_NAME} Entries`}
         items={cashFlowTrendGraph.entries.map(e => ({ date: e.date })) as ListTableItem[]}

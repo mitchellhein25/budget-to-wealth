@@ -118,16 +118,16 @@ export default function DataImport() {
   const failedResults = importResult?.results.filter(result => !result.success) || [];
 
   return (
-    <div className={`p-6 h-full flex flex-col`}>
-      <div className="flex items-center justify-between mb-6">  
+    <div className={`p-3 sm:p-6 h-full flex flex-col`}>
+      <div className="flex items-center justify-between mb-3 sm:mb-4">  
         <h2 className="text-xl font-semibold">
           Import {selectedDataType} Data
         </h2>
       </div>
 
       {!showPreview && !importResult && (
-        <div className="space-y-4 flex-1 flex flex-col">
-          <div className="flex flex-col space-y-4">
+        <div className="space-y-3 sm:space-y-4 flex-1 flex flex-col">
+          <div className="flex flex-col space-y-3 sm:space-y-4">
             <InputFieldSetTemplate 
               label="Import Type" 
               isRequired={false}
@@ -152,7 +152,7 @@ export default function DataImport() {
             </div>
           </div>
           <div className="card bg-base-100 shadow-xl border-2 border-dashed border-base-300 hover:border-primary transition-colors flex-1">
-            <div className="card-body items-center text-center space-y-4 justify-center min-h-0">
+            <div className="card-body items-center text-center space-y-3 sm:space-y-4 justify-center min-h-0">
               <input
                 type="file"
                 accept=".csv"
@@ -172,7 +172,7 @@ export default function DataImport() {
                 <div className="text-sm">
                   Supports .csv files only
                 </div>
-                <div className="bg-base-200 rounded-lg p-4 text-sm space-y-2">
+                <div className="bg-base-200 rounded-lg p-3 sm:p-4 text-sm space-y-2">
                   <div className="text-md">💡 Tip:</div>
                   <div>If you have an Excel file, save it as CSV first:</div>
                   <div className="text-xs">
@@ -206,8 +206,8 @@ export default function DataImport() {
       )}
 
       {importResult && (
-        <div className="mt-6">
-          <div className={`flex items-center p-4 rounded-lg ${
+        <div className="mt-3 sm:mt-4">
+          <div className={`flex items-center p-3 sm:p-4 rounded-lg ${
             importResult.success 
               ? 'bg-green-50 border border-green-200' 
               : 'bg-red-50 border border-red-200'
@@ -233,9 +233,9 @@ export default function DataImport() {
           </div>
 
           {failedResults.length > 0 && (
-            <div className="mt-4">
+            <div className="mt-3 sm:mt-4">
               <h4 className="font-medium text-gray-900 mb-2">Errors:</h4>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-h-40 overflow-y-auto">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 max-h-40 overflow-y-auto">
                 {failedResults.map((result, index) => (
                   <div key={index} className="text-sm text-red-700 mb-1">
                     Row {result.row}: {result.message}
@@ -245,7 +245,7 @@ export default function DataImport() {
             </div>
           )}
 
-          <div className="mt-6 flex gap-3">
+          <div className="mt-3 sm:mt-4 flex gap-2 sm:gap-3">
             <button
               onClick={handleCancel}
               className="btn btn-outline"
@@ -275,4 +275,4 @@ export default function DataImport() {
       )}
     </div>
   );
-} 
+}        

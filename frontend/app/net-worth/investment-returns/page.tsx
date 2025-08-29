@@ -136,15 +136,15 @@ export default function InvestmentReturnsPage() {
     />
 
   return (
-    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
+    <div className="flex gap-3 sm:gap-6 pt-3 sm:pt-6 px-3 sm:px-6 pb-0 h-full min-h-screen">
       {!isMobile && <NetWorthSideBar />}
-      <div className="flex flex-1 gap-6">
+      <div className="flex flex-1 gap-3 sm:gap-6">
         {isMobile ? (
-          <div className="flex-1 flex flex-col gap-6">
+          <div className="flex-1 flex flex-col gap-3 sm:gap-6">
             <div className="w-full">
                 {form}
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:gap-4">
               <div className="w-full">
                 {datePicker}
               </div>
@@ -158,7 +158,7 @@ export default function InvestmentReturnsPage() {
             <div className="flex-shrink-0">
               {form}
             </div>
-            <div className="flex flex-1 flex-col gap-2">
+            <div className="flex flex-1 flex-col gap-2 sm:gap-3">
               {datePicker}
               {list}
             </div>

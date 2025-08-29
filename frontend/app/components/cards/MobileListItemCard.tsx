@@ -9,7 +9,7 @@ interface MobileListItemCardProps {
 export function MobileListItemCard({ children, className = '' }: MobileListItemCardProps) {
 	return (
 		<div className={`card bg-base-100 border border-base-300 shadow-sm ${className}`}>
-			<div className="card-body p-4">
+			<div className="card-body card-responsive">
 				{children}
 			</div>
 		</div>
@@ -24,8 +24,8 @@ interface MobileListItemCardHeaderProps {
 
 export function MobileListItemCardHeader({ leftContent, rightContent, className = '' }: MobileListItemCardHeaderProps) {
 	return (
-		<div className={`flex items-center justify-between mb-3 ${className}`}>
-			<div className="flex items-center space-x-3">
+		<div className={`flex items-center justify-between mb-2 sm:mb-3 ${className}`}>
+			<div className="flex items-center space-x-2 sm:space-x-3">
 				{leftContent}
 			</div>
 			{rightContent}
@@ -42,11 +42,11 @@ interface MobileListItemCardContentProps {
 
 export function MobileListItemCardContent({ description, onEdit, onDelete, className = '' }: MobileListItemCardContentProps) {
 	return (
-		<div className={`flex items-start justify-between gap-2 ${className}`}>
+		<div className={`flex items-start justify-between gap-2 sm:gap-3 ${className}`}>
 			<div className="flex-1 min-w-0">
 				{description}
 			</div>
-			<div className="flex items-center space-x-2 flex-shrink-0">
+			<div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
 				<EditButton onClick={onEdit} />
 				<DeleteButton onClick={onDelete} />
 			</div>

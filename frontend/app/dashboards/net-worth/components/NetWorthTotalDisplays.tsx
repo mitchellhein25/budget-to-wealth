@@ -5,7 +5,7 @@ import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '.
 
 export function NetWorthTotalDisplays({ assets, debts, netWorths }: { assets: number[], debts: number[], netWorths: number[] }) {
   return (
-    <div className="mt-4 space-y-3">
+    <div className="mt-3 sm:mt-4 space-y-3">
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <TotalDisplay compact label={`${ASSET_ITEM_NAME_PLURAL} - Min`} amount={minNumberList(assets)} />
         <TotalDisplay compact label={`${ASSET_ITEM_NAME_PLURAL} - Median`} amount={medianNumberList(assets)} />

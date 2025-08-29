@@ -58,9 +58,9 @@ export default function HoldingSnapshotsPage() {
 	}, [fetchItems]);
   
   return (
-    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
+    <div className="flex gap-3 sm:gap-6 pt-3 sm:pt-6 px-3 sm:px-6 pb-0 h-full min-h-screen">
       {!isMobile && <NetWorthSideBar />}
-      <div className={`flex flex-1 gap-6 ${isMobile ? 'flex-col' : ''}`}>
+      <div className={`flex flex-1 gap-3 sm:gap-6 ${isMobile ? 'flex-col' : ''}`}>
         <div className="flex-shrink-0">
           <HoldingSnapshotForm
             formState={formState}
