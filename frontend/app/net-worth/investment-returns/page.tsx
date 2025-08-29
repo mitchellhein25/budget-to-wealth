@@ -136,7 +136,7 @@ export default function InvestmentReturnsPage() {
     />
 
   return (
-    <div className="flex gap-3 sm:gap-6 pt-3 sm:pt-6 px-3 sm:px-6 pb-0 h-full min-h-screen">
+    <div className="page-layout pb-0">
       {!isMobile && <NetWorthSideBar />}
       <div className="flex flex-1 gap-3 sm:gap-6">
         {isMobile ? (

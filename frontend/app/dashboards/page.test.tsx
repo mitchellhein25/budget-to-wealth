@@ -14,7 +14,7 @@ describe('DashboardsPage', () => {
   it('renders the main dashboard page structure', () => {
     render(<DashboardsPage />);
 
-    const mainContainer = screen.getByTestId('dashboard-sidebar').closest('.flex');
+    const mainContainer = screen.getByTestId('dashboard-sidebar').closest('.page-layout');
     expect(mainContainer).toBeInTheDocument();
   });
 
@@ -29,4 +29,4 @@ describe('DashboardsPage', () => {
 
     expect(screen.getByText('DashboardSideBar Component')).toBeInTheDocument();
   });
-}); 
+});  

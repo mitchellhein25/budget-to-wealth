@@ -161,7 +161,7 @@ describe('InvestmentReturnsPage', () => {
       render(<InvestmentReturnsPage />);
     });
 
-    const mainContainer = screen.getByTestId(investmentReturnFormTestId).closest('.flex.gap-6.pt-6.px-6.pb-0.h-full.min-h-screen');
+    const mainContainer = screen.getByTestId(investmentReturnFormTestId).closest('.page-layout');
     expect(mainContainer).toBeInTheDocument();
   });
 

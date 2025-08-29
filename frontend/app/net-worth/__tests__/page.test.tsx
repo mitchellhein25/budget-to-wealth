@@ -17,7 +17,7 @@ describe('NetWorthPage', () => {
   it('renders component with correct structure', () => {
     render(<NetWorthPage />);
 
-    const container = document.querySelector('div.flex.gap-6.p-6.h-full.min-h-screen');
+    const container = document.querySelector('div.page-layout');
     expect(container).toBeInTheDocument();
   });
 
@@ -47,12 +47,8 @@ describe('NetWorthPage', () => {
   it('has correct CSS classes for layout', () => {
     render(<NetWorthPage />);
 
-    const container = document.querySelector('div.flex.gap-6.p-6.h-full.min-h-screen');
-    expect(container).toHaveClass('flex');
-    expect(container).toHaveClass('gap-6');
-    expect(container).toHaveClass('p-6');
-    expect(container).toHaveClass('h-full');
-    expect(container).toHaveClass('min-h-screen');
+    const container = document.querySelector('div.page-layout');
+    expect(container).toHaveClass('page-layout');
   });
 
   it('renders without errors', () => {
