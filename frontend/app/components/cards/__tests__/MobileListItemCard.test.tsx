@@ -81,7 +81,7 @@ describe('MobileListItemCardHeader', () => {
     );
 
     const header = screen.getByText('Left content').closest('div')?.parentElement;
-    expect(header).toHaveClass('flex', 'items-center', 'justify-between', 'mb-3');
+    expect(header).toHaveClass('flex', 'items-center', 'justify-between', 'mb-2', 'sm:mb-3');
   });
 });
 
