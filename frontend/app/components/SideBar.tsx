@@ -17,8 +17,8 @@ export function SideBar(props: SideBarProps) {
   const pathname = usePathname()
   
   return (
-    <div className="flex flex-col space-y-2 p-4 bg-base-200 rounded-lg shadow-sm">
-      <h3 className="text-sm font-semibold text-base-content/70 mb-2 px-2">Navigation</h3>
+    <div className="flex flex-col space-y-1 sm:space-y-2 p-3 sm:p-4 bg-base-200 rounded-lg shadow-sm">
+      <h3 className="text-xs sm:text-sm font-semibold text-base-content/70 mb-1 sm:mb-2 px-1 sm:px-2">Navigation</h3>
       {props.navItems.map((item) => {
         const isActive = pathname === item.href
         

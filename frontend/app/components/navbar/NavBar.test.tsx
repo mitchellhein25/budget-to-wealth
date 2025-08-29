@@ -97,7 +97,7 @@ describe('NavBar', () => {
     render(<NavBar session={mockSession} />);
 
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('navbar', 'px-4', 'lg:px-8', 'max-w-7xl', 'mx-auto');
+    expect(navbar).toHaveClass('navbar', 'px-3', 'sm:px-4', 'lg:px-8', 'max-w-7xl', 'mx-auto');
 
     const navbarStart = navbar.querySelector('.navbar-start');
     expect(navbarStart).toBeInTheDocument();
@@ -134,4 +134,4 @@ describe('NavBar', () => {
   });
 
 
-}); 
+});  

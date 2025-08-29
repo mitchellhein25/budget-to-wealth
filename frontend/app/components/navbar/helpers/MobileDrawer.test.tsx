@@ -36,7 +36,7 @@ describe('MobileDrawer', () => {
     const drawerSide = screen.getByText('Menu').closest('.drawer-side');
     expect(drawerSide).toBeInTheDocument();
     const aside = screen.getByText('Menu').closest('aside');
-    expect(aside).toHaveClass('bg-base-200', 'min-h-full', 'w-80', 'p-4');
+    expect(aside).toHaveClass('bg-base-200', 'min-h-full', 'w-72', 'sm:w-80', 'p-3', 'sm:p-4');
     const closeButton = screen.getByTestId('close-icon').closest('label');
     expect(closeButton).toHaveClass('btn', 'btn-square', 'btn-ghost', 'btn-sm');
     const closeIcon = screen.getByTestId('close-icon');
@@ -90,4 +90,4 @@ describe('MobileDrawer', () => {
 
     expect(mockOnClose).toHaveBeenCalledTimes(3);
   });
-}); 
+});  

@@ -10,8 +10,8 @@ export default function HoldingCategories() {
   const parentPath = useParentPath();
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
+    <div className="p-3 sm:p-6">
+      <div className="mb-4 sm:mb-6">
         <BackArrow link={parentPath} />
       </div>
       <CategoriesPage 

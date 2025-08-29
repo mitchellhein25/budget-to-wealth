@@ -10,7 +10,7 @@ export default function IncomeCategories() {
   const parentPath = useParentPath();
 
 	return (
-		<div className="p-6">
+		<div className="p-3 sm:p-6">
 			<div className="mb-6">
 				<BackArrow link={parentPath} />
 			</div>

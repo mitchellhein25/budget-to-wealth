@@ -5,7 +5,7 @@ import { NetWorthTrendGraphData, NetWorthTrendGraphEntry } from './';
 
 export function NetWorthTrendGraphListTable({ netWorthTrendGraph }: { netWorthTrendGraph: NetWorthTrendGraphData }) {
   return (
-    <div className="mt-4">
+    <div className="mt-3 sm:mt-4">
       <ListTable
         title={`${NET_WORTH_ITEM_NAME} Entries`}
         items={netWorthTrendGraph.entries.map(e => ({ date: e.date })) as ListTableItem[]}

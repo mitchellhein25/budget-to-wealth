@@ -51,7 +51,7 @@ describe('FormTemplate', () => {
     it('should render form with correct CSS classes', () => {
       render(<FormTemplate {...mockProps} />);
       const form = screen.getByText(testTexts.buttonText).closest('form');
-      expect(form).toHaveClass('space-y-4');
+      expect(form).toHaveClass('space-y-3', 'sm:space-y-4');
     });
   });
 
@@ -109,7 +109,7 @@ describe('FormTemplate', () => {
     it('should render card body with correct classes', () => {
       render(<FormTemplate {...mockProps} />);
       const cardBody = screen.getByText(testTexts.formHeader).closest('.card-body');
-      expect(cardBody).toHaveClass('card-body', 'p-6');
+      expect(cardBody).toHaveClass('card-body', 'p-3', 'sm:p-6');
     });
 
     it('should render header with correct classes', () => {
@@ -189,4 +189,4 @@ describe('FormTemplate', () => {
       expect(screen.getByText('Reset')).toBeInTheDocument();
     });
   });
-}); 
+});  

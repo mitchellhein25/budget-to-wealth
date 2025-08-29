@@ -12,7 +12,7 @@ export default function NavBar({ session }: { session: SessionData | null }) {
     <div className="drawer">
       <input id="mobile-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        <nav className="navbar px-4 lg:px-8 max-w-7xl mx-auto">
+        <nav className="navbar px-3 sm:px-4 lg:px-8 max-w-7xl mx-auto">
           <div className="navbar-start">
             <MobileMenuButton />
             <Logo className="hidden lg:flex" />

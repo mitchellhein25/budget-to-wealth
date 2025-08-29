@@ -7,7 +7,7 @@ import { NetWorthSideBar } from './holding-snapshots/components/NetWorthSideBar'
 export default function NetWorthPage() {
   const isMobile = useMobileDetection();
   return (
-    <div className="flex gap-6 p-6 h-full min-h-screen">
+    <div className="page-layout">
       {!isMobile && <NetWorthSideBar />}
     </div>
   )

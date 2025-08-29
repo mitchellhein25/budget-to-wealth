@@ -34,7 +34,7 @@ export default function ImportTemplate(props: ImportTemplateProps) {
   return (
     <div className="modal modal-open">
       <div className="modal-box max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <h2 className="text-xl font-semibold">
             Import Template - {props.dataTypeString}
           </h2>
@@ -46,7 +46,7 @@ export default function ImportTemplate(props: ImportTemplateProps) {
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <p className="text-base-content/70">{template.description}</p>
 
           <div className="bg-base-200 rounded-lg p-4 text-sm space-y-2">
@@ -124,4 +124,4 @@ export default function ImportTemplate(props: ImportTemplateProps) {
       <div className="modal-backdrop" onClick={props.onClose}></div>
     </div>
   );
-} 
+}    

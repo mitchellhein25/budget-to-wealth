@@ -94,6 +94,6 @@ describe('SideBar', () => {
     render(<SideBar {...defaultProps} />);
     
     const container = screen.getByText('Navigation').closest('div');
-    expect(container).toHaveClass('flex', 'flex-col', 'space-y-2', 'p-4', 'bg-base-200', 'rounded-lg', 'shadow-sm');
+    expect(container).toHaveClass('flex', 'flex-col', 'space-y-1', 'sm:space-y-2', 'p-3', 'sm:p-4', 'bg-base-200', 'rounded-lg', 'shadow-sm');
   });
-}); 
+});  

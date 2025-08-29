@@ -40,22 +40,22 @@ export function MobileDrawer(
   return (
     <div className="drawer-side">
       <label htmlFor="mobile-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-      <aside className="bg-base-200 min-h-full w-80 p-4">
-        <div className="flex justify-between items-center mb-4">
+      <aside className="bg-base-200 min-h-full w-72 sm:w-80 p-3 sm:p-4">
+        <div className="flex justify-between items-center mb-3 sm:mb-4">
           <h2 className="text-lg font-semibold">Menu</h2>
           <label htmlFor="mobile-drawer" aria-label="close sidebar" className="btn btn-square btn-ghost btn-sm">
             <X className="w-5 h-5" />
           </label>
         </div>
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-1 sm:space-y-2">
           {NavItems.map((item) => (
             <DrawerNavLink key={item.href} item={item} />
           ))}
           
           {showSubDrawer && (
             <>
-              <div className="divider my-4"></div>
-              <div className="text-sm font-medium text-base-content/70 mb-2 px-2">
+              <div className="divider my-3 sm:my-4"></div>
+              <div className="text-xs sm:text-sm font-medium text-base-content/70 mb-2 px-2">
                 {isCashflowPage ? CASHFLOW_ITEM_NAME : isNetWorthPage ? NET_WORTH_ITEM_NAME : DASHBOARDS_ITEM_NAME}
               </div>
               {(isCashflowPage ? CashflowSubNavItems : isNetWorthPage ? NetWorthSubNavItems : DashboardsSubNavItems).map((item: NavItem) => (

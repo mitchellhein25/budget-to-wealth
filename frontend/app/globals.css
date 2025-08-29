@@ -54,10 +54,29 @@
   
   /* Professional spacing utilities */
   .section-padding {
-    @apply px-4 lg:px-8 py-6;
+    @apply px-3 sm:px-4 lg:px-8 py-4 sm:py-6;
   }
   
   .container-max {
     @apply max-w-7xl mx-auto;
+  }
+  
+  /* Responsive page layout */
+  .page-layout {
+    @apply flex gap-3 sm:gap-6 p-3 sm:p-6 h-full min-h-screen;
+  }
+  
+  /* Responsive card spacing */
+  .card-responsive {
+    @apply p-3 sm:p-4;
+  }
+  
+  /* Text overflow handling */
+  .text-responsive {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-truncate-responsive {
+    @apply truncate sm:text-clip;
   }
 }
