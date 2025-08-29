@@ -5,7 +5,7 @@ import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { getAllHoldings } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
-import { InputFieldSetTemplate } from '@/app/components/form';
+import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings/components';
 import { HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HOLDING_SNAPSHOT_ITEM_NAME_LINK, HoldingSnapshotFormData, NET_WORTH_ITEM_NAME_LINK } from '..';
 
@@ -92,14 +92,13 @@ export function HoldingSnapshotInputs({ editingFormData, onChange, setIsLoading 
         label="Balance" 
         isRequired={true}
         inputChild={
-          <input
+          <CurrencyInputField
             id={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-balance`}
             name={`${HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID}-balance`}
-            type="text"
             value={editingFormData?.balance ?? ""}
             onChange={onChange}
-            placeholder="0.00" 
-            className="input m-0 w-full" 
+            placeholder="0.00"
+            className="input m-0 w-full"
           />}
       />
     </>

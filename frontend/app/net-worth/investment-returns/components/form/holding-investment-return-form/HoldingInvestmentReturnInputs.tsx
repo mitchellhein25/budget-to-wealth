@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Edit } from 'lucide-react'
-import { InputFieldSetTemplate } from '@/app/components/form/InputFieldSetTemplate'
+import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form'
 import { convertDateToISOString, convertToDate, formatDate } from '@/app/components/Utils'
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '../../../../holding-snapshots/holdings/components'
 import { HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '../../../../holding-snapshots/components'
@@ -129,10 +129,9 @@ export function HoldingInvestmentReturnInputs({
         label="Balance"
         isRequired={true}
         inputChild={
-          <input
+          <CurrencyInputField
             id={`${formId}-endHoldingSnapshotBalance`}
             name={`${formId}-endHoldingSnapshotBalance`}
-            type="text"
             value={editingFormData.endHoldingSnapshotBalance || ""}
             onChange={onChange}
             placeholder="0.00"
@@ -152,10 +151,9 @@ export function HoldingInvestmentReturnInputs({
         label="Total Contributions"
         isRequired={false}
         inputChild={
-          <input
+          <CurrencyInputField
             id={`${formId}-totalContributions`}
             name={`${formId}-totalContributions`}
-            type="text"
             value={editingFormData.totalContributions || ""}
             onChange={onChange}
             placeholder="0.00"
@@ -167,10 +165,9 @@ export function HoldingInvestmentReturnInputs({
         label="Total Withdrawals"
         isRequired={false}
         inputChild={
-          <input
+          <CurrencyInputField
             id={`${formId}-totalWithdrawals`}
             name={`${formId}-totalWithdrawals`}
-            type="text"
             value={editingFormData.totalWithdrawals || ""}
             onChange={onChange}
             placeholder="0.00"
