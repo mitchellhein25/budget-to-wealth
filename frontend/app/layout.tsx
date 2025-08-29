@@ -3,6 +3,7 @@ import "./globals.css";
 import NavBar from "./components/navbar/NavBar";
 import { SessionData } from "@auth0/nextjs-auth0/types";
 import { auth0 } from "./lib/auth/auth0";
+import UnauthorizedWrapper from "./components/auth/UnauthorizedWrapper";
 
 export const metadata: Metadata = {
   title: "Budget to Wealth",
@@ -19,7 +20,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <NavBar session={session} />
           </header>
           <main className="flex-1">
-            {children}
+            <UnauthorizedWrapper session={session}>
+              {children}
+            </UnauthorizedWrapper>
           </main>
         </div>
       </body>
