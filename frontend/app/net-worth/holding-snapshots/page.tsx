@@ -6,6 +6,7 @@ import {  useForm, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api/data-methods';
 import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { NetWorthSideBar } from './components/NetWorthSideBar';
+import ResponsiveFormListPage from '@/app/components/ui/ResponsiveFormListPage';
 
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
@@ -13,8 +14,6 @@ export default function HoldingSnapshotsPage() {
   const [showLatestOnly, setShowLatestOnly] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
-  const isMobile = useMobileDetection();
-  const showSidebar = useSidebarDetection();
 
   const fetchHoldingSnapshots = useCallback(() => showLatestOnly ? getLatestHoldingSnapshots() : getHoldingSnapshotsByDateRange(dateRange), [dateRange, showLatestOnly]);
   
@@ -31,7 +30,6 @@ export default function HoldingSnapshotsPage() {
       setItems(response.data as HoldingSnapshot[]);
     } catch (error) {
       setErrorMessage(`An error occurred while loading ${HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE}s. Please try again.`);
-      console.error("Fetch error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -57,42 +55,51 @@ export default function HoldingSnapshotsPage() {
 	useEffect(() => {
 		fetchItems();
 	}, [fetchItems]);
+
+  const datePickerAndCheckbox = (
+    <>
+      <div className="flex items-center gap-2">
+        <input
+          id="show-latest-only"
+          type="checkbox"
+          className="checkbox"
+          checked={showLatestOnly}
+          onChange={(e) => setShowLatestOnly(e.target.checked)}
+        />
+        <label htmlFor="show-latest-only">Show most recent entries</label>
+      </div>
+      {!showLatestOnly && (
+        <DatePicker
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
+      )}
+    </>
+  );
+
+  const form = (
+    <HoldingSnapshotForm
+      formState={formState}
+    />
+  );
+
+  const list = (
+    <HoldingSnapshotsList
+      snapshots={items}
+      onSnapshotDeleted={fetchItems}
+      onSnapshotIsEditing={formState.onItemIsEditing}
+      isLoading={isLoading}
+      isError={messageTypeIsError(message)}
+    />
+  );
   
   return (
-    <div className="flex gap-3 sm:gap-6 pt-3 sm:pt-6 px-3 sm:px-6 pb-0 h-full min-h-screen">
-      {showSidebar && <NetWorthSideBar />}
-      <div className={`flex flex-1 gap-3 sm:gap-6 ${isMobile ? 'flex-col' : ''}`}>
-        <div className="flex-shrink-0">
-          <HoldingSnapshotForm
-            formState={formState}
-          />
-        </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <input
-              id="show-latest-only"
-              type="checkbox"
-              className="checkbox"
-              checked={showLatestOnly}
-              onChange={(e) => setShowLatestOnly(e.target.checked)}
-            />
-            <label htmlFor="show-latest-only">Show most recent entries</label>
-          </div>
-          {!showLatestOnly && (
-            <DatePicker
-              dateRange={dateRange}
-              setDateRange={setDateRange}
-            />
-          )}
-          <HoldingSnapshotsList
-            snapshots={items}
-            onSnapshotDeleted={fetchItems}
-            onSnapshotIsEditing={formState.onItemIsEditing}
-            isLoading={isLoading}
-            isError={messageTypeIsError(message)}
-          />
-        </div>
-      </div>
-    </div>
-  )
+    <ResponsiveFormListPage
+      sideBar={<NetWorthSideBar />}
+      totalDisplay={<div className="w-full"></div>}
+      datePicker={datePickerAndCheckbox}
+      form={form}
+      list={list}
+    />
+  );
 }
