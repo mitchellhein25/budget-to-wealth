@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { MobileState, useMobileDetection } from '@/app/hooks';
 import { convertDateToISOString } from './Utils';
 
 export type DateRange = {
@@ -17,6 +18,7 @@ type DatePickerProps = {
 export function DatePicker({ dateRange, setDateRange, className = "" }: DatePickerProps) {
   const [fromInputValue, setFromInputValue] = useState('');
   const [toInputValue, setToInputValue] = useState('');
+  const mobileState = useMobileDetection();
 
   useEffect(() => {
     setFromInputValue(dateRange.from ? convertDateToISOString(dateRange.from) : '');
@@ -50,50 +52,59 @@ export function DatePicker({ dateRange, setDateRange, className = "" }: DatePick
     return fromInputValue !== currentFrom || toInputValue !== currentTo;
   };
 
+  const isXSmall = mobileState === MobileState.XSMALL;
+
   return (
     <div className={`card bg-base-100 shadow-sm ${className}`}>
-      <div className="card-body p-4">
+      <div className={`card-body p-4 ${isXSmall ? 'justify-center items-center' : ''}`}>
         <h3 className="card-title text-base mb-3 sm:mb-4">Date Range Filter</h3>
-        <div className="flex flex-col flex-row items-center gap-3">
-          <div className="form-control w-full sm:w-auto">
-            <label className="label">
-              <span className="label-text text-sm">From</span>
-            </label>
-            <input
-              type="date"
-              value={fromInputValue}
-              onChange={handleFromChange}
-              className="input input-bordered input-sm"
-              placeholder="MM/DD/YYYY"
-            />
+        <div className={`flex ${isXSmall ? 'flex-col' : 'flex-row'} items-center gap-3`}>
+          <div className='flex flex-row items-center gap-3' >
+            <div className="form-control w-full sm:w-auto">
+              {!isXSmall && 
+                <label className="label">
+                  <span className="label-text text-sm">From</span>
+                </label>
+              }
+              <input
+                type="date"
+                value={fromInputValue}
+                onChange={handleFromChange}
+                className="input input-bordered input-sm"
+                placeholder="MM/DD/YYYY"
+              />
+            </div>
+            <div className={`flex items-center text-base-content/60 ${mobileState === 'xsmall' ? 'justify-center' : ''}`}>
+              <span className="text-sm">to</span>
+            </div>
+            <div className="form-control w-full sm:w-auto">
+              
+              {!isXSmall && 
+                <label className="label">
+                  <span className="label-text text-sm">To</span>
+                </label>
+              }
+
+              <input
+                type="date"
+                value={toInputValue}
+                onChange={handleToChange}
+                className="input input-bordered input-sm"
+                placeholder="MM/DD/YYYY"
+              />
+            </div>
           </div>
-          <div className="flex items-center text-base-content/60">
-            <span className="text-sm">to</span>
-          </div>
-          <div className="form-control w-full sm:w-auto">
-            <label className="label">
-              <span className="label-text text-sm">To</span>
-            </label>
-            <input
-              type="date"
-              value={toInputValue}
-              onChange={handleToChange}
-              className="input input-bordered input-sm"
-              placeholder="MM/DD/YYYY"
-            />
-          </div>
-          <div className="form-control w-full sm:w-auto">
-            <label className="label">
-              <span className="label-text opacity-0">Action</span>
-            </label>
-            <button
-              type="button"
-              onClick={handleSetRange}
-              disabled={!hasChanges()}
-              className={`btn btn-sm ${hasChanges() ? 'btn-primary' : 'btn-disabled'}`}
-            >
-              Apply Filter
-            </button>
+          <div>
+            <div className="form-control w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleSetRange}
+                disabled={!hasChanges()}
+                className={`btn btn-sm ${hasChanges() ? 'btn-primary' : 'btn-disabled'}`}
+              >
+                Apply Filter
+              </button>
+            </div>
           </div>
         </div>
       </div>
