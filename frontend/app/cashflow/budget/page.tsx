@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useForm, useMobileDetection, useSidebarDetection } from '@/app/hooks';
+import { useForm } from '@/app/hooks';
 import { getCurrentMonthRange, messageTypeIsError, DatePicker, DateRange, MessageState, MESSAGE_TYPE_ERROR } from '@/app/components';
 import { CashFlowSideBar, CashFlowEntry, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components';
 import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, BudgetsForm, BudgetsList, BudgetSummary, BUDGET_ITEM_NAME_LOWERCASE } from './components';
 import { BUDGETS_ENDPOINT, getBudgetsByDateRange, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
+import ResponsiveFormListPage from '@/app/components/ui/ResponsiveFormListPage';
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
@@ -15,8 +16,6 @@ export default function BudgetsPage() {
   const [isLoadingExpenses, setIsLoadingExpenses] = useState(false);
   const [messageBudgets, setMessageBudgets] = useState<MessageState>({ type: null, text: '' });
   const [messageExpenses, setMessageExpenses] = useState<MessageState>({ type: null, text: '' });
-  	const isMobile = useMobileDetection();
-	const showSidebar = useSidebarDetection();
 
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
   const fetchExpenses = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, 'Expense'), [dateRange]);
@@ -79,83 +78,46 @@ export default function BudgetsPage() {
     fetchExpenseItems();
 	}, [fetchBudgetItems, fetchExpenseItems]);
 
+  const datePicker = (
+    <DatePicker
+      dateRange={dateRange}
+      setDateRange={setDateRange}
+    />
+  );
+
+  const summary = (
+    <BudgetSummary
+      budgets={budgets}
+      expenses={expenses}
+      dateRange={dateRange}
+      isLoading={isLoadingBudgets || isLoadingExpenses}
+    />
+  );
+  
+  const form = (
+    <BudgetsForm
+      formState={formState}
+    />
+  );
+
+  const list = (
+    <BudgetsList
+      budgets={budgets}
+      expenses={expenses}
+      onBudgetDeleted={fetchBudgetItems}
+      onBudgetIsEditing={formState.onItemIsEditing}
+      isLoading={isLoadingBudgets || isLoadingExpenses}
+      isError={messageTypeIsError(messageBudgets) || messageTypeIsError(messageExpenses)}
+    />
+  );
+
   return (
-    <div className="page-layout">
-      {showSidebar && <CashFlowSideBar />}
-      <div className="flex flex-1 gap-3 sm:gap-6">
-        {isMobile ? (
-          <div className="flex-1 flex flex-col gap-3 sm:gap-6">
-            <div className="w-full">
-              <BudgetsForm
-                formState={formState}
-              />
-            </div>
-            
-            <div className="flex flex-col gap-4">
-              <div className="w-full">
-                <DatePicker
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                />
-              </div>
-              <div className="flex justify-center">
-                <BudgetSummary
-                  budgets={budgets}
-                  expenses={expenses}
-                  dateRange={dateRange}
-                  isLoading={isLoadingBudgets || isLoadingExpenses}
-                />
-              </div>
-            </div>
-            
-            <div className="flex-1">
-              <BudgetsList
-                budgets={budgets}
-                expenses={expenses}
-                onBudgetDeleted={fetchBudgetItems}
-                onBudgetIsEditing={formState.onItemIsEditing}
-                isLoading={isLoadingBudgets || isLoadingExpenses}
-                isError={messageTypeIsError(messageBudgets) || messageTypeIsError(messageExpenses)}
-              />
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="flex-shrink-0">
-              <BudgetsForm
-                formState={formState}
-              />
-            </div>
-            <div className="flex flex-1 flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <DatePicker
-                    dateRange={dateRange}
-                    setDateRange={setDateRange}
-                  />
-                </div>
-                <div className="flex-1 flex justify-center">
-                  <BudgetSummary
-                    budgets={budgets}
-                    expenses={expenses}
-                    dateRange={dateRange}
-                    isLoading={isLoadingBudgets || isLoadingExpenses}
-                  />
-                </div>
-                <div className="flex-1"></div>
-              </div>
-              <BudgetsList
-                budgets={budgets}
-                expenses={expenses}
-                onBudgetDeleted={fetchBudgetItems}
-                onBudgetIsEditing={formState.onItemIsEditing}
-                isLoading={isLoadingBudgets || isLoadingExpenses}
-                isError={messageTypeIsError(messageBudgets) || messageTypeIsError(messageExpenses)}
-              />
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  )
+    <ResponsiveFormListPage
+      sideBar={<CashFlowSideBar />}
+      totalDisplay={summary}
+      datePicker={datePicker}
+      form={form}
+      list={list}
+    />
+  );
 }

@@ -6,7 +6,7 @@ interface ResponsiveFormListPageProps {
   sideBar: React.ReactNode;
   totalDisplay: React.ReactNode;
   datePicker: React.ReactNode;
-  showTotalAndDatePicker: boolean;
+  showTotalAndDatePicker?: boolean;
   form: React.ReactNode;
   list: React.ReactNode;
 }
@@ -14,7 +14,7 @@ interface ResponsiveFormListPageProps {
 export default function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
   const mobileState = useMobileDetection();
   const showSidebar = useSidebarDetection();
-  
+  const showTotalAndDatePicker = props.showTotalAndDatePicker ?? true;
   
   return (
     <div className="page-layout">
@@ -26,7 +26,7 @@ export default function ResponsiveFormListPage(props: ResponsiveFormListPageProp
               {props.form}
             </div>
             
-            {props.showTotalAndDatePicker && 
+            {showTotalAndDatePicker && 
               (mobileState === MobileState.XSMALL ? (
                 <div className={`flex gap-3 sm:gap-4 flex-col`}>
                   <div className="flex justify-center">
@@ -60,7 +60,7 @@ export default function ResponsiveFormListPage(props: ResponsiveFormListPageProp
                 {props.form}
               </div>
               
-              {props.showTotalAndDatePicker && 
+              {showTotalAndDatePicker && 
                  <div className="flex flex-col gap-3 sm:gap-4 w-full h-full justify-between">
                    <div className="flex-1"></div>
                    <div className="flex justify-center">
@@ -86,7 +86,7 @@ export default function ResponsiveFormListPage(props: ResponsiveFormListPageProp
               {props.form}
             </div>
             <div className="flex flex-1 flex-col gap-3 sm:gap-4">
-              {props.showTotalAndDatePicker && (
+              {showTotalAndDatePicker && (
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     {props.datePicker}
