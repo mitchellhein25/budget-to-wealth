@@ -74,7 +74,7 @@ export function DatePicker({ dateRange, setDateRange, className = "" }: DatePick
                 placeholder="MM/DD/YYYY"
               />
             </div>
-            <div className={`flex items-center text-base-content/60 ${mobileState === 'xsmall' ? 'justify-center' : ''}`}>
+            <div className={`flex items-center text-base-content/60 ${mobileState === MobileState.XSMALL ? 'justify-center' : ''}`}>
               <span className="text-sm">to</span>
             </div>
             <div className="form-control w-full sm:w-auto">
