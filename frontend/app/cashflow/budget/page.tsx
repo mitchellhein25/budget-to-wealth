@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useForm, useMobileDetection } from '@/app/hooks';
+import { useForm, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 import { getCurrentMonthRange, messageTypeIsError, DatePicker, DateRange, MessageState, MESSAGE_TYPE_ERROR } from '@/app/components';
 import { CashFlowSideBar, CashFlowEntry, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components';
 import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, BudgetsForm, BudgetsList, BudgetSummary, BUDGET_ITEM_NAME_LOWERCASE } from './components';
@@ -15,7 +15,8 @@ export default function BudgetsPage() {
   const [isLoadingExpenses, setIsLoadingExpenses] = useState(false);
   const [messageBudgets, setMessageBudgets] = useState<MessageState>({ type: null, text: '' });
   const [messageExpenses, setMessageExpenses] = useState<MessageState>({ type: null, text: '' });
-  const isMobile = useMobileDetection();
+  	const isMobile = useMobileDetection();
+	const showSidebar = useSidebarDetection();
 
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
   const fetchExpenses = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, 'Expense'), [dateRange]);
@@ -80,7 +81,7 @@ export default function BudgetsPage() {
 
   return (
     <div className="page-layout">
-      {!isMobile && <CashFlowSideBar />}
+      {showSidebar && <CashFlowSideBar />}
       <div className="flex flex-1 gap-3 sm:gap-6">
         {isMobile ? (
           <div className="flex-1 flex flex-col gap-3 sm:gap-6">

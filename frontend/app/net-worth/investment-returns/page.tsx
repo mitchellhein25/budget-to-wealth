@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
-import { useForm, useMobileDetection } from '@/app/hooks';
+import { useForm, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
 import { ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
 import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE } from './components/form';
@@ -22,6 +22,7 @@ export default function InvestmentReturnsPage() {
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
   const isMobile = useMobileDetection();
+  const showSidebar = useSidebarDetection();
 
   const fetchReturnItems = useCallback(async <T extends ListTableItem>(
     fetchItems: (dateRange: DateRange) => Promise<FetchResult<T[]>>, 
@@ -137,7 +138,7 @@ export default function InvestmentReturnsPage() {
 
   return (
     <div className="page-layout pb-0">
-      {!isMobile && <NetWorthSideBar />}
+      {showSidebar && <NetWorthSideBar />}
       <div className="flex flex-1 gap-3 sm:gap-6">
         {isMobile ? (
           <div className="flex-1 flex flex-col gap-3 sm:gap-6">

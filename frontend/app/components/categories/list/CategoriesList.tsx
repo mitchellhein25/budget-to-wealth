@@ -26,7 +26,7 @@ export function CategoriesList<T extends Category>(props: CategoriesListProps<T>
   const tableHeaderRow = (
     <tr>
       <th className="w-3/4">Name</th>
-      <th className="w-1/4 text-right">Actions</th>
+      			<th className="w-20 text-right">Actions</th>
     </tr>
   );
 

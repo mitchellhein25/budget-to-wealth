@@ -27,14 +27,23 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		}
 	};
 
+	const columnWidths = {
+		date: "w-2/12",
+		amount: "w-2/12", 
+		category: "w-2/12",
+		description: "w-4/12",
+		recurrence: "w-1/12",
+		actions: "w-1/12"
+	};
+
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-1/6">Date</th>
-			<th className="w-1/6">Amount</th>
-			<th className="w-1/5">Category</th>
-			<th className="w-1/5">Description</th>
-			{props.recurringOnly && <th className="w-1/5">Recurrence</th>}
-			<th className="text-right">Actions</th>
+			<th className={columnWidths.date}>Date</th>
+			<th className={columnWidths.amount}>Amount</th>
+			<th className={columnWidths.category}>Category</th>
+			<th className={columnWidths.description}>Description</th>
+			{props.recurringOnly && <th className={columnWidths.recurrence}>Recurrence</th>}
+			<th className={columnWidths.actions + " text-center"}>Actions</th>
 		</tr>
 	);
 
@@ -42,9 +51,11 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		<DesktopCashFlowEntryRow
 			key={entry.id}
 			entry={entry}
+			columnWidths={columnWidths}
 			onEdit={props.onEntryIsEditing}
 			onDelete={handleDelete}
 			recurringOnly={props.recurringOnly}
+			actionColumnWidth={columnWidths.actions}
 		/>
 	);
 

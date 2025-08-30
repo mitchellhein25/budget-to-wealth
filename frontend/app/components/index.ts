@@ -3,5 +3,7 @@ export * from './SideBar';
 export * from './TotalDisplay';
 export * from './Utils';
 export * from './cards/MobileListItemCard';
+export * from './table/DesktopListItemCell';
 export * from './table/DesktopListItemRow';
 export * from './table/ListTable';
+export * from './ui/TruncatedBadge';

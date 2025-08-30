@@ -1,12 +1,20 @@
 import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
 import { CashFlowEntry, getRecurrenceText } from '..';
-import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
+import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge } from '@/app/components';
 
 interface DesktopCashFlowEntryRowProps {
 	entry: CashFlowEntry;
 	onEdit: (entry: CashFlowEntry) => void;
 	onDelete: (id: number) => void;
 	recurringOnly?: boolean;
+	columnWidths: {
+		date: string;
+		amount: string;
+		category: string;
+		description: string;
+		recurrence: string;
+	};
+	actionColumnWidth?: string;
 }
 
 export function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
@@ -14,25 +22,25 @@ export function DesktopCashFlowEntryRow(props: DesktopCashFlowEntryRowProps) {
 	const handleDelete = () => props.onDelete(props.entry.id as number);
 	
   return (
-    <DesktopListItemRow key={props.entry.id} onEdit={handleEdit} onDelete={handleDelete}>
-			<DesktopListItemCell>
+    <DesktopListItemRow key={props.entry.id} onEdit={handleEdit} onDelete={handleDelete} actionColumnWidth={props.actionColumnWidth}>
+			<DesktopListItemCell className={props.columnWidths.date + " whitespace-nowrap"}>
 				{formatDate(convertToDate(props.entry.date))}
 			</DesktopListItemCell>
-			<DesktopListItemCell className="whitespace-nowrap font-medium">
+			<DesktopListItemCell className={props.columnWidths.amount + " whitespace-nowrap font-medium"}>
 				{convertCentsToDollars(props.entry.amount)}
 			</DesktopListItemCell>
-			<DesktopListItemCell>
+			<DesktopListItemCell className={props.columnWidths.category}>
 				{props.entry.category?.name && (
-					<span className="badge badge-primary badge-sm">
+					<TruncatedBadge title={props.entry.category.name}>
 						{props.entry.category.name}
-					</span>
+					</TruncatedBadge>
 				)}
 			</DesktopListItemCell>
-			<DesktopListItemCell title={props.entry.description}>
+			<DesktopListItemCell className={props.columnWidths.description} title={props.entry.description}>
 				{props.entry.description}
 			</DesktopListItemCell>
 			{props.recurringOnly && (
-				<DesktopListItemCell>
+				<DesktopListItemCell className={props.columnWidths.recurrence}>
 					{getRecurrenceText(props.entry)}
 				</DesktopListItemCell>
 			)}

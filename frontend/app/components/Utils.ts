@@ -90,7 +90,7 @@ export const cleanPercentageInput = (value: string): string | null => {
 export const formatDate = (date: Date | undefined, noDay: boolean = false): string | undefined => {
   return date?.toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: noDay ? undefined : 'numeric'
   });
 }

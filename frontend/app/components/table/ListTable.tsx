@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import TablePagination from './TablePagination';
-import { useMobileDetection } from '@/app/hooks';
+import { MobileState, mobileStateIsMediumOrSmaller, useMobileDetection } from '@/app/hooks';
 import { HOLDING_SNAPSHOT_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components/constants';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components/HoldingSnapshot';
 
@@ -24,7 +24,7 @@ export type ListTableProps<T extends ListTableItem> = {
 
 export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 	const [currentPage, setCurrentPage] = useState(1);
-	const isMobile = useMobileDetection();
+	const mobileState = useMobileDetection();
 	const itemsPerPage = props.itemsPerPage || 10;
 
 	const sortedItems = useMemo(() => {
@@ -112,7 +112,7 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 								</div>
 							) : (
 								<>
-									{isMobile && props.mobileRow ? (
+									{mobileStateIsMediumOrSmaller(mobileState) && props.mobileRow ? (
 										<div className="space-y-3 sm:space-y-4">
 											{currentItems.map((item, index) => (
 												<React.Fragment key={index}>
@@ -121,9 +121,9 @@ export function ListTable<T extends ListTableItem>(props: ListTableProps<T>) {
 											))}
 										</div>
 									) : (
-								<div className="overflow-hidden rounded-lg border border-base-300">
-									<div className="overflow-x-auto w-full">
-									<table className="table table-zebra table-fixed w-full text-xs sm:text-sm lg:text-base" style={{ wordBreak: 'break-word' }}>
+								<div className="overflow-hidden rounded-lg border border-base-300 w-full">
+									<div className="overflow-x-auto w-full max-w-full">
+									<table className="table table-zebra table-fixed w-full text-xs sm:text-sm lg:text-base max-w-full" style={{ wordBreak: 'break-word', tableLayout: 'fixed', width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
 													<thead>
 														{props.headerRow}
 													</thead>

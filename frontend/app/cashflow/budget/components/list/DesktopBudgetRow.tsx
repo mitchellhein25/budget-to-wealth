@@ -1,6 +1,6 @@
 import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
 import { convertCentsToDollars } from '@/app/components/Utils';
-import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
+import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow/components';
 import { Budget } from '..';
 
@@ -9,9 +9,16 @@ interface DesktopBudgetRowProps {
 	expenses: CashFlowEntry[];
 	onEdit: (budget: Budget) => void;
 	onDelete: (id: number) => void;
+	columnWidths: {
+		category: string;
+		amount: string;
+		spent: string;
+		remaining: string;
+		actions: string;
+	};
 }
 
-export function DesktopBudgetRow({ budget, expenses, onEdit, onDelete }: DesktopBudgetRowProps) {
+export function DesktopBudgetRow({ budget, expenses, onEdit, onDelete, columnWidths }: DesktopBudgetRowProps) {
 	const getAmountSpentInCategory = (categoryId: string) => {
 		return expenses.filter(expense => expense.categoryId === categoryId)
 			.reduce((acc, expense) => acc + expense.amount, 0);
@@ -26,21 +33,27 @@ export function DesktopBudgetRow({ budget, expenses, onEdit, onDelete }: Desktop
 	const handleDelete = () => onDelete(budget.id as number);
 
 	return (
-		<DesktopListItemRow key={budget.id} onEdit={handleEdit} onDelete={handleDelete}>
-			<DesktopListItemCell>
-				{budget.category?.name}
+		<DesktopListItemRow key={budget.id} onEdit={handleEdit} onDelete={handleDelete} actionColumnWidth={columnWidths.actions}>
+			<DesktopListItemCell className={columnWidths.category}>
+				{budget.category?.name && (
+					<TruncatedBadge title={budget.category.name}>
+						{budget.category.name}
+					</TruncatedBadge>
+				)}
 			</DesktopListItemCell>
-			<DesktopListItemCell>
+			<DesktopListItemCell className={columnWidths.amount + " whitespace-nowrap font-medium"} title={convertCentsToDollars(budget.amount)}>
 				{convertCentsToDollars(budget.amount)}
 			</DesktopListItemCell>
-			<DesktopListItemCell>
+			<DesktopListItemCell className={columnWidths.spent + " whitespace-nowrap"} title={convertCentsToDollars(getAmountSpentInCategory(budget.categoryId))}>
 				{convertCentsToDollars(getAmountSpentInCategory(budget.categoryId))}
 			</DesktopListItemCell>
-			<DesktopListItemCell>
-				{convertCentsToDollars(remainingBudget)}
-			</DesktopListItemCell>
-			<DesktopListItemCell className={"flex-1 " + (remainingBudget === 0 ? "text-yellow-500" : remainingBudget > 0 ? "text-green-500" : "text-red-500")}>
-				{remainingBudget === 0 ? <Equal size={22} /> : remainingBudget > 0 ? <ArrowDown size={22} /> : <ArrowUp size={22} />}
+			<DesktopListItemCell className={columnWidths.remaining + " whitespace-nowrap"} title={convertCentsToDollars(remainingBudget)}>
+				<div className="flex items-center space-x-2">
+					<span>{convertCentsToDollars(remainingBudget)}</span>
+					<span className={remainingBudget === 0 ? "text-yellow-500" : remainingBudget > 0 ? "text-green-500" : "text-red-500"}>
+						{remainingBudget === 0 ? <Equal size={18} /> : remainingBudget > 0 ? <ArrowDown size={18} /> : <ArrowUp size={18} />}
+					</span>
+				</div>
 			</DesktopListItemCell>
 		</DesktopListItemRow>
 	);

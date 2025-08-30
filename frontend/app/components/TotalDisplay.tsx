@@ -17,7 +17,7 @@ export function TotalDisplay(props: TotalDisplayProps) {
   const labelClass = props.compact ? 'text-xs sm:text-sm' : 'text-sm sm:text-base';
   const valueClass = props.compact ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl';
   return (
-    <div className={`bg-base-200 rounded-lg ${paddingClass} w-full sm:w-auto ${minWidthClass} ${props.className || ''}`}>
+    <div className={`bg-base-200 rounded-lg ${paddingClass} w-auto h-min flex flex-col justify-center items-center ${minWidthClass} ${props.className || ''}`}>
       <div className={`${labelClass} font-medium text-base-content/70`}>
         {props.label}
       </div>

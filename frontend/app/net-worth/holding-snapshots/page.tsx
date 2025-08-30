@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 import { DatePicker, DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
-import {  useForm, useMobileDetection } from '@/app/hooks';
+import {  useForm, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api/data-methods';
 import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { NetWorthSideBar } from './components/NetWorthSideBar';
@@ -14,6 +14,7 @@ export default function HoldingSnapshotsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
   const isMobile = useMobileDetection();
+  const showSidebar = useSidebarDetection();
 
   const fetchHoldingSnapshots = useCallback(() => showLatestOnly ? getLatestHoldingSnapshots() : getHoldingSnapshotsByDateRange(dateRange), [dateRange, showLatestOnly]);
   
@@ -59,7 +60,7 @@ export default function HoldingSnapshotsPage() {
   
   return (
     <div className="flex gap-3 sm:gap-6 pt-3 sm:pt-6 px-3 sm:px-6 pb-0 h-full min-h-screen">
-      {!isMobile && <NetWorthSideBar />}
+      {showSidebar && <NetWorthSideBar />}
       <div className={`flex flex-1 gap-3 sm:gap-6 ${isMobile ? 'flex-col' : ''}`}>
         <div className="flex-shrink-0">
           <HoldingSnapshotForm

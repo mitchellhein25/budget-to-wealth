@@ -30,7 +30,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 			<th className="w-3/10">Holding</th>
 			<th className="w-1/5">Date</th>
 			<th className="w-1/5">Balance</th>
-			<th className="text-right">Actions</th>
+			<th className="w-20 text-right">Actions</th>
 		</tr>
 	);
 

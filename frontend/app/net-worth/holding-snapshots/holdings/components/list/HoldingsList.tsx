@@ -20,7 +20,7 @@ export function HoldingsList(props: HoldingsListProps) {
       <th className="w-1/5">Institution</th>
       <th className="w-2/5">Category</th>
       <th className="w-1/5">Type</th>
-      <th className="text-right">Actions</th>
+      <th className="w-20 text-right">Actions</th>
     </tr>
   );
 
