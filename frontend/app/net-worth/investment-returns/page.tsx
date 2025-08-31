@@ -146,36 +146,4 @@ export default function InvestmentReturnsPage() {
         list={list}
       />
     );
-  // return (
-  //   <div className="page-layout pb-0">
-  //     {showSidebar && <NetWorthSideBar />}
-  //     <div className="flex flex-1 gap-3 sm:gap-6">
-  //       {isMobile ? (
-  //         <div className="flex-1 flex flex-col gap-3 sm:gap-6">
-  //           <div className="w-full">
-  //               {form}
-  //           </div>
-  //           <div className="flex flex-col gap-3 sm:gap-4">
-  //             <div className="w-full">
-  //               {datePicker}
-  //             </div>
-  //           </div>
-  //           <div className="flex-1">
-  //             {list}
-  //           </div>
-  //         </div>
-  //       ) : (
-  //         <>
-  //           <div className="flex-shrink-0">
-  //             {form}
-  //           </div>
-  //           <div className="flex flex-1 flex-col gap-2 sm:gap-3">
-  //             {datePicker}
-  //             {list}
-  //           </div>
-  //         </>
-  //       )}
-  //     </div>
-  //   </div>
-  // )
 }

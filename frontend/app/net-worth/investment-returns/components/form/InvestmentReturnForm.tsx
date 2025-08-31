@@ -20,7 +20,7 @@ export function InvestmentReturnForm({
   holdingInvestmentReturnFormState }: InvestmentReturnFormProps) 
 {
   return (
-    <>
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <input
           id={`${INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-isManualInvestment`}
@@ -37,7 +37,7 @@ export function InvestmentReturnForm({
       ) : (
         <HoldingInvestmentReturnForm formState={holdingInvestmentReturnFormState} />
       )}
-    </>
+    </div>
   )
 }
 
