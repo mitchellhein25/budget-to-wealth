@@ -3,9 +3,7 @@
 import React from 'react';
 import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
 import { ListTable } from '@/app/components/table/ListTable';
-import { CashFlowEntry, CashFlowType } from '..';
-import { MobileCashFlowEntryCard } from './MobileCashFlowEntryCard';
-import { DesktopCashFlowEntryRow } from './DesktopCashFlowEntryRow';
+import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '..';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
@@ -17,7 +15,7 @@ interface CashFlowEntriesListProps {
 	recurringOnly?: boolean,
 }
 
-export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
+export function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 	
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {

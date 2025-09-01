@@ -1,7 +1,6 @@
-import { CashFlowCategory } from "./CashFlowCategory";
-import { CashFlowType } from "./CashFlowType";
-import { RecurrenceFrequency } from "./RecurrenceFrequency";
-import { ListTableItem } from "@/app/components/table/ListTable";
+import { ListTableItem } from "@/app/components";
+import { CashFlowCategory, CashFlowType, RecurrenceFrequency } from "..";
+
 
 export type CashFlowEntry = ListTableItem & {
     id?: number;

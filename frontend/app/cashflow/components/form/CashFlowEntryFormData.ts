@@ -1,6 +1,6 @@
 import z from "zod";
 import { currencyRegex } from "@/app/components";
-import { RecurrenceFrequency } from "../components/RecurrenceFrequency";
+import { RecurrenceFrequency } from "..";
 
 export const cashFlowEntryFormSchema = z.object({
   id: z.string().uuid().optional(),

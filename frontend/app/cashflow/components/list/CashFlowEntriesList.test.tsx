@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import CashFlowEntriesList from './CashFlowEntriesList';
+import CashFlowEntriesList from '.';
 
 const listTableTestId = 'list-table';
 const listTableText = 'ListTable';

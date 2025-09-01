@@ -3,11 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm, useFormListItemsFetch } from '@/app/hooks';
 import { CASH_FLOW_ENTRIES_ENDPOINT, getCashFlowEntriesByDateRangeAndType, getRecurringCashFlowEntries } from '@/app/lib/api/data-methods';
-import { DatePicker, DateRange, TotalDisplay, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
-import { CashFlowType, CashFlowEntry, CashFlowSideBar } from '@/app/cashflow/components';
-import { CashFlowEntriesForm, CashFlowEntryFormData, convertCashFlowEntryToFormData, transformCashFlowFormDataToEntry } from './form';
-import CashFlowEntriesList from './list/CashFlowEntriesList';
-import ResponsiveFormListPage from '@/app/components/ui/ResponsiveFormListPage';
+import { DatePicker, DateRange, ResponsiveFormListPage, TotalDisplay, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
+import { CashFlowEntriesForm, CashFlowEntry, CashFlowEntryFormData, CashFlowSideBar, CashFlowType, convertCashFlowEntryToFormData, transformCashFlowFormDataToEntry, CashFlowEntriesList } from '.';
 
 export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashFlowType, recurringOnly?: boolean}) {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));

@@ -1,6 +1,5 @@
-import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
+import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge, convertCentsToDollars, convertToDate, formatDate } from '@/app/components';
 import { CashFlowEntry, getRecurrenceText } from '..';
-import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge } from '@/app/components';
 
 interface DesktopCashFlowEntryRowProps {
 	entry: CashFlowEntry;

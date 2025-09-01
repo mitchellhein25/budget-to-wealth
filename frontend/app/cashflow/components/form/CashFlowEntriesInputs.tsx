@@ -6,9 +6,7 @@ import Link from 'next/link';
 import { getCategoriesList } from '@/app/lib/api/data-methods';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
-import { CashFlowEntryFormData } from './';
-import { CashFlowType, CashFlowCategory, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL } from '..';
-import { RecurrenceFrequency } from '../components/RecurrenceFrequency';
+import { CashFlowType, CashFlowCategory, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL, CashFlowEntryFormData, RecurrenceFrequency } from '..';
 
 interface CashFlowEntriesInputsProps {
   editingFormData: Partial<CashFlowEntryFormData>;

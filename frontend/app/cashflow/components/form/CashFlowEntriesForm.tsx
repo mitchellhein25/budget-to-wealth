@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { formHasAnyValue, FormTemplate } from '@/app/components/form';
 import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
-import { CashFlowEntriesInputs, CashFlowEntryFormData } from './';
-import { CashFlowEntry, CashFlowType } from '..';
+import { CashFlowEntriesInputs, CashFlowEntry, CashFlowEntryFormData, CashFlowType } from '..';
 
 export function CashFlowEntriesForm({formState, cashFlowType} : {formState: FormState<CashFlowEntry, CashFlowEntryFormData>, cashFlowType: CashFlowType}) {
   
