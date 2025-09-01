@@ -11,7 +11,7 @@ interface ResponsiveFormListPageProps {
   list: React.ReactNode;
 }
 
-export default function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
+export function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
   const mobileState = useMobileDetection();
   const showSidebar = useSidebarDetection();
   const showTotalAndDatePicker = props.showTotalAndDatePicker ?? true;

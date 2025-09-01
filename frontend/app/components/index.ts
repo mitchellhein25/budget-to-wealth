@@ -7,3 +7,4 @@ export * from './table/DesktopListItemCell';
 export * from './table/DesktopListItemRow';
 export * from './table/ListTable';
 export * from './ui/TruncatedBadge';
+export * from './ui/ResponsiveFormListPage';

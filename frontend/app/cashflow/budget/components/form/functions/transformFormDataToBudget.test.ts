@@ -1,4 +1,4 @@
-import { BUDGET_ITEM_NAME_LOWERCASE, transformFormDataToBudget } from '..';
+import { BUDGET_ITEM_NAME_LOWERCASE, transformFormDataToBudget } from '../..';
 import { convertDollarsToCents } from '@/app/components';
 
 // Mock only the convertDollarsToCents function
