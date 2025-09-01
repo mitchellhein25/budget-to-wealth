@@ -1,12 +1,14 @@
 import { getAccessToken } from '../auth/getAccessToken';
 import { API_BASE_URL } from './apiVariables';
 
-export enum HttpMethod {
-  GET = 'GET', 
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-} 
+export const HttpMethod = {
+  GET: 'GET', 
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+} as const;
+
+export type HttpMethod = typeof HttpMethod[keyof typeof HttpMethod];
 
 type FetchOptions = {
   endpoint: string;
@@ -43,8 +45,6 @@ export async function fetchWithAuth<T>(fetchOptions: FetchOptions): Promise<Fetc
 
   try {
     const res = await fetch(`${API_BASE_URL}/${fetchOptions.endpoint}`, request);
-    // console.log(`Request: ${fetchOptions.method} ${API_BASE_URL}/${fetchOptions.endpoint}\n${request.body}`);
-    // console.log(`Response: ${res.status} ${res.statusText}`);
     if (!res.ok) 
       return { data: {} as T, responseMessage: await res.text(), successful: res.ok };
     

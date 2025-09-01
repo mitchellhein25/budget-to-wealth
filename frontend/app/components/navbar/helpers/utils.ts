@@ -1,19 +1,8 @@
-import { SessionData } from "@auth0/nextjs-auth0/types";
 import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, RECURRENCE_ITEM_NAME, RECURRENCE_ITEM_NAME_LOWERCASE } from "@/app/cashflow/components/components/constants";
 import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, HOLDING_SNAPSHOT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from "@/app/net-worth/holding-snapshots/components";
 import { INVESTMENT_RETURN_ITEM_NAME_PLURAL, INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK } from "@/app/net-worth/investment-returns/components/form";
 import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from "@/app/dashboards/components/constants";
 import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE } from "@/app/cashflow/budget/components/constants";
-
-export const isTokenExpired = (session: SessionData | null): boolean => {
-  return session?.tokenSet?.expiresAt
-    ? session.tokenSet.expiresAt * 1000 < Date.now()
-    : false;
-};
-
-export const isAuthenticated = (session: SessionData | null): boolean => {
-  return (session ?? false) && !isTokenExpired(session);
-};
 
 export const closeDrawer = (): void => {
   const drawerCheckbox = document.getElementById('mobile-drawer') as HTMLInputElement;
