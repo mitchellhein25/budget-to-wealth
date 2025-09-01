@@ -5,6 +5,7 @@ export * from './form/HoldingSnapshotFormData';
 export * from './form/HoldingSnapshotInputs';
 export * from './form/functions/transformFormDataToHoldingSnapshot';
 export * from './form/functions/getHoldingSnapshotValidationResult';
+export * from './form/functions/convertHoldingSnapshotToFormData';
 export * from './list/HoldingSnapshotsList';
 export * from './list/MobileHoldingSnapshotCard';
 export * from './list/DesktopHoldingSnapshotRow';

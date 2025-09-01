@@ -9,4 +9,5 @@ export * from './form/HoldingInputs';
 export * from './form/functions/getHoldingValidationResult';
 export * from './form/functions/transformFormDataToHolding';
 export * from './form/functions/holdingFormOnChange';
+export * from './form/functions/convertHoldingToFormData';
 export * from './constants';

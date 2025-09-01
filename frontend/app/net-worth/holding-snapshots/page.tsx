@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react'
-import { DatePicker, DateRange, getCurrentMonthRange, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
-import {  useForm, useMobileDetection, useSidebarDetection } from '@/app/hooks';
+import React, { useCallback, useState } from 'react'
+import { DatePicker, DateRange, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
+import {  useForm, useFormListItemsFetch } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api/data-methods';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
+import { convertHoldingSnapshotToFormData, HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { NetWorthSideBar } from './components/NetWorthSideBar';
 import ResponsiveFormListPage from '@/app/components/ui/ResponsiveFormListPage';
 
@@ -12,34 +12,12 @@ export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [items, setItems] = useState<HoldingSnapshot[]>([]);
   const [showLatestOnly, setShowLatestOnly] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
 
-  const fetchHoldingSnapshots = useCallback(() => showLatestOnly ? getLatestHoldingSnapshots() : getHoldingSnapshotsByDateRange(dateRange), [dateRange, showLatestOnly]);
-  
-  const fetchItems = useCallback(async () => {
-    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
-    try {
-      setIsLoading(true);
-      setMessage({ type: null, text: '' });
-      const response = await fetchHoldingSnapshots();
-      if (!response.successful) {
-        setErrorMessage(`Failed to load ${HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE}s. Please try again.`);
-        return;
-      }
-      setItems(response.data as HoldingSnapshot[]);
-    } catch (error) {
-      setErrorMessage(`An error occurred while loading ${HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE}s. Please try again.`);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchHoldingSnapshots]);
-  
-  const convertHoldingSnapshotToFormData = (holdingSnapshot: HoldingSnapshot) => ({
-    id: holdingSnapshot.id?.toString(),
-    holdingId: holdingSnapshot.holdingId,
-    date: new Date(holdingSnapshot.date),
-    balance: (holdingSnapshot.balance / 100).toFixed(2),
+  const fetchHoldingSnapshotsFunction = useCallback(() => showLatestOnly ? getLatestHoldingSnapshots() : getHoldingSnapshotsByDateRange(dateRange), [dateRange, showLatestOnly]);
+  const { fetchItems: fetchHoldingSnapshots, isPending: isPendingHoldingSnapshots, message: messageHoldingSnapshots } = useFormListItemsFetch<HoldingSnapshot>({
+    fetchItems: fetchHoldingSnapshotsFunction,
+    itemName: HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE,
+    setItems: setItems,
   });
 
   const formState = useForm<HoldingSnapshot, HoldingSnapshotFormData>(
@@ -48,13 +26,9 @@ export default function HoldingSnapshotsPage() {
       itemEndpoint: HOLDING_SNAPSHOTS_ENDPOINT,
       transformFormDataToItem: transformFormDataToHoldingSnapshot,
       convertItemToFormData: convertHoldingSnapshotToFormData,
-      fetchItems: fetchItems,
+      fetchItems: fetchHoldingSnapshots,
     }
   );
-
-	useEffect(() => {
-		fetchItems();
-	}, [fetchItems]);
 
   const datePickerAndCheckbox = (
     <>
@@ -76,30 +50,26 @@ export default function HoldingSnapshotsPage() {
       )}
     </>
   );
-
-  const form = (
-    <HoldingSnapshotForm
-      formState={formState}
-    />
-  );
-
-  const list = (
-    <HoldingSnapshotsList
-      snapshots={items}
-      onSnapshotDeleted={fetchItems}
-      onSnapshotIsEditing={formState.onItemIsEditing}
-      isLoading={isLoading}
-      isError={messageTypeIsError(message)}
-    />
-  );
   
   return (
     <ResponsiveFormListPage
       sideBar={<NetWorthSideBar />}
       totalDisplay={<div className="w-full"></div>}
       datePicker={datePickerAndCheckbox}
-      form={form}
-      list={list}
+      form={
+        <HoldingSnapshotForm
+          formState={formState}
+        />
+      }
+      list={
+        <HoldingSnapshotsList
+          snapshots={items}
+          onSnapshotDeleted={fetchHoldingSnapshots}
+          onSnapshotIsEditing={formState.onItemIsEditing}
+          isLoading={isPendingHoldingSnapshots}
+          isError={messageTypeIsError(messageHoldingSnapshots)}
+        />
+      }
     />
   );
 }
