@@ -1,18 +1,20 @@
 export const currencyRegex = /^\d+(\.\d{0,2})?$/;
 export const percentageRegex = /^-?\d+(\.\d*)?$/;
 
-export const MESSAGE_TYPE_ERROR = "ERROR";
-export const MESSAGE_TYPE_INFO = "INFO";
+export const MessageType = {
+  ERROR: "ERROR",
+  INFO: "INFO",
+}
 
-export type MessageType = "ERROR" | "INFO" | null;
+export type MessageType = typeof MessageType[keyof typeof MessageType] | null;
 
 export type MessageState = {
   type: MessageType;
   text: string;
 };
 
-export const messageTypeIsError = (message: MessageState) => message.type === "ERROR";
-export const messageTypeIsInfo = (message: MessageState) => message.type === "INFO";
+export const messageTypeIsError = (message: MessageState) => message.type === MessageType.ERROR;
+export const messageTypeIsInfo = (message: MessageState) => message.type === MessageType.INFO;
 
 export const convertDollarsToCents = (dollarAmount: string): number | null => {
   const parsed = Number.parseFloat(dollarAmount);
