@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import Profile from './page';
-import { auth0 } from '@/app/lib/auth/auth0';
+import Profile from '@/app/profile/page';
+import { auth0 } from '@/app/lib/auth';
 
 const profileTitleText = 'Profile';
 const loginPromptText = 'Please log in to view your profile.';

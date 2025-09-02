@@ -1,6 +1,6 @@
-import { auth0 } from "@/app/lib/auth/auth0";
 import Image from "next/image";
 import { User } from "lucide-react";
+import { auth0 } from "@/app/lib/auth";
 
 export default async function Profile() {
   const session = await auth0.getSession();
