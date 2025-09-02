@@ -22,11 +22,11 @@ jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/queryHelpers', () => ({
+jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/endpoints', () => ({
+jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
   HOLDING_SNAPSHOTS_ENDPOINT: 'HoldingSnapshots',
   HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT: 'HoldingSnapshots/AvailableDateRange',
 }));

@@ -1,11 +1,14 @@
 import { getRequestList, deleteRequest, getAllHoldingCategories, deleteHoldingCategory, FetchResult, HOLDING_CATEGORIES_ENDPOINT } from '@/app/lib/api';
 
-jest.mock('"@/app/lib/api/getRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
+}));
+
+jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('"@/app/lib/api/endpoints', () => ({
+jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
   HOLDING_CATEGORIES_ENDPOINT: 'HoldingCategories',
 }));
 
@@ -35,7 +38,7 @@ describe('Holding Categories Requests', () => {
       const result = await getAllHoldingCategories();
       
       expect(mockGetRequestList).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT);
-      expect(result).toEqual(mockCategories);
+      expect(result.data).toEqual(mockCategories);
     });
 
     it('handles errors from getRequestList', async () => {
@@ -73,7 +76,7 @@ describe('Holding Categories Requests', () => {
       const result = await deleteHoldingCategory(999);
       
       expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT, 999);
-      expect(result).toEqual(mockDeletedCategory);
+      expect(result.data).toEqual(mockDeletedCategory);
     });
   });
 });

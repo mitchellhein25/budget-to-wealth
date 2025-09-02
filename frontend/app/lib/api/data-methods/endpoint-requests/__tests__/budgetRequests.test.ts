@@ -9,11 +9,11 @@ jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/queryHelpers', () => ({
+jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/endpoints', () => ({
+jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
   BUDGETS_ENDPOINT: 'test-budgets-endpoint',
 }));
 

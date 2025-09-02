@@ -12,11 +12,11 @@ jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
 }));
 
 
-jest.mock('@/app/lib/api/queryHelpers', () => ({
+jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/endpoints', () => ({
+jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
   CASH_FLOW_ENTRIES_ENDPOINT: 'CashFlowEntries',
   CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT: 'CashFlowEntries/AvailableDateRange',
 }));

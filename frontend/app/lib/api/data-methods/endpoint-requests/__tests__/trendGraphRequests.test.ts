@@ -2,11 +2,11 @@ import { FetchResult, getCashFlowTrendGraphForDateRange, getNetWorthTrendGraphFo
 import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/components';
 import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components';
 
-jest.mock('"@/app/lib/api/rest-methods', () => ({
+jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestSingle: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/queryHelpers', () => ({
+jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
@@ -76,7 +76,7 @@ describe('trendGraphRequests', () => {
       expect(mockGetRequestSingle).toHaveBeenCalledWith(
         `NetWorthTrendGraph?startDate=2024-01-01&endDate=2024-01-31`
       );
-      expect(result).toEqual(mockData);
+      expect(result.data).toEqual(mockData);
     });
 
     it('handles errors from getRequestSingle', async () => {
