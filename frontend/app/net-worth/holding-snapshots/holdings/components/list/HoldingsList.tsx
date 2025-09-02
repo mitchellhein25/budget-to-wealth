@@ -1,5 +1,5 @@
 import React from 'react'
-import { deleteHolding } from '@/app/lib/api/data-methods';
+import { deleteHolding } from '@/app/lib/api';
 import { ListTable } from '@/app/components/table/ListTable';
 import { HOLDING_ITEM_NAME, Holding } from '..';
 import { MobileHoldingCard } from './MobileHoldingCard';

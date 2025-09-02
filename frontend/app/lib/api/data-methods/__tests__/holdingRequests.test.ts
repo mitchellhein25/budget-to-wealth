@@ -1,144 +1,112 @@
-import { getAllHoldings } from '../holdingRequests';
-import { getRequestList, GetRequestResultList } from '../../rest-methods';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components/Holding';
+import { getRequestList, deleteRequest, getAllHoldings, deleteHolding, HOLDINGS_ENDPOINT, FetchResult } from '../..';
 
-jest.mock('../../rest-methods', () => ({
+jest.mock('../../rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
 }));
 
-jest.mock('../endpoints', () => ({
-  HOLDINGS_ENDPOINT: '/api/v1/holdings',
+jest.mock('../../rest-methods/deleteRequest', () => ({
+  deleteRequest: jest.fn(),
 }));
 
-describe('holdingRequests', () => {
-  const mockGetRequestList = getRequestList as jest.MockedFunction<typeof getRequestList>;
+jest.mock('../endpoints', () => ({
+  HOLDINGS_ENDPOINT: 'Holdings',
+}));
 
+const mockGetRequestList = getRequestList as jest.MockedFunction<typeof getRequestList>;
+const mockDeleteRequest = deleteRequest as jest.MockedFunction<typeof deleteRequest>;
+
+const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
+  data,
+  responseMessage: 'Success',
+  successful: true,
+});
+
+const createMockHolding = (id: number, name: string): Holding => ({
+  id,
+  name,
+  holdingCategoryId: '1',
+  institution: 'Institution',
+  type: 'Asset',
+  holdingCategory: { name: 'Category' },
+  date: '2024-01-01',
+});
+
+describe('Holding Requests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('getAllHoldings', () => {
-    it('fetches all holdings successfully', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Stock A', type: 'Stock', value: 1000 },
-          { id: 2, name: 'Bond B', type: 'Bond', value: 2000 },
-          { id: 3, name: 'ETF C', type: 'ETF', value: 1500 },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
+    it('calls getRequestList with correct endpoint', async () => {
+      const mockHoldings = [
+        createMockHolding(1, 'Holding 1'),
+        createMockHolding(2, 'Holding 2'),
+      ];
+      
+      mockGetRequestList.mockResolvedValue(createMockFetchResult(mockHoldings));
+      
       const result = await getAllHoldings();
-
-      expect(mockGetRequestList).toHaveBeenCalledWith('/api/v1/holdings');
-      expect(result).toEqual(mockResponse);
+      
+      expect(mockGetRequestList).toHaveBeenCalledWith(HOLDINGS_ENDPOINT);
+      expect(result).toEqual(createMockFetchResult(mockHoldings));
     });
 
-    it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: false,
-        data: null,
-        responseMessage: 'Failed to fetch holdings',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldings();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles request error', async () => {
-      const mockError = new Error('Network error');
+    it('handles errors from getRequestList', async () => {
+      const mockError = new Error('API Error');
       mockGetRequestList.mockRejectedValue(mockError);
-
-      await expect(getAllHoldings()).rejects.toThrow('Network error');
+      
+      await expect(getAllHoldings()).rejects.toThrow('API Error');
+      expect(mockGetRequestList).toHaveBeenCalledWith(HOLDINGS_ENDPOINT);
     });
 
-    it('handles empty holdings list', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: true,
-        data: [],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
+    it('returns empty array when no holdings exist', async () => {
+      mockGetRequestList.mockResolvedValue(createMockFetchResult([]));
+      
       const result = await getAllHoldings();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles single holding', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Single Stock', type: 'Stock', value: 1000 },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldings();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles holdings with different types', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Stock A', type: 'Stock', value: 1000 },
-          { id: 2, name: 'Bond B', type: 'Bond', value: 2000 },
-          { id: 3, name: 'Real Estate', type: 'RealEstate', value: 50000 },
-          { id: 4, name: 'Cash', type: 'Cash', value: 5000 },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldings();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles holdings with null values', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Stock A', type: 'Stock', value: null },
-          { id: 2, name: 'Bond B', type: 'Bond', value: 2000 },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldings();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles holdings with undefined values', async () => {
-      const mockResponse: GetRequestResultList<Holding> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Stock A', type: 'Stock', value: undefined },
-          { id: 2, name: 'Bond B', type: 'Bond', value: 2000 },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldings();
-
-      expect(result).toEqual(mockResponse);
+      
+      expect(mockGetRequestList).toHaveBeenCalledWith(HOLDINGS_ENDPOINT);
+      expect(result).toEqual(createMockFetchResult([]));
     });
   });
-}); 
+
+  describe('deleteHolding', () => {
+    it('calls deleteRequest with correct endpoint and id', async () => {
+      const mockDeletedHolding = createMockHolding(1, 'Deleted Holding');
+      mockDeleteRequest.mockResolvedValue(createMockFetchResult(mockDeletedHolding));
+      
+      const result = await deleteHolding(1);
+      
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDINGS_ENDPOINT, 1);
+      expect(result).toEqual(createMockFetchResult(mockDeletedHolding));
+    });
+
+    it('handles errors from deleteRequest', async () => {
+      const mockError = new Error('Delete Error');
+      mockDeleteRequest.mockRejectedValue(mockError);
+      
+      await expect(deleteHolding(1)).rejects.toThrow('Delete Error');
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDINGS_ENDPOINT, 1);
+    });
+
+    it('works with different id values', async () => {
+      const mockDeletedHolding = createMockHolding(999, 'Another Holding');
+      mockDeleteRequest.mockResolvedValue(createMockFetchResult(mockDeletedHolding));
+      
+      const result = await deleteHolding(999);
+      
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDINGS_ENDPOINT, 999);
+      expect(result).toEqual(createMockFetchResult(mockDeletedHolding));
+    });
+
+    it('works with zero id', async () => {
+      const mockDeletedHolding = createMockHolding(0, 'Zero Holding');
+      mockDeleteRequest.mockResolvedValue(createMockFetchResult(mockDeletedHolding));
+      
+      const result = await deleteHolding(0);
+      
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDINGS_ENDPOINT, 0);
+      expect(result).toEqual(createMockFetchResult(mockDeletedHolding));
+    });
+  });
+});

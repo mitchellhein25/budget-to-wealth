@@ -1,7 +1,6 @@
 "use server";
 
-import { getRequestList } from "../rest-methods/getRequest";
-import { MANUAL_INVESTMENT_CATEGORIES_ENDPOINT } from "./endpoints";
+import { getRequestList, MANUAL_INVESTMENT_CATEGORIES_ENDPOINT } from "..";
 
 export type ManualInvestmentCategory = { id: number; name: string };
 

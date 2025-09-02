@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { getCategoriesList } from '@/app/lib/api/data-methods';
+import { getCategoriesList } from '@/app/lib/api';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
 import { CashFlowType, CashFlowCategory, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL, CashFlowEntryFormData, RecurrenceFrequency } from '..';

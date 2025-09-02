@@ -1,11 +1,20 @@
-import { getCashFlowTrendGraphForDateRange, getNetWorthTrendGraphForDateRange } from '../trendGraphRequests';
-import { getRequestSingle } from '../../rest-methods';
-import { getQueryStringForDateRange } from '../queryHelpers';
-import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/components/CashFlowTrendGraphData';
-import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components/NetWorthTrendGraphData';
+import { FetchResult, getCashFlowTrendGraphForDateRange, getNetWorthTrendGraphForDateRange,getQueryStringForDateRange, getRequestSingle } from '../../';
+import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/components';
+import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components';
 
-jest.mock('../../rest-methods');
-jest.mock('../queryHelpers');
+jest.mock('../../rest-methods', () => ({
+  getRequestSingle: jest.fn(),
+}));
+
+jest.mock('../../queryHelpers', () => ({
+  getQueryStringForDateRange: jest.fn(),
+}));
+
+const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
+  data,
+  responseMessage: 'Success',
+  successful: true,
+});
 
 const mockGetRequestSingle = getRequestSingle as jest.MockedFunction<typeof getRequestSingle>;
 const mockGetQueryStringForDateRange = getQueryStringForDateRange as jest.MockedFunction<typeof getQueryStringForDateRange>;
@@ -24,12 +33,14 @@ describe('trendGraphRequests', () => {
 
   describe('getCashFlowTrendGraphForDateRange', () => {
     it('calls getRequestSingle with correct endpoint and query string', async () => {
-      const mockData: CashFlowTrendGraphData = {
-        labels: ['Jan 1', 'Jan 2'],
-        datasets: [{ label: 'Income', data: [1000, 1500] }]
+        const mockData: CashFlowTrendGraphData = {
+        entries: [
+          { date: '2024-01-01', incomeInCents: 1000, expensesInCents: 500, netCashFlowInCents: 500 },
+          { date: '2024-01-02', incomeInCents: 1500, expensesInCents: 750, netCashFlowInCents: 750 },
+        ]
       };
 
-      mockGetRequestSingle.mockResolvedValue(mockData);
+      mockGetRequestSingle.mockResolvedValue(createMockFetchResult(mockData));
 
       const result = await getCashFlowTrendGraphForDateRange(mockDateRange);
 
@@ -37,7 +48,7 @@ describe('trendGraphRequests', () => {
       expect(mockGetRequestSingle).toHaveBeenCalledWith(
         `CashFlowTrendGraph?startDate=2024-01-01&endDate=2024-01-31`
       );
-      expect(result).toEqual(mockData);
+      expect(result).toEqual(createMockFetchResult(mockData));
     });
 
     it('handles errors from getRequestSingle', async () => {
@@ -51,11 +62,13 @@ describe('trendGraphRequests', () => {
   describe('getNetWorthTrendGraphForDateRange', () => {
     it('calls getRequestSingle with correct endpoint and query string', async () => {
       const mockData: NetWorthTrendGraphData = {
-        labels: ['Jan 1', 'Jan 2'],
-        datasets: [{ label: 'Net Worth', data: [50000, 52000] }]
+        entries: [
+          { date: '2024-01-01', assetValueInCents: 50000, debtValueInCents: 10000, netWorthInCents: 40000 },
+          { date: '2024-01-02', assetValueInCents: 52000, debtValueInCents: 10400, netWorthInCents: 41600 },
+        ]
       };
 
-      mockGetRequestSingle.mockResolvedValue(mockData);
+      mockGetRequestSingle.mockResolvedValue(createMockFetchResult(mockData));
 
       const result = await getNetWorthTrendGraphForDateRange(mockDateRange);
 

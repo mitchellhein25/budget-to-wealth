@@ -1,4 +1,4 @@
-import { auth0 } from '../auth0';
+import { auth0 } from '..';
 
 describe('auth0', () => {
   const originalEnv = process.env;
@@ -23,7 +23,7 @@ describe('auth0', () => {
     // Re-import to trigger the console.log statements
     jest.resetModules();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('../auth0');
+    require('..');
 
     expect(auth0).toBeDefined();
   });
@@ -39,7 +39,7 @@ describe('auth0', () => {
     // Re-import to trigger the console.log statements
     jest.resetModules();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('../auth0');
+    require('..');
 
     expect(auth0).toBeDefined();
   });
@@ -55,7 +55,7 @@ describe('auth0', () => {
     // Re-import to trigger the console.log statements
     jest.resetModules();
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('../auth0');
+    require('..');
 
     expect(auth0).toBeDefined();
   });

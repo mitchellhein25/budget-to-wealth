@@ -1,7 +1,6 @@
-import { postRequest } from './postRequest';
-import { fetchWithAuth } from '../apiClient';
+import { fetchWithAuth, putRequest } from '../..';
 
-jest.mock('../apiClient', () => ({
+jest.mock('../../apiClient', () => ({
   fetchWithAuth: jest.fn(),
   HttpMethod: {
     GET: 'GET',
@@ -13,27 +12,28 @@ jest.mock('../apiClient', () => ({
 
 const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;
 
-describe('Post Request Method', () => {
+describe('Put Request Method', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('calls fetchWithAuth with correct parameters', async () => {
     const mockResponse = {
-      data: { id: 1, name: 'Created Item' },
+      data: { id: 1, name: 'Updated Item' },
       responseMessage: 'Success',
       successful: true,
     };
     
-    const mockBody = { name: 'New Item', value: 100 };
+    const mockBody = { name: 'Updated Item', value: 200 };
+    const mockId = '1';
     
     mockFetchWithAuth.mockResolvedValue(mockResponse);
     
-    const result = await postRequest<{ id: number; name: string }>('test-endpoint', mockBody);
+    const result = await putRequest<{ id: number; name: string }>('test-endpoint', mockId, mockBody);
     
     expect(mockFetchWithAuth).toHaveBeenCalledWith({
-      endpoint: 'test-endpoint',
-      method: 'POST',
+      endpoint: 'test-endpoint/1',
+      method: 'PUT',
       body: mockBody,
     });
     expect(result).toEqual(mockResponse);
@@ -42,33 +42,35 @@ describe('Post Request Method', () => {
   it('handles errors from fetchWithAuth', async () => {
     const mockError = new Error('API Error');
     const mockBody = { name: 'Test Item' };
+    const mockId = '1';
     
     mockFetchWithAuth.mockRejectedValue(mockError);
     
-    await expect(postRequest('test-endpoint', mockBody)).rejects.toThrow('API Error');
+    await expect(putRequest('test-endpoint', mockId, mockBody)).rejects.toThrow('API Error');
     expect(mockFetchWithAuth).toHaveBeenCalledWith({
-      endpoint: 'test-endpoint',
-      method: 'POST',
+      endpoint: 'test-endpoint/1',
+      method: 'PUT',
       body: mockBody,
     });
   });
 
   it('works with different endpoint values', async () => {
     const mockResponse = {
-      data: { id: 999, name: 'Another Item' },
+      data: { id: 999, name: 'Another Updated Item' },
       responseMessage: 'Success',
       successful: true,
     };
     
-    const mockBody = { name: 'Another Item', value: 500 };
+    const mockBody = { name: 'Another Updated Item', value: 500 };
+    const mockId = '999';
     
     mockFetchWithAuth.mockResolvedValue(mockResponse);
     
-    const result = await postRequest<{ id: number; name: string }>('different-endpoint', mockBody);
+    const result = await putRequest<{ id: number; name: string }>('different-endpoint', mockId, mockBody);
     
     expect(mockFetchWithAuth).toHaveBeenCalledWith({
-      endpoint: 'different-endpoint',
-      method: 'POST',
+      endpoint: 'different-endpoint/999',
+      method: 'PUT',
       body: mockBody,
     });
     expect(result).toEqual(mockResponse);
@@ -82,14 +84,37 @@ describe('Post Request Method', () => {
     };
     
     const mockBody = { name: 'Empty Endpoint Item' };
+    const mockId = '1';
     
     mockFetchWithAuth.mockResolvedValue(mockResponse);
     
-    const result = await postRequest<{ id: number; name: string }>('', mockBody);
+    const result = await putRequest<{ id: number; name: string }>('', mockId, mockBody);
     
     expect(mockFetchWithAuth).toHaveBeenCalledWith({
-      endpoint: '',
-      method: 'POST',
+      endpoint: '/1',
+      method: 'PUT',
+      body: mockBody,
+    });
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('works with empty id string', async () => {
+    const mockResponse = {
+      data: { id: 0, name: 'Zero ID Item' },
+      responseMessage: 'Success',
+      successful: true,
+    };
+    
+    const mockBody = { name: 'Zero ID Item', value: 0 };
+    const mockId = '';
+    
+    mockFetchWithAuth.mockResolvedValue(mockResponse);
+    
+    const result = await putRequest<{ id: number; name: string }>('test-endpoint', mockId, mockBody);
+    
+    expect(mockFetchWithAuth).toHaveBeenCalledWith({
+      endpoint: 'test-endpoint/',
+      method: 'PUT',
       body: mockBody,
     });
     expect(result).toEqual(mockResponse);
@@ -103,14 +128,15 @@ describe('Post Request Method', () => {
     };
     
     const mockBody = {};
+    const mockId = '1';
     
     mockFetchWithAuth.mockResolvedValue(mockResponse);
     
-    const result = await postRequest<{ id: number; name: string }>('test-endpoint', mockBody);
+    const result = await putRequest<{ id: number; name: string }>('test-endpoint', mockId, mockBody);
     
     expect(mockFetchWithAuth).toHaveBeenCalledWith({
-      endpoint: 'test-endpoint',
-      method: 'POST',
+      endpoint: 'test-endpoint/1',
+      method: 'PUT',
       body: mockBody,
     });
     expect(result).toEqual(mockResponse);

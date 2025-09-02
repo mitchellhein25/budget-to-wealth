@@ -1,180 +1,80 @@
-import { getAllHoldingCategories } from '../holdingCategoriesRequests';
-import { getRequestList, GetRequestResultList } from '../../rest-methods';
 import { Category } from '@/app/components/categories/Category';
+import { getRequestList, deleteRequest, getAllHoldingCategories, deleteHoldingCategory, FetchResult, HOLDING_CATEGORIES_ENDPOINT } from '../..';
 
-jest.mock('../../rest-methods', () => ({
+jest.mock('../../getRequest', () => ({
   getRequestList: jest.fn(),
+  deleteRequest: jest.fn(),
 }));
 
-jest.mock('../endpoints', () => ({
-  HOLDING_CATEGORIES_ENDPOINT: '/api/v1/holding-categories',
+jest.mock('../../endpoints', () => ({
+  HOLDING_CATEGORIES_ENDPOINT: 'HoldingCategories',
 }));
 
-describe('holdingCategoriesRequests', () => {
-  const mockGetRequestList = getRequestList as jest.MockedFunction<typeof getRequestList>;
+const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
+  data,
+  responseMessage: 'Success',
+  successful: true,
+});
 
+const mockGetRequestList = getRequestList as jest.MockedFunction<typeof getRequestList>;
+const mockDeleteRequest = deleteRequest as jest.MockedFunction<typeof deleteRequest>;
+
+describe('Holding Categories Requests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('getAllHoldingCategories', () => {
-    it('fetches all holding categories successfully', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Stocks', description: 'Stock investments' },
-          { id: 2, name: 'Bonds', description: 'Bond investments' },
-          { id: 3, name: 'Real Estate', description: 'Real estate investments' },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
+    it('calls getRequestList with correct endpoint', async () => {
+      const mockCategories = [
+        { id: 1, name: 'Category 1' },
+        { id: 2, name: 'Category 2' },
+      ];
+      
+      mockGetRequestList.mockResolvedValue(createMockFetchResult(mockCategories));
+      
       const result = await getAllHoldingCategories();
-
-      expect(mockGetRequestList).toHaveBeenCalledWith('/api/v1/holding-categories');
-      expect(result).toEqual(mockResponse);
+      
+      expect(mockGetRequestList).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT);
+      expect(result).toEqual(mockCategories);
     });
 
-    it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: false,
-        data: null,
-        responseMessage: 'Failed to fetch holding categories',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles request error', async () => {
-      const mockError = new Error('Network error');
+    it('handles errors from getRequestList', async () => {
+      const mockError = new Error('API Error');
       mockGetRequestList.mockRejectedValue(mockError);
-
-      await expect(getAllHoldingCategories()).rejects.toThrow('Network error');
-    });
-
-    it('handles empty categories list', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles single category', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Single Category', description: 'A single category' },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles categories with null descriptions', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Category A', description: null },
-          { id: 2, name: 'Category B', description: 'Has description' },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles categories with undefined descriptions', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Category A', description: undefined },
-          { id: 2, name: 'Category B', description: 'Has description' },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles categories with empty descriptions', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Category A', description: '' },
-          { id: 2, name: 'Category B', description: 'Has description' },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles categories with special characters in names', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Category & Co.', description: 'Special characters' },
-          { id: 2, name: 'Category-Name', description: 'Hyphenated name' },
-          { id: 3, name: 'Category_Name', description: 'Underscore name' },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
-    });
-
-    it('handles categories with long names and descriptions', async () => {
-      const mockResponse: GetRequestResultList<Category> = {
-        successful: true,
-        data: [
-          { 
-            id: 1, 
-            name: 'Very Long Category Name That Exceeds Normal Length', 
-            description: 'This is a very long description that contains a lot of text and might exceed normal length limits in some cases where the description field is quite lengthy and detailed' 
-          },
-        ],
-        responseMessage: 'Success',
-      };
-
-      mockGetRequestList.mockResolvedValue(mockResponse);
-
-      const result = await getAllHoldingCategories();
-
-      expect(result).toEqual(mockResponse);
+      
+      await expect(getAllHoldingCategories()).rejects.toThrow('API Error');
+      expect(mockGetRequestList).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT);
     });
   });
-}); 
+
+  describe('deleteHoldingCategory', () => {
+    it('calls deleteRequest with correct endpoint and id', async () => {
+      const mockDeletedCategory = { id: 1, name: 'Deleted Category' };
+      mockDeleteRequest.mockResolvedValue(createMockFetchResult(mockDeletedCategory));
+      
+      const result = await deleteHoldingCategory(1);
+      
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT, 1);
+      expect(result).toEqual(createMockFetchResult(mockDeletedCategory));
+    });
+
+    it('handles errors from deleteRequest', async () => {
+      const mockError = new Error('Delete Error');
+      mockDeleteRequest.mockRejectedValue(mockError);
+      
+      await expect(deleteHoldingCategory(1)).rejects.toThrow('Delete Error');
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT, 1);
+    });
+
+    it('works with different id values', async () => {
+      const mockDeletedCategory = { id: 999, name: 'Another Category' };
+      mockDeleteRequest.mockResolvedValue(createMockFetchResult(mockDeletedCategory));
+      
+      const result = await deleteHoldingCategory(999);
+      
+      expect(mockDeleteRequest).toHaveBeenCalledWith(HOLDING_CATEGORIES_ENDPOINT, 999);
+      expect(result).toEqual(mockDeletedCategory);
+    });
+  });
+});

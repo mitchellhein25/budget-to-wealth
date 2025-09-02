@@ -1,10 +1,16 @@
 import { getCategoriesList, getExpenseCategoriesList, getIncomeCategoriesList } from '../categoriesRequests';
-import { getRequestList, GetRequestResultList } from '../../rest-methods/getRequest';
+import { getRequestList, FetchResult } from '../../';
 import { CashFlowCategory } from '@/app/cashflow/components/components/CashFlowCategory';
 
 jest.mock('../../rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
 }));
+
+const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
+  data,
+  responseMessage: 'Success',
+  successful: true,
+});
 
 describe('categoriesRequests', () => {
   const mockGetRequestList = getRequestList as jest.MockedFunction<typeof getRequestList>;
@@ -15,14 +21,10 @@ describe('categoriesRequests', () => {
 
   describe('getCategoriesList', () => {
     it('fetches categories for income type', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Salary', categoryType: 'Income' },
-          { id: 2, name: 'Freelance', categoryType: 'Income' },
-        ],
-        responseMessage: 'Success',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([
+        { id: 1, name: 'Salary', categoryType: 'Income' },
+        { id: 2, name: 'Freelance', categoryType: 'Income' },
+      ]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -33,14 +35,10 @@ describe('categoriesRequests', () => {
     });
 
     it('fetches categories for expense type', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([
           { id: 1, name: 'Food', categoryType: 'Expense' },
           { id: 2, name: 'Transport', categoryType: 'Expense' },
-        ],
-        responseMessage: 'Success',
-      };
+      ]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -51,11 +49,7 @@ describe('categoriesRequests', () => {
     });
 
     it('handles failed request', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: false,
-        data: null,
-        responseMessage: 'Failed to fetch categories',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -72,11 +66,7 @@ describe('categoriesRequests', () => {
     });
 
     it('handles empty response data', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [],
-        responseMessage: 'Success',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -86,13 +76,9 @@ describe('categoriesRequests', () => {
     });
 
     it('handles both income and expense types', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Category 1', categoryType: 'Income' },
-        ],
-        responseMessage: 'Success',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([
+        { id: 1, name: 'Category 1', categoryType: 'Income' },
+      ]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -107,15 +93,11 @@ describe('categoriesRequests', () => {
 
   describe('getExpenseCategoriesList', () => {
     it('fetches expense categories', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([
           { id: 1, name: 'Food', categoryType: 'Expense' },
           { id: 2, name: 'Transport', categoryType: 'Expense' },
           { id: 3, name: 'Entertainment', categoryType: 'Expense' },
-        ],
-        responseMessage: 'Success',
-      };
+      ]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -126,11 +108,7 @@ describe('categoriesRequests', () => {
     });
 
     it('handles failed expense categories request', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: false,
-        data: null,
-        responseMessage: 'Failed to fetch expense categories',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -147,11 +125,7 @@ describe('categoriesRequests', () => {
     });
 
     it('handles empty expense categories', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [],
-        responseMessage: 'Success',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -163,15 +137,11 @@ describe('categoriesRequests', () => {
 
   describe('getIncomeCategoriesList', () => {
     it('fetches income categories', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [
-          { id: 1, name: 'Salary', categoryType: 'Income' },
-          { id: 2, name: 'Freelance', categoryType: 'Income' },
-          { id: 3, name: 'Investment', categoryType: 'Income' },
-        ],
-        responseMessage: 'Success',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([
+        { id: 1, name: 'Salary', categoryType: 'Income' },
+        { id: 2, name: 'Freelance', categoryType: 'Income' },
+        { id: 3, name: 'Investment', categoryType: 'Income' },
+      ]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -182,11 +152,7 @@ describe('categoriesRequests', () => {
     });
 
     it('handles failed income categories request', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: false,
-        data: null,
-        responseMessage: 'Failed to fetch income categories',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 
@@ -203,11 +169,7 @@ describe('categoriesRequests', () => {
     });
 
     it('handles empty income categories', async () => {
-      const mockResponse: GetRequestResultList<CashFlowCategory> = {
-        successful: true,
-        data: [],
-        responseMessage: 'Success',
-      };
+      const mockResponse: FetchResult<CashFlowCategory[]> = createMockFetchResult([]);
 
       mockGetRequestList.mockResolvedValue(mockResponse);
 

@@ -1,6 +1,6 @@
-import { deleteRequest } from '../deleteRequest';
+import { fetchWithAuth, deleteRequest } from '../..';
 
-jest.mock('@/app/lib/api/apiClient', () => ({
+jest.mock('../../apiClient', () => ({
   fetchWithAuth: jest.fn(),
   HttpMethod: {
     GET: 'GET',
@@ -9,8 +9,6 @@ jest.mock('@/app/lib/api/apiClient', () => ({
     DELETE: 'DELETE',
   },
 }));
-
-import { fetchWithAuth } from '@/app/lib/api/apiClient';
 
 describe('deleteRequest', () => {
   const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;

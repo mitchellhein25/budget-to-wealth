@@ -1,9 +1,5 @@
-import { getBudgetsByDateRange, deleteBudget } from '../budgetRequests';
-import { getRequestList, GetRequestResultList } from '../../rest-methods/getRequest';
-import { deleteRequest } from '../../rest-methods/deleteRequest';
-import { getQueryStringForDateRange } from '../queryHelpers';
-import { BUDGETS_ENDPOINT } from '../endpoints';
-import { DateRange } from '@/app/components/DatePicker';
+import { DateRange } from "@/app/components";
+import { BUDGETS_ENDPOINT, deleteBudget, deleteRequest, FetchResult, getBudgetsByDateRange, getQueryStringForDateRange, getRequestList } from "../../";
 
 jest.mock('../../rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
@@ -20,6 +16,12 @@ jest.mock('../queryHelpers', () => ({
 jest.mock('../endpoints', () => ({
   BUDGETS_ENDPOINT: 'test-budgets-endpoint',
 }));
+
+const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
+  data,
+  responseMessage: 'Success',
+  successful: true,
+});
 
 describe('budgetRequests', () => {
   const mockGetRequestList = jest.mocked(getRequestList);
@@ -39,12 +41,7 @@ describe('budgetRequests', () => {
     });
 
     it('should call getRequestList with correct endpoint and query string', async () => {
-      const mockResponse: GetRequestResultList<unknown> = { 
-        successful: true, 
-        data: [], 
-        responseMessage: 'Success' 
-      };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue(createMockFetchResult([]));
 
       await getBudgetsByDateRange(mockDateRange);
 
@@ -58,12 +55,7 @@ describe('budgetRequests', () => {
         { id: 2, amount: 500, category: { name: 'Transport' } },
         { id: 3, amount: 200, category: null },
       ];
-      const mockResponse: GetRequestResultList<unknown> = { 
-        successful: true, 
-        data: mockBudgets, 
-        responseMessage: 'Success' 
-      };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue(createMockFetchResult(mockBudgets));
 
       const result = await getBudgetsByDateRange(mockDateRange);
 
@@ -76,12 +68,7 @@ describe('budgetRequests', () => {
     });
 
     it('should handle empty budgets array when successful', async () => {
-      const mockResponse: GetRequestResultList<unknown> = { 
-        successful: true, 
-        data: [], 
-        responseMessage: 'Success' 
-      };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue(createMockFetchResult([]));
 
       const result = await getBudgetsByDateRange(mockDateRange);
 
@@ -90,14 +77,9 @@ describe('budgetRequests', () => {
     });
 
     it('should return unsuccessful response without processing when getRequestList fails', async () => {
-      const mockResponse: GetRequestResultList<unknown> = { 
-        successful: false, 
-        data: null, 
-        responseMessage: 'Error fetching budgets' 
-      };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue({ successful: false, data: null, responseMessage: 'Error fetching budgets' } as FetchResult<unknown[]>);
 
-      const result = await getBudgetsByDateRange(mockDateRange);
+      const result = await getBudgetsByDateRange(mockDateRange);  
 
       expect(result.successful).toBe(false);
       expect(result.data).toBeNull();
@@ -108,12 +90,12 @@ describe('budgetRequests', () => {
       const mockBudgets = [
         { id: 1, amount: 1000, category: null },
       ];
-      const mockResponse: GetRequestResultList<unknown> = { 
+      const mockResponse: FetchResult<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 
       };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue(mockResponse as FetchResult<unknown[]>);
 
       const result = await getBudgetsByDateRange(mockDateRange);
 
@@ -127,12 +109,12 @@ describe('budgetRequests', () => {
       const mockBudgets = [
         { id: 1, amount: 1000, category: undefined },
       ];
-      const mockResponse: GetRequestResultList<unknown> = { 
+      const mockResponse: FetchResult<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 
       };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue(mockResponse as FetchResult<unknown[]>);
 
       const result = await getBudgetsByDateRange(mockDateRange);
 
@@ -146,12 +128,12 @@ describe('budgetRequests', () => {
       const mockBudgets = [
         { id: 1, amount: 1000, category: {} },
       ];
-      const mockResponse: GetRequestResultList<unknown> = { 
+      const mockResponse: FetchResult<unknown> = { 
         successful: true, 
         data: mockBudgets, 
         responseMessage: 'Success' 
       };
-      mockGetRequestList.mockResolvedValue(mockResponse);
+      mockGetRequestList.mockResolvedValue(mockResponse as FetchResult<unknown[]>);
 
       const result = await getBudgetsByDateRange(mockDateRange);
 
@@ -167,7 +149,7 @@ describe('budgetRequests', () => {
 
     it('should call deleteRequest with correct endpoint and id', async () => {
       const mockResponse = { successful: true, data: null, responseMessage: 'Success' };
-      mockDeleteRequest.mockResolvedValue(mockResponse);
+      mockDeleteRequest.mockResolvedValue(mockResponse as FetchResult<unknown>);
 
       await deleteBudget(mockBudgetId);
 
@@ -176,7 +158,7 @@ describe('budgetRequests', () => {
 
     it('should return successful response from deleteRequest', async () => {
       const mockResponse = { successful: true, data: null, responseMessage: 'Success' };
-      mockDeleteRequest.mockResolvedValue(mockResponse);
+      mockDeleteRequest.mockResolvedValue(mockResponse as FetchResult<unknown>);
 
       const result = await deleteBudget(mockBudgetId);
 

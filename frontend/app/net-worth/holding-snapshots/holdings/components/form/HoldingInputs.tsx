@@ -5,7 +5,7 @@ import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { InputFieldSetTemplate } from '@/app/components/form';
 import { Category } from '@/app/components/categories/Category';
-import { getAllHoldingCategories } from '@/app/lib/api/data-methods';
+import { getAllHoldingCategories } from '@/app/lib/api';
 import { HOLDING_CATEGORY_ITEM_NAME_LINK, HOLDING_CATEGORY_ITEM_NAME_PLURAL, HOLDING_ITEM_NAME_LOWERCASE, HOLDING_ITEM_NAME_LOWERCASE_PLURAL, HOLDING_TYPE_ASSET, HOLDING_TYPE_DEBT, HoldingFormData } from '..';
 import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '../../../components';
 

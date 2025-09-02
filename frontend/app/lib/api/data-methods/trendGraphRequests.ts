@@ -1,8 +1,7 @@
 import { DateRange } from "@/app/components";
-import { CASH_FLOW_TREND_GRAPH_ENDPOINT, getQueryStringForDateRange, NET_WORTH_TREND_GRAPH_ENDPOINT } from ".";
-import { getRequestSingle } from "../rest-methods";
-import { CashFlowTrendGraphData } from "@/app/dashboards/cashflow/components/CashFlowTrendGraphData";
-import { NetWorthTrendGraphData } from "@/app/dashboards/net-worth/components/NetWorthTrendGraphData";
+import { CashFlowTrendGraphData } from "@/app/dashboards/cashflow/components";
+import { NetWorthTrendGraphData } from "@/app/dashboards/net-worth/components";
+import { getRequestSingle, CASH_FLOW_TREND_GRAPH_ENDPOINT, getQueryStringForDateRange, NET_WORTH_TREND_GRAPH_ENDPOINT } from "..";
 
 export async function getCashFlowTrendGraphForDateRange(dateRange: DateRange) {
   return await getRequestSingle<CashFlowTrendGraphData>(`${CASH_FLOW_TREND_GRAPH_ENDPOINT}?${getQueryStringForDateRange(dateRange)}`)

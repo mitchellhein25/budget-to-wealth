@@ -1,6 +1,6 @@
-import { getRequestSingle } from '../getRequest';
+import { FetchResult, getRequestList, getRequestSingle, fetchWithAuth } from '../..';
 
-jest.mock('@/app/lib/api/apiClient', () => ({
+  jest.mock('../../apiClient', () => ({
   fetchWithAuth: jest.fn(),
   HttpMethod: {
     GET: 'GET',
@@ -10,44 +10,144 @@ jest.mock('@/app/lib/api/apiClient', () => ({
   },
 }));
 
-import { fetchWithAuth } from '@/app/lib/api/apiClient';
+const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;
 
-describe('getRequestSingle', () => {
-  const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;
-
+describe('Get Request Methods', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should make a GET request with correct parameters', async () => {
-    const mockResponse = { data: 'test', successful: true, responseMessage: '' };
-    mockFetchWithAuth.mockResolvedValue(mockResponse);
-
-    const url = '/api/test';
-    const result = await getRequestSingle(url);
-
-    expect(mockFetchWithAuth).toHaveBeenCalledWith({
-      endpoint: url,
-      method: 'GET',
+  describe('getRequestList', () => {
+    it('calls fetchWithAuth with correct parameters for list request', async () => {
+      const mockResponse: FetchResult<{ id: number; name: string }[]> = {
+        data: [{ id: 1, name: 'Item 1' }, { id: 2, name: 'Item 2' }],
+        responseMessage: 'Success',
+        successful: true,
+      };
+      
+      mockFetchWithAuth.mockResolvedValue(mockResponse);
+      
+      const result = await getRequestList<{ id: number; name: string }>('test-endpoint');
+      
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: 'test-endpoint',
+        method: 'GET',
+      });
+      expect(result).toEqual(mockResponse);
     });
-    expect(result).toEqual(mockResponse);
+
+    it('handles errors from fetchWithAuth', async () => {
+      const mockError = new Error('API Error');
+      mockFetchWithAuth.mockRejectedValue(mockError);
+      
+      await expect(getRequestList('test-endpoint')).rejects.toThrow('API Error');
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: 'test-endpoint',
+        method: 'GET',
+      });
+    });
+
+    it('works with different endpoint values', async () => {
+      const mockResponse: FetchResult<{ id: number }[]> = {
+        data: [{ id: 1 }],
+        responseMessage: 'Success',
+        successful: true,
+      };
+      
+      mockFetchWithAuth.mockResolvedValue(mockResponse);
+      
+      const result = await getRequestList<{ id: number }>('another-endpoint');
+      
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: 'another-endpoint',
+        method: 'GET',
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('works with empty endpoint', async () => {
+      const mockResponse: FetchResult<{ id: number }[]> = {
+        data: [],
+        responseMessage: 'Success',
+        successful: true,
+      };
+      
+      mockFetchWithAuth.mockResolvedValue(mockResponse);
+      
+      const result = await getRequestList<{ id: number }>('');
+      
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: '',
+        method: 'GET',
+      });
+      expect(result).toEqual(mockResponse);
+    });
   });
 
-  it('should handle network errors', async () => {
-    mockFetchWithAuth.mockRejectedValue(new Error('Network error'));
+  describe('getRequestSingle', () => {
+    it('calls fetchWithAuth with correct parameters for single request', async () => {
+      const mockResponse: FetchResult<{ id: number; name: string }> = {
+        data: { id: 1, name: 'Single Item' },
+        responseMessage: 'Success',
+        successful: true,
+      };
+      
+      mockFetchWithAuth.mockResolvedValue(mockResponse);
+      
+      const result = await getRequestSingle<{ id: number; name: string }>('test-endpoint');
+      
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: 'test-endpoint',
+        method: 'GET',
+      });
+      expect(result).toEqual(mockResponse);
+    });
 
-    const url = '/api/test';
-    
-    await expect(getRequestSingle(url)).rejects.toThrow('Network error');
+    it('handles errors from fetchWithAuth', async () => {
+      const mockError = new Error('API Error');
+      mockFetchWithAuth.mockRejectedValue(mockError);
+      
+      await expect(getRequestSingle('test-endpoint')).rejects.toThrow('API Error');
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: 'test-endpoint',
+        method: 'GET',
+      });
+    });
+
+    it('works with different endpoint values', async () => {
+      const mockResponse: FetchResult<{ id: number }> = {
+        data: { id: 999 },
+        responseMessage: 'Success',
+        successful: true,
+      };
+      
+      mockFetchWithAuth.mockResolvedValue(mockResponse);
+      
+      const result = await getRequestSingle<{ id: number }>('different-endpoint');
+      
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: 'different-endpoint',
+        method: 'GET',
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('works with empty endpoint', async () => {
+      const mockResponse: FetchResult<{ id: number }> = {
+        data: null,
+        responseMessage: 'Success',
+        successful: true,
+      };
+      
+      mockFetchWithAuth.mockResolvedValue(mockResponse);
+      
+      const result = await getRequestSingle<{ id: number }>('');
+      
+      expect(mockFetchWithAuth).toHaveBeenCalledWith({
+        endpoint: '',
+        method: 'GET',
+      });
+      expect(result).toEqual(mockResponse);
+    });
   });
-
-  it('should handle non-ok responses', async () => {
-    const mockResponse = { data: null, successful: false, responseMessage: 'Not authorized.' };
-    mockFetchWithAuth.mockResolvedValue(mockResponse);
-
-    const url = '/api/test';
-    
-    const result = await getRequestSingle(url);
-    expect(result).toEqual(mockResponse);
-  });
-}); 
+});

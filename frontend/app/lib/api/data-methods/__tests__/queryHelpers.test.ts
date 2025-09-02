@@ -1,7 +1,7 @@
-import { getQueryStringForDateRange } from '../queryHelpers';
-import { convertDateToISOString } from '@/app/components/Utils';
+import { getQueryStringForDateRange } from '../..';
+import { convertDateToISOString } from '@/app/components';
 
-jest.mock('@/app/components/Utils');
+jest.mock('@/app/components');
 
 const mockConvertDateToISOString = convertDateToISOString as jest.MockedFunction<typeof convertDateToISOString>;
 

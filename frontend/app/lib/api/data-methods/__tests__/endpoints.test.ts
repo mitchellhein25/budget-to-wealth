@@ -10,7 +10,7 @@ import {
   AVAILABLE_DATE_RANGE_ENDPOINT,
   CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT,
   HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT,
-} from './endpoints';
+} from '../../';
 
 describe('API Endpoints', () => {
   it('exports all required endpoint constants', () => {

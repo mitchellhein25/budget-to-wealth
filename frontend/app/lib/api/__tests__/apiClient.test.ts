@@ -1,8 +1,8 @@
-import { fetchWithAuth, HttpMethod } from '../apiClient';
-import { getAccessToken } from '@/app/lib/auth/getAccessToken';
+import { fetchWithAuth, HttpMethod } from '../';
+import { getAccessToken } from '../../auth';
 
 // Mock dependencies
-jest.mock('@/app/lib/auth/getAccessToken', () => ({
+jest.mock('../../auth/getAccessToken', () => ({
   getAccessToken: jest.fn()
 }));
 

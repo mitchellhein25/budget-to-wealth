@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { getAllHoldings } from '@/app/lib/api/data-methods';
+import { getAllHoldings } from '@/app/lib/api';
 import { convertDateToISOString } from '@/app/components';
 import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings/components';

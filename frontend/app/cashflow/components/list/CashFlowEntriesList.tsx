@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
+import { deleteCashFlowEntry } from '@/app/lib/api';
 import { ListTable } from '@/app/components/table/ListTable';
 import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '..';
 
