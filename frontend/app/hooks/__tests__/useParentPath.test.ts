@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { useParentPath } from './useParentPath';
+import { useParentPath } from '@/app/hooks';
 
 const mockUsePathname = jest.fn();
 

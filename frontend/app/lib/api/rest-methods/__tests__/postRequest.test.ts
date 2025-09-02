@@ -1,6 +1,6 @@
-import { fetchWithAuth, postRequest } from '../..';
+import { fetchWithAuth, postRequest } from '@/app/lib/api';
 
-jest.mock('../../apiClient', () => ({
+jest.mock('@/app/lib/api/apiClient', () => ({
   fetchWithAuth: jest.fn(),
   HttpMethod: {
     GET: 'GET',

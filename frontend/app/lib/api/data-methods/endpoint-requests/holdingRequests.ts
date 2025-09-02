@@ -1,5 +1,5 @@
 import { Holding } from "@/app/net-worth/holding-snapshots/holdings/components";
-import { deleteRequest, getRequestList, HOLDINGS_ENDPOINT } from "..";
+import { deleteRequest, getRequestList, HOLDINGS_ENDPOINT } from "@/app/lib/api";
 
 export async function getAllHoldings() {
   return await getRequestList<Holding>(HOLDINGS_ENDPOINT);

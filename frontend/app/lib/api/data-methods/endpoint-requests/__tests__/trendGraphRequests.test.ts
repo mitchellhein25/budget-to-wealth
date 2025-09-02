@@ -1,12 +1,12 @@
-import { FetchResult, getCashFlowTrendGraphForDateRange, getNetWorthTrendGraphForDateRange,getQueryStringForDateRange, getRequestSingle } from '../../';
+import { FetchResult, getCashFlowTrendGraphForDateRange, getNetWorthTrendGraphForDateRange,getQueryStringForDateRange, getRequestSingle } from '@/app/lib/api';
 import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow/components';
 import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth/components';
 
-jest.mock('../../rest-methods', () => ({
+jest.mock('"@/app/lib/api/rest-methods', () => ({
   getRequestSingle: jest.fn(),
 }));
 
-jest.mock('../../queryHelpers', () => ({
+jest.mock('@/app/lib/api/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 

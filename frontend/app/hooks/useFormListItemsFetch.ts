@@ -1,6 +1,6 @@
 import { useCallback, useState, useTransition } from "react";
 import { MessageState, MessageType } from "../components";
-import { FetchResult } from "../lib/api/apiClient";
+import { FetchResult } from "../lib/api";
 
 export type useItemsFetchResult = {
   isPending: boolean;

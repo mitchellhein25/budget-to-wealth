@@ -1,8 +1,7 @@
-import { getCategoriesList, getExpenseCategoriesList, getIncomeCategoriesList } from '../categoriesRequests';
-import { getRequestList, FetchResult } from '../../';
-import { CashFlowCategory } from '@/app/cashflow/components/components/CashFlowCategory';
+import { CashFlowCategory } from '@/app/cashflow/components';
+import { getRequestList, FetchResult, getCategoriesList, getExpenseCategoriesList, getIncomeCategoriesList } from '@/app/lib/api';
 
-jest.mock('../../rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
 }));
 

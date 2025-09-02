@@ -1,19 +1,19 @@
 import { DateRange } from "@/app/components";
-import { BUDGETS_ENDPOINT, deleteBudget, deleteRequest, FetchResult, getBudgetsByDateRange, getQueryStringForDateRange, getRequestList } from "../../";
+import { BUDGETS_ENDPOINT, deleteBudget, deleteRequest, FetchResult, getBudgetsByDateRange, getQueryStringForDateRange, getRequestList } from '@/app/lib/api';
 
-jest.mock('../../rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
 }));
 
-jest.mock('../../rest-methods/deleteRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('../queryHelpers', () => ({
+jest.mock('@/app/lib/api/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
-jest.mock('../endpoints', () => ({
+jest.mock('@/app/lib/api/endpoints', () => ({
   BUDGETS_ENDPOINT: 'test-budgets-endpoint',
 }));
 

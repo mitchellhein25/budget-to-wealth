@@ -1,6 +1,6 @@
-import { getAccessToken, auth0 } from '..';
+import { getAccessToken, auth0 } from '@/app/lib/auth';
 
-jest.mock('../auth0', () => ({
+jest.mock('@/app/lib/auth/auth0', () => ({
   auth0: {
     getSession: jest.fn()
   }

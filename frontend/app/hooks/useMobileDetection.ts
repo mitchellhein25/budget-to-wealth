@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export function useMobileDetection() {
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.LARGE);

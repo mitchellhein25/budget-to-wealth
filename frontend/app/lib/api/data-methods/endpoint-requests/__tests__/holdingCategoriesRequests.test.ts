@@ -1,12 +1,11 @@
-import { Category } from '@/app/components/categories/Category';
-import { getRequestList, deleteRequest, getAllHoldingCategories, deleteHoldingCategory, FetchResult, HOLDING_CATEGORIES_ENDPOINT } from '../..';
+import { getRequestList, deleteRequest, getAllHoldingCategories, deleteHoldingCategory, FetchResult, HOLDING_CATEGORIES_ENDPOINT } from '@/app/lib/api';
 
-jest.mock('../../getRequest', () => ({
+jest.mock('"@/app/lib/api/getRequest', () => ({
   getRequestList: jest.fn(),
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('../../endpoints', () => ({
+jest.mock('"@/app/lib/api/endpoints', () => ({
   HOLDING_CATEGORIES_ENDPOINT: 'HoldingCategories',
 }));
 

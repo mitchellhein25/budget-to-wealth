@@ -1,4 +1,4 @@
-import { auth0 } from '..';
+import { auth0 } from '@/app/lib/auth';
 
 describe('auth0', () => {
   const originalEnv = process.env;

@@ -1,15 +1,15 @@
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components/Holding';
-import { getRequestList, deleteRequest, getAllHoldings, deleteHolding, HOLDINGS_ENDPOINT, FetchResult } from '../..';
+import { getRequestList, deleteRequest, getAllHoldings, deleteHolding, HOLDINGS_ENDPOINT, FetchResult } from '@/app/lib/api';
 
-jest.mock('../../rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
 }));
 
-jest.mock('../../rest-methods/deleteRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('../endpoints', () => ({
+jest.mock('@/app/lib/api/endpoints', () => ({
   HOLDINGS_ENDPOINT: 'Holdings',
 }));
 

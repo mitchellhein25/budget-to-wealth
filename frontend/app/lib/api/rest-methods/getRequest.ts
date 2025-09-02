@@ -1,5 +1,5 @@
 'use server';
-import { FetchResult, fetchWithAuth, HttpMethod } from '../';
+import { FetchResult, fetchWithAuth, HttpMethod } from '@/app/lib/api';
 
 export async function getRequestList<T>(endpoint: string): Promise<FetchResult<T[]>> {
   return await fetchWithAuth<T[]>(

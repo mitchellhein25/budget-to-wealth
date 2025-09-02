@@ -1,5 +1,5 @@
 'use server'
-import { FetchResult, fetchWithAuth, HttpMethod } from '../';
+import { FetchResult, fetchWithAuth, HttpMethod } from '@/app/lib/api';
 
 export async function deleteRequest<T>(endpoint: string, id: number): Promise<FetchResult<T>> {
   const result = await fetchWithAuth<T>(

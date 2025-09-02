@@ -11,22 +11,22 @@ import {
   deleteRequest,
   getQueryStringForDateRange,
   FetchResult
-} from '../..';
+} from '@/app/lib/api';
 
-jest.mock('../rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
   getRequestSingle: jest.fn(),
 }));
 
-jest.mock('../rest-methods/deleteRequest', () => ({
+jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('./queryHelpers', () => ({
+jest.mock('@/app/lib/api/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
-jest.mock('./', () => ({
+jest.mock('@/app/lib/api/endpoints', () => ({
   HOLDING_SNAPSHOTS_ENDPOINT: 'HoldingSnapshots',
   HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT: 'HoldingSnapshots/AvailableDateRange',
 }));

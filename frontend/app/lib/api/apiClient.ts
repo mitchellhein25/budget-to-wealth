@@ -1,5 +1,5 @@
-import { getAccessToken } from '../auth';
-import { API_BASE_URL } from '.';
+import { getAccessToken } from '@/app/lib/auth';
+import { API_BASE_URL } from '@/app/lib/api';
 
 export const HttpMethod = {
   GET: 'GET', 

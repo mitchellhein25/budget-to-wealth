@@ -1,5 +1,5 @@
 import { Category } from "@/app/components/categories";
-import { HOLDING_CATEGORIES_ENDPOINT, deleteRequest, getRequestList } from "..";
+import { HOLDING_CATEGORIES_ENDPOINT, deleteRequest, getRequestList } from "@/app/lib/api";
 
 export async function getAllHoldingCategories() {
   return await getRequestList<Category>(HOLDING_CATEGORIES_ENDPOINT);

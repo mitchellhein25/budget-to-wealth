@@ -1,4 +1,4 @@
-import { getQueryStringForDateRange } from '../..';
+import { getQueryStringForDateRange } from '@/app/lib/api';
 import { convertDateToISOString } from '@/app/components';
 
 jest.mock('@/app/components');
