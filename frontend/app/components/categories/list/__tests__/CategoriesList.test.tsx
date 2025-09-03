@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { CategoriesList } from './CategoriesList';
+import { CategoriesList } from '@/app/components';
 
 const listTableTestId = 'list-table';
 const listTableText = 'List Table';

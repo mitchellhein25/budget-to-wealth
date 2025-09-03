@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DesktopCategoryRow } from '../DesktopCategoryRow';
-import { Category } from '..';
+import { DesktopCategoryRow, Category } from '@/app/components';
 
 const editButtonTestId = 'edit-button';
 const deleteButtonTestId = 'delete-button';
@@ -26,9 +25,6 @@ describe('DesktopCategoryRow', () => {
   const mockCategory: Category = {
     id: 1,
     name: 'Test Category',
-    type: 'expense',
-    color: '#FF0000',
-    icon: 'test-icon',
   };
 
   const mockOnEdit = jest.fn();
@@ -81,7 +77,7 @@ describe('DesktopCategoryRow', () => {
   it('handles category with string id', () => {
     const categoryWithStringId: Category = {
       ...mockCategory,
-      id: 'string-id',
+      id: 1,
     };
     
     render(

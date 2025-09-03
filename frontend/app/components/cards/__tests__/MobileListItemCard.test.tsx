@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from '../MobileListItemCard';
+import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from '@/app/components';
 
 describe('MobileListItemCard', () => {
   it('renders with default className', () => {

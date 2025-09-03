@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { CategoriesForm } from '../CategoriesForm';
+import { CategoriesForm } from '@/app/components';
 
 const formTemplateTestId = 'form-template';
 const categoriesInputsTestId = 'categories-inputs';
@@ -41,7 +41,7 @@ jest.mock('@/app/components/buttons/ResetButton', () => ({
   ResetButton: () => <div>{resetButtonText}</div>,
 }));
 
-jest.mock('./CategoriesInputs', () => ({
+jest.mock('@/app/components/categories/form/CategoriesInputs', () => ({
   __esModule: true,
   CategoriesInputs: ({}: { editingFormData: unknown; onChange: () => void }) => (
     <div data-testid={categoriesInputsTestId}>

@@ -1,9 +1,8 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { CategoriesPage } from '../CategoriesPage';
 import { useForm } from '@/app/hooks';
-import { getRequestList } from '@/app/lib/api/rest-methods';
-import { messageTypeIsError } from '../Utils';
-import { Category, CategoryFormData } from '../Category';
+import { getRequestList } from '@/app/lib/api';
+import { messageTypeIsError } from '@/app/lib/utils';
+import { Category, CategoryFormData, CategoriesPage } from '@/app/components';
 import { CashFlowCategory } from '@/app/cashflow/components';
 
 const categoriesFormTestId = 'categories-form';
@@ -20,7 +19,7 @@ jest.mock('@/app/lib/api/rest-methods', () => ({
   getRequestList: jest.fn(),
 }));
 
-jest.mock('./form/CategoriesForm', () => ({
+jest.mock('@/app/components/categories/form/CategoriesForm', () => ({
   __esModule: true,
   CategoriesForm: ({ categoryTypeName }: { formState: unknown; categoryTypeName: string }) => (
     <div data-testid={categoriesFormTestId}>
@@ -30,7 +29,7 @@ jest.mock('./form/CategoriesForm', () => ({
   ),
 }));
 
-jest.mock('./list/CategoriesList', () => ({
+jest.mock('@/app/components/categories/list/CategoriesList', () => ({
   __esModule: true,
   CategoriesList: ({ categoryTypeName, deleteEndpoint, isLoading, isError }: { 
     categories: unknown[]; 
@@ -49,7 +48,7 @@ jest.mock('./list/CategoriesList', () => ({
   ),
 }));
 
-jest.mock('../Utils', () => ({
+jest.mock('@/app/components/Utils', () => ({
   messageTypeIsError: jest.fn(),
   replaceSpacesWithDashes: jest.fn(),
 }));

@@ -1,10 +1,7 @@
 'use client'
 
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { ListTable } from '../../table/ListTable';
-import { Category } from '../Category';
-import { MobileCategoryCard } from './MobileCategoryCard';
-import { DesktopCategoryRow } from './DesktopCategoryRow';
+import { ListTable, Category, MobileCategoryCard, DesktopCategoryRow } from '@/app/components';
 
 type CategoriesListProps<T extends Category> = {
   categories: T[],

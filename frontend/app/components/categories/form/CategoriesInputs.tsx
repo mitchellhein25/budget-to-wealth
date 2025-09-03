@@ -1,6 +1,5 @@
 import React from 'react'
-import { InputFieldSetTemplate } from '../../form';
-import { CategoryFormData } from '@/app/components/categories/Category';
+import { InputFieldSetTemplate, CategoryFormData } from '@/app/components';
 
 interface CategoriesInputsProps {
   editingFormData: Partial<CategoryFormData>;

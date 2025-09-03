@@ -1,5 +1,4 @@
-import { Category } from '..';
-import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
+import { DesktopListItemRow, DesktopListItemCell, Category } from '@/app/components';
 
 interface DesktopCategoryRowProps<T extends Category> {
 	category: T;
