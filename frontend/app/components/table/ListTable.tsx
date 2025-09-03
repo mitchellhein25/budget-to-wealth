@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import TablePagination from './TablePagination';
-import { MobileState, mobileStateIsMediumOrSmaller, useMobileDetection } from '@/app/hooks';
+import { mobileStateIsMediumOrSmaller, useMobileDetection } from '@/app/hooks';
+import { TablePagination } from '@/app/components';
 import { HOLDING_SNAPSHOT_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components/constants';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components/HoldingSnapshot';
 

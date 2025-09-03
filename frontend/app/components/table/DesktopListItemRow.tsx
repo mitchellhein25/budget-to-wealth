@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditButton, DeleteButton } from '@/app/components/buttons';
+import { EditButton, DeleteButton } from '@/app/components';
 
 interface DesktopListItemRowProps {
 	children: React.ReactNode;

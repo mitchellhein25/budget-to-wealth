@@ -8,7 +8,7 @@ type TablePaginationProps = {
   handlePrevious: () => void;
 }
 
-export default function TablePagination(props: TablePaginationProps) {
+export function TablePagination(props: TablePaginationProps) {
 
   if (props.totalPages <= 1) {
     return null;
