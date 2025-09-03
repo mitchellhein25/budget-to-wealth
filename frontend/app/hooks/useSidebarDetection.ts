@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { mobileStateIsMediumOrSmaller, useMobileDetection } from "./useMobileDetection";
+import { mobileStateIsMediumOrSmaller, useMobileDetection } from "@/app/hooks";
 
 export function useSidebarDetection() {
   const [showSidebar, setShowSidebar] = useState(true);

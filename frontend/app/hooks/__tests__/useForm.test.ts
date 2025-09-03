@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useForm } from '@/app/hooks';
-import { cleanCurrencyInput } from '@/app/components';
 import { handleFormSubmit } from '@/app/components/form';
+import { cleanCurrencyInput } from '@/app/components';
 
 const TEST_ITEM_NAME = 'TestItem';
 const TEST_ENDPOINT = '/api/test-items';
