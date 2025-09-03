@@ -1,5 +1,5 @@
 import Form from 'next/form';
-import { MessageState, messageTypeIsError, messageTypeIsInfo } from '../Utils';
+import { MessageState, messageTypeIsError, messageTypeIsInfo } from '@/app/lib/utils';
 
 export type FormTemplateProps = {
   formId: string;

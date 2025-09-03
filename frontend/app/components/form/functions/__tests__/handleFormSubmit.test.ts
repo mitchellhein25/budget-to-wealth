@@ -1,4 +1,5 @@
-import { handleFormSubmit } from './handleFormSubmit';
+import { handleFormSubmit } from '@/app/components';
+import { postRequest, putRequest } from '@/app/lib/api';
 
 jest.mock('@/app/lib/api/rest-methods/postRequest', () => ({
   postRequest: jest.fn(),
@@ -8,8 +9,6 @@ jest.mock('@/app/lib/api/rest-methods/putRequest', () => ({
   putRequest: jest.fn(),
 }));
 
-import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
-import { putRequest } from '@/app/lib/api/rest-methods/putRequest';
 
 describe('handleFormSubmit', () => {
   const mockTransformFormDataToItem = jest.fn();

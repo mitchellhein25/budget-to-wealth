@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FormTemplate } from '../FormTemplate';
-import { MessageState } from '../Utils';
+import { render, screen, act } from '@testing-library/react';
+import { FormTemplate } from '@/app/components';
+import { MessageState } from '@/app/lib/utils';
 
 describe('FormTemplate', () => {
   const testTexts = {
