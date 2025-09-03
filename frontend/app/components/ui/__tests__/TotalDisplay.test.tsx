@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { TotalDisplay } from './TotalDisplay';
+import { TotalDisplay } from '../TotalDisplay';
 
 jest.mock('@/app/components/Utils', () => ({
   convertCentsToDollars: jest.fn((cents) => {

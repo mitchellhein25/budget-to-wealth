@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { UserProfile } from './';
+import { UserProfile } from '..';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
 jest.mock('next/link', () => ({
@@ -32,7 +32,7 @@ jest.mock('./utils', () => ({
   isAuthenticated: jest.fn(),
 }));
 
-import { isAuthenticated } from './utils';
+import { isAuthenticated } from '../utils';
 const mockIsAuthenticated = isAuthenticated as jest.MockedFunction<() => boolean>;
 
 describe('UserProfile', () => {

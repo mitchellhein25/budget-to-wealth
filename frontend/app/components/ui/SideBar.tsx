@@ -4,11 +4,6 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
-export type NavItem = {
-  href: string;
-  label: string;
-}
-
 export type SideBarProps = {
   navItems: NavItem[];
 }

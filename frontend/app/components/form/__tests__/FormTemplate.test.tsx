@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FormTemplate } from './FormTemplate';
+import { FormTemplate } from '../FormTemplate';
 import { MessageState } from '../Utils';
 
 describe('FormTemplate', () => {

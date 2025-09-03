@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react'
-import { useSidebarDetection } from '../hooks';
-import { NetWorthSideBar } from './holding-snapshots/components/NetWorthSideBar';
+import { useSidebarDetection } from '@/app/hooks';
+import { NetWorthSideBar } from '@/app/net-worth/components/NetWorthSideBar';
 
 export default function NetWorthPage() {
   const showSidebar = useSidebarDetection();

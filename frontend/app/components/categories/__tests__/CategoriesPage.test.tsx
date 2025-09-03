@@ -1,9 +1,9 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { CategoriesPage } from './CategoriesPage';
+import { CategoriesPage } from '../CategoriesPage';
 import { useForm } from '@/app/hooks';
 import { getRequestList } from '@/app/lib/api/rest-methods';
 import { messageTypeIsError } from '../Utils';
-import { Category, CategoryFormData } from './Category';
+import { Category, CategoryFormData } from '../Category';
 import { CashFlowCategory } from '@/app/cashflow/components';
 
 const categoriesFormTestId = 'categories-form';

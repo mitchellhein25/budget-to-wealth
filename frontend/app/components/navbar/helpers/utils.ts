@@ -11,7 +11,7 @@ export const closeDrawer = (): void => {
   }
 };
 
-export interface NavItem {
+export type NavItem = {
   href: string;
   label: string;
 }

@@ -1,4 +1,4 @@
-import { isTokenExpired, isAuthenticated, closeDrawer, NavItems } from './';
+import { isTokenExpired, isAuthenticated, closeDrawer, NavItems } from '..';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
 describe('utils', () => {

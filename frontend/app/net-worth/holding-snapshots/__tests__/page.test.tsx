@@ -1,5 +1,5 @@
 import { render, screen, act, fireEvent } from '@testing-library/react';
-import HoldingSnapshotsPage from './page';
+import HoldingSnapshotsPage from '@/app/net-worth/holding-snapshots/page';
 
 const holdingSnapshotFormTestId = 'holding-snapshot-form';
 const holdingSnapshotsListTestId = 'holding-snapshots-list';

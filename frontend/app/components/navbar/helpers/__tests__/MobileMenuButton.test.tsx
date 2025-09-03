@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { MobileMenuButton } from './MobileMenuButton';
+import { MobileMenuButton } from '../MobileMenuButton';
 
 jest.mock('lucide-react', () => ({
   Menu: ({ className }: { className?: string }) => (

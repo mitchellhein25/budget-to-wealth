@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MobileState, useMobileDetection } from '@/app/hooks';
-import { convertDateToISOString } from './Utils';
+import { convertDateToISOString } from '../Utils';
 
 export type DateRange = {
   from?: Date;

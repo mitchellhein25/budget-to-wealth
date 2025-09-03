@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { CategoriesForm } from './CategoriesForm';
+import { CategoriesForm } from '../CategoriesForm';
 
 const formTemplateTestId = 'form-template';
 const categoriesInputsTestId = 'categories-inputs';

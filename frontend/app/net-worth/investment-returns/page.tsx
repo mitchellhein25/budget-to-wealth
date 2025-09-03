@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react'
-import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
+import { NetWorthSideBar } from '../components/NetWorthSideBar';
 import { useForm, useFormListItemsFetch } from '@/app/hooks';
 import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
 import { convertManualInvestmentReturnItemToFormData, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';

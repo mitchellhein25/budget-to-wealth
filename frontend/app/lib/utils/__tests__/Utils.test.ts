@@ -1,4 +1,4 @@
-import { convertCentsToDollars, formatDate, messageTypeIsError, messageTypeIsInfo } from './Utils';
+import { convertCentsToDollars, formatDate, messageTypeIsError, messageTypeIsInfo } from '@/app/lib/utils';
 
 describe('Utils', () => {
   describe('convertCentsToDollars', () => {

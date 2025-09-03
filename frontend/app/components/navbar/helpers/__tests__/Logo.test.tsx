@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Logo } from './';
+import { Logo } from '..';
 
 jest.mock('next/image', () => ({
   __esModule: true,

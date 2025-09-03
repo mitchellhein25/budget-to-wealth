@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DatePicker } from './DatePicker';
+import { DatePicker } from '../DatePicker';
 
 jest.mock('@/app/components/Utils', () => ({
   convertDateToISOString: jest.fn((date) => date?.toISOString().slice(0, 10) ?? ''),
