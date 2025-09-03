@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SideBar } from '../SideBar';
 import { usePathname } from 'next/navigation';
+import { SideBar } from '@/app/components';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),

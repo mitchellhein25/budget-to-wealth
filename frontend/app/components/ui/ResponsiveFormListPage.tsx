@@ -1,6 +1,5 @@
-import { CashFlowSideBar } from '@/app/cashflow/components';
-import { MobileState, mobileStateIsMediumOrLarge, mobileStateIsSmallOrSmaller, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 import React from 'react'
+import { MobileState, mobileStateIsMediumOrLarge, mobileStateIsSmallOrSmaller, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 
 interface ResponsiveFormListPageProps {
   sideBar: React.ReactNode;
