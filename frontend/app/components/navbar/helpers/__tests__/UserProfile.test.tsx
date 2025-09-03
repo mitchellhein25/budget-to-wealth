@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { UserProfile } from '..';
 import { SessionData } from '@auth0/nextjs-auth0/types';
+import { isAuthenticated } from '@/app/lib/auth';
+import { UserProfile } from '@/app/components';
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -28,11 +29,10 @@ jest.mock('lucide-react', () => ({
   ),
 }));
 
-jest.mock('./utils', () => ({
+jest.mock('@/app/lib/auth', () => ({
   isAuthenticated: jest.fn(),
 }));
 
-import { isAuthenticated } from '../utils';
 const mockIsAuthenticated = isAuthenticated as jest.MockedFunction<() => boolean>;
 
 describe('UserProfile', () => {

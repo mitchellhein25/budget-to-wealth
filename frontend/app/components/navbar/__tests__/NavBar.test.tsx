@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import { usePathname } from 'next/navigation';
-import NavBar from './NavBar';
 import { SessionData } from '@auth0/nextjs-auth0/types';
+import { usePathname } from 'next/navigation';
+import { NavBar } from '@/app/components';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock('./helpers', () => ({
+jest.mock('@/app/components/navbar/helpers', () => ({
   Logo: ({ className }: { className?: string }) => (
     <div data-testid="logo" className={className}>Logo Component</div>
   ),

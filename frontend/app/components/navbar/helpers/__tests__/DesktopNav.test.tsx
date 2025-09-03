@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { DesktopNav } from '../DesktopNav';
-import { NavItems } from '../utils';
+import { DesktopNav, NavItems } from '@/app/components';
 
 describe('DesktopNav', () => {
   it('renders all navigation items', () => {

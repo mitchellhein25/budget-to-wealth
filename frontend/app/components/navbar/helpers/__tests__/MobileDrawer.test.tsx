@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileDrawer } from '../MobileDrawer';
-import { NavItems, CashflowSubNavItems, NetWorthSubNavItems } from '../utils';
+import { MobileDrawer, NavItems, CashflowSubNavItems, NetWorthSubNavItems } from '@/app/components';
 
 jest.mock('lucide-react', () => ({
   X: ({ className }: { className?: string }) => (

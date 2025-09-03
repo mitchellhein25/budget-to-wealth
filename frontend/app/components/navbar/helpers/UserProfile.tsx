@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Import, User } from 'lucide-react';
-import { isAuthenticated } from './utils';
 import { SessionData } from '@auth0/nextjs-auth0/types';
+import { isAuthenticated } from '@/app/lib/auth';
 
 export function UserProfile({ session, pathname }: { session: SessionData | null, pathname: string }) {
   if (!isAuthenticated(session)) {
