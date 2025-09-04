@@ -1,14 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { HoldingSnapshotsList } from '../HoldingSnapshotsList';
-import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
-import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
+import { deleteHoldingSnapshot } from '@/app/lib/api';
+import { HoldingSnapshotsList, HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 
 jest.mock('@/app/hooks/useMobileDetection', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api/data-methods/deleteHoldingSnapshot', () => ({
   deleteHoldingSnapshot: jest.fn()
 }));
 

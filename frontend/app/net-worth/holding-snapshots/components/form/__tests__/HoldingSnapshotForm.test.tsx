@@ -1,9 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { HoldingSnapshotForm } from '../HoldingSnapshotForm';
 import { FormState } from '@/app/hooks';
-import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
-import { HoldingSnapshot } from '../../HoldingSnapshot';
+import { HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 
 // Mock the dependencies
 jest.mock('@/app/components/buttons', () => ({
@@ -31,7 +29,7 @@ jest.mock('@/app/components/form', () => ({
   )
 }));
 
-jest.mock('../HoldingSnapshotInputs', () => ({
+jest.mock('@/app/net-worth/holding-snapshots/components/form/HoldingSnapshotInputs', () => ({
   HoldingSnapshotInputs: ({ editingFormData, onChange }: { editingFormData?: HoldingSnapshotFormData; onChange: (field: string, value: unknown) => void }) => (
     <div data-testid="holding-snapshot-inputs">
       <input

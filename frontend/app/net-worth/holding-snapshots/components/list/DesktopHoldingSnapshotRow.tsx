@@ -1,6 +1,6 @@
-import { convertCentsToDollars, convertToDate, formatDate } from '@/app/components/Utils';
-import { getHoldingSnapshotDisplayName, HoldingSnapshot } from '..';
+import { convertCentsToDollars, convertToDate, formatDate } from '@/app/lib/utils';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
+import { getHoldingSnapshotDisplayName, HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 
 interface DesktopHoldingSnapshotRowProps {
 	snapshot: HoldingSnapshot;

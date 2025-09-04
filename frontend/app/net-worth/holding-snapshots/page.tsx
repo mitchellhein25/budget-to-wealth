@@ -3,12 +3,12 @@
 import React, { useCallback, useState } from 'react'
 import {  useForm, useFormListItemsFetch } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api';
-import { DatePicker, DateRange, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
-import { ResponsiveFormListPage } from '@/app/components/ui/ResponsiveFormListPage';
+import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
+import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components';
 import { NetWorthSideBar } from '@/app/net-worth';
 import { convertHoldingSnapshotToFormData, HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 
-export default function HoldingSnapshotsPage() {
+export function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [items, setItems] = useState<HoldingSnapshot[]>([]);
   const [showLatestOnly, setShowLatestOnly] = useState<boolean>(true);

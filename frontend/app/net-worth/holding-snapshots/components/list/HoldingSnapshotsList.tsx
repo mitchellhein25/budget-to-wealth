@@ -1,11 +1,9 @@
 'use client'
 
 import React from 'react';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
 import { deleteHoldingSnapshot } from '@/app/lib/api';
-import { ListTable } from '@/app/components/table/ListTable';
-import { MobileHoldingSnapshotCard } from './MobileHoldingSnapshotCard';
-import { DesktopHoldingSnapshotRow } from './DesktopHoldingSnapshotRow';
+import { ListTable } from '@/app/components';
+import { DesktopHoldingSnapshotRow, HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot, MobileHoldingSnapshotCard } from '@/app/net-worth/holding-snapshots';
 
 type HoldingSnapshotsListProps = {
 	snapshots: HoldingSnapshot[],

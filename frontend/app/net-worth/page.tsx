@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { useSidebarDetection } from '@/app/hooks';
-import { NetWorthSideBar } from '@/app/net-worth/components/NetWorthSideBar';
+import { NetWorthSideBar } from '@/app/net-worth';
 
-export default function NetWorthPage() {
+export function NetWorthPage() {
   const showSidebar = useSidebarDetection();
   return (
     <div className="page-layout">

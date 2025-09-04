@@ -1,6 +1,6 @@
-import { convertCentsToDollars } from "@/app/components/Utils";
-import { HoldingSnapshot } from "..";
+import { convertCentsToDollars } from "@/app/lib/utils";
 import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
+import { HoldingSnapshot } from "@/app/net-worth/holding-snapshots";
 
 interface MobileHoldingSnapshotCardProps {
 	snapshot: HoldingSnapshot;

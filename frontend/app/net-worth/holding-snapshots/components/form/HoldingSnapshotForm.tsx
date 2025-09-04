@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
-import { formHasAnyValue, FormTemplate } from '@/app/components/form';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshot, HoldingSnapshotInputs, HoldingSnapshotFormData } from '..';
+import { formHasAnyValue, FormTemplate, UpdateCreateButton, ResetButton } from '@/app/components';
+import { HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_FORM_ID, HoldingSnapshot, HoldingSnapshotInputs, HoldingSnapshotFormData } from '@/app/net-worth/holding-snapshots';
 
 export function HoldingSnapshotForm(
   {formState} : {formState: FormState<HoldingSnapshot, HoldingSnapshotFormData>}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import NetWorthPage from '@/app/net-worth/page';
+import { NetWorthPage } from '@/app/net-worth';
 
 const netWorthSideBarTestId = 'net-worth-side-bar';
 const netWorthSideBarText = 'Net Worth Side Bar';

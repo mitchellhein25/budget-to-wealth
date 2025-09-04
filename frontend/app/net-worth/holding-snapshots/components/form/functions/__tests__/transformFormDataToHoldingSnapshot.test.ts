@@ -1,10 +1,9 @@
-import { transformFormDataToHoldingSnapshot } from '../transformFormDataToHoldingSnapshot';
-import { getHoldingSnapshotValidationResult } from '../getHoldingSnapshotValidationResult';
-import { convertDollarsToCents } from '@/app/components/Utils';
+import { getHoldingSnapshotValidationResult, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots';
+import { convertDollarsToCents } from '@/app/lib/utils';
 
-jest.mock('../getHoldingSnapshotValidationResult');
-jest.mock('@/app/components/Utils', () => {
-  const actual = jest.requireActual('@/app/components/Utils');
+jest.mock('@/app/net-worth/holding-snapshots/components/form/functions/getHoldingSnapshotValidationResult');
+jest.mock('@/app/lib/utils', () => {
+  const actual = jest.requireActual('@/app/lib/utils');
   return {
     ...actual,
     convertDollarsToCents: jest.fn(),

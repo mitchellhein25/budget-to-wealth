@@ -1,4 +1,4 @@
-import { HoldingSnapshotFormSchema } from '../HoldingSnapshotFormData';
+import { HoldingSnapshotFormSchema } from '@/app/net-worth/holding-snapshots';
 
 describe('HoldingSnapshotFormSchema', () => {
   it('validates correct form data successfully', () => {

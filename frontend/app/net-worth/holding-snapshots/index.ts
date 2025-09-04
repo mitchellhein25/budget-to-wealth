@@ -1,3 +1,4 @@
+export * from '@/app/net-worth/holding-snapshots/page';
 export * from '@/app/net-worth/holding-snapshots/components/HoldingSnapshot';
 export * from '@/app/net-worth/holding-snapshots/components/constants';
 export * from '@/app/net-worth/components/NetWorthSideBar';

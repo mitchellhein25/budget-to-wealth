@@ -1,6 +1,5 @@
 import React from 'react'
-import { SideBar } from '@/app/components'
-import { NetWorthSubNavItems } from '@/app/components/navbar/helpers/utils'
+import { NetWorthSubNavItems, SideBar } from '@/app/components'
 
 export function NetWorthSideBar() {
   return (
