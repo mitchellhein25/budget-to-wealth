@@ -1,4 +1,4 @@
-import { HoldingFormData } from "../HoldingFormData";
+import { HoldingFormData } from "@/app/net-worth/holding-snapshots/holdings";
 
 export const holdingFormOnChange = (
   event: React.ChangeEvent<HTMLInputElement>, 

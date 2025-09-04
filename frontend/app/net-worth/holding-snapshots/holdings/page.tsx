@@ -2,12 +2,12 @@
 
 import React, { useCallback, useState } from 'react'
 import { useForm, useParentPath, useMobileDetection, useFormListItemsFetch, mobileStateIsMediumOrSmaller } from '@/app/hooks';
-import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api/data-methods';
-import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding, HOLDING_ITEM_NAME_LOWERCASE, convertHoldingToFormData } from './components';
-import { messageTypeIsError } from '@/app/components/Utils';
-import { BackArrow } from '@/app/components/buttons/BackArrow';
+import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api';
+import { messageTypeIsError } from '@/app/lib/utils';
+import { BackArrow } from '@/app/components';
+import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding, HOLDING_ITEM_NAME_LOWERCASE, convertHoldingToFormData } from '@/app/net-worth/holding-snapshots/holdings';
 
-export default function HoldingsPage() {
+export function HoldingsPage() {
   const parentPath = useParentPath();
   const mobileState = useMobileDetection();
 

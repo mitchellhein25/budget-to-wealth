@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import HoldingsPage from './page';
+import { HoldingsPage } from '@/app/net-worth/holding-snapshots/holdings';
 
 const backButtonTestId = 'back-button';
 const holdingFormTestId = 'holding-form';
@@ -26,7 +26,7 @@ jest.mock('@/app/lib/api/data-methods', () => ({
   HOLDINGS_ENDPOINT: '/api/holdings',
 }));
 
-jest.mock('@/app/components/Utils', () => ({
+jest.mock('@/app/lib/utils', () => ({
   messageTypeIsError: jest.fn(() => false),
 }));
 
@@ -39,7 +39,7 @@ jest.mock('next/link', () => ({
   ),
 }));
 
-jest.mock('./components', () => ({
+jest.mock('@/app/net-worth/holding-snapshots/holdings', () => ({
   HOLDING_ITEM_NAME: 'Holding',
   HoldingForm: () => <div data-testid={holdingFormTestId}>{holdingFormText}</div>,
   HoldingsList: () => <div data-testid={holdingsListTestId}>{holdingsListText}</div>,

@@ -1,8 +1,6 @@
-import { transformFormDataToHolding } from '../transformFormDataToHolding';
-import { getHoldingValidationResult } from '../getHoldingValidationResult';
-import { HoldingType } from '../../HoldingType';
+import { HoldingType, transformFormDataToHolding, getHoldingValidationResult } from '@/app/net-worth/holding-snapshots/holdings';
 
-jest.mock('../getHoldingValidationResult');
+jest.mock('@/app/net-worth/holding-snapshots/holdings');
 
 const mockGetHoldingValidationResult = getHoldingValidationResult as jest.MockedFunction<typeof getHoldingValidationResult>;
 
@@ -47,7 +45,7 @@ describe('transformFormDataToHolding', () => {
       }
     };
 
-    mockGetHoldingValidationResult.mockReturnValue(mockValidationError);
+    mockGetHoldingValidationResult.mockReturnValue(mockValidationError as unknown as ReturnType<typeof getHoldingValidationResult>);
 
     const result = transformFormDataToHolding(mockFormData);
 

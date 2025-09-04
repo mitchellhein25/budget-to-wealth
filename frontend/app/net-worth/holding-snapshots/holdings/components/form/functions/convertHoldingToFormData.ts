@@ -1,4 +1,4 @@
-import { Holding } from "../..";
+import { Holding } from "@/app/net-worth/holding-snapshots/holdings";
 
 export const convertHoldingToFormData = (holding: Holding) => ({
   id: holding.id?.toString(),

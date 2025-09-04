@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { HoldingForm } from '../HoldingForm';
 import { FormState } from '@/app/hooks';
-import { HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingFormData } from '../..';
+import { HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingFormData, HoldingForm } from '@/app/net-worth/holding-snapshots/holdings';
 
 const formTemplateTestId = 'form-template';
 const holdingInputsTestId = 'holding-inputs';
@@ -10,7 +9,7 @@ const holdingInputsText = 'Holding Inputs';
 const updateCreateButtonText = 'Update/Create Button';
 const resetButtonText = 'Reset Button';
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components', () => ({
   formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { formId: string, formHeader: string, inputs: React.ReactNode, buttons: React.ReactNode, message: { type: string | null, text: string } }) => (
     <div data-testid={formTemplateTestId}>
@@ -22,14 +21,11 @@ jest.mock('@/app/components/form', () => ({
       {message && <div data-testid="message">{JSON.stringify(message)}</div>}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons', () => ({
   UpdateCreateButton: () => <div>{updateCreateButtonText}</div>,
   ResetButton: () => <div>{resetButtonText}</div>,
 }));
 
-jest.mock('../HoldingInputs', () => ({
+jest.mock('@/app/net-worth/holding-snapshots/holdings', () => ({
   HoldingInputs: () => (
     <div data-testid={holdingInputsTestId}>
       {holdingInputsText}

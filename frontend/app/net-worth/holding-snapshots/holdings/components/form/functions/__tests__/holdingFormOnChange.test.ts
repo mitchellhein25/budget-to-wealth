@@ -1,5 +1,4 @@
-import { holdingFormOnChange } from '../holdingFormOnChange';
-import { HoldingFormData } from '../../HoldingFormData';
+import { HoldingFormData, holdingFormOnChange } from '@/app/net-worth/holding-snapshots/holdings';
 
 describe('holdingFormOnChange', () => {
   const createMockEvent = (name: string, value: string): React.ChangeEvent<HTMLInputElement> => ({
@@ -273,7 +272,7 @@ describe('holdingFormOnChange', () => {
 
     it('should handle undefined values', () => {
       const mockSetState = createMockSetEditingFormData();
-      const event = createMockEvent('holding-name', undefined as string | undefined);
+      const event = createMockEvent('holding-name', undefined as unknown as string);
 
       holdingFormOnChange(event, mockSetState);
 
@@ -284,7 +283,7 @@ describe('holdingFormOnChange', () => {
 
     it('should handle null values', () => {
       const mockSetState = createMockSetEditingFormData();
-      const event = createMockEvent('holding-name', null as string | null);
+      const event = createMockEvent('holding-name', null as unknown as string);
 
       holdingFormOnChange(event, mockSetState);
 

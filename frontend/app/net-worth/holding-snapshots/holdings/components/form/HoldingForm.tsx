@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
-import { formHasAnyValue, FormTemplate } from '@/app/components/form';
-import { UpdateCreateButton, ResetButton } from '@/app/components/buttons';
-import { HOLDING_ITEM_NAME, HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingInputs, HoldingFormData } from '..';
+import { UpdateCreateButton, ResetButton, formHasAnyValue, FormTemplate } from '@/app/components';
+import { HOLDING_ITEM_NAME, HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingInputs, HoldingFormData } from '@/app/net-worth/holding-snapshots/holdings';
 
 export function HoldingForm(
   {formState} : {formState: FormState<Holding, HoldingFormData>}
