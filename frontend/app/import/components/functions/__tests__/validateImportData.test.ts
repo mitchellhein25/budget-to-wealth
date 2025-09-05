@@ -1,4 +1,4 @@
-import { validateImportData } from '../validateImportData';
+import { validateImportData } from '@/app/import';
 
 interface MockImportRow {
   [key: string]: string | number;
@@ -51,7 +51,7 @@ describe('validateImportData', () => {
       }
     ];
     
-    const result = validateImportData(mockData, 'CashFlow Categories');
+    const result = validateImportData(mockData, 'Cash Flow Categories');
     
     expect(result).toBeDefined();
     expect(result).toHaveProperty('success');

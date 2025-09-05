@@ -10,7 +10,7 @@ interface ImportPreviewProps {
   isProcessing: boolean;
 }
 
-export default function ImportPreview(props: ImportPreviewProps) {
+export function ImportPreview(props: ImportPreviewProps) {
   const getColumns = () => {
     if (props.data.length === 0) return [];
     

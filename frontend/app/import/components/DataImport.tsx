@@ -14,7 +14,7 @@ import { ImportDataTypeStrings } from './models/ImportDataTypeStrings';
 import { ImportResult } from './models/ImportResult';
 import { InputFieldSetTemplate } from '@/app/components/form';
 
-export default function DataImport() {
+export function DataImport() {
   const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>(ImportDataTypeStringMappings.CashFlowEntries);
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);

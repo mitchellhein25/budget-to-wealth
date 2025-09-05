@@ -1,6 +1,4 @@
-import { getImportTemplateData } from '../getImportTemplateData';
-import { ImportDataTypeStringMappings } from '../../models/ImportDataTypeStringMappings';
-import { ImportDataTypeStrings } from '../../models/ImportDataTypeStrings';
+import { getImportTemplateData, ImportDataTypeStringMappings, ImportDataTypeStrings } from '@/app/import';
 
 interface MockTemplateData {
   headers: string[];

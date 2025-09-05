@@ -1,5 +1,4 @@
-import { transformImportData } from '../transformImportData';
-import { ImportDataTypeStringMappings } from '../../models/ImportDataTypeStringMappings';
+import { transformImportData, ImportDataTypeStringMappings, ImportDataType, CashFlowEntryImport, ImportDataTypeStrings } from '@/app/import';
 
 describe('transformImportData', () => {
   it('transforms CashFlow Entries data correctly', () => {
@@ -189,7 +188,7 @@ describe('transformImportData', () => {
       { amount: '1000000.00', date: '2024-01-15', categoryName: 'Test', description: 'Test', categoryType: 'Expense' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as unknown[];
+    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as CashFlowEntryImport[];
 
     expect(result).toHaveLength(3);
     expect(result[0].amountInCents).toBe(123456);
@@ -299,7 +298,7 @@ describe('transformImportData', () => {
       { field1: 'value3', field2: 'value4' }
     ];
 
-    const result = transformImportData(rawData, 'Unknown Type' as ImportDataTypeStringMappings);
+    const result = transformImportData(rawData, 'Unknown Type' as ImportDataTypeStrings);
 
     expect(result).toEqual(rawData);
   });
@@ -339,7 +338,7 @@ describe('transformImportData', () => {
       { amount: '1234.56', date: '2024-01-15', categoryName: 'Test', description: 'Test', categoryType: 'Expense' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as unknown[];
+    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as CashFlowEntryImport[];
 
     expect(result).toHaveLength(3);
     expect(result[0].amountInCents).toBe(123456);

@@ -1,8 +1,7 @@
-import { uploadImportData } from '../uploadImportData';
-import { ImportDataTypeStringMappings } from '../../models/ImportDataTypeStringMappings';
-import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
+import { uploadImportData, ImportDataTypeStringMappings, ImportDataTypeStrings } from '@/app/import';
+import { postRequest } from '@/app/lib/api';
 
-jest.mock('@/app/lib/api/rest-methods/postRequest');
+jest.mock('@/app/lib/api');
 
 const mockPostRequest = postRequest as jest.MockedFunction<typeof postRequest>;
 
@@ -243,7 +242,7 @@ describe('uploadImportData', () => {
   it('handles unknown data types', async () => {
     const mockData = [{ id: 1, name: 'Test Item' }];
 
-    await expect(uploadImportData(mockData, 'Unknown Type' as ImportDataTypeStringMappings))
+    await expect(uploadImportData(mockData, 'Unknown Type' as ImportDataTypeStrings))
       .rejects.toThrow('Unknown data type: Unknown Type');
   });
 
@@ -315,7 +314,7 @@ describe('uploadImportData', () => {
     mockPostRequest.mockResolvedValue({
       successful: false,
       data: null,
-      responseMessage: undefined as string | undefined
+      responseMessage: ""
     });
 
     const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);

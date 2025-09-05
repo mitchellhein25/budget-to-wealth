@@ -1,25 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import DataImport from '../DataImport';
+import { DataImport } from '@/app/import';
 
-jest.mock('../functions/getFieldsForImportType', () => ({
+jest.mock('@/app/import', () => ({
   getFieldsForImportType: jest.fn(),
-}));
-
-jest.mock('../functions/getImportTemplateData', () => ({
   getImportTemplateData: jest.fn(),
-}));
-
-jest.mock('../functions/parseCsvFile', () => ({
   parseCsvFile: jest.fn(),
-}));
-
-jest.mock('../functions/validateImportData', () => ({
   validateImportData: jest.fn(),
-}));
-
-jest.mock('../functions/uploadImportData', () => ({
   uploadImportData: jest.fn(),
 }));
 
