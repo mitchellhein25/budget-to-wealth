@@ -1,7 +1,7 @@
 "use server";
 
 import { DateRange } from "@/app/components";
-import { HoldingSnapshot } from "@/app/net-worth/holding-snapshots/components";
+import { HoldingSnapshot } from "@/app/net-worth/holding-snapshots";
 import { deleteRequest, postRequest, putRequest, DateRangeResponse, HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT, getRequestList, getRequestSingle, getQueryStringForDateRange } from "@/app/lib/api";
 
 export async function getHoldingSnapshotsByDateRange(dateRange: DateRange) {

@@ -1,5 +1,5 @@
 import { DateRange } from '@/app/components';
-import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 import { 
   getHoldingSnapshotsByDateRange, 
   getLatestHoldingSnapshots, 
