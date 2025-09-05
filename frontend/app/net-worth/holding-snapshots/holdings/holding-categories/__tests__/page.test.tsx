@@ -1,16 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import page from './page';
+import { HoldingCategoriesPage } from '@/app/net-worth/holding-snapshots/holdings';
 
 jest.mock('@/app/hooks', () => ({
   useParentPath: () => '/net-worth/holdings',
 }));
 
-jest.mock('@/app/components/buttons', () => ({
+jest.mock('@/app/components', () => ({
   BackArrow: ({ link }: { link: string }) => <div data-testid="back-arrow" data-link={link}>Back Arrow</div>,
-}));
-
-jest.mock('@/app/components/categories/CategoriesPage', () => ({
   CategoriesPage: ({ 
     isLoggedIn, 
     categoryTypeName, 
@@ -32,13 +29,9 @@ jest.mock('@/app/components/categories/CategoriesPage', () => ({
   ),
 }));
 
-jest.mock('../components', () => ({
-  HOLDING_ITEM_NAME: 'Holding',
-}));
-
 describe('Holding Categories Page', () => {
   it('renders with correct props', () => {
-    const PageComponent = page();
+    const PageComponent = HoldingCategoriesPage();
     render(PageComponent);
     
     expect(screen.getByTestId('back-arrow')).toBeInTheDocument();

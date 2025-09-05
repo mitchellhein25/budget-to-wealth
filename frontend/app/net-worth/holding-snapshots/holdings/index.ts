@@ -12,3 +12,4 @@ export * from '@/app/net-worth/holding-snapshots/holdings/components/form/functi
 export * from '@/app/net-worth/holding-snapshots/holdings/components/form/functions/holdingFormOnChange';
 export * from '@/app/net-worth/holding-snapshots/holdings/components/form/functions/convertHoldingToFormData';
 export * from '@/app/net-worth/holding-snapshots/holdings/components/constants';
+export * from '@/app/net-worth/holding-snapshots/holdings/holding-categories/page';
