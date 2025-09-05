@@ -1,15 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { HoldingsList } from '../HoldingsList';
-import { Holding } from '../../Holding';
-import { deleteHolding } from '@/app/lib/api/data-methods';
-import { HOLDING_ITEM_NAME } from '../../constants';
+import { deleteHolding } from '@/app/lib/api';
+import { HOLDING_ITEM_NAME, Holding, HoldingsList } from '@/app/net-worth/holding-snapshots/holdings';
 
-jest.mock('@/app/hooks/useMobileDetection', () => ({
+jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   deleteHolding: jest.fn(),
 }));
 

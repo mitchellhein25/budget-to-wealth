@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DesktopHoldingRow } from '../DesktopHoldingRow';
-import { Holding } from '../../Holding';
+import { Holding, DesktopHoldingRow } from '@/app/net-worth/holding-snapshots/holdings';
 
 const editButtonText = 'Edit';
 const deleteButtonText = 'Delete';

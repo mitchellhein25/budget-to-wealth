@@ -1,9 +1,7 @@
 import React from 'react'
 import { deleteHolding } from '@/app/lib/api';
-import { ListTable } from '@/app/components/table/ListTable';
-import { HOLDING_ITEM_NAME, Holding } from '..';
-import { MobileHoldingCard } from './MobileHoldingCard';
-import { DesktopHoldingRow } from './DesktopHoldingRow';
+import { ListTable } from '@/app/components';
+import { HOLDING_ITEM_NAME, Holding, DesktopHoldingRow, MobileHoldingCard } from '@/app/net-worth/holding-snapshots/holdings';
 
 type HoldingsListProps = {
   holdings: Holding[],
