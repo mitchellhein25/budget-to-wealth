@@ -19,8 +19,6 @@ export * from '@/app/import/components/models/HoldingCategoryImport';
 export * from '@/app/import/components/models/HoldingImport';
 export * from '@/app/import/components/models/HoldingSnapshotImport';
 export * from '@/app/import/components/models/ImportDataType';
-export * from '@/app/import/components/models/ImportDataTypeStringMappings';
-export * from '@/app/import/components/models/ImportDataTypeStrings';
 export * from '@/app/import/components/models/ImportError';
 export * from '@/app/import/components/models/ImportItemResult';
 export * from '@/app/import/components/models/ImportResult';

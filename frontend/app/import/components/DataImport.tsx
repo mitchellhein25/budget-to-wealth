@@ -2,20 +2,11 @@
 
 import React, { useState, useCallback } from 'react';
 import { Upload, AlertCircle, CheckCircle, Loader2, FileText } from 'lucide-react';
-import { validateImportData } from './functions/validateImportData';
-import { transformImportData } from './functions/transformImportData';
-import { uploadImportData } from './functions/uploadImportData';
-import { parseCsvFile } from './functions/parseCsvFile';
-import ImportPreview from './ImportPreview';
-import ImportTemplate from './ImportTemplate';
-import { ImportDataType } from './models/ImportDataType';
-import { ImportDataTypeStringMappings } from './models/ImportDataTypeStringMappings';
-import { ImportDataTypeStrings } from './models/ImportDataTypeStrings';
-import { ImportResult } from './models/ImportResult';
-import { InputFieldSetTemplate } from '@/app/components/form';
+import { InputFieldSetTemplate } from '@/app/components';
+import { validateImportData, transformImportData, uploadImportData, parseCsvFile, ImportPreview, ImportTemplate, ImportDataType, ImportDataTypeString, ImportResult } from '@/app/import';
 
 export function DataImport() {
-  const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeStrings>(ImportDataTypeStringMappings.CashFlowEntries);
+  const [selectedDataType, setSelectedDataType] = useState<ImportDataTypeString>(ImportDataTypeString.CashFlowEntries);
   const [isProcessing, setIsProcessing] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [previewData, setPreviewData] = useState<ImportDataType[]>([]);
@@ -23,7 +14,7 @@ export function DataImport() {
   const [showTemplate, setShowTemplate] = useState(false);
 
   const handleDataTypeChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedDataType(event.target.value as ImportDataTypeStrings);
+    setSelectedDataType(event.target.value as ImportDataTypeString);
     setPreviewData([]);
     setShowPreview(false);
     setImportResult(null);
@@ -65,7 +56,7 @@ export function DataImport() {
         return;
       }
 
-      const transformedData = transformImportData(validationResult.data as ImportDataType[], selectedDataType as ImportDataTypeStrings);
+      const transformedData = transformImportData(validationResult.data as ImportDataType[], selectedDataType as ImportDataTypeString);
       setPreviewData(transformedData);
       setShowPreview(true);
 
@@ -89,7 +80,7 @@ export function DataImport() {
     setImportResult(null);
 
     try {
-      const result = await uploadImportData(previewData, selectedDataType as ImportDataTypeStrings);
+      const result = await uploadImportData(previewData, selectedDataType as ImportDataTypeString);
       setImportResult(result);
     } catch (error) {
       setImportResult({
@@ -138,7 +129,7 @@ export function DataImport() {
                   onChange={handleDataTypeChange}
                   className="select"
                 >
-                  {Object.values(ImportDataTypeStringMappings).map((dataType) => (
+                  {Object.values(ImportDataTypeString).map((dataType) => (
                     <option key={dataType} value={dataType}>{dataType}</option>
                   ))}
                 </select>
@@ -198,7 +189,7 @@ export function DataImport() {
       {showPreview && (
         <ImportPreview
           data={previewData}
-          dataTypeString={selectedDataType as ImportDataTypeStrings}
+          dataTypeString={selectedDataType as ImportDataTypeString}
           onImport={handleImport}
           onCancel={handleCancel}
           isProcessing={isProcessing}
@@ -269,7 +260,7 @@ export function DataImport() {
 
       {showTemplate && (
         <ImportTemplate
-          dataTypeString={selectedDataType as ImportDataTypeStrings}
+          dataTypeString={selectedDataType as ImportDataTypeString}
           onClose={() => setShowTemplate(false)}
         />
       )}

@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
-import { ImportDataTypeStringMappings } from './models/ImportDataTypeStringMappings';
 import { Download, X } from 'lucide-react';
-import { getImportTemplateData } from './functions/getImportTemplateData';
+import { ImportDataTypeString, getImportTemplateData } from '@/app/import';
 
 interface ImportTemplateProps {
-  dataTypeString: (typeof ImportDataTypeStringMappings)[keyof typeof ImportDataTypeStringMappings];
+  dataTypeString: ImportDataTypeString;
   onClose: () => void;
 }
 
-export default function ImportTemplate(props: ImportTemplateProps) {
+export function ImportTemplate(props: ImportTemplateProps) {
 
   const template = useMemo(() => 
     getImportTemplateData(props.dataTypeString), 

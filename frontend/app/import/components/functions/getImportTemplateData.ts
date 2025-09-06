@@ -1,9 +1,8 @@
-import { ImportDataTypeStringMappings } from "../models/ImportDataTypeStringMappings";
-import { ImportDataTypeStrings } from "../models/ImportDataTypeStrings";
+import { ImportDataTypeString } from "@/app/import";
 
-export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => {
+export const getImportTemplateData = (dataTypeString: ImportDataTypeString) => {
   switch (dataTypeString) {
-    case ImportDataTypeStringMappings.CashFlowEntries:
+    case ImportDataTypeString.CashFlowEntries:
       return {
         headers: ['amount', 'categoryName', 'categoryType', 'date', 'description', 'recurrenceFrequency'],
         sampleData: [
@@ -13,7 +12,7 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
         ],
         description: 'Import cash flow entries with amount, category name, category type (Income/Expense), date, description (optional), and recurrence frequency (optional)'
       };
-    case ImportDataTypeStringMappings.Budgets:
+    case ImportDataTypeString.Budgets:
       return {
         headers: ['amount', 'categoryName'],
         sampleData: [
@@ -23,7 +22,7 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
         ],
         description: 'Import budgets with amount, category name, and budget name'
       };
-    case ImportDataTypeStringMappings.HoldingSnapshots:
+    case ImportDataTypeString.HoldingSnapshots:
       return {
         headers: ['balance', 'holdingName', 'holdingCategoryName', 'holdingType', 'date', 'holdingInstitution'],
         sampleData: [
@@ -33,7 +32,7 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
         ],
         description: 'Import holding snapshots with balance, holding name, holding category name, holding type (Asset/Debt), and date, and holding institution'
       };
-    case ImportDataTypeStringMappings.Holdings:
+    case ImportDataTypeString.Holdings:
       return {
         headers: ['name', 'type', 'holdingCategoryName', 'institution'],
         sampleData: [
@@ -46,7 +45,7 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
         ],
         description: 'Import holdings with name, type (Asset/Debt), and holding category name'
       };
-    case ImportDataTypeStringMappings.CashFlowCategories:
+    case ImportDataTypeString.CashFlowCategories:
       return {
         headers: ['name', 'categoryType'],
         sampleData: [
@@ -57,7 +56,7 @@ export const getImportTemplateData = (dataTypeString: ImportDataTypeStrings) => 
         ],
         description: 'Import cash flow categories with name and category type (Income/Expense)'
       };
-    case ImportDataTypeStringMappings.HoldingCategories:
+    case ImportDataTypeString.HoldingCategories:
       return {
         headers: ['name'],
         sampleData: [

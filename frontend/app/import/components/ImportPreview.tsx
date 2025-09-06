@@ -1,10 +1,9 @@
 import React from 'react';
-import { ImportDataTypeStrings } from './models/ImportDataTypeStrings';
-import { ImportDataType } from './models/ImportDataType';
+import { ImportDataTypeString, ImportDataType } from '@/app/import';
 
 interface ImportPreviewProps {
   data: ImportDataType[];
-  dataTypeString: ImportDataTypeStrings;
+  dataTypeString: ImportDataTypeString;
   onImport: () => void;
   onCancel: () => void;
   isProcessing: boolean;

@@ -1,5 +1,5 @@
 import React from 'react'
-import DataImport from './components/DataImport'
+import { DataImport } from '@/app/import'
 
 export function ImportPage() {
   return (

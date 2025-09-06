@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ImportPreview, ImportDataTypeStringMappings } from '@/app/import';
+import { ImportPreview, ImportDataTypeString } from '@/app/import';
 
 const mockOnImport = jest.fn();
 const mockOnCancel = jest.fn();
 
 const defaultProps = {
   data: [],
-  dataTypeString: ImportDataTypeStringMappings.CashFlowEntries,
+  dataTypeString: ImportDataTypeString.CashFlowEntries,
   onImport: mockOnImport,
   onCancel: mockOnCancel,
   isProcessing: false,

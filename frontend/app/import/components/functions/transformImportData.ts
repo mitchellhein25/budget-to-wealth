@@ -1,19 +1,11 @@
-import { BudgetImport } from '../models/BudgetImport';
-import { CashFlowCategoryImport } from '../models/CashFlowCategoryImport';
-import { CashFlowEntryImport } from '../models/CashFlowEntryImport';
-import { HoldingCategoryImport } from '../models/HoldingCategoryImport';
-import { HoldingImport } from '../models/HoldingImport';
-import { HoldingSnapshotImport } from '../models/HoldingSnapshotImport';
-import { ImportDataType } from '../models/ImportDataType';
-import { ImportDataTypeStringMappings } from '../models/ImportDataTypeStringMappings';
-import { ImportDataTypeStrings } from '../models/ImportDataTypeStrings';
-import { cleanCurrencyInput, convertDollarsToCents } from '../../../components/Utils';
+import { cleanCurrencyInput, convertDollarsToCents } from '@/app/lib/utils';
+import { ImportDataTypeString, ImportDataType, HoldingSnapshotImport, HoldingImport, HoldingCategoryImport, CashFlowEntryImport, CashFlowCategoryImport, BudgetImport } from '@/app/import';
 
 type RawCsvData = Record<string, string | number>;
 
-export function transformImportData(data: RawCsvData[], dataType: ImportDataTypeStrings): ImportDataType[] { 
+export function transformImportData(data: RawCsvData[], dataType: ImportDataTypeString): ImportDataType[] { 
   switch (dataType) {
-    case ImportDataTypeStringMappings.CashFlowEntries:
+    case ImportDataTypeString.CashFlowEntries:
       return data.map((item: RawCsvData) => ({
         amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0'),
         date: item.date as string,
@@ -23,7 +15,7 @@ export function transformImportData(data: RawCsvData[], dataType: ImportDataType
         recurrenceFrequency: item.recurrenceFrequency as "Daily" | "Weekly" | "Monthly" | "Yearly" | undefined,
       } as CashFlowEntryImport));
 
-    case ImportDataTypeStringMappings.Holdings:
+    case ImportDataTypeString.Holdings:
       return data.map((item: RawCsvData) => ({
         name: item.name as string,
         type: item.type as "Asset" | "Debt",
@@ -31,7 +23,7 @@ export function transformImportData(data: RawCsvData[], dataType: ImportDataType
         institution: item.institution as string
       } as HoldingImport));
 
-    case ImportDataTypeStringMappings.HoldingSnapshots:
+    case ImportDataTypeString.HoldingSnapshots:
       return data.map((item: RawCsvData) => ({
         holdingName: item.holdingName as string,
         date: item.date as string,
@@ -41,18 +33,18 @@ export function transformImportData(data: RawCsvData[], dataType: ImportDataType
         holdingInstitution: item.holdingInstitution as string ?? ""
       } as HoldingSnapshotImport));
 
-    case ImportDataTypeStringMappings.Budgets:
+    case ImportDataTypeString.Budgets:
       return data.map((item: RawCsvData) => ({
         categoryName: item.categoryName as string,
         amountInCents: convertDollarsToCents(cleanCurrencyInput(item.amount.toString()) || '0')
       } as BudgetImport));
 
-    case ImportDataTypeStringMappings.HoldingCategories:
+    case ImportDataTypeString.HoldingCategories:
       return data.map((item: RawCsvData) => ({
         name: item.name as string
       } as HoldingCategoryImport));
 
-    case ImportDataTypeStringMappings.CashFlowCategories:
+    case ImportDataTypeString.CashFlowCategories:
       return data.map((item: RawCsvData) => ({
         name: item.name as string,
         categoryType: item.categoryType as "Income" | "Expense"
