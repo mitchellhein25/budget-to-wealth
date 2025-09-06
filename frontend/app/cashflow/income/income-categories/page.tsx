@@ -1,12 +1,11 @@
 'use client';
 
 import { useParentPath } from '@/app/hooks';
-import { CategoriesPage } from '@/app/components/categories/CategoriesPage';
-import { INCOME_ITEM_NAME } from '@/app/cashflow/components/constants';
-import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
-import { BackArrow } from '@/app/components/buttons/BackArrow';
+import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api';
+import { CategoriesPage, BackArrow } from '@/app/components';
+import { INCOME_ITEM_NAME } from '@/app/cashflow';
 
-export default function IncomeCategories() {
+export function IncomeCategoriesPage() {
   const parentPath = useParentPath();
 
 	return (

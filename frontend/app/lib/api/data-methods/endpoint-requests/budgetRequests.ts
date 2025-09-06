@@ -1,7 +1,7 @@
 "use server";
 
 import { DateRange } from "@/app/components";
-import { Budget } from "@/app/cashflow/budget/components";
+import { Budget } from "@/app/cashflow/budget";
 import { BUDGETS_ENDPOINT, deleteRequest, getQueryStringForDateRange, getRequestList } from "@/app/lib/api";
 
 export async function getBudgetsByDateRange(dateRange: DateRange) {

@@ -1,13 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import RecurringCashFlowPage from './page';
 import { EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
+import { RecurringCashFlowPage } from '@/app/cashflow/recurring';
 
 const cashFlowPageTestId = 'cash-flow-page';
 const cashFlowPageText = 'Cash Flow Page';
 const cashFlowTypeTestId = 'cash-flow-type';
 
-jest.mock('@/app/cashflow/components', () => ({
-  ...jest.requireActual('@/app/cashflow/components'),
+jest.mock('@/app/cashflow', () => ({
+  ...jest.requireActual('@/app/cashflow'),
   CashFlowPage: ({ cashFlowType }: { cashFlowType: string }) => (
     <div data-testid={cashFlowPageTestId}>
       <div>{cashFlowPageText}</div>

@@ -1,6 +1,6 @@
 import React from 'react'
-import { EXPENSE_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '../../components/constants'
-import { CashFlowType } from '../..';
+import { EXPENSE_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
+import { CashFlowType } from '@/app/cashflow';
 
 type CashFlowTypeRadioButtonsProps = {
   selectedType: CashFlowType;

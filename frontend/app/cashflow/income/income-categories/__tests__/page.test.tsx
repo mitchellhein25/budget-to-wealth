@@ -1,7 +1,7 @@
 import { render, screen, act } from '@testing-library/react';
-import IncomeCategoriesPage from './page';
+import { IncomeCategoriesPage } from '@/app/cashflow/income/income-categories/page';
 
-jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api', () => ({
   getRequestList: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
 

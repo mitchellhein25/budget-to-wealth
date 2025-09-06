@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import ExpenseCategoriesPage from './page';
+import { ExpenseCategoriesPage } from '@/app/cashflow/expenses/expense-categories/page';
 
 jest.mock('next/navigation', () => ({
   useSearchParams: () => ({
@@ -7,11 +7,11 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-jest.mock('@/app/hooks/useParentPath', () => ({
+jest.mock('@/app/hooks', () => ({
   useParentPath: () => '/cashflow/expenses',
 }));
 
-jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api', () => ({
   getRequestList: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
 

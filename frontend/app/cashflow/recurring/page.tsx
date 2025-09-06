@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import { CashFlowPage, CashFlowType, EXPENSE_ITEM_NAME } from '@/app/cashflow';
-import CashFlowTypeRadioButtons from './components/CashFlowTypeRadioButtons';
+import { CashFlowTypeRadioButtons } from '@/app/cashflow/recurring';
 
-export default function RecurringCashFlowPage() {
+export function RecurringCashFlowPage() {
 	const [selectedType, setSelectedType] = useState<CashFlowType>(EXPENSE_ITEM_NAME);
 
 	return (
