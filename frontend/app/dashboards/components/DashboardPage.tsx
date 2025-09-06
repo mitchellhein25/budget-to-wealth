@@ -2,10 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useMobileDetection, useSidebarDetection } from '@/app/hooks';
+import { DateRangeResponse, FetchResult } from '@/app/lib/api';
 import { DatePicker, DateRange } from '@/app/components';
-import { DashboardSideBar, HistoryToggle, TrendGraphData, TrendGraphEntry, getCompletedMonthsDefaultRange } from './';
-import { DateRangeResponse } from '@/app/lib/api/data-methods';
-import { FetchResult } from '@/app/lib/api/apiClient';
+import { DashboardSideBar, HistoryToggle, TrendGraphData, TrendGraphEntry, getCompletedMonthsDefaultRange } from '@/app/dashboards';
 
 export type DashboardPageProps<T extends TrendGraphData<TrendGraphEntry>> = {
   getAvailableDateRange: () => Promise<FetchResult<DateRangeResponse>>;

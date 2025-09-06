@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { TrendGraph } from '../TrendGraph';
-import { useMobileDetection } from '@/app/hooks';
+import { MobileState, useMobileDetection } from '@/app/hooks';
+import { TrendGraph } from '@/app/dashboards';
 
 const titleText = 'Test Trend Graph';
 const lineDatasetLabel = 'Line Dataset';
@@ -63,7 +63,7 @@ describe('TrendGraph', () => {
   });
 
   it('renders with title and datasets', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     render(
       <TrendGraph
@@ -78,7 +78,7 @@ describe('TrendGraph', () => {
   });
 
   it('uses mobile height when on mobile device', () => {
-    mockUseMobileDetection.mockReturnValue(true);
+    mockUseMobileDetection.mockReturnValue(MobileState.SMALL);
     
     render(
       <TrendGraph
@@ -93,7 +93,7 @@ describe('TrendGraph', () => {
   });
 
   it('uses desktop height when not on mobile device', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     render(
       <TrendGraph
@@ -108,7 +108,7 @@ describe('TrendGraph', () => {
   });
 
   it('handles datasets with missing data values', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     const datasetsWithMissingData = [
       {
@@ -132,7 +132,7 @@ describe('TrendGraph', () => {
   });
 
   it('renders line chart for line type datasets', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     const lineOnlyDatasets = [
       {
@@ -156,7 +156,7 @@ describe('TrendGraph', () => {
   });
 
   it('renders bar chart for bar type datasets', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     const barOnlyDatasets = [
       {
@@ -180,7 +180,7 @@ describe('TrendGraph', () => {
   });
 
   it('renders mixed line and bar charts', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     render(
       <TrendGraph
@@ -194,7 +194,7 @@ describe('TrendGraph', () => {
   });
 
   it('handles empty datasets array', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     render(
       <TrendGraph
@@ -208,7 +208,7 @@ describe('TrendGraph', () => {
   });
 
   it('handles empty labels array', () => {
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     render(
       <TrendGraph

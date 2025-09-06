@@ -1,6 +1,5 @@
 import React from 'react'
-import { SideBar } from '@/app/components'
-import { DashboardsSubNavItems } from '@/app/components/navbar/helpers/utils'
+import { SideBar, DashboardsSubNavItems } from '@/app/components'
 
 export function DashboardSideBar() {
   return (

@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import { DashboardSideBar } from './DashboardSideBar';
-import { DASHBOARDS_CASHFLOW_LINK, DASHBOARDS_NET_WORTH_LINK } from '@/app/components/navbar/helpers/utils';
-import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
+import { DASHBOARDS_CASHFLOW_LINK, DASHBOARDS_NET_WORTH_LINK } from '@/app/components';
 import { CASHFLOW_ITEM_NAME } from '@/app/cashflow/components';
+import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots';
+import { DashboardSideBar } from '@/app/dashboards';
 
 jest.mock('next/navigation', () => ({
   usePathname: () => DASHBOARDS_NET_WORTH_LINK,
 }));
 
-jest.mock('../../components/SideBar', () => ({
+jest.mock('@/app/dashboards', () => ({
   __esModule: true,
   SideBar: ({ navItems }: { navItems: Array<{ href: string; label: string }> }) => (
     <div data-testid="sidebar" data-nav-items={JSON.stringify(navItems)}>

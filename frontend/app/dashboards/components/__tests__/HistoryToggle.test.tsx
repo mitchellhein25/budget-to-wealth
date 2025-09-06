@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { HistoryToggle } from '../HistoryToggle';
+import { HistoryToggle } from '@/app/dashboards';
 
 describe('HistoryToggle', () => {
   const mockOnToggle = jest.fn();

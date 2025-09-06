@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CashFlowTrendGraph from './page';
 import { CASHFLOW_ITEM_NAME } from '@/app/cashflow/components';
+import { CashFlowTrendGraph } from '@/app/dashboards/cashflow';
 
 jest.mock('@/app/lib/api/data-methods', () => ({
   getCashFlowTrendGraphForDateRange: jest.fn(),

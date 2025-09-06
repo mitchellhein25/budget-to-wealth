@@ -1,8 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { DashboardPage } from '../DashboardPage';
-import { useMobileDetection } from '@/app/hooks';
-import { TrendGraphData, TrendGraphEntry } from '../';
+import { MobileState, useMobileDetection } from '@/app/hooks';
+import { DashboardPage, TrendGraphData, TrendGraphEntry } from '@/app/dashboards';
 
 // Mock console.error to prevent it from appearing in tests
 const originalConsoleError = console.error;
@@ -28,7 +27,7 @@ jest.mock('@/app/components', () => ({
   ),
 }));
 
-jest.mock('../', () => ({
+jest.mock('@/app/dashboards', () => ({
   DashboardSideBar: () => <div data-testid="dashboard-sidebar">Sidebar</div>,
   HistoryToggle: ({ onToggle }: { onToggle: (checked: boolean) => void }) => (
     <button onClick={() => onToggle(true)} data-testid="history-toggle">
@@ -51,7 +50,7 @@ describe('DashboardPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     // Set up default mocks to prevent undefined response errors
     mockGetTrendGraph.mockResolvedValue({
@@ -81,7 +80,7 @@ describe('DashboardPage', () => {
   });
 
   it('hides sidebar on mobile', () => {
-    mockUseMobileDetection.mockReturnValue(true);
+    mockUseMobileDetection.mockReturnValue(MobileState.SMALL);
 
     render(
       <DashboardPage

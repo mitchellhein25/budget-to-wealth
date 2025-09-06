@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import DashboardsPage from './page';
+import { DashboardsPage } from '@/app/dashboards';
 
-jest.mock('./components/DashboardSideBar', () => ({
+jest.mock('@/app/dashboards', () => ({
   __esModule: true,
   DashboardSideBar: () => <div data-testid="dashboard-sidebar">DashboardSideBar Component</div>,
 }));

@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useCallback } from 'react'
+import { getCashFlowTrendGraphForDateRange, getCashFlowEntriesDateRange } from '@/app/lib/api';
+import { formatDate } from '@/app/lib/utils';
+import { DateRange } from '@/app/components';
 import { CASHFLOW_ITEM_NAME } from '@/app/cashflow/components';
-import { DateRange, formatDate } from '@/app/components';
-import { getCashFlowTrendGraphForDateRange, getCashFlowEntriesDateRange } from '@/app/lib/api/data-methods';
-import { DashboardPage, TrendGraph } from '../components';
-import { CashFlowTrendDatasets, CashFlowTotalDisplays, CashFlowTrendGraphListTable, CashFlowTrendGraphData } from './components';
+import { DashboardPage, TrendGraph } from '@/app/dashboards';
+import { CashFlowTrendDatasets, CashFlowTotalDisplays, CashFlowTrendGraphListTable, CashFlowTrendGraphData } from '@/app/dashboards/cashflow';
 
-export default function CashFlowTrendGraph() {
+export function CashFlowTrendGraph() {
   const renderContent = (trendGraphData: CashFlowTrendGraphData | null) => {
     if (!trendGraphData?.entries) 
       return null;

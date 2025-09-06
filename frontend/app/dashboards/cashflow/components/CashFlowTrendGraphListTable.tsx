@@ -1,7 +1,8 @@
 import React from 'react'
+import { convertCentsToDollars, formatDate } from '@/app/lib/utils';
 import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
-import { convertCentsToDollars, formatDate, ListTable, ListTableItem } from '@/app/components';
-import { CashFlowTrendGraphData, CashFlowTrendGraphEntry } from './';
+import { ListTable, ListTableItem } from '@/app/components';
+import { CashFlowTrendGraphData, CashFlowTrendGraphEntry } from '@/app/dashboards/cashflow';
 
 export function CashFlowTrendGraphListTable({ cashFlowTrendGraph }: { cashFlowTrendGraph: CashFlowTrendGraphData }) {
   return (
