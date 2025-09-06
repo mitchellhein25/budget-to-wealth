@@ -1,5 +1,5 @@
 import { convertDollarsToCents } from "@/app/components";
-import { CashFlowEntry, CashFlowType, getCashFlowValidationResult, RecurrenceFrequency } from "../..";
+import { CashFlowEntry, CashFlowType, getCashFlowValidationResult, RecurrenceFrequency } from "../../..";
 
 export const transformCashFlowFormDataToEntry = (formData: FormData, cashFlowType: CashFlowType): { item: CashFlowEntry | null; errors: string[] } => {
   try {

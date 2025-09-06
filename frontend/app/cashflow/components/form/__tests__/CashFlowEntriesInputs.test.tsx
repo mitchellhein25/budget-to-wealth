@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { getCategoriesList } from '@/app/lib/api/data-methods';
-import { CashFlowCategory, CashFlowType } from '@/app/cashflow/components';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
-import { CashFlowEntriesInputs } from './CashFlowEntriesInputs';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '../../components';
+import { CashFlowCategory, CashFlowType } from '@/app/cashflow';
+import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
+import { CashFlowEntriesInputs } from '../CashFlowEntriesInputs';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '../../..';
 
 interface MockLinkProps {
   children: React.ReactNode;

@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { NavItems, CashflowSubNavItems, DashboardsSubNavItems, NavItem, NetWorthSubNavItems } from '@/app/components';
-import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components/components/constants';
+import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE } from '@/app/cashflow/components/constants';
 import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from '@/app/dashboards/components/constants';
 import { NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
 

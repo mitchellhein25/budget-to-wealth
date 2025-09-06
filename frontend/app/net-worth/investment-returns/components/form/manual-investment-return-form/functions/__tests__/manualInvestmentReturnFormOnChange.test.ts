@@ -1,6 +1,6 @@
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../..';
 import { manualInvestmentReturnFormOnChange } from '../manualInvestmentReturnFormOnChange';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
 
 const formID = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 

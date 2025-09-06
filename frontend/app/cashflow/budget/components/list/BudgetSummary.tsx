@@ -3,8 +3,8 @@
 import React, { useMemo } from 'react';
 import { ArrowUp, ArrowDown, Equal } from 'lucide-react';
 import { DateRange, TotalDisplay } from '@/app/components';
-import { CashFlowEntry } from '../../../components';
-import { BUDGET_ITEM_NAME, Budget } from '..';
+import { CashFlowEntry } from '@/app/cashflow';
+import { BUDGET_ITEM_NAME, Budget } from '@/app/cashflow/budget';
 
 interface BudgetSummaryProps {
   budgets: Budget[];

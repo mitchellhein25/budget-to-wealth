@@ -2,7 +2,7 @@
 
 import { useParentPath } from '@/app/hooks';
 import { CategoriesPage } from '@/app/components/categories/CategoriesPage';
-import { INCOME_ITEM_NAME } from '@/app/cashflow/components/components/constants';
+import { INCOME_ITEM_NAME } from '@/app/cashflow/components/constants';
 import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
 import { BackArrow } from '@/app/components/buttons/BackArrow';
 

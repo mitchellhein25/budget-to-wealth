@@ -5,7 +5,7 @@ import { Category } from '@/app/components/categories/Category';
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
 import { ManualInvestmentReturnFormData } from '.';
 import { convertDateToISOString } from '@/app/components/Utils';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
 
 interface ManualInvestmentInputsProps {
   editingFormData: Partial<ManualInvestmentReturnFormData>;

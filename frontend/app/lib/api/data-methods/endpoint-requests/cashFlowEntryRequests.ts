@@ -1,7 +1,7 @@
 "use server";
 
 import { DateRange } from "@/app/components";
-import { CashFlowEntry, CashFlowType } from "@/app/cashflow/components";
+import { CashFlowEntry, CashFlowType } from "@/app/cashflow";
 import { deleteRequest, getQueryStringForDateRange, getRequestList, getRequestSingle, CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT, CASH_FLOW_ENTRIES_ENDPOINT, CASH_FLOW_ENTRIES_RECURRING_ENDPOINT, DateRangeResponse } from "@/app/lib/api";
 
 export async function getCashFlowEntriesByDateRangeAndType(dateRange: DateRange, cashFlowType: CashFlowType) {

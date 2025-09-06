@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { getExpenseCategoriesList } from '@/app/lib/api/data-methods';
-import { CashFlowCategory } from '@/app/cashflow/components';
-import { BudgetInputs } from '../';
+import { getExpenseCategoriesList } from '@/app/lib/api';
+import { CashFlowCategory } from '@/app/cashflow';
+import { BudgetInputs } from '@/app/cashflow/budget';
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getExpenseCategoriesList: jest.fn(),
 }));
 

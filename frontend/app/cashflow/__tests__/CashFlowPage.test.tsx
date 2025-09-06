@@ -1,10 +1,8 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { CashFlowPage } from './CashFlowPage';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from './components/constants';
-import { useForm, useMobileDetection } from '@/app/hooks';
-import { getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api/data-methods';
-import { messageTypeIsError } from '@/app/components';
-import { CashFlowType, CashFlowEntry } from '@/app/cashflow/components';
+import { MobileState, useForm, useMobileDetection } from '@/app/hooks';
+import { getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api';
+import { messageTypeIsError } from '@/app/lib/utils';
+import { CashFlowType, CashFlowEntry, CashFlowPage, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '@/app/cashflow';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
 const cashFlowEntriesFormTestId = 'cash-flow-entries-form';
@@ -113,7 +111,7 @@ describe('CashFlowPage', () => {
       onReset: jest.fn(),
     });
     
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
       successful: true,
@@ -137,7 +135,7 @@ describe('CashFlowPage', () => {
   });
 
   it('renders all main components for mobile view', async () => {
-    mockUseMobileDetection.mockReturnValue(true);
+    mockUseMobileDetection.mockReturnValue(MobileState.SMALL);
     
     await act(async () => {
       render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);

@@ -1,4 +1,4 @@
-import { TrendGraphData, TrendGraphEntry } from "../../components";
+import { TrendGraphData, TrendGraphEntry } from '@/app/dashboards';
 
 export type NetWorthTrendGraphData = TrendGraphData<NetWorthTrendGraphEntry>;
 

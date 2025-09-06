@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { DASHBOARDS_CASHFLOW_LINK, DASHBOARDS_NET_WORTH_LINK } from '@/app/components';
-import { CASHFLOW_ITEM_NAME } from '@/app/cashflow/components';
+import { CASHFLOW_ITEM_NAME } from '@/app/cashflow';
 import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots';
 import { DashboardSideBar } from '@/app/dashboards';
 

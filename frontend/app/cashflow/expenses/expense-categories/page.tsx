@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useParentPath } from '@/app/hooks';
 import { CategoriesPage } from '@/app/components/categories/CategoriesPage';
-import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components/components/constants';
+import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components/constants';
 import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods';
 import { BackArrow } from '@/app/components/buttons/BackArrow';
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { TotalDisplay } from '@/app/components'
-import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components'
+import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow'
 import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '@/app/dashboards'
 
 export function CashFlowTotalDisplays({ incomes, expenses, netCashFlows }: 

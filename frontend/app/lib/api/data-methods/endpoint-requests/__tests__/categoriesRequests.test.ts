@@ -1,4 +1,4 @@
-import { CashFlowCategory } from '@/app/cashflow/components';
+import { CashFlowCategory } from '@/app/cashflow';
 import { getRequestList, FetchResult, getCategoriesList, getExpenseCategoriesList, getIncomeCategoriesList } from '@/app/lib/api';
 
 jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({

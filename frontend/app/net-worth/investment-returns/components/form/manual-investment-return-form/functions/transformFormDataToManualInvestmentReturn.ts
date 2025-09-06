@@ -1,4 +1,4 @@
-import { RecurrenceFrequency } from "@/app/cashflow/components/components/RecurrenceFrequency";
+import { RecurrenceFrequency } from "@/app/cashflow/components/RecurrenceFrequency";
 import { getManualInvestmentReturnValidationResult, ManualInvestmentReturnFormData } from "..";
 import { ManualInvestmentReturn } from "../../../ManualInvestmentReturn";
 import { convertDateToISOString } from "@/app/components/Utils";

@@ -1,5 +1,5 @@
 import { DateRange } from '@/app/components';
-import { CashFlowEntry } from '@/app/cashflow/components';
+import { CashFlowEntry } from '@/app/cashflow';
 import { getRequestList, getRequestSingle, deleteRequest, getCashFlowEntriesByDateRangeAndType, deleteCashFlowEntry, getCashFlowEntriesDateRange, getQueryStringForDateRange, DateRangeResponse, CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT, CASH_FLOW_ENTRIES_ENDPOINT, FetchResult } from '@/app/lib/api';
 
 jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({

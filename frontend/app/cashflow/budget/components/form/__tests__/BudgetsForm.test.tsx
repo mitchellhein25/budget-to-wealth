@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '..';
+import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '@/app/cashflow/budget';
 
 const formTemplateTestId = 'form-template';
 const budgetInputsTestId = 'budget-inputs';

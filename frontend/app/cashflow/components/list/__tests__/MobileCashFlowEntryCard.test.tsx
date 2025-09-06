@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MobileCashFlowEntryCard } from '../MobileCashFlowEntryCard';
-import { CashFlowEntry, CashFlowType } from '../..';
+import { CashFlowEntry, CashFlowType } from '../../..';
 import { Category } from '@/app/components/categories';
-import { RecurrenceFrequency } from '../../components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '../../RecurrenceFrequency';
 
 const editLabel = 'Edit';
 const deleteLabel = 'Delete';

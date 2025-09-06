@@ -3,7 +3,7 @@ import { useForm } from '@/app/hooks';
 import { getRequestList } from '@/app/lib/api';
 import { messageTypeIsError } from '@/app/lib/utils';
 import { Category, CategoryFormData, CategoriesPage } from '@/app/components';
-import { CashFlowCategory } from '@/app/cashflow/components';
+import { CashFlowCategory } from '@/app/cashflow';
 
 const categoriesFormTestId = 'categories-form';
 const categoriesListTestId = 'categories-list';

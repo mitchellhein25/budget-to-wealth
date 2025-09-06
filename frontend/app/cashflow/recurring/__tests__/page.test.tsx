@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import RecurringCashFlowPage from './page';
-import { EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import { EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
 
 const cashFlowPageTestId = 'cash-flow-page';
 const cashFlowPageText = 'Cash Flow Page';

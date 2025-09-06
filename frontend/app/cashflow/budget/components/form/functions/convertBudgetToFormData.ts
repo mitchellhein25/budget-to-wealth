@@ -1,4 +1,4 @@
-import { Budget } from "../..";
+import { Budget } from "@/app/cashflow/budget";
 
 export const convertBudgetToFormData = (budget: Budget) => ({
   id: budget.id?.toString(),

@@ -1,4 +1,4 @@
-import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
 import { CashFlowTrendGraphData, CashFlowTrendDatasets } from '@/app/dashboards/cashflow';
 
 describe('CashFlowTrendDatasets', () => {

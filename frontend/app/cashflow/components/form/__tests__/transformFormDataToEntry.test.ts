@@ -1,5 +1,5 @@
-import { transformCashFlowFormDataToEntry } from './functions/transformFormDataToEntry';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../components';
+import { transformCashFlowFormDataToEntry } from '../functions/transformFormDataToEntry';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../..';
 
 jest.mock('@/app/components/Utils', () => ({
   convertDollarsToCents: jest.fn(),

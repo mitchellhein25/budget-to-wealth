@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ManualInvestmentInputs } from '../ManualInvestmentInputs';
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../constants';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
 
 const mockOnChange = jest.fn();
 const formId = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;

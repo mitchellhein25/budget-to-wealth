@@ -1,19 +1,17 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BudgetsList } from '../BudgetsList';
-import { Budget } from '../../Budget';
-import { CashFlowEntry } from '@/app/cashflow/components';
-import { deleteBudget } from '@/app/lib/api/data-methods';
-import { BUDGET_ITEM_NAME } from '../../constants';
+import { deleteBudget } from '@/app/lib/api';
+import { CashFlowEntry } from '@/app/cashflow';
+import { Budget, BudgetsList, BUDGET_ITEM_NAME } from '@/app/cashflow/budget';
 
-jest.mock('@/app/hooks/useMobileDetection', () => ({
+jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   deleteBudget: jest.fn(),
 }));
 
-jest.mock('@/app/components/table/ListTable', () => ({
+jest.mock('@/app/components', () => ({
   ListTable: ({ title, headerRow, bodyRow, items, isLoading, isError }: {
     title: string;
     headerRow: React.ReactElement;

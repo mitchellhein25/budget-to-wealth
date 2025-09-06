@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react';
-import { ListTable } from '@/app/components/table/ListTable';
-import { CashFlowEntry } from '@/app/cashflow/components';
-import { deleteBudget } from '@/app/lib/api/data-methods';
-import { BUDGET_ITEM_NAME, Budget, DesktopBudgetRow, MobileBudgetCard } from '..';
+import { deleteBudget } from '@/app/lib/api';
+import { ListTable } from '@/app/components';
+import { CashFlowEntry } from '@/app/cashflow';
+import { BUDGET_ITEM_NAME, Budget, DesktopBudgetRow, MobileBudgetCard } from '@/app/cashflow/budget';
 
 interface BudgetsListProps {
 	budgets: Budget[],

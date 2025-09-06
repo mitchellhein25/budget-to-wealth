@@ -1,5 +1,5 @@
 import { transformFormDataToManualInvestmentReturn } from '../transformFormDataToManualInvestmentReturn';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
 
 
 

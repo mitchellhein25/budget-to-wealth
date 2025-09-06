@@ -1,7 +1,8 @@
 import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
-import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge, convertCentsToDollars } from '@/app/components';
-import { CashFlowEntry } from '@/app/cashflow/components';
-import { Budget } from '..';
+import { convertCentsToDollars } from '@/app/lib/utils';
+import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge } from '@/app/components';
+import { CashFlowEntry } from '@/app/cashflow';
+import { Budget } from '@/app/cashflow/budget';
 
 interface DesktopBudgetRowProps {
 	budget: Budget;

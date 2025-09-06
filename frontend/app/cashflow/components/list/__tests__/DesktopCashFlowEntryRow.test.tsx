@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DesktopCashFlowEntryRow } from '../DesktopCashFlowEntryRow';
-import { CashFlowEntry, CashFlowType } from '../..';
+import { CashFlowEntry, CashFlowType } from '../../..';
 import { Category } from '@/app/components/categories';
 
 const editLabel = 'Edit';

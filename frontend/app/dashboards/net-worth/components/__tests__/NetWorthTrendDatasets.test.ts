@@ -1,5 +1,4 @@
-import { NetWorthTrendDatasets } from '../NetWorthTrendDatasets';
-import { NetWorthTrendGraphData } from '../NetWorthTrendGraphData';
+import { NetWorthTrendGraphData, NetWorthTrendDatasets } from '@/app/dashboards/net-worth';
 
 const assetItemNamePlural = 'Assets';
 const debtItemNamePlural = 'Debts';

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { BUDGET_ITEM_NAME, BudgetSummary } from '..';
-import { EXPENSE_ITEM_NAME } from '@/app/cashflow/components';
+import { CashFlowEntry, CashFlowType, EXPENSE_ITEM_NAME } from '@/app/cashflow';
+import { Budget, BUDGET_ITEM_NAME, BudgetSummary } from '@/app/cashflow/budget';
 
 const totalDisplayTestId = 'total-display';
 const totalDisplayText = 'Total Display';
@@ -12,18 +12,6 @@ interface TotalDisplayProps {
   label: string;
   amount: number;
   isLoading: boolean;
-}
-
-interface Budget {
-  id: number;
-  amount: number;
-  categoryId: string;
-}
-
-interface Expense {
-  id: number;
-  amount: number;
-  categoryId: string;
 }
 
 jest.mock('@/app/components', () => ({
@@ -39,13 +27,13 @@ jest.mock('@/app/components', () => ({
 
 describe('BudgetSummary', () => {
   const mockBudgets: Budget[] = [
-    { id: 1, amount: 1000, categoryId: '1' },
-    { id: 2, amount: 2000, categoryId: '2' },
+    { id: 1, amount: 1000, categoryId: '1', date: '2024-01-01' },
+    { id: 2, amount: 2000, categoryId: '2', date: '2024-01-02' },
   ];
   
-  const mockExpenses: Expense[] = [
-    { id: 1, amount: 500, categoryId: '1' },
-    { id: 2, amount: 1500, categoryId: '2' },
+  const mockExpenses: CashFlowEntry[] = [
+    { id: 1, amount: 500, categoryId: '1', entryType: CashFlowType.EXPENSE, date: '2024-01-01' },
+    { id: 2, amount: 1500, categoryId: '2', entryType: CashFlowType.EXPENSE, date: '2024-01-02' },
   ];
 
   const mockDateRange = {
@@ -97,9 +85,9 @@ describe('BudgetSummary', () => {
   });
 
   it('handles over-budget scenario correctly', () => {
-    const overBudgetExpenses: Expense[] = [
-      { id: 1, amount: 2000, categoryId: '1' },
-      { id: 2, amount: 2500, categoryId: '2' },
+    const overBudgetExpenses: CashFlowEntry[] = [
+      { id: 1, amount: 2000, categoryId: '1', date: '2024-01-01', entryType: CashFlowType.EXPENSE },
+      { id: 2, amount: 2500, categoryId: '2', date: '2024-01-02', entryType: CashFlowType.EXPENSE },
     ];
     
     const propsWithOverBudget = {
@@ -114,9 +102,9 @@ describe('BudgetSummary', () => {
   });
 
   it('handles exact budget scenario correctly', () => {
-    const exactBudgetExpenses: Expense[] = [
-      { id: 1, amount: 1000, categoryId: '1' },
-      { id: 2, amount: 2000, categoryId: '2' },
+    const exactBudgetExpenses: CashFlowEntry[] = [
+      { id: 1, amount: 1000, categoryId: '1', date: '2024-01-01', entryType: CashFlowType.EXPENSE },
+      { id: 2, amount: 2000, categoryId: '2', date: '2024-01-02', entryType: CashFlowType.EXPENSE },
     ];
     
     const propsWithExactBudget = {

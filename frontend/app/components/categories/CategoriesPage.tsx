@@ -5,7 +5,7 @@ import { useForm, useMobileDetection } from "@/app/hooks";
 import { getRequestList } from "@/app/lib/api";
 import { MessageState, MessageType, messageTypeIsError } from "@/app/lib/utils";
 import { Category, CategoryFormData, CategoriesForm, CategoriesList } from "@/app/components";
-import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow/components";
+import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow";
 
 type CategoriesPageProps = {
   isLoggedIn: boolean;

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import Income from './page';
-import { INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import Expenses from './page';
+import { EXPENSE_ITEM_NAME } from '@/app/cashflow';
 
 const cashFlowPageTestId = 'cash-flow-page';
 const cashFlowPageText = 'Cash Flow Page';
@@ -16,16 +16,16 @@ jest.mock('@/app/cashflow/components', () => ({
   ),
 }));
 
-describe('Income', () => {
+describe('Expenses', () => {
   it('renders the page correctly', () => {
-    render(<Income />);
+    render(<Expenses />);
     
     expect(screen.getByTestId(cashFlowPageTestId)).toBeInTheDocument();
   });
 
   it('passes correct cashFlowType to CashFlowPage', () => {
-    render(<Income />);
+    render(<Expenses />);
     
-    expect(screen.getByTestId(cashFlowTypeTestId)).toHaveTextContent(INCOME_ITEM_NAME);
+    expect(screen.getByTestId(cashFlowTypeTestId)).toHaveTextContent(EXPENSE_ITEM_NAME);
   });
 }); 

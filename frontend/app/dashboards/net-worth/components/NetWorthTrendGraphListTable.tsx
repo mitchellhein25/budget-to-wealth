@@ -1,7 +1,8 @@
 import React from 'react'
-import { convertCentsToDollars, formatDate, ListTable, ListTableItem } from '@/app/components';
-import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
-import { NetWorthTrendGraphData, NetWorthTrendGraphEntry } from './';
+import { convertCentsToDollars, formatDate } from '@/app/lib/utils';
+import { ListTable, ListTableItem } from '@/app/components';
+import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots'
+import { NetWorthTrendGraphData, NetWorthTrendGraphEntry } from '@/app/dashboards/net-worth';
 
 export function NetWorthTrendGraphListTable({ netWorthTrendGraph }: { netWorthTrendGraph: NetWorthTrendGraphData }) {
   return (

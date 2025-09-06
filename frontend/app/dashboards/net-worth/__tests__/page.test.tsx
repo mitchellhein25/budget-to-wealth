@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import NetWorthTrendGraph from './page';
-import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
+import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots';
+import { NetWorthTrendGraph } from '@/app/dashboards/net-worth';
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getNetWorthTrendGraphForDateRange: jest.fn(),
   getNetWorthAvailableDateRange: jest.fn(),
 }));
 
-jest.mock('../components', () => ({
+jest.mock('@/app/dashboards', () => ({
   DashboardPage: ({ children, itemName }: { children: (props: { trendGraphData: unknown }) => React.ReactElement; itemName: string }) => (
     <div data-testid="dashboard-page">
       <div data-testid="item-name">{itemName}</div>
@@ -24,7 +24,7 @@ jest.mock('../components', () => ({
   ),
 }));
 
-jest.mock('./components', () => ({
+jest.mock('@/app/dashboards/net-worth', () => ({
   NetWorthTrendDatasets: jest.fn(() => [{ label: 'Net Worth', data: [10000, 12000] }]),
   NetWorthTotalDisplays: ({ netWorths }: { netWorths: number[] }) => (
     <div data-testid="net-worth-totals">

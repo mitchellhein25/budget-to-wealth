@@ -1,5 +1,5 @@
 import { TrendGraphDataset } from '@/app/dashboards';
-import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
+import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
 import { CashFlowTrendGraphData } from '@/app/dashboards/cashflow';
 
 export function CashFlowTrendDatasets(data: CashFlowTrendGraphData | null): TrendGraphDataset[] {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react'
-import { CashFlowPage, CashFlowType, EXPENSE_ITEM_NAME } from '@/app/cashflow/components';
+import { CashFlowPage, CashFlowType, EXPENSE_ITEM_NAME } from '@/app/cashflow';
 import CashFlowTypeRadioButtons from './components/CashFlowTypeRadioButtons';
 
 export default function RecurringCashFlowPage() {

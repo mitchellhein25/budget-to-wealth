@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { CashFlowEntriesForm } from './CashFlowEntriesForm';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '..';
+import { CashFlowEntriesForm } from '../CashFlowEntriesForm';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../..';
 
 const formTemplateTestId = 'form-template';
 const cashFlowEntriesInputsTestId = 'cash-flow-entries-inputs';

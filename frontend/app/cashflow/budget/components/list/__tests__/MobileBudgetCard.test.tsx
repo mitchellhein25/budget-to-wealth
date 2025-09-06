@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileBudgetCard } from './MobileBudgetCard';
-import { Budget } from '..';
-import { CashFlowEntry } from '@/app/cashflow/components';
+import { CashFlowEntry } from '@/app/cashflow';
+import { MobileBudgetCard, Budget } from '@/app/cashflow/budget';
 
 const mockBudget: Budget = {
   id: 1,

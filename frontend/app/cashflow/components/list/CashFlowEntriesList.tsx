@@ -3,7 +3,7 @@
 import React from 'react';
 import { deleteCashFlowEntry } from '@/app/lib/api';
 import { ListTable } from '@/app/components/table/ListTable';
-import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '..';
+import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '../..';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ManualInvestmentReturnList } from '../ManualInvestmentReturnList';
 import { ManualInvestmentReturn } from '../../../ManualInvestmentReturn';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
 
 const mockOnManualInvestmentReturnDeleted = jest.fn();
 const mockOnManualInvestmentReturnIsEditing = jest.fn();

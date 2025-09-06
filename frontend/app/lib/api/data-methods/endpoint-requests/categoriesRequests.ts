@@ -1,6 +1,6 @@
 "use server";
 
-import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowType, CashFlowCategory } from "@/app/cashflow/components";
+import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowType, CashFlowCategory } from "@/app/cashflow";
 import { getRequestList, CASH_FLOW_CATEGORIES_ENDPOINT } from "@/app/lib/api";
 
 export async function getCategoriesList(cashFlowType: CashFlowType) {

@@ -1,5 +1,5 @@
 import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent, convertCentsToDollars } from "@/app/components";
-import { CashFlowEntry, getRecurrenceText } from "..";
+import { CashFlowEntry, getRecurrenceText } from "../..";
 
 interface MobileCashFlowEntryCardProps {
 	entry: CashFlowEntry;

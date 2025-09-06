@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import BudgetsPage from './page';
+import { BudgetsPage } from '@/app/cashflow/budget';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
 const budgetsFormTestId = 'budgets-form';
@@ -30,7 +30,7 @@ jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => false,
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getBudgetsByDateRange: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
   getCashFlowEntriesByDateRangeAndType: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
@@ -41,11 +41,11 @@ jest.mock('@/app/components', () => ({
   messageTypeIsError: jest.fn(() => false),
 }));
 
-jest.mock('@/app/cashflow/components', () => ({
+jest.mock('@/app/cashflow', () => ({
   CashFlowSideBar: () => <div data-testid={cashFlowSideBarTestId}>{cashFlowSideBarText}</div>,
 }));
 
-jest.mock('./components', () => ({
+jest.mock('@/app/cashflow/budget', () => ({
   BudgetsForm: () => <div data-testid={budgetsFormTestId}>{budgetsFormText}</div>,
   BudgetsList: () => <div data-testid={budgetsListTestId}>{budgetsListText}</div>,
   BudgetSummary: () => <div data-testid={budgetSummaryTestId}>{budgetSummaryText}</div>,

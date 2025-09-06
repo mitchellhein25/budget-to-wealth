@@ -1,9 +1,8 @@
-import { BUDGET_ITEM_NAME_LOWERCASE, transformFormDataToBudget } from '../..';
-import { convertDollarsToCents } from '@/app/components';
+import { convertDollarsToCents } from '@/app/lib/utils';
+import { BUDGET_ITEM_NAME_LOWERCASE, transformFormDataToBudget } from '@/app/cashflow/budget';
 
-// Mock only the convertDollarsToCents function
-jest.mock('@/app/components', () => ({
-  ...jest.requireActual('@/app/components'),
+jest.mock('@/app/lib/utils', () => ({
+  ...jest.requireActual('@/app/lib/utils'),
   convertDollarsToCents: jest.fn(),
 }));
 

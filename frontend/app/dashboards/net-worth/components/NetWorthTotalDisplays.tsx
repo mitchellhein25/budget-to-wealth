@@ -1,7 +1,7 @@
 import React from 'react'
 import { TotalDisplay } from '@/app/components'
-import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components'
-import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '../../components'
+import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots'
+import { avgNumberList, maxNumberList, medianNumberList, minNumberList } from '@/app/dashboards'
 
 export function NetWorthTotalDisplays({ assets, debts, netWorths }: { assets: number[], debts: number[], netWorths: number[] }) {
   return (
