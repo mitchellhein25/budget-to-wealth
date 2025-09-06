@@ -1,4 +1,4 @@
-import { CashFlowEntry } from "../../..";
+import { CashFlowEntry } from "@/app/cashflow";
 
 export const convertCashFlowEntryToFormData = (cashFlowEntry: CashFlowEntry) => {
   return {

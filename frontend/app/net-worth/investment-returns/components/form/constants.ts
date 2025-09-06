@@ -1,4 +1,4 @@
-import { replaceSpacesWithDashes } from "@/app/components/Utils";
+import { replaceSpacesWithDashes } from "@/app/lib/utils";
 
 export const HOLDING_INVESTMENT_RETURN_ITEM_NAME = "Holding Investment Return";
 export const HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE = HOLDING_INVESTMENT_RETURN_ITEM_NAME.toLowerCase();

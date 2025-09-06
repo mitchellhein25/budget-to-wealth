@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { deleteCashFlowEntry } from '@/app/lib/api';
-import { ListTable } from '@/app/components/table/ListTable';
-import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '../..';
+import { ListTable } from '@/app/components';
+import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '@/app/cashflow';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],

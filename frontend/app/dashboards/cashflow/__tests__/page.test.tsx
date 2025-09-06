@@ -3,12 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { CASHFLOW_ITEM_NAME } from '@/app/cashflow';
 import { CashFlowTrendGraph } from '@/app/dashboards/cashflow';
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getCashFlowTrendGraphForDateRange: jest.fn(),
   getCashFlowEntriesDateRange: jest.fn(),
 }));
 
-jest.mock('../components', () => ({
+jest.mock('@/app/dashboards', () => ({
+  ...jest.requireActual('@/app/dashboards'),
   DashboardPage: ({ children, itemName }: { children: (props: { trendGraphData: unknown }) => React.ReactElement; itemName: string }) => (
     <div data-testid="dashboard-page">
       <div data-testid="item-name">{itemName}</div>
@@ -24,7 +25,8 @@ jest.mock('../components', () => ({
   ),
 }));
 
-jest.mock('./components', () => ({
+jest.mock('@/app/dashboards/cashflow', () => ({
+  ...jest.requireActual('@/app/dashboards/cashflow'),
   CashFlowTrendDatasets: jest.fn(() => [{ label: 'Income', data: [100, 200] }]),
   CashFlowTotalDisplays: ({ incomes, expenses, netCashFlows }: { incomes: number[]; expenses: number[]; netCashFlows: number[] }) => (
     <div data-testid="cash-flow-totals">

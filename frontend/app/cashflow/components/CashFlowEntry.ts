@@ -1,5 +1,5 @@
 import { ListTableItem } from "@/app/components";
-import { CashFlowCategory, CashFlowType, RecurrenceFrequency } from "..";
+import { CashFlowCategory, CashFlowType, RecurrenceFrequency } from "@/app/cashflow";
 
 
 export type CashFlowEntry = ListTableItem & {

@@ -40,7 +40,7 @@ jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getCashFlowEntriesByDateRangeAndType: jest.fn(),
 }));
 
@@ -64,11 +64,9 @@ jest.mock('@/app/components', () => ({
   MESSAGE_TYPE_ERROR: 'error',
 }));
 
-jest.mock('./components/CashFlowSideBar', () => ({
+jest.mock('@/app/cashflow', () => ({
+  ...jest.requireActual('@/app/cashflow'),
   CashFlowSideBar: () => <div data-testid={cashFlowSideBarTestId}>Cash Flow Side Bar</div>,
-}));
-
-jest.mock('./form', () => ({
   CashFlowEntriesForm: ({ cashFlowType, formState }: CashFlowEntriesFormProps) => (
     <div data-testid={cashFlowEntriesFormTestId}>
       <span>Cash Flow Entries Form - {cashFlowType}</span>
@@ -77,10 +75,6 @@ jest.mock('./form', () => ({
   ),
   CashFlowEntryFormData: {},
   transformCashFlowFormDataToEntry: jest.fn(),
-}));
-
-jest.mock('./list/CashFlowEntriesList', () => ({
-  __esModule: true,
   default: ({ cashFlowType, entries, onEntryDeleted, isLoading, isError }: CashFlowEntriesListProps) => (
     <div data-testid={cashFlowEntriesListTestId}>
       <span>Cash Flow Entries List - {cashFlowType}</span>

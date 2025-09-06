@@ -9,7 +9,8 @@ jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => false,
 }));
 
-jest.mock('@/app/net-worth/holding-snapshots/components/NetWorthSideBar', () => ({
+jest.mock('@/app/net-worth', () => ({
+  ...jest.requireActual('@/app/net-worth'),
   NetWorthSideBar: () => <div data-testid={netWorthSideBarTestId}>{netWorthSideBarText}</div>,
 }));
 

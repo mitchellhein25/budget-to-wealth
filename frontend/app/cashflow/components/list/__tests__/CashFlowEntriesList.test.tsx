@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import CashFlowEntriesList from '.';
+import { CashFlowEntriesList, CashFlowType } from '@/app/cashflow';
 
 const listTableTestId = 'list-table';
 const listTableText = 'ListTable';
@@ -15,7 +15,8 @@ interface ListTableProps {
   isLoading: boolean;
 }
 
-jest.mock('@/app/components/table/ListTable', () => ({
+jest.mock('@/app/components', () => ({
+  ...jest.requireActual('@/app/components'),
   ListTable: ({ title, items, isError, isLoading }: ListTableProps) => (
     <div data-testid={listTableTestId}>
       <div>{listTableText}</div>
@@ -34,7 +35,7 @@ describe('CashFlowEntriesList', () => {
     onEntryIsEditing: jest.fn(),
     isLoading: false,
     isError: false,
-    cashFlowType: 'Cash Flow' as const,
+    cashFlowType: CashFlowType.INCOME,
   };
 
   it('renders with correct title', () => {

@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { CashFlowEntriesForm } from '../CashFlowEntriesForm';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../..';
+import { CashFlowEntriesForm, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
 
 const formTemplateTestId = 'form-template';
 const cashFlowEntriesInputsTestId = 'cash-flow-entries-inputs';
@@ -25,7 +24,8 @@ interface CashFlowEntriesInputsProps {
   setIsLoading: (loading: boolean) => void;
 }
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components', () => ({
+  ...jest.requireActual('@/app/components'),
   formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: FormTemplateProps) => (
     <div data-testid={formTemplateTestId}>
@@ -37,14 +37,12 @@ jest.mock('@/app/components/form', () => ({
       {message && <div data-testid={messageTestId}>{JSON.stringify(message)}</div>}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons', () => ({
   UpdateCreateButton: () => <div>{updateCreateButtonText}</div>,
   ResetButton: () => <div>{resetButtonText}</div>,
 }));
 
-jest.mock('./CashFlowEntriesInputs', () => ({
+jest.mock('@/app/cashflow', () => ({
+  ...jest.requireActual('@/app/cashflow'),
   CashFlowEntriesInputs: ({ }: CashFlowEntriesInputsProps) => (
     <div data-testid={cashFlowEntriesInputsTestId}>
       {cashFlowEntriesInputsTestId}

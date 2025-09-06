@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ImportPage } from '@/app/import';
 
-jest.mock('./components/DataImport', () => ({
+jest.mock('@/app/import', () => ({
   __esModule: true,
-  default: () => <div data-testid="data-import">DataImport Component</div>,
+  DataImport: () => <div data-testid="data-import">DataImport Component</div>,
 }));
 
 describe('Import Page', () => {

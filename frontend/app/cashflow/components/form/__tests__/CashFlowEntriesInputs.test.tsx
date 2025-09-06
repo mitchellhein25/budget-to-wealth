@@ -1,10 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { getCategoriesList } from '@/app/lib/api/data-methods';
-import { CashFlowCategory, CashFlowType } from '@/app/cashflow';
-import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
-import { CashFlowEntriesInputs } from '../CashFlowEntriesInputs';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '../../..';
+import { getCategoriesList } from '@/app/lib/api';
+import { CashFlowCategory, CashFlowType, RecurrenceFrequency, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, CashFlowEntriesInputs } from '@/app/cashflow';
 
 interface MockLinkProps {
   children: React.ReactNode;
@@ -12,7 +9,8 @@ interface MockLinkProps {
   [key: string]: unknown;
 }
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
+  ...jest.requireActual('@/app/lib/api'),
   getCategoriesList: jest.fn(),
 }));
 

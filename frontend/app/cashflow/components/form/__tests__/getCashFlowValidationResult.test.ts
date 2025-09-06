@@ -1,5 +1,4 @@
-import { getCashFlowValidationResult } from '../functions/getCashFlowValidationResult';
-import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '../../..';
+import { getCashFlowValidationResult, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
 
 describe('getCashFlowValidationResult', () => {
   it('validates valid income form data', () => {
