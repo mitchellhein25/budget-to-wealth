@@ -1,6 +1,6 @@
-import { convertToDate, convertToDateMonthYear, DesktopListItemCell } from "@/app/components";
-import { DesktopListItemRow } from "@/app/components";
-import { getManualInvestmentReturnDisplayName, ManualInvestmentReturn } from "../../ManualInvestmentReturn";
+import { convertToDate, convertToDateMonthYear } from "@/app/lib/utils";
+import { DesktopListItemCell, DesktopListItemRow } from "@/app/components";
+import { getManualInvestmentReturnDisplayName, ManualInvestmentReturn } from "@/app/net-worth/investment-returns";
 
 interface DesktopManualInvestmentReturnRowProps {
 	investmentReturn: ManualInvestmentReturn;

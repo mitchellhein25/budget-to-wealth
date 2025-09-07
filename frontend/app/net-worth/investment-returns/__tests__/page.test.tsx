@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import InvestmentReturnsPage from './page';
+import InvestmentReturnsPage from '../page';
 
 
 // Mock console.error to prevent it from appearing in tests
@@ -36,7 +36,7 @@ jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => false,
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getHoldingInvestmentReturnsByDateRange: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
   getManualInvestmentReturnsByDateRange: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
 }));
@@ -47,23 +47,14 @@ jest.mock('@/app/components', () => ({
   getCurrentMonthRange: jest.fn(() => ({ start: new Date(), end: new Date() })),
 }));
 
-jest.mock('@/app/net-worth/holding-snapshots/components/NetWorthSideBar', () => ({
+jest.mock('@/app/net-worth/holding-snapshots', () => ({
   NetWorthSideBar: () => <div data-testid={netWorthSideBarTestId}>{netWorthSideBarText}</div>,
 }));
 
-jest.mock('./components/form/InvestmentReturnForm', () => ({
-  InvestmentReturnForm: () => <div data-testid={investmentReturnFormTestId}>{investmentReturnFormText}</div>,
-}));
-
-jest.mock('./components/list/InvestmentReturnList', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   InvestmentReturnList: () => <div data-testid={investmentReturnListTestId}>{investmentReturnListText}</div>,
-}));
-
-jest.mock('./components/form/manual-investment-return-form', () => ({
+  InvestmentReturnForm: () => <div data-testid={investmentReturnFormTestId}>{investmentReturnFormText}</div>,
   transformFormDataToManualInvestmentReturn: jest.fn(),
-}));
-
-jest.mock('./components/form/holding-investment-return-form', () => ({
   transformFormDataToHoldingInvestmentReturn: jest.fn(),
 }));
 
@@ -95,8 +86,8 @@ describe('InvestmentReturnsPage', () => {
   });
 
   it('fetches both types of investment returns on mount', async () => {
-    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingInvestmentReturnsByDateRange as jest.Mock;
-    const getManualInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getManualInvestmentReturnsByDateRange as jest.Mock;
+    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api').getHoldingInvestmentReturnsByDateRange as jest.Mock;
+    const getManualInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api').getManualInvestmentReturnsByDateRange as jest.Mock;
 
     await act(async () => {
       render(<InvestmentReturnsPage />);
@@ -109,7 +100,7 @@ describe('InvestmentReturnsPage', () => {
   });
 
   it('handles API errors gracefully', async () => {
-    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingInvestmentReturnsByDateRange as jest.Mock;
+    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api').getHoldingInvestmentReturnsByDateRange as jest.Mock;
     getHoldingInvestmentReturnsByDateRange.mockRejectedValueOnce(new Error('API Error'));
 
     await act(async () => {
@@ -122,7 +113,7 @@ describe('InvestmentReturnsPage', () => {
   });
 
   it('handles unsuccessful API responses', async () => {
-    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingInvestmentReturnsByDateRange as jest.Mock;
+    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api').getHoldingInvestmentReturnsByDateRange as jest.Mock;
     getHoldingInvestmentReturnsByDateRange.mockResolvedValueOnce({ successful: false, data: [] });
 
     await act(async () => {
@@ -166,8 +157,8 @@ describe('InvestmentReturnsPage', () => {
   });
 
   it('calls fetch functions with correct date range', async () => {
-    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingInvestmentReturnsByDateRange as jest.Mock;
-    const getManualInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getManualInvestmentReturnsByDateRange as jest.Mock;
+    const getHoldingInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api').getHoldingInvestmentReturnsByDateRange as jest.Mock;
+    const getManualInvestmentReturnsByDateRange = jest.requireMock('@/app/lib/api').getManualInvestmentReturnsByDateRange as jest.Mock;
 
     await act(async () => {
       render(<InvestmentReturnsPage />);

@@ -58,9 +58,6 @@ jest.mock('@/app/components', () => ({
       {description}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons', () => ({
   EditButton: ({ onClick }: { onClick: () => void }) => (
     <button data-testid="edit-button" onClick={onClick}>Edit</button>
   ),

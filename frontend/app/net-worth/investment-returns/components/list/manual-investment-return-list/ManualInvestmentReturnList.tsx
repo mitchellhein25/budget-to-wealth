@@ -1,9 +1,6 @@
 import React from 'react'
-import { ListTable } from '@/app/components/table/ListTable';
-import { DesktopManualInvestmentReturnRow } from './DesktopManualInvestmentReturnRow';
-import { MobileManualInvestmentReturnCard } from './MobileManualInvestmentReturnCard';
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_PLURAL } from '../../form';
-import { getManualInvestmentReturnDisplayName, ManualInvestmentReturn } from '../../ManualInvestmentReturn';
+import { ListTable } from '@/app/components';
+import { getManualInvestmentReturnDisplayName, ManualInvestmentReturn,  MANUAL_INVESTMENT_RETURN_ITEM_NAME_PLURAL, DesktopManualInvestmentReturnRow, MobileManualInvestmentReturnCard } from '@/app/net-worth/investment-returns';
 
 type ManualInvestmentReturnListProps = {
   manualInvestmentReturns: ManualInvestmentReturn[],

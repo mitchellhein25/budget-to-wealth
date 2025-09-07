@@ -10,7 +10,6 @@ interface MockLinkProps {
 }
 
 jest.mock('@/app/lib/api', () => ({
-  ...jest.requireActual('@/app/lib/api'),
   getCategoriesList: jest.fn(),
 }));
 

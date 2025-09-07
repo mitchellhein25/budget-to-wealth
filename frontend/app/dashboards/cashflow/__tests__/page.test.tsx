@@ -124,7 +124,7 @@ describe('CashFlowTrendGraph', () => {
     const { rerender } = render(<CashFlowTrendGraph />);
     
     // Mock the DashboardPage to return null data
-    jest.doMock('../components', () => ({
+    jest.doMock('@/app/dashboards', () => ({
       DashboardPage: ({ children }: { children: (props: { trendGraphData: unknown }) => React.ReactElement }) => (
         <div data-testid="dashboard-page">
           {children({ trendGraphData: null })}

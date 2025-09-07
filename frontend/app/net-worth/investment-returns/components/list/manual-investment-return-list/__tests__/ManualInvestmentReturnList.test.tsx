@@ -1,14 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ManualInvestmentReturnList } from '../ManualInvestmentReturnList';
-import { ManualInvestmentReturn } from '../../../ManualInvestmentReturn';
-import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { ManualInvestmentReturnList, ManualInvestmentReturn } from '@/app/net-worth/investment-returns';
 
 const mockOnManualInvestmentReturnDeleted = jest.fn();
 const mockOnManualInvestmentReturnIsEditing = jest.fn();
 const mockHandleDelete = jest.fn();
 
-jest.mock('@/app/components/table/ListTable', () => ({
+jest.mock('@/app/components', () => ({
   ListTable: ({ title, headerRow, bodyRow, mobileRow, items, isError, isLoading }: { 
     title: string; 
     headerRow: React.ReactNode; 
@@ -39,7 +38,7 @@ jest.mock('@/app/components/table/ListTable', () => ({
   )
 }));
 
-jest.mock('../DesktopManualInvestmentReturnRow', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   DesktopManualInvestmentReturnRow: ({ 
     investmentReturn, 
     onEdit, 
@@ -58,10 +57,7 @@ jest.mock('../DesktopManualInvestmentReturnRow', () => ({
         <button onClick={() => onDelete(investmentReturn.id!)} data-testid={`delete-${investmentReturn.id}`}>Delete</button>
       </td>
     </tr>
-  )
-}));
-
-jest.mock('../MobileManualInvestmentReturnCard', () => ({
+  ),
   MobileManualInvestmentReturnCard: ({ 
     investmentReturn, 
     onEdit, 
@@ -103,7 +99,7 @@ describe('ManualInvestmentReturnList', () => {
       },
       manualInvestmentReturnDate: '2024-01-15',
       manualInvestmentPercentageReturn: 5.75,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly,
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
     },
     {
@@ -117,7 +113,7 @@ describe('ManualInvestmentReturnList', () => {
       },
       manualInvestmentReturnDate: '2024-01-16',
       manualInvestmentPercentageReturn: 3.25,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Monthly
+      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY
     },
     {
       id: 3,
@@ -330,7 +326,7 @@ describe('ManualInvestmentReturnList', () => {
         },
         manualInvestmentReturnDate: '2024-01-19',
         manualInvestmentPercentageReturn: 25.50,
-        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.Weekly,
+        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY,
         manualInvestmentRecurrenceEndDate: '2024-06-30'
       }
     ];

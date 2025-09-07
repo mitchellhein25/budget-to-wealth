@@ -1,9 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Category } from '@/app/components';
-import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow } from '@/app/cashflow';
+import { CashFlowEntry, CashFlowType } from '@/app/cashflow';
+import { DesktopCashFlowEntryRow } from '@/app/cashflow/components/list/DesktopCashFlowEntryRow';
 
 const editLabel = 'Edit';
 const deleteLabel = 'Delete';
+
+jest.mock('@/app/lib/utils', () => ({
+  convertCentsToDollars: jest.fn((cents) => `$${(cents / 100).toFixed(2)}`),
+  convertToDate: jest.fn((dateString) => new Date(dateString)),
+  formatDate: jest.fn((date) => date.toLocaleDateString()),
+}));
+
+jest.mock('@/app/cashflow', () => ({
+  getRecurrenceText: jest.fn((entry) => 'Monthly'),
+  CashFlowType: {
+    INCOME: 'Income',
+    EXPENSE: 'Expense',
+  },
+}));
 
 jest.mock('@/app/components', () => ({
   DesktopListItemRow: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
@@ -15,8 +30,11 @@ jest.mock('@/app/components', () => ({
       </td>
     </tr>
   ),
-  DesktopListItemCell: ({ children, title }: { children: React.ReactNode; title?: string }) => (
-    <td title={title}>{children}</td>
+  DesktopListItemCell: ({ children, title, className }: { children: React.ReactNode; title?: string; className?: string }) => (
+    <td title={title} className={className}>{children}</td>
+  ),
+  TruncatedBadge: ({ children, title }: { children: React.ReactNode; title?: string }) => (
+    <span title={title}>{children}</span>
   ),
 }));
 

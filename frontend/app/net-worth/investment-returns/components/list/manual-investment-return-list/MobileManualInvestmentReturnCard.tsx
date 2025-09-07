@@ -1,5 +1,6 @@
-import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent, convertToDate, convertToDateMonthYear } from "@/app/components";
-import { getManualInvestmentReturnDisplayName, ManualInvestmentReturn } from "../../ManualInvestmentReturn";
+import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
+import { convertToDate, convertToDateMonthYear } from "@/app/lib/utils";
+import { getManualInvestmentReturnDisplayName, ManualInvestmentReturn } from "@/app/net-worth/investment-returns";
 
 interface MobileManualInvestmentReturnCardProps {
 	investmentReturn: ManualInvestmentReturn;

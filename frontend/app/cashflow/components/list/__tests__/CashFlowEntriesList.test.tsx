@@ -40,7 +40,7 @@ describe('CashFlowEntriesList', () => {
 
   it('renders with correct title', () => {
     render(<CashFlowEntriesList {...mockProps} />);
-    expect(screen.getByTestId(titleTestId)).toHaveTextContent('Cash Flow Entries');
+    expect(screen.getByTestId(titleTestId)).toHaveTextContent(`${CashFlowType.INCOME} Entries`);
   });
 
   it('passes correct props to ListTable', () => {

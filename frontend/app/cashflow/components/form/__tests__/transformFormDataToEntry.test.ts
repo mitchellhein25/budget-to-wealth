@@ -1,7 +1,6 @@
 import { transformCashFlowFormDataToEntry, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
 
-jest.mock('@/app/components', () => ({
-  ...jest.requireActual('@/app/components'),
+jest.mock('@/app/lib/utils', () => ({
   convertDollarsToCents: jest.fn(),
   currencyRegex: /^\d+(\.\d{0,2})?$/,
   replaceSpacesWithDashes: jest.fn(),

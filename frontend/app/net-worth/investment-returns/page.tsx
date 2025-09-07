@@ -1,16 +1,15 @@
 'use client';
 
 import React, { useCallback, useState } from 'react'
-import { NetWorthSideBar } from '../components/NetWorthSideBar';
 import { useForm, useFormListItemsFetch } from '@/app/hooks';
-import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
-import { convertManualInvestmentReturnItemToFormData, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE } from './components/form';
-import { InvestmentReturnForm } from './components/form/InvestmentReturnForm';
-import { HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
-import { ManualInvestmentReturn } from './components/ManualInvestmentReturn';
-import { HoldingInvestmentReturn } from './components/HoldingInvestmentReturn';
-import { InvestmentReturnList } from './components/list/InvestmentReturnList';
+import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api';
+import { NetWorthSideBar } from '@/app/net-worth';
+import { InvestmentReturnList, ManualInvestmentReturn, HoldingInvestmentReturn, InvestmentReturnForm, HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn, convertManualInvestmentReturnItemToFormData, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE } from '@/app/net-worth/investment-returns';
+import {  } from '@/app/net-worth/investment-returns/components/form/InvestmentReturnForm';
+import { } from './components/form/holding-investment-return-form';
+import {  } from './components/ManualInvestmentReturn';
+import {  } from './components/HoldingInvestmentReturn';
+import {  } from './components/list/InvestmentReturnList';
 import { DatePicker, DateRange, getCurrentMonthRange, messageTypeIsError } from '@/app/components';
 import ResponsiveFormListPage from '@/app/components/ui/ResponsiveFormListPage';
 import { convertHoldingInvestmentReturnItemToFormData } from './components/form/holding-investment-return-form/functions';

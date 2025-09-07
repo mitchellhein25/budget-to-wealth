@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE, BudgetsForm } from '@/app/cashflow/budget';
+import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE } from '@/app/cashflow/budget';
+import { BudgetsForm } from '@/app/cashflow/budget/components/form/BudgetsForm';
 
 const formTemplateTestId = 'form-template';
 const budgetInputsTestId = 'budget-inputs';
@@ -18,8 +19,8 @@ interface FormTemplateProps {
   message?: { type: string | null; text: string };
 }
 
-jest.mock('@/app/components/form', () => ({
-  formHasAnyValue: () => true,
+jest.mock('@/app/components', () => ({
+  formHasAnyValue: jest.fn(() => true),
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: FormTemplateProps) => (
     <div data-testid={formTemplateTestId}>
       <div>{formTemplateTestId}</div>
@@ -30,14 +31,11 @@ jest.mock('@/app/components/form', () => ({
       {message && <div data-testid={messageTestId}>{JSON.stringify(message)}</div>}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons', () => ({
   UpdateCreateButton: () => <div>{updateCreateButtonText}</div>,
   ResetButton: () => <div>{resetButtonText}</div>,
 }));
 
-jest.mock('./BudgetInputs', () => ({
+jest.mock('@/app/cashflow/budget', () => ({
   BudgetInputs: () => (
     <div data-testid={budgetInputsTestId}>
       {budgetInputsTestId}

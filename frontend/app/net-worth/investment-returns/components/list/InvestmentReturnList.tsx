@@ -1,10 +1,6 @@
 import React from 'react'
-import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn } from '@/app/lib/api/data-methods';
-import { HoldingInvestmentReturn } from '../HoldingInvestmentReturn';
-import { ManualInvestmentReturn } from '../ManualInvestmentReturn';
-import { FetchResult } from '@/app/lib/api/apiClient';
-import { HoldingInvestmentReturnList } from './holding-investment-return-list/HoldingInvestmentReturnList';
-import { ManualInvestmentReturnList } from './investment-return-list/ManualInvestmentReturnList';
+import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn, FetchResult } from '@/app/lib/api';
+import { HoldingInvestmentReturn, ManualInvestmentReturn, HoldingInvestmentReturnList, ManualInvestmentReturnList } from '@/app/net-worth/investment-returns';
 
 type InvestmentReturnListProps = {
   manualInvestmentReturns: ManualInvestmentReturn[],

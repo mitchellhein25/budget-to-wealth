@@ -1,9 +1,6 @@
 import React from 'react'
-import { ListTable } from '@/app/components/table/ListTable';
-import { getHoldingInvestmentReturnDisplayName, HoldingInvestmentReturn } from '../../HoldingInvestmentReturn';
-import { DesktopHoldingInvestmentReturnRow } from './DesktopHoldingInvestmentReturnRow';
-import { MobileHoldingInvestmentReturnCard } from './MobileHoldingInvestmentReturnCard';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_PLURAL } from '../../form';
+import { ListTable } from '@/app/components';
+import { getHoldingInvestmentReturnDisplayName, HoldingInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME_PLURAL, DesktopHoldingInvestmentReturnRow, MobileHoldingInvestmentReturnCard } from '@/app/net-worth/investment-returns';
 
 type HoldingInvestmentReturnListProps = {
   holdingInvestmentReturns: HoldingInvestmentReturn[],

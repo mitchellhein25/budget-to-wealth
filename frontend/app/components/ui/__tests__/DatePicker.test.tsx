@@ -5,6 +5,7 @@ import { DatePicker } from '@/app/components';
 
 jest.mock('@/app/lib/utils', () => ({
   convertDateToISOString: jest.fn((date) => date?.toISOString().slice(0, 10) ?? ''),
+  replaceSpacesWithDashes: jest.fn((str: string) => str.replace(/\s+/g, '-')),
 }));
 
 const mockSetDateRange = jest.fn();

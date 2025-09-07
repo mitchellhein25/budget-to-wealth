@@ -11,6 +11,7 @@ jest.mock('@/app/lib/utils', () => ({
       currency: 'USD'
     }).format(dollars);
   }),
+  replaceSpacesWithDashes: jest.fn((text) => text.replace(/\s+/g, '-')),
 }));
 
 const defaultProps = {

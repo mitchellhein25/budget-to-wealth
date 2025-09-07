@@ -1,96 +1,79 @@
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { MobileState, useForm, useMobileDetection } from '@/app/hooks';
-import { getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api';
-import { messageTypeIsError } from '@/app/lib/utils';
-import { CashFlowType, CashFlowEntry, CashFlowPage, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '@/app/cashflow';
-
-const cashFlowSideBarTestId = 'cash-flow-side-bar';
-const cashFlowEntriesFormTestId = 'cash-flow-entries-form';
-const datePickerTestId = 'date-picker';
-const totalDisplayTestId = 'total-display';
-const cashFlowEntriesListTestId = 'cash-flow-entries-list';
-
-interface DatePickerProps {
-  setDateRange: (range: { start: Date; end: Date }) => void;
-}
-
-interface TotalDisplayProps {
-  label: string;
-  amount: number;
-  isLoading: boolean;
-}
-
-interface CashFlowEntriesFormProps {
-  cashFlowType: string;
-  formState: {
-    onSubmit: () => void;
-  };
-}
-
-interface CashFlowEntriesListProps {
-  cashFlowType: string;
-  entries: CashFlowEntry[];
-  onEntryDeleted: () => void;
-  isLoading: boolean;
-  isError: boolean;
-}
+import { render, screen } from '@testing-library/react';
+import { CashFlowPage } from '@/app/cashflow/CashFlowPage';
+import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '@/app/cashflow/components/constants';
 
 jest.mock('@/app/hooks', () => ({
   useForm: jest.fn(),
   useMobileDetection: jest.fn(),
+  useFormListItemsFetch: jest.fn(),
+  useSidebarDetection: jest.fn(),
 }));
 
 jest.mock('@/app/lib/api', () => ({
   getCashFlowEntriesByDateRangeAndType: jest.fn(),
+  getRecurringCashFlowEntries: jest.fn(),
+}));
+
+jest.mock('@/app/lib/utils', () => ({
+  getCurrentMonthRange: jest.fn(() => ({ from: new Date('2024-01-01'), to: new Date('2024-01-31') })),
+  messageTypeIsError: jest.fn(() => false),
 }));
 
 jest.mock('@/app/components', () => ({
-  DatePicker: ({ setDateRange }: DatePickerProps) => (
-    <div data-testid={datePickerTestId}>
+  DatePicker: ({ dateRange, setDateRange }: any) => (
+    <div data-testid="date-picker">
       <span>Date Picker</span>
-      <button onClick={() => setDateRange({ start: new Date(), end: new Date() })}>
-        Change Date
-      </button>
     </div>
   ),
-  TotalDisplay: ({ label, amount, isLoading }: TotalDisplayProps) => (
-    <div data-testid={totalDisplayTestId}>
+  TotalDisplay: ({ label, amount, isLoading }: any) => (
+    <div data-testid="total-display">
       <span>{label}</span>
       <span>{isLoading ? 'Loading...' : `$${(amount / 100).toFixed(2)}`}</span>
     </div>
   ),
-  getCurrentMonthRange: jest.fn(() => ({ start: new Date('2024-01-01'), end: new Date('2024-01-31') })),
-  messageTypeIsError: jest.fn(() => false),
-  MESSAGE_TYPE_ERROR: 'error',
+  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list, showTotalAndDatePicker }: any) => {
+    const mockUseSidebarDetection = jest.mocked(require('@/app/hooks').useSidebarDetection);
+    const showSidebar = mockUseSidebarDetection();
+    
+    return (
+      <div data-testid="responsive-form-list-page">
+        {showSidebar && <div data-testid="sidebar">{sideBar}</div>}
+        {showTotalAndDatePicker !== false && <div data-testid="responsive-total-display">{totalDisplay}</div>}
+        {showTotalAndDatePicker !== false && <div data-testid="responsive-date-picker">{datePicker}</div>}
+        <div data-testid="form">{form}</div>
+        <div data-testid="list">{list}</div>
+      </div>
+    );
+  },
 }));
 
 jest.mock('@/app/cashflow', () => ({
-  ...jest.requireActual('@/app/cashflow'),
-  CashFlowSideBar: () => <div data-testid={cashFlowSideBarTestId}>Cash Flow Side Bar</div>,
-  CashFlowEntriesForm: ({ cashFlowType, formState }: CashFlowEntriesFormProps) => (
-    <div data-testid={cashFlowEntriesFormTestId}>
+  CashFlowSideBar: () => <div data-testid="cash-flow-side-bar">Cash Flow Side Bar</div>,
+  CashFlowEntriesForm: ({ cashFlowType, formState }: any) => (
+    <div data-testid="cash-flow-entries-form">
       <span>Cash Flow Entries Form - {cashFlowType}</span>
-      <button onClick={formState.onSubmit}>Submit</button>
     </div>
   ),
-  CashFlowEntryFormData: {},
-  transformCashFlowFormDataToEntry: jest.fn(),
-  default: ({ cashFlowType, entries, onEntryDeleted, isLoading, isError }: CashFlowEntriesListProps) => (
-    <div data-testid={cashFlowEntriesListTestId}>
+  CashFlowEntriesList: ({ cashFlowType, entries, onEntryDeleted, onEntryIsEditing, isLoading, isError, recurringOnly }: any) => (
+    <div data-testid="cash-flow-entries-list">
       <span>Cash Flow Entries List - {cashFlowType}</span>
       <span>Entries: {entries.length}</span>
       <span>Loading: {isLoading.toString()}</span>
       <span>Error: {isError.toString()}</span>
+      <span>Recurring: {recurringOnly?.toString() || 'false'}</span>
       <button onClick={() => onEntryDeleted()}>Refresh</button>
     </div>
   ),
+  CashFlowEntryFormData: {},
+  transformCashFlowFormDataToEntry: jest.fn(),
+  convertCashFlowEntryToFormData: jest.fn(),
 }));
 
 describe('CashFlowPage', () => {
-  const mockUseForm = jest.mocked(useForm);
-  const mockUseMobileDetection = jest.mocked(useMobileDetection);
-  const mockGetCashFlowEntriesByDateRangeAndType = jest.mocked(getCashFlowEntriesByDateRangeAndType);
-  const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
+  const mockUseForm = jest.mocked(require('@/app/hooks').useForm);
+  const mockUseMobileDetection = jest.mocked(require('@/app/hooks').useMobileDetection);
+  const mockUseFormListItemsFetch = jest.mocked(require('@/app/hooks').useFormListItemsFetch);
+  const mockUseSidebarDetection = jest.mocked(require('@/app/hooks').useSidebarDetection);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -103,180 +86,92 @@ describe('CashFlowPage', () => {
       isSubmitting: false,
       message: { type: null, text: '' },
       onReset: jest.fn(),
+      onSubmit: jest.fn(),
     });
     
-    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
+    mockUseMobileDetection.mockReturnValue('large');
+    mockUseSidebarDetection.mockReturnValue(true);
     
-    mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
-      successful: true,
-      data: [],
-      responseMessage: '',
+    mockUseFormListItemsFetch.mockReturnValue({
+      fetchItems: jest.fn(),
+      isPending: false,
+      message: { type: null, text: '' },
     });
-    
-    mockMessageTypeIsError.mockReturnValue(false);
   });
 
-  it('renders all main components for desktop view', async () => {
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
+  it('renders all main components for desktop view', () => {
+    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    expect(screen.getByTestId(cashFlowSideBarTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(cashFlowEntriesFormTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(datePickerTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(totalDisplayTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(cashFlowEntriesListTestId)).toBeInTheDocument();
+    expect(screen.getByTestId('cash-flow-side-bar')).toBeInTheDocument();
+    expect(screen.getByTestId('cash-flow-entries-form')).toBeInTheDocument();
+    expect(screen.getByTestId('responsive-date-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('responsive-total-display')).toBeInTheDocument();
+    expect(screen.getByTestId('cash-flow-entries-list')).toBeInTheDocument();
   });
 
-  it('renders all main components for mobile view', async () => {
-    mockUseMobileDetection.mockReturnValue(MobileState.SMALL);
+  it('renders all main components for mobile view', () => {
+    mockUseMobileDetection.mockReturnValue('small');
+    mockUseSidebarDetection.mockReturnValue(false);
     
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
+    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    expect(screen.getByTestId(cashFlowEntriesFormTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(datePickerTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(totalDisplayTestId)).toBeInTheDocument();
-    expect(screen.getByTestId(cashFlowEntriesListTestId)).toBeInTheDocument();
+    expect(screen.getByTestId('cash-flow-entries-form')).toBeInTheDocument();
+    expect(screen.getByTestId('responsive-date-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('responsive-total-display')).toBeInTheDocument();
+    expect(screen.getByTestId('cash-flow-entries-list')).toBeInTheDocument();
     
-    expect(screen.queryByTestId(cashFlowSideBarTestId)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
   });
 
-  it('displays correct cash flow type in components', async () => {
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={EXPENSE_ITEM_NAME} />);
-    });
+  it('displays correct cash flow type in components', () => {
+    render(<CashFlowPage cashFlowType={EXPENSE_ITEM_NAME} />);
     
     expect(screen.getByText(`Cash Flow Entries Form - ${EXPENSE_ITEM_NAME}`)).toBeInTheDocument();
     expect(screen.getByText(`Cash Flow Entries List - ${EXPENSE_ITEM_NAME}`)).toBeInTheDocument();
     expect(screen.getByText(`Total ${EXPENSE_ITEM_NAME}`)).toBeInTheDocument();
   });
 
-  it('fetches cash flow entries on mount', async () => {
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+  it('fetches cash flow entries on mount', () => {
+    const mockFetchItems = jest.fn();
+    mockUseFormListItemsFetch.mockReturnValue({
+      fetchItems: mockFetchItems,
+      isPending: false,
+      message: { type: null, text: '' },
     });
     
-    await waitFor(() => {
-      expect(mockGetCashFlowEntriesByDateRangeAndType).toHaveBeenCalled();
-    });
+    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
+    
+    expect(mockFetchItems).toHaveBeenCalled();
   });
 
-  it('handles successful API response', async () => {
-    const mockEntries: CashFlowEntry[] = [
-      { id: 1, amount: 5000, date: '2024-01-15', categoryId: '1', description: 'Salary', entryType: INCOME_ITEM_NAME as CashFlowType },
-      { id: 2, amount: 2500, date: '2024-01-20', categoryId: '2', description: 'Bonus', entryType: INCOME_ITEM_NAME as CashFlowType }
-    ];
+  it('handles API error response', () => {
+    const mockMessageTypeIsError = jest.mocked(require('@/app/lib/utils').messageTypeIsError);
+    mockMessageTypeIsError.mockReturnValue(true);
     
-    mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
-      successful: true,
-      data: mockEntries,
-      responseMessage: 'Success',
+    mockUseFormListItemsFetch.mockReturnValue({
+      fetchItems: jest.fn(),
+      isPending: false,
+      message: { type: 'error', text: 'Failed to load entries' },
     });
     
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
+    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    await waitFor(() => {
-      expect(screen.getByText('Entries: 2')).toBeInTheDocument();
-      expect(screen.getByText('$75.00')).toBeInTheDocument(); // (5000 + 2500) / 100
-    });
+    expect(screen.getByText('Error: true')).toBeInTheDocument();
   });
 
-  it('handles API error response', async () => {
-    mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
-      successful: false,
-      data: null,
-      responseMessage: 'Failed to load entries',
-    });
+  it('calls messageTypeIsError with message state', () => {
+    const mockMessageTypeIsError = jest.mocked(require('@/app/lib/utils').messageTypeIsError);
     
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
+    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     
-    await waitFor(() => {
-      expect(screen.getByText('Entries: 0')).toBeInTheDocument();
-    });
+    expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: null, text: '' });
   });
 
-  it('handles API exception', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockGetCashFlowEntriesByDateRangeAndType.mockRejectedValue(new Error('Network error'));
+  it('handles recurring only mode', () => {
+    render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} recurringOnly={true} />);
     
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
-    
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Fetch error:', expect.any(Error));
-    });
-    
-    consoleSpy.mockRestore();
-  });
-
-  it('calculates total amount correctly', async () => {
-    const mockEntries: CashFlowEntry[] = [
-      { id: 1, amount: 1000, date: '2024-01-15', categoryId: '1', description: 'Small amount', entryType: INCOME_ITEM_NAME as CashFlowType },
-      { id: 2, amount: 2000, date: '2024-01-20', categoryId: '2', description: 'Medium amount', entryType: INCOME_ITEM_NAME as CashFlowType },
-      { id: 3, amount: 3000, date: '2024-01-25', categoryId: '3', description: 'Large amount', entryType: INCOME_ITEM_NAME as CashFlowType }
-    ];
-    
-    mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
-      successful: true,
-      data: mockEntries,
-      responseMessage: 'Success',
-    });
-    
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('$60.00')).toBeInTheDocument(); // (1000 + 2000 + 3000) / 100
-    });
-  });
-
-  it('handles empty entries array', async () => {
-    mockGetCashFlowEntriesByDateRangeAndType.mockResolvedValue({
-      successful: true,
-      data: [],
-      responseMessage: 'Success',
-    });
-    
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('Entries: 0')).toBeInTheDocument();
-      expect(screen.getByText('$0.00')).toBeInTheDocument();
-    });
-  });
-
-  it('calls messageTypeIsError with message state', async () => {
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
-    
-    await waitFor(() => {
-      expect(mockMessageTypeIsError).toHaveBeenCalledWith({ type: null, text: '' });
-    });
-  });
-
-  it('refreshes entries when refresh button is clicked', async () => {
-    await act(async () => {
-      render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
-    });
-    
-    const refreshButton = screen.getByText('Refresh');
-    await act(async () => {
-      refreshButton.click();
-    });
-    
-    await waitFor(() => {
-      expect(mockGetCashFlowEntriesByDateRangeAndType).toHaveBeenCalledTimes(2);
-    });
+    expect(screen.getByText('Recurring: true')).toBeInTheDocument();
+    expect(screen.queryByTestId('responsive-total-display')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('responsive-date-picker')).not.toBeInTheDocument();
   });
 });

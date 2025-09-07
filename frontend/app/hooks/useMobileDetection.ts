@@ -2,6 +2,15 @@
 
 import { useState, useEffect } from "react";
 
+export const MobileState = {
+  XSMALL: 'xsmall',
+  SMALL: 'small',
+  MEDIUM: 'medium',
+  LARGE: 'large',
+  XLARGE: 'xlarge',
+  XXLARGE: 'xxlarge',
+} as const;
+
 export function useMobileDetection() {
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.LARGE);
 
@@ -30,15 +39,6 @@ export function useMobileDetection() {
 
   return mobileState;
 }
-
-export const MobileState = {
-  XSMALL: 'xsmall',
-  SMALL: 'small',
-  MEDIUM: 'medium',
-  LARGE: 'large',
-  XLARGE: 'xlarge',
-  XXLARGE: 'xxlarge',
-} as const;
 
 export type MobileState = typeof MobileState[keyof typeof MobileState];
 

@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import { BudgetsPage } from '@/app/cashflow/budget';
+import { BudgetsPage } from '@/app/cashflow/budget/page';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
 const budgetsFormTestId = 'budgets-form';
@@ -21,11 +21,10 @@ jest.mock('@/app/hooks', () => ({
     isSubmitting: false,
     message: null,
   }),
-  useDataListFetcher: () => ({
-    items: [],
-    isLoading: false,
-    message: null,
+  useFormListItemsFetch: () => ({
     fetchItems: jest.fn(),
+    isPending: false,
+    message: null,
   }),
   useMobileDetection: () => false,
 }));
@@ -33,16 +32,31 @@ jest.mock('@/app/hooks', () => ({
 jest.mock('@/app/lib/api', () => ({
   getBudgetsByDateRange: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
   getCashFlowEntriesByDateRangeAndType: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
+  BUDGETS_ENDPOINT: '/api/budgets',
 }));
 
-jest.mock('@/app/components', () => ({
-  DatePicker: () => <div data-testid={datePickerTestId}>{datePickerText}</div>,
+jest.mock('@/app/lib/utils', () => ({
   getCurrentMonthRange: jest.fn(() => ({ start: new Date(), end: new Date() })),
   messageTypeIsError: jest.fn(() => false),
 }));
 
+jest.mock('@/app/components', () => ({
+  DatePicker: () => <div data-testid={datePickerTestId}>{datePickerText}</div>,
+  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list }: any) => (
+    <div>
+      {sideBar}
+      {totalDisplay}
+      {datePicker}
+      {form}
+      {list}
+    </div>
+  ),
+}));
+
 jest.mock('@/app/cashflow', () => ({
   CashFlowSideBar: () => <div data-testid={cashFlowSideBarTestId}>{cashFlowSideBarText}</div>,
+  CashFlowEntry: {},
+  EXPENSE_ITEM_NAME_LOWERCASE: 'expense',
 }));
 
 jest.mock('@/app/cashflow/budget', () => ({
@@ -51,6 +65,10 @@ jest.mock('@/app/cashflow/budget', () => ({
   BudgetSummary: () => <div data-testid={budgetSummaryTestId}>{budgetSummaryText}</div>,
   BudgetFormData: {},
   transformFormDataToBudget: jest.fn(),
+  convertBudgetToFormData: jest.fn(),
+  BUDGET_ITEM_NAME: 'Budget',
+  BUDGET_ITEM_NAME_LOWERCASE: 'budget',
+  Budget: {},
 }));
 
 describe('BudgetsPage', () => {

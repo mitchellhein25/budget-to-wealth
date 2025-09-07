@@ -22,7 +22,7 @@ export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashF
     fetchItems: fetchCashFlowEntries,
     itemName: cashFlowType.toLowerCase(),
     setItems: setItems,
-  });convertCashFlowEntryToFormData
+  });
 
   const formState = useForm<CashFlowEntry, CashFlowEntryFormData>(
     {

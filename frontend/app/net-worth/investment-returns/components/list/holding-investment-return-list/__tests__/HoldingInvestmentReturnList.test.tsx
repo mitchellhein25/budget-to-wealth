@@ -1,13 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { HoldingInvestmentReturnList } from '../HoldingInvestmentReturnList';
-import { HoldingInvestmentReturn } from '../../../HoldingInvestmentReturn';
+import { HoldingInvestmentReturnList, HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
 
 const mockOnHoldingInvestmentReturnDeleted = jest.fn();
 const mockOnHoldingInvestmentReturnIsEditing = jest.fn();
 const mockHandleDelete = jest.fn();
 
-jest.mock('@/app/components/table/ListTable', () => ({
+jest.mock('@/app/components', () => ({
   ListTable: ({ title, headerRow, bodyRow, mobileRow, items, isError, isLoading }: { 
     title: string; 
     headerRow: React.ReactNode; 
@@ -38,7 +37,7 @@ jest.mock('@/app/components/table/ListTable', () => ({
   )
 }));
 
-jest.mock('../DesktopHoldingInvestmentReturnRow', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   DesktopHoldingInvestmentReturnRow: ({ 
     investmentReturn, 
     onEdit, 
@@ -58,10 +57,8 @@ jest.mock('../DesktopHoldingInvestmentReturnRow', () => ({
         <button onClick={() => onDelete(investmentReturn.id!)} data-testid={`delete-${investmentReturn.id}`}>Delete</button>
       </td>
     </tr>
-  )
-}));
-
-jest.mock('../MobileHoldingInvestmentReturnCard', () => ({
+  ),
+  
   MobileHoldingInvestmentReturnCard: ({ 
     investmentReturn, 
     onEdit, 
