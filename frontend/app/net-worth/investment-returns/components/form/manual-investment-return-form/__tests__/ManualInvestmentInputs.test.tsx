@@ -1,12 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ManualInvestmentInputs } from '../ManualInvestmentInputs';
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../constants';
-import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentInputs } from '@/app/net-worth/investment-returns';
 
 const mockOnChange = jest.fn();
 const formId = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 
-jest.mock('@/app/components/form/InputFieldSetTemplate', () => ({
+jest.mock('@/app/components', () => ({
   InputFieldSetTemplate: ({ label, isRequired, inputChild }: { label: string, isRequired: boolean, inputChild: React.ReactNode }) => (
     <div data-testid={`field-${label.toLowerCase().replace(/\s+/g, '-').replace(/[()%]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '')}`}>
       <label>{label}</label>

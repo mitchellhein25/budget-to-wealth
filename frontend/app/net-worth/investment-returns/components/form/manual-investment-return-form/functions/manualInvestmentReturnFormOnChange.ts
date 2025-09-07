@@ -1,6 +1,5 @@
-import { cleanPercentageInput } from "@/app/components";
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../";
-import { ManualInvestmentReturnFormData } from "..";
+import { cleanPercentageInput } from "@/app/lib/utils";
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData } from "@/app/net-worth/investment-returns";
 
 export const manualInvestmentReturnFormOnChange = (
   event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,

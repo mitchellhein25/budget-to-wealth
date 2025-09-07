@@ -1,6 +1,5 @@
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../../constants';
-import { getManualInvestmentReturnValidationResult } from '../getManualInvestmentReturnValidationResult';
-import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, getManualInvestmentReturnValidationResult } from '@/app/net-worth/investment-returns';
 
 const formID = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 

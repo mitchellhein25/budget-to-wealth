@@ -1,11 +1,10 @@
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../..';
-import { manualInvestmentReturnFormOnChange } from '../manualInvestmentReturnFormOnChange';
-import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, manualInvestmentReturnFormOnChange } from '@/app/net-worth/investment-returns';
 
 const formID = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 
 // Mock the cleanPercentageInput function
-jest.mock('@/app/components', () => ({
+jest.mock('@/app/lib/utils', () => ({
   cleanPercentageInput: jest.fn((value) => {
     if (value === 'invalid') return null;
     return value.replace(/[^\d.]/g, '');

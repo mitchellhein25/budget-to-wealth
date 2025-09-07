@@ -1,21 +1,19 @@
-import { transformFormDataToManualInvestmentReturn } from '../transformFormDataToManualInvestmentReturn';
-import { RecurrenceFrequency } from '@/app/cashflow/components/RecurrenceFrequency';
-
-
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { transformFormDataToManualInvestmentReturn } from '@/app/net-worth/investment-returns';
 
 // Mock the Utils function
-jest.mock('@/app/components/Utils', () => ({
+jest.mock('@/app/lib/utils', () => ({
   convertDateToISOString: jest.fn((date) => date.toISOString().split('T')[0]),
   replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-'))
 }));
 
 // Mock the validation function to avoid circular dependencies
-jest.mock('../getManualInvestmentReturnValidationResult', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   getManualInvestmentReturnValidationResult: jest.fn()
 }));
 
 describe('transformFormDataToManualInvestmentReturn', () => {
-  const mockGetManualInvestmentReturnValidationResult = jest.requireMock('../getManualInvestmentReturnValidationResult').getManualInvestmentReturnValidationResult;
+  const mockGetManualInvestmentReturnValidationResult = jest.requireMock('@/app/net-worth/investment-returns').getManualInvestmentReturnValidationResult;
 
   beforeEach(() => {
     jest.clearAllMocks();

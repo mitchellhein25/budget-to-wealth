@@ -1,9 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { ManualInvestmentReturnForm } from '../ManualInvestmentReturnForm';
 import { FormState } from '@/app/hooks';
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../constants';
-import { ManualInvestmentReturnFormData } from '../ManualInvestmentReturnFormData';
-import { ManualInvestmentReturn } from '../../../ManualInvestmentReturn';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData, ManualInvestmentReturn, ManualInvestmentReturnForm } from '@/app/net-worth/investment-returns';
 
 const formTemplateTestId = 'form-template';
 const manualInvestmentInputsTestId = 'manual-investment-inputs';
@@ -12,7 +9,7 @@ const manualInvestmentInputsText = 'Manual Investment Inputs';
 const updateCreateButtonText = 'Update/Create Button';
 const resetButtonText = 'Reset Button';
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components', () => ({
   formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { formId: string, formHeader: string, inputs: React.ReactNode, buttons: React.ReactNode, message: { type: string | null, text: string } }) => (
     <div data-testid={formTemplateTestId}>
@@ -24,9 +21,6 @@ jest.mock('@/app/components/form', () => ({
       {message && <div data-testid="message">{JSON.stringify(message)}</div>}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons', () => ({
   UpdateCreateButton: ({ isUpdateState, isDisabled }: { isUpdateState: boolean, isDisabled: boolean }) => (
     <div data-testid="update-create-button" data-is-update={isUpdateState} data-is-disabled={isDisabled}>
       {updateCreateButtonText}
@@ -39,7 +33,7 @@ jest.mock('@/app/components/buttons', () => ({
   ),
 }));
 
-jest.mock('../ManualInvestmentInputs', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   ManualInvestmentInputs: ({ editingFormData, manualCategories }: {
     editingFormData: unknown;
     manualCategories: unknown[];
@@ -52,11 +46,11 @@ jest.mock('../ManualInvestmentInputs', () => ({
   ),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getManualInvestmentCategories: jest.fn(),
 }));
 
-const mockGetManualInvestmentCategories = jest.requireMock('@/app/lib/api/data-methods').getManualInvestmentCategories;
+const mockGetManualInvestmentCategories = jest.requireMock('@/app/lib/api').getManualInvestmentCategories;
 
 describe('ManualInvestmentReturnForm', () => {
   const mockFormState: FormState<ManualInvestmentReturn, ManualInvestmentReturnFormData> = {

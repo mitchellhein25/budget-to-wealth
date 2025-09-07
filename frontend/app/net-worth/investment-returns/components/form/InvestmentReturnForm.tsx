@@ -1,10 +1,6 @@
 import React from 'react'
-import { HoldingInvestmentReturnForm, HoldingInvestmentReturnFormData } from './holding-investment-return-form';
-import { ManualInvestmentReturnForm, ManualInvestmentReturnFormData } from './manual-investment-return-form';
-import { FormState } from '@/app/hooks/useForm';
-import { INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '.';
-import { ManualInvestmentReturn } from '../ManualInvestmentReturn';
-import { HoldingInvestmentReturn } from '../HoldingInvestmentReturn';
+import { FormState } from '@/app/hooks';
+import { HoldingInvestmentReturnForm, HoldingInvestmentReturnFormData, ManualInvestmentReturnForm, ManualInvestmentReturnFormData, INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturn, HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
 
 interface InvestmentReturnFormProps {
   isManualActive: boolean;

@@ -1,5 +1,4 @@
-import { ManualInvestmentReturn } from "../../../ManualInvestmentReturn";
-import { ManualInvestmentReturnFormData } from "../ManualInvestmentReturnFormData";
+import { ManualInvestmentReturnFormData, ManualInvestmentReturn } from "@/app/net-worth/investment-returns";
 
 export const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn) : ManualInvestmentReturnFormData => ({
   id: item.id?.toString(),
