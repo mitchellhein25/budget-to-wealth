@@ -1,12 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { HoldingInvestmentReturnInputs } from '../HoldingInvestmentReturnInputs';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../constants';
-import { NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots/components';
-import { HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings/components';
+import { NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
+import { HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnInputs } from '@/app/net-worth/investment-returns';
 
 const editHoldingsLinkTestId = 'edit-holdings-link';
 
-jest.mock('@/app/components/form/InputFieldSetTemplate', () => ({
+jest.mock('@/app/components', () => ({
   InputFieldSetTemplate: ({ label, isRequired, inputChild }: { label: string, isRequired: boolean, inputChild: React.ReactNode }) => (
     <div data-testid={`field-${label.toLowerCase().replace(/\s+/g, '-')}`}>
       <label>{label}</label>

@@ -1,5 +1,4 @@
-import { transformFormDataToHoldingInvestmentReturn } from '../transformFormDataToHoldingInvestmentReturn';
-import { HoldingInvestmentReturn } from '../../../../HoldingInvestmentReturn';
+import { transformFormDataToHoldingInvestmentReturn, HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
 
 jest.mock('../getHoldingInvestmentReturnValidationResult', () => ({
   getHoldingInvestmentReturnValidationResult: jest.fn(),

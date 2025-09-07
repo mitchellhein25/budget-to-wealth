@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import InvestmentReturnsPage from '../page';
+import { InvestmentReturnsPage } from '@/app/net-worth/investment-returns';
 
 
 // Mock console.error to prevent it from appearing in tests

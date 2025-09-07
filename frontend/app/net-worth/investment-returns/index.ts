@@ -33,3 +33,5 @@ export * from '@/app/net-worth/investment-returns/components/list/holding-invest
 export * from '@/app/net-worth/investment-returns/components/list/manual-investment-return-list/DesktopManualInvestmentReturnRow';
 export * from '@/app/net-worth/investment-returns/components/list/manual-investment-return-list/ManualInvestmentReturnList';
 export * from '@/app/net-worth/investment-returns/components/list/manual-investment-return-list/MobileManualInvestmentReturnCard';
+
+export * from '@/app/net-worth/investment-returns/manual-investment-categories/page';

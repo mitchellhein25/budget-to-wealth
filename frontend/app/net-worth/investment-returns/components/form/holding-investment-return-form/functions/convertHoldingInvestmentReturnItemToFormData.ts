@@ -1,5 +1,4 @@
-import { HoldingInvestmentReturn } from "../../../HoldingInvestmentReturn";
-import { HoldingInvestmentReturnFormData } from "../HoldingInvestmentReturnFormData";
+import { HoldingInvestmentReturn, HoldingInvestmentReturnFormData } from "@/app/net-worth/investment-returns";
 
 export const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvestmentReturn) : HoldingInvestmentReturnFormData => ({
   id: item.id?.toString(),

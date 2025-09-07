@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ManualInvestmentCategories from './page';
+import { ManualInvestmentCategoriesPage } from '@/app/net-worth/investment-returns';
 
 const categoriesPageTestId = 'categories-page';
 const categoriesPageText = 'Categories Page';
 
-jest.mock('@/app/components/categories', () => ({
+jest.mock('@/app/components', () => ({
   CategoriesPage: ({ 
     isLoggedIn, 
     categoryTypeName, 
@@ -29,7 +29,7 @@ jest.mock('@/app/components/categories', () => ({
 
 describe('ManualInvestmentCategories', () => {
   it('renders CategoriesPage with correct props', () => {
-    render(<ManualInvestmentCategories />);
+    render(<ManualInvestmentCategoriesPage />);
     
     const categoriesPage = screen.getByTestId(categoriesPageTestId);
     expect(categoriesPage).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe('ManualInvestmentCategories', () => {
   });
 
   it('renders with correct content', () => {
-    render(<ManualInvestmentCategories />);
+    render(<ManualInvestmentCategoriesPage />);
     
     expect(screen.getByText(categoriesPageText)).toBeInTheDocument();
   });

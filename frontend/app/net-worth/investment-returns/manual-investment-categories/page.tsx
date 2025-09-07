@@ -1,9 +1,9 @@
-import { CategoriesPage } from '@/app/components/categories'
 import React from 'react'
-import { MANUAL_INVESTMENT_ITEM_NAME } from '../components/form'
-import { MANUAL_INVESTMENT_CATEGORIES_ENDPOINT } from '@/app/lib/api/data-methods'
+import { MANUAL_INVESTMENT_CATEGORIES_ENDPOINT } from '@/app/lib/api'
+import { CategoriesPage } from '@/app/components'
+import { MANUAL_INVESTMENT_ITEM_NAME } from '@/app/net-worth/investment-returns'
 
-export default function ManualInvestmentCategories() {
+export function ManualInvestmentCategoriesPage() {
   return (
     <CategoriesPage
     isLoggedIn={true} 

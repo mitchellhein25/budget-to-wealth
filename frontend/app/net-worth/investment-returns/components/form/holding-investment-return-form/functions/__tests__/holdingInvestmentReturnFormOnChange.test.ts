@@ -1,9 +1,7 @@
-import { holdingInvestmentReturnFormOnChange } from '../holdingInvestmentReturnFormOnChange';
-import { cleanCurrencyInput } from '@/app/components';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../../constants';
-import { HoldingInvestmentReturnFormData } from '..';
+import { cleanCurrencyInput } from '@/app/lib/utils';
+import { holdingInvestmentReturnFormOnChange, HoldingInvestmentReturnFormData, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/investment-returns';
 
-jest.mock('@/app/components', () => ({
+jest.mock('@/app/lib/utils', () => ({
   cleanCurrencyInput: jest.fn(),
 }));
 
@@ -11,7 +9,7 @@ const mockCleanCurrencyInput = cleanCurrencyInput as jest.MockedFunction<typeof 
 const FORM_ID = HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 
 describe('holdingInvestmentReturnFormOnChange', () => {
-  let mockSetEditingFormData: jest.MockedFunction<React.Dispatch<React.SetStateAction<Partial<HoldingInvestmentReturnFormData>>>>;
+  let mockSetEditingFormData: jest.MockedFunction<(value: React.SetStateAction<Partial<HoldingInvestmentReturnFormData>>) => void>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -29,7 +27,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     holdingInvestmentReturnFormOnChange(event, mockSetEditingFormData);
 
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const result = updateFn({ startHoldingSnapshotId: 'old-id' });
     expect(result).toEqual({ startHoldingSnapshotId: 'new-snapshot-id' });
   });
@@ -49,7 +47,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     expect(mockCleanCurrencyInput).toHaveBeenCalledWith('1,500.75');
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
     
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const result = updateFn({});
     expect(result).toEqual({ endHoldingSnapshotBalance: '1500.75' });
   });
@@ -69,7 +67,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     expect(mockCleanCurrencyInput).toHaveBeenCalledWith('500');
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
     
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const result = updateFn({});
     expect(result).toEqual({ totalContributions: '500.00' });
   });
@@ -89,7 +87,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     expect(mockCleanCurrencyInput).toHaveBeenCalledWith('100.5');
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
     
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const result = updateFn({});
     expect(result).toEqual({ totalWithdrawals: '100.50' });
   });
@@ -121,7 +119,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     holdingInvestmentReturnFormOnChange(event, mockSetEditingFormData);
 
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const existingData = { 
       startHoldingSnapshotId: 'old-id',
       endHoldingSnapshotId: 'existing-id',
@@ -146,7 +144,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     holdingInvestmentReturnFormOnChange(event, mockSetEditingFormData);
 
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const result = updateFn({});
     expect(result).toEqual({ endHoldingSnapshotId: 'selected-snapshot-id' });
   });
@@ -162,7 +160,7 @@ describe('holdingInvestmentReturnFormOnChange', () => {
     holdingInvestmentReturnFormOnChange(event, mockSetEditingFormData);
 
     expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    const updateFn = mockSetEditingFormData.mock.calls[0][0];
+    const updateFn = mockSetEditingFormData.mock.calls[0][0] as (prev: Partial<HoldingInvestmentReturnFormData>) => Partial<HoldingInvestmentReturnFormData>;
     const result = updateFn({});
     expect(result).toEqual({ startHoldingSnapshotDate: '2024-01-01' });
   });
