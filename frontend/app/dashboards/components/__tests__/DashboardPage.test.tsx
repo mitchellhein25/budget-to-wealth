@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MobileState, useMobileDetection } from '@/app/hooks';
+import { MobileState, useMobileDetection, useSidebarDetection } from '@/app/hooks';
 import { TrendGraphData, TrendGraphEntry } from '@/app/dashboards';
 import { DashboardPage } from '@/app/dashboards/components/DashboardPage';
 
@@ -17,7 +17,7 @@ afterAll(() => {
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
   MobileState: { },
-  useSidebarDetection: jest.fn(),
+  useSidebarDetection: jest.fn(() => true),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -41,6 +41,7 @@ jest.mock('@/app/dashboards', () => ({
 }));
 
 const mockUseMobileDetection = useMobileDetection as jest.MockedFunction<typeof useMobileDetection>;
+const mockUseSidebarDetection = useSidebarDetection as jest.MockedFunction<typeof useSidebarDetection>;
 
 describe('DashboardPage', () => {
   const mockGetAvailableDateRange = jest.fn();
@@ -84,7 +85,7 @@ describe('DashboardPage', () => {
 
   it('hides sidebar on mobile', () => {
     mockUseMobileDetection.mockReturnValue(MobileState.SMALL);
-
+    mockUseSidebarDetection.mockReturnValue(false);
     render(
       <DashboardPage
         getAvailableDateRange={mockGetAvailableDateRange}

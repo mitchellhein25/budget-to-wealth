@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 import { usePathname } from 'next/navigation';
-import { NavBar } from '@/app/components';
+import { NavBar } from '@/app/components/navbar/NavBar';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),

@@ -20,6 +20,7 @@ jest.mock('@/app/components', () => ({
   DesktopListItemCell: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="desktop-list-item-cell">{children}</div>
   ),
+  CategoriesInputs: () => <div>CategoriesInputs</div>,
 }));
 
 describe('DesktopCategoryRow', () => {

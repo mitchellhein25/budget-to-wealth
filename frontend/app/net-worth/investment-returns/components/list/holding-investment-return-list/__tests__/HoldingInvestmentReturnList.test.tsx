@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { HoldingInvestmentReturnList, HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturnList } from '@/app/net-worth/investment-returns/components/list/holding-investment-return-list/HoldingInvestmentReturnList';
+
 
 const mockOnHoldingInvestmentReturnDeleted = jest.fn();
 const mockOnHoldingInvestmentReturnIsEditing = jest.fn();
