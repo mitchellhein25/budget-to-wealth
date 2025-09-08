@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DesktopCategoryRow, Category } from '@/app/components';
+import { Category } from '@/app/components';
+import { DesktopCategoryRow } from '@/app/components/categories/list/DesktopCategoryRow';
 
 const editButtonTestId = 'edit-button';
 const deleteButtonTestId = 'delete-button';

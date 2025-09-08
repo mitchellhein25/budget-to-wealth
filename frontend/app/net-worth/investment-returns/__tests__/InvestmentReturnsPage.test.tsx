@@ -31,13 +31,13 @@ jest.mock('@/app/hooks', () => ({
     onSubmit: jest.fn(),
     onItemIsEditing: jest.fn(),
     isSubmitting: false,
-    message: null,
+    message: { type: 'INFO', text: 'Test message' },
   }),
   useMobileDetection: () => false,
   useFormListItemsFetch: () => ({
     items: [],
     isLoading: false,
-    message: null,
+    message: { type: 'INFO', text: 'Test message' },
     fetchItems: jest.fn(),
   }),
 }));
@@ -49,6 +49,15 @@ jest.mock('@/app/lib/api', () => ({
 
 jest.mock('@/app/components', () => ({
   DatePicker: () => <div data-testid={datePickerTestId}>{datePickerText}</div>,
+  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list }: any) => (
+    <div data-testid="responsive-form-list-page">
+      <div data-testid="sidebar">{sideBar}</div>
+      <div data-testid="total-display">{totalDisplay}</div>
+      <div data-testid="date-picker-container">{datePicker}</div>
+      <div data-testid="form-container">{form}</div>
+      <div data-testid="list-container">{list}</div>
+    </div>
+  ),
   messageTypeIsError: jest.fn(() => false),
   getCurrentMonthRange: jest.fn(() => ({ start: new Date(), end: new Date() })),
 }));
@@ -62,6 +71,10 @@ jest.mock('@/app/net-worth/investment-returns', () => ({
   InvestmentReturnForm: () => <div data-testid={investmentReturnFormTestId}>{investmentReturnFormText}</div>,
   transformFormDataToManualInvestmentReturn: jest.fn(),
   transformFormDataToHoldingInvestmentReturn: jest.fn(),
+  convertManualInvestmentReturnItemToFormData: jest.fn(),
+  convertHoldingInvestmentReturnItemToFormData: jest.fn(),
+  HoldingInvestmentReturnFormData: {},
+  ManualInvestmentReturnFormData: {},
 }));
 
 describe('InvestmentReturnsPage', () => {
