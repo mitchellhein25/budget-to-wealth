@@ -1,4 +1,6 @@
-import { transformCashFlowFormDataToEntry, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
+import { convertDollarsToCents } from '@/app/lib/utils';
+import { getCashFlowValidationResult, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
+import { transformCashFlowFormDataToEntry } from '@/app/cashflow/components/form/functions/transformFormDataToEntry';
 
 jest.mock('@/app/lib/utils', () => ({
   convertDollarsToCents: jest.fn(),
@@ -6,9 +8,40 @@ jest.mock('@/app/lib/utils', () => ({
   replaceSpacesWithDashes: jest.fn(),
 }));
 
-import { convertDollarsToCents } from '@/app/lib/utils';
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {
+    DAILY: 'Daily',
+    WEEKLY: 'Weekly',
+    MONTHLY: 'Monthly',
+    YEARLY: 'Yearly',
+  },
+  getCashFlowValidationResult: jest.fn(),
+}));
+
 
 const mockConvertDollarsToCents = convertDollarsToCents as jest.MockedFunction<typeof convertDollarsToCents>;
+const mockGetCashFlowValidationResult = getCashFlowValidationResult as jest.MockedFunction<typeof getCashFlowValidationResult>;
+
+// Helper functions to reduce duplication
+const createValidValidationResult = (data: any) => ({
+  success: true as const,
+  data,
+});
+
+const createInvalidValidationResult = (message: string) => ({
+  success: false as const,
+  error: {
+    errors: [{ message, code: 'invalid_type' as const, path: [], severity: 'error' as const }],
+  },
+} as any);
+
+const createFormData = (type: string, fields: Record<string, string>) => {
+  const formData = new FormData();
+  Object.entries(fields).forEach(([key, value]) => {
+    formData.append(`${type}-${key}`, value);
+  });
+  return formData;
+};
 
 describe('transformCashFlowFormDataToEntry', () => {
   beforeEach(() => {
@@ -16,14 +49,23 @@ describe('transformCashFlowFormDataToEntry', () => {
   });
 
   it('transforms valid income form data to entry', () => {
-    const formData = new FormData();
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-amount`, '150.75');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-categoryId`, '2');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-description`, 'Test income');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-recurrenceFrequency`, 'Monthly');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-recurrenceEndDate`, '2024-12-31');
+    const formData = createFormData(INCOME_ITEM_NAME_LOWERCASE, {
+      amount: '150.75',
+      date: '2024-01-15',
+      categoryId: '2',
+      description: 'Test income',
+      recurrenceFrequency: 'Monthly',
+      recurrenceEndDate: '2024-12-31',
+    });
 
+    mockGetCashFlowValidationResult.mockReturnValue(createValidValidationResult({
+      amount: '150.75',
+      date: new Date('2024-01-15'),
+      categoryId: '2',
+      description: 'Test income',
+      recurrenceFrequency: 'Monthly',
+      recurrenceEndDate: '2024-12-31',
+    }));
     mockConvertDollarsToCents.mockReturnValue(15075);
 
     const result = transformCashFlowFormDataToEntry(formData, INCOME_ITEM_NAME);
@@ -41,11 +83,20 @@ describe('transformCashFlowFormDataToEntry', () => {
   });
 
   it('transforms valid expense form data to entry', () => {
-    const formData = new FormData();
-    formData.append(`${EXPENSE_ITEM_NAME_LOWERCASE}-amount`, '50.25');
-    formData.append(`${EXPENSE_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${EXPENSE_ITEM_NAME_LOWERCASE}-categoryId`, '1');
+    const formData = createFormData(EXPENSE_ITEM_NAME_LOWERCASE, {
+      amount: '50.25',
+      date: '2024-01-15',
+      categoryId: '1',
+    });
 
+    mockGetCashFlowValidationResult.mockReturnValue(createValidValidationResult({
+      amount: '50.25',
+      date: new Date('2024-01-15'),
+      categoryId: '1',
+      description: '',
+      recurrenceFrequency: undefined,
+      recurrenceEndDate: undefined,
+    }));
     mockConvertDollarsToCents.mockReturnValue(5025);
 
     const result = transformCashFlowFormDataToEntry(formData, EXPENSE_ITEM_NAME);
@@ -57,14 +108,19 @@ describe('transformCashFlowFormDataToEntry', () => {
       categoryId: '1',
       description: '',
       entryType: EXPENSE_ITEM_NAME,
+      recurrenceFrequency: undefined,
+      recurrenceEndDate: undefined,
     });
   });
 
   it('returns error for validation failure', () => {
-    const formData = new FormData();
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-amount`, 'invalid');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-categoryId`, '2');
+    const formData = createFormData(INCOME_ITEM_NAME_LOWERCASE, {
+      amount: 'invalid',
+      date: '2024-01-15',
+      categoryId: '2',
+    });
+
+    mockGetCashFlowValidationResult.mockReturnValue(createInvalidValidationResult('Invalid currency format'));
 
     const result = transformCashFlowFormDataToEntry(formData, INCOME_ITEM_NAME);
 
@@ -74,11 +130,20 @@ describe('transformCashFlowFormDataToEntry', () => {
   });
 
   it('returns error for invalid amount conversion', () => {
-    const formData = new FormData();
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-amount`, '150.75');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-categoryId`, '2');
+    const formData = createFormData(INCOME_ITEM_NAME_LOWERCASE, {
+      amount: '150.75',
+      date: '2024-01-15',
+      categoryId: '2',
+    });
 
+    mockGetCashFlowValidationResult.mockReturnValue(createValidValidationResult({
+      amount: '150.75',
+      date: new Date('2024-01-15'),
+      categoryId: '2',
+      description: '',
+      recurrenceFrequency: undefined,
+      recurrenceEndDate: undefined,
+    }));
     mockConvertDollarsToCents.mockReturnValue(null);
 
     const result = transformCashFlowFormDataToEntry(formData, INCOME_ITEM_NAME);
@@ -88,11 +153,20 @@ describe('transformCashFlowFormDataToEntry', () => {
   });
 
   it('handles missing optional fields', () => {
-    const formData = new FormData();
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-amount`, '150.75');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-categoryId`, '2');
+    const formData = createFormData(INCOME_ITEM_NAME_LOWERCASE, {
+      amount: '150.75',
+      date: '2024-01-15',
+      categoryId: '2',
+    });
 
+    mockGetCashFlowValidationResult.mockReturnValue(createValidValidationResult({
+      amount: '150.75',
+      date: new Date('2024-01-15'),
+      categoryId: '2',
+      description: '',
+      recurrenceFrequency: undefined,
+      recurrenceEndDate: undefined,
+    }));
     mockConvertDollarsToCents.mockReturnValue(15075);
 
     const result = transformCashFlowFormDataToEntry(formData, INCOME_ITEM_NAME);
@@ -104,18 +178,19 @@ describe('transformCashFlowFormDataToEntry', () => {
       categoryId: '2',
       description: '',
       entryType: INCOME_ITEM_NAME,
+      recurrenceFrequency: undefined,
+      recurrenceEndDate: undefined,
     });
-    expect(result.item?.recurrenceFrequency).toBeUndefined();
-    expect(result.item?.recurrenceEndDate).toBeUndefined();
   });
 
   it('handles unexpected errors', () => {
-    const formData = new FormData();
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-amount`, '150.75');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-categoryId`, '2');
+    const formData = createFormData(INCOME_ITEM_NAME_LOWERCASE, {
+      amount: '150.75',
+      date: '2024-01-15',
+      categoryId: '2',
+    });
 
-    mockConvertDollarsToCents.mockImplementation(() => {
+    mockGetCashFlowValidationResult.mockImplementation(() => {
       throw new Error('Test error');
     });
 
@@ -128,10 +203,11 @@ describe('transformCashFlowFormDataToEntry', () => {
   });
 
   it('handles error without message property', () => {
-    const formData = new FormData();
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-amount`, '150.75');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-date`, '2024-01-15');
-    formData.append(`${INCOME_ITEM_NAME_LOWERCASE}-categoryId`, '2');
+    const formData = createFormData(INCOME_ITEM_NAME_LOWERCASE, {
+      amount: '150.75',
+      date: '2024-01-15',
+      categoryId: '2',
+    });
 
     mockConvertDollarsToCents.mockImplementation(() => {
       throw 'String error';

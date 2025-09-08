@@ -19,15 +19,22 @@ jest.mock('@/app/hooks', () => ({
   }),
   useParentPath: () => '/net-worth',
   useMobileDetection: () => ({ isMobile: false }),
+  useFormListItemsFetch: () => ({
+    items: [],
+    isLoading: false,
+    message: null,
+    fetchItems: jest.fn(),
+  }),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getAllHoldings: jest.fn(() => Promise.resolve({ successful: true, data: [] })),
   HOLDINGS_ENDPOINT: '/api/holdings',
 }));
 
 jest.mock('@/app/lib/utils', () => ({
   messageTypeIsError: jest.fn(() => false),
+  replaceSpacesWithDashes: jest.fn(),
 }));
 
 jest.mock('next/link', () => ({
@@ -39,7 +46,7 @@ jest.mock('next/link', () => ({
   ),
 }));
 
-jest.mock('@/app/net-worth/holding-snapshots/holdings', () => ({
+jest.mock('@/app/net-worth', () => ({
   HOLDING_ITEM_NAME: 'Holding',
   HoldingForm: () => <div data-testid={holdingFormTestId}>{holdingFormText}</div>,
   HoldingsList: () => <div data-testid={holdingsListTestId}>{holdingsListText}</div>,

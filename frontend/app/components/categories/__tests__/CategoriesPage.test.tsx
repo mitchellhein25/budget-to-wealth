@@ -2,8 +2,9 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import { useForm } from '@/app/hooks';
 import { getRequestList } from '@/app/lib/api';
 import { messageTypeIsError } from '@/app/lib/utils';
-import { Category, CategoryFormData, CategoriesPage } from '@/app/components';
+import { Category, CategoryFormData } from '@/app/components';
 import { CashFlowCategory } from '@/app/cashflow';
+import { CategoriesPage } from '@/app/components/categories/CategoriesPage';
 
 const categoriesFormTestId = 'categories-form';
 const categoriesListTestId = 'categories-list';
@@ -15,11 +16,11 @@ jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/rest-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getRequestList: jest.fn(),
 }));
 
-jest.mock('@/app/components/categories/form/CategoriesForm', () => ({
+jest.mock('@/app/components', () => ({
   __esModule: true,
   CategoriesForm: ({ categoryTypeName }: { formState: unknown; categoryTypeName: string }) => (
     <div data-testid={categoriesFormTestId}>
@@ -27,10 +28,6 @@ jest.mock('@/app/components/categories/form/CategoriesForm', () => ({
       <div data-testid="form-category-type-name">{categoryTypeName}</div>
     </div>
   ),
-}));
-
-jest.mock('@/app/components/categories/list/CategoriesList', () => ({
-  __esModule: true,
   CategoriesList: ({ categoryTypeName, deleteEndpoint, isLoading, isError }: { 
     categories: unknown[]; 
     categoryTypeName: string; 
@@ -48,7 +45,7 @@ jest.mock('@/app/components/categories/list/CategoriesList', () => ({
   ),
 }));
 
-jest.mock('@/app/components/Utils', () => ({
+jest.mock('@/app/lib/utils', () => ({
   messageTypeIsError: jest.fn(),
   replaceSpacesWithDashes: jest.fn(),
 }));

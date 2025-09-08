@@ -14,6 +14,7 @@ jest.mock('@/app/cashflow', () => ({
       <div data-testid={cashFlowTypeTestId}>{cashFlowType}</div>
     </div>
   ),
+  RecurrenceFrequency: {  },
 }));
 
 describe('RecurringCashFlowPage', () => {

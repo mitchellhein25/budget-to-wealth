@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MobileState, useMobileDetection } from '@/app/hooks';
-import { DashboardPage, TrendGraphData, TrendGraphEntry } from '@/app/dashboards';
+import { TrendGraphData, TrendGraphEntry } from '@/app/dashboards';
+import { DashboardPage } from '@/app/dashboards/components/DashboardPage';
 
 // Mock console.error to prevent it from appearing in tests
 const originalConsoleError = console.error;
@@ -15,6 +16,8 @@ afterAll(() => {
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
+  MobileState: { },
+  useSidebarDetection: jest.fn(),
 }));
 
 jest.mock('@/app/components', () => ({

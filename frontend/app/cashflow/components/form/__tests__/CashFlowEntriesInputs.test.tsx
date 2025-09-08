@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { getCategoriesList } from '@/app/lib/api';
-import { CashFlowCategory, CashFlowType, RecurrenceFrequency, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME, CashFlowEntriesInputs } from '@/app/cashflow';
+import { CashFlowCategory, CashFlowType, RecurrenceFrequency, INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '@/app/cashflow';
+import { CashFlowEntriesInputs } from '@/app/cashflow/components/form/CashFlowEntriesInputs';
 
 interface MockLinkProps {
   children: React.ReactNode;
@@ -18,6 +19,10 @@ jest.mock('next/link', () => {
     return <a href={href} {...props}>{children}</a>;
   };
 });
+
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {  },
+}));
 
 const mockGetCategoriesList = getCategoriesList as jest.MockedFunction<typeof getCategoriesList>;
 

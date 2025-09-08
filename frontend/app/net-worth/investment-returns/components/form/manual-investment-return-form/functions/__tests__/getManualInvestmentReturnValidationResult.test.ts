@@ -1,6 +1,10 @@
 import { RecurrenceFrequency } from '@/app/cashflow';
 import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, getManualInvestmentReturnValidationResult } from '@/app/net-worth/investment-returns';
 
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {  },
+}));
+
 const formID = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 
 describe('getManualInvestmentReturnValidationResult', () => {

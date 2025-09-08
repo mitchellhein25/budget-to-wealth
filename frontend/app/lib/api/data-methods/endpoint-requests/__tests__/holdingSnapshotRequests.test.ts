@@ -1,34 +1,14 @@
 import { DateRange } from '@/app/components';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
-import { 
-  getHoldingSnapshotsByDateRange, 
-  getLatestHoldingSnapshots, 
-  deleteHoldingSnapshot, 
-  getHoldingSnapshotsDateRange,
-  DateRangeResponse, HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT,
-  getRequestList,
-  getRequestSingle,
-  deleteRequest,
-  getQueryStringForDateRange,
-  FetchResult
-} from '@/app/lib/api';
+import { DateRangeResponse, HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT, HOLDING_SNAPSHOTS_ENDPOINT, getRequestList, getRequestSingle, deleteRequest, FetchResult, getQueryStringForDateRange } from '@/app/lib/api';
+import { getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots, deleteHoldingSnapshot, getHoldingSnapshotsDateRange } from '@/app/lib/api/data-methods/endpoint-requests/holdingSnapshotRequests';
 
-jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
+jest.mock('@/app/lib/api', () => ({
   getRequestList: jest.fn(),
   getRequestSingle: jest.fn(),
-}));
-
-jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
-}));
-
-jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
-}));
-
-jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
-  HOLDING_SNAPSHOTS_ENDPOINT: 'HoldingSnapshots',
-  HOLDING_SNAPSHOTS_AVAILABLE_DATE_RANGE_ENDPOINT: 'HoldingSnapshots/AvailableDateRange',
+  getHoldingSnapshotsDateRange: jest.fn(),
 }));
 
 const createMockFetchResult = <T>(data: T): FetchResult<T> => ({

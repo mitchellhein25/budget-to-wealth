@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import { InvestmentReturnsPage } from '@/app/net-worth/investment-returns';
+import { InvestmentReturnsPage } from '@/app/net-worth/investment-returns/page';
 
 
 // Mock console.error to prevent it from appearing in tests
@@ -34,6 +34,12 @@ jest.mock('@/app/hooks', () => ({
     message: null,
   }),
   useMobileDetection: () => false,
+  useFormListItemsFetch: () => ({
+    items: [],
+    isLoading: false,
+    message: null,
+    fetchItems: jest.fn(),
+  }),
 }));
 
 jest.mock('@/app/lib/api', () => ({

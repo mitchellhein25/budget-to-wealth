@@ -1,24 +1,15 @@
 import { DateRange } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow';
-import { getRequestList, getRequestSingle, deleteRequest, getCashFlowEntriesByDateRangeAndType, deleteCashFlowEntry, getCashFlowEntriesDateRange, getQueryStringForDateRange, DateRangeResponse, CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT, CASH_FLOW_ENTRIES_ENDPOINT, FetchResult } from '@/app/lib/api';
-
-jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
-  getRequestList: jest.fn(),
-  getRequestSingle: jest.fn()
-}));
-
-jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
-  deleteRequest: jest.fn(),
-}));
+import { getRequestList, getRequestSingle, deleteRequest, getQueryStringForDateRange, DateRangeResponse, CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT, CASH_FLOW_ENTRIES_ENDPOINT, FetchResult } from '@/app/lib/api';
+import { getCashFlowEntriesByDateRangeAndType, deleteCashFlowEntry, getCashFlowEntriesDateRange } from '@/app/lib/api/data-methods/endpoint-requests/cashFlowEntryRequests';
 
 
-jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
+jest.mock('@/app/lib/api', () => ({
   getQueryStringForDateRange: jest.fn(),
-}));
-
-jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
-  CASH_FLOW_ENTRIES_ENDPOINT: 'CashFlowEntries',
-  CASH_FLOW_ENTRIES_AVAILABLE_DATE_RANGE_ENDPOINT: 'CashFlowEntries/AvailableDateRange',
+  deleteRequest: jest.fn(),
+  getRequestList: jest.fn(),
+  getRequestSingle: jest.fn(),
+  getCashFlowEntriesDateRange: jest.fn(),
 }));
 
 const createMockFetchResult = <T>(data: T): FetchResult<T> => ({

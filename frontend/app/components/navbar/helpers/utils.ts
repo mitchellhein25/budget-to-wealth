@@ -1,8 +1,8 @@
-import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, RECURRENCE_ITEM_NAME, RECURRENCE_ITEM_NAME_LOWERCASE } from "@/app/cashflow/components/constants";
+import { CASHFLOW_ITEM_NAME, CASHFLOW_ITEM_NAME_LOWERCASE, EXPENSE_ITEM_NAME_LOWERCASE_PLURAL, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME, INCOME_ITEM_NAME_LOWERCASE, RECURRENCE_ITEM_NAME, RECURRENCE_ITEM_NAME_LOWERCASE } from "@/app/cashflow";
+import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE } from "@/app/cashflow/budget";
 import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, HOLDING_SNAPSHOT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME, NET_WORTH_ITEM_NAME_LINK } from "@/app/net-worth/holding-snapshots";
-import { INVESTMENT_RETURN_ITEM_NAME_PLURAL, INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK } from "@/app/net-worth/investment-returns/components/form";
-import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from "@/app/dashboards/components/constants";
-import { BUDGET_ITEM_NAME, BUDGET_ITEM_NAME_LOWERCASE } from "@/app/cashflow/budget/components/constants";
+import { INVESTMENT_RETURN_ITEM_NAME_PLURAL, INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK } from "@/app/net-worth/investment-returns";
+import { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from "@/app/dashboards";
 
 export const closeDrawer = (): void => {
   const drawerCheckbox = document.getElementById('mobile-drawer') as HTMLInputElement;

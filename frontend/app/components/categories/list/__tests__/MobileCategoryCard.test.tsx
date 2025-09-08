@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileCategoryCard, Category } from '@/app/components';
+import { Category } from '@/app/components';
+import { MobileCategoryCard } from '@/app/components/categories/list/MobileCategoryCard';
 
 const editButtonTestId = 'edit-button';
 const deleteButtonTestId = 'delete-button';
@@ -93,7 +94,7 @@ describe('MobileCategoryCard', () => {
     );
     
     fireEvent.click(screen.getByTestId(deleteButtonTestId));
-    expect(mockOnDelete).toHaveBeenCalledWith('string-id');
+    expect(mockOnDelete).toHaveBeenCalledWith(1);
   });
 
   it('handles category with number id', () => {

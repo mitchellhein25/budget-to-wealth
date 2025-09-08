@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { CategoriesList } from '@/app/components';
+import { CategoriesList } from '@/app/components/categories/list/CategoriesList';
 
 const listTableTestId = 'list-table';
 const listTableText = 'List Table';
@@ -8,7 +8,7 @@ const itemsCountTestId = 'items-count';
 const isErrorTestId = 'is-error';
 const isLoadingTestId = 'is-loading';
 
-jest.mock('@/app/components/table/ListTable', () => ({
+jest.mock('@/app/components', () => ({
   __esModule: true,
   ListTable: ({ title, items, isError, isLoading }: { 
     title: string; 
@@ -43,7 +43,7 @@ jest.mock('@/app/components/table/ListTable', () => ({
   ),
 }));
 
-jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
+jest.mock('@/app/lib/api', () => ({
   deleteRequest: jest.fn(),
 }));
 

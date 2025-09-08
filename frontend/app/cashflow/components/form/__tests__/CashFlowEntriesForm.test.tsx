@@ -48,6 +48,7 @@ jest.mock('@/app/cashflow', () => ({
       {cashFlowEntriesInputsTestId}
     </div>
   ),
+  RecurrenceFrequency: {  },
 }));
 
 describe('CashFlowEntriesForm', () => {

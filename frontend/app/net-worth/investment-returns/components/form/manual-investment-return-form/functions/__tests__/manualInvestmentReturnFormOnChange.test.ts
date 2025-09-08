@@ -8,12 +8,18 @@ jest.mock('@/app/lib/utils', () => ({
   cleanPercentageInput: jest.fn((value) => {
     if (value === 'invalid') return null;
     return value.replace(/[^\d.]/g, '');
-  })
+  }),
+  replaceSpacesWithDashes: jest.fn()
+}));
+
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {
+  }
 }));
 
 describe('manualInvestmentReturnFormOnChange', () => {
   const mockSetEditingFormData = jest.fn();
-  const mockCleanPercentageInput = jest.requireMock('@/app/components').cleanPercentageInput;
+  const mockCleanPercentageInput = jest.requireMock('@/app/lib/utils').cleanPercentageInput;
 
   beforeEach(() => {
     jest.clearAllMocks();

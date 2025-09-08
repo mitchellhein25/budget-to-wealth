@@ -40,10 +40,13 @@ const mockFormData: TestFormData = {
   amount: '10.00'
 };
 
-jest.mock('@/app/components', () => ({
-  handleFormSubmit: jest.fn(),
+jest.mock('@/app/lib/utils', () => ({
   cleanCurrencyInput: jest.fn(),
   replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-').toLowerCase()),
+}));
+
+jest.mock('@/app/components', () => ({
+  handleFormSubmit: jest.fn(),
 }));
 
 describe('useForm', () => {

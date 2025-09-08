@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData, ManualInvestmentReturn, ManualInvestmentReturnForm } from '@/app/net-worth/investment-returns';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData, ManualInvestmentReturn,  } from '@/app/net-worth/investment-returns';
+import { ManualInvestmentReturnForm } from '@/app/net-worth/investment-returns/components/form/manual-investment-return-form/ManualInvestmentReturnForm';
 
 const formTemplateTestId = 'form-template';
 const manualInvestmentInputsTestId = 'manual-investment-inputs';

@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
-
+import { HoldingSnapshotFormData, HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
+import { HoldingSnapshotForm } from '@/app/net-worth/holding-snapshots/components/form/HoldingSnapshotForm';
 // Mock the dependencies
-jest.mock('@/app/components/buttons', () => ({
+jest.mock('@/app/components', () => ({
   UpdateCreateButton: ({ isUpdateState, isDisabled, onClick }: { isUpdateState: boolean; isDisabled: boolean; onClick?: () => void }) => (
     <button data-testid="update-create-button" disabled={isDisabled} onClick={onClick}>
       {isUpdateState ? 'Update' : 'Create'}
@@ -14,10 +14,7 @@ jest.mock('@/app/components/buttons', () => ({
     <button data-testid="reset-button" onClick={onClick} style={{ display: isHidden ? 'none' : 'block' }}>
       Reset
     </button>
-  )
-}));
-
-jest.mock('@/app/components/form', () => ({
+  ),
   formHasAnyValue: () => true,
   FormTemplate: ({ formHeader, inputs, buttons, message }: { formHeader: string; inputs: React.ReactNode; buttons: React.ReactNode; message?: { type: string | null; text: string } }) => (
     <form data-testid="form-template">
@@ -29,7 +26,7 @@ jest.mock('@/app/components/form', () => ({
   )
 }));
 
-jest.mock('@/app/net-worth/holding-snapshots/components/form/HoldingSnapshotInputs', () => ({
+jest.mock('@/app/net-worth/holding-snapshots', () => ({
   HoldingSnapshotInputs: ({ editingFormData, onChange }: { editingFormData?: HoldingSnapshotFormData; onChange: (field: string, value: unknown) => void }) => (
     <div data-testid="holding-snapshot-inputs">
       <input

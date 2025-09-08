@@ -10,6 +10,10 @@ jest.mock('@/app/lib/api/data-methods/queryHelpers', () => ({
   getQueryStringForDateRange: jest.fn(),
 }));
 
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {  },
+}));
+
 const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
   data,
   responseMessage: 'Success',

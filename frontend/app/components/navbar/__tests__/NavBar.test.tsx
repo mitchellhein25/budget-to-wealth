@@ -7,7 +7,7 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock('@/app/components/navbar/helpers', () => ({
+jest.mock('@/app/components', () => ({
   Logo: ({ className }: { className?: string }) => (
     <div data-testid="logo" className={className}>Logo Component</div>
   ),

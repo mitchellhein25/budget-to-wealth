@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingFormData, HoldingForm } from '@/app/net-worth/holding-snapshots/holdings';
+import { HOLDING_ITEM_NAME_LOWERCASE, Holding, HoldingFormData } from '@/app/net-worth/holding-snapshots/holdings';
+import { HoldingForm } from '@/app/net-worth/holding-snapshots/holdings/components/form/HoldingForm';
 
 const formTemplateTestId = 'form-template';
 const holdingInputsTestId = 'holding-inputs';

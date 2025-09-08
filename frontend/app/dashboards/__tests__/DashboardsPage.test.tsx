@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { DashboardsPage } from '@/app/dashboards';
+import { DashboardsPage } from '@/app/dashboards/page';
 
 jest.mock('@/app/dashboards', () => ({
   __esModule: true,
@@ -8,6 +8,7 @@ jest.mock('@/app/dashboards', () => ({
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => false,
+  useSidebarDetection: () => true,
 }));
 
 describe('DashboardsPage', () => {

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { CashFlowEntriesList, CashFlowType } from '@/app/cashflow';
+import { CashFlowType } from '@/app/cashflow';
+import { CashFlowEntriesList } from '@/app/cashflow/components/list/CashFlowEntriesList';
 
 const listTableTestId = 'list-table';
 const listTableText = 'ListTable';
@@ -26,6 +27,14 @@ jest.mock('@/app/components', () => ({
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
     </div>
   ),
+}));
+
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {  },
+  CashFlowType: { 
+    INCOME: 'Income',
+    EXPENSE: 'Expense'
+   },
 }));
 
 describe('CashFlowEntriesList', () => {

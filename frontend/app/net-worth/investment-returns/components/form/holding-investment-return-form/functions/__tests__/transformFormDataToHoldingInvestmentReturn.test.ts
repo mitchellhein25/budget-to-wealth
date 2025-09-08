@@ -1,16 +1,17 @@
-import { transformFormDataToHoldingInvestmentReturn, HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturn } from '@/app/net-worth/investment-returns';
+import {transformFormDataToHoldingInvestmentReturn} from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/functions/transformFormDataToHoldingInvestmentReturn';
 
-jest.mock('../getHoldingInvestmentReturnValidationResult', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   getHoldingInvestmentReturnValidationResult: jest.fn(),
 }));
 
-jest.mock('@/app/components/Utils', () => ({
+jest.mock('@/app/lib/utils', () => ({
   convertDollarsToCents: jest.fn(),
   replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-')),
 }));
 
-const mockGetHoldingInvestmentReturnValidationResult = jest.requireMock('../getHoldingInvestmentReturnValidationResult').getHoldingInvestmentReturnValidationResult;
-const mockConvertDollarsToCents = jest.requireMock('@/app/components/Utils').convertDollarsToCents;
+const mockGetHoldingInvestmentReturnValidationResult = jest.requireMock('@/app/net-worth/investment-returns').getHoldingInvestmentReturnValidationResult;
+const mockConvertDollarsToCents = jest.requireMock('@/app/lib/utils').convertDollarsToCents;
 
 const FORM_ID = 'holding-investment-return';
 
@@ -59,7 +60,7 @@ describe('transformFormDataToHoldingInvestmentReturn', () => {
     expect(result.errors).toHaveLength(0);
     expect(result.item).toEqual({
       startHoldingSnapshotId: 'start-snapshot-id',
-      endHoldingSnapshotId: 'end-snapshot-id',
+      endHoldingSnapshotId: null as unknown,
       totalContributions: 50000,
       totalWithdrawals: 10000,
     } as HoldingInvestmentReturn);
@@ -106,7 +107,7 @@ describe('transformFormDataToHoldingInvestmentReturn', () => {
     const result = transformFormDataToHoldingInvestmentReturn(formData);
 
     expect(result.errors).toHaveLength(0);
-    expect(result.item?.endHoldingSnapshotId).toBe('');
+    expect(result.item?.endHoldingSnapshotId).toBe(null);
   });
 
   it('should convert currency values to cents', () => {

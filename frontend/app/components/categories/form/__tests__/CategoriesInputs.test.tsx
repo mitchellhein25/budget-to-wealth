@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { CategoriesInputs } from '@/app/components';
 import { INCOME_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components', () => ({
   InputFieldSetTemplate: jest.fn(({ label, isRequired, inputChild }) => (
     <div data-testid="input-field-set">
       <label>{label}</label>

@@ -5,15 +5,16 @@ import { HoldingSnapshotInputs, HoldingSnapshotFormData, HOLDING_SNAPSHOT_ITEM_N
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL, HoldingType } from '@/app/net-worth/holding-snapshots/holdings';
 
 // Mock getAllHoldings globally before imports
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getAllHoldings: jest.fn().mockResolvedValue({ successful: true, data: [] })
 }));
 
 // Unmock InputFieldSetTemplate for the entire file
-jest.unmock('@/app/components/form');
+jest.unmock('@/app/components');
 
-jest.mock('@/app/components', () => ({
-  convertDateToISOString: (date: Date) => date.toISOString().split('T')[0]
+jest.mock('@/app/lib/utils', () => ({
+  convertDateToISOString: (date: Date) => date.toISOString().split('T')[0],
+  replaceSpacesWithDashes: jest.fn()
 }));
 
 jest.mock('next/link', () => ({

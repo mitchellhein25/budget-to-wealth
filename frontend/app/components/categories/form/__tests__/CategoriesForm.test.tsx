@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
-import { CategoriesForm } from '@/app/components';
+import { CategoriesForm } from '@/app/components/categories/form/CategoriesForm';
 
 const formTemplateTestId = 'form-template';
 const categoriesInputsTestId = 'categories-inputs';
@@ -10,7 +10,7 @@ const formIdTestId = 'form-id';
 const formHeaderTestId = 'form-header';
 const messageTestId = 'message';
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components', () => ({
   __esModule: true,
   formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { 
@@ -29,20 +29,8 @@ jest.mock('@/app/components/form', () => ({
       {message && <div data-testid={messageTestId}>{JSON.stringify(message)}</div>}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons/UpdateCreateButton', () => ({
-  __esModule: true,
   UpdateCreateButton: () => <div>{updateCreateButtonText}</div>,
-}));
-
-jest.mock('@/app/components/buttons/ResetButton', () => ({
-  __esModule: true,
   ResetButton: () => <div>{resetButtonText}</div>,
-}));
-
-jest.mock('@/app/components/categories/form/CategoriesInputs', () => ({
-  __esModule: true,
   CategoriesInputs: ({}: { editingFormData: unknown; onChange: () => void }) => (
     <div data-testid={categoriesInputsTestId}>
       {categoriesInputsTestId}

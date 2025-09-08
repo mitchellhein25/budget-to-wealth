@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots';
-import { NetWorthTrendGraph } from '@/app/dashboards/net-worth';
+import { NetWorthTrendGraphPage } from '@/app/dashboards/net-worth/page';
 
 jest.mock('@/app/lib/api', () => ({
   getNetWorthTrendGraphForDateRange: jest.fn(),
@@ -81,14 +81,14 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('renders dashboard page with correct item name', () => {
-    render(<NetWorthTrendGraph />);
+    render(<NetWorthTrendGraphPage />);
     
     expect(screen.getByTestId('dashboard-page')).toBeInTheDocument();
     expect(screen.getByTestId('item-name')).toHaveTextContent(NET_WORTH_ITEM_NAME);
   });
 
   it('renders trend graph with correct data', () => {
-    render(<NetWorthTrendGraph />);
+    render(<NetWorthTrendGraphPage />);
     
     expect(screen.getByTestId('trend-graph')).toBeInTheDocument();
     expect(screen.getByTestId('trend-graph-title')).toHaveTextContent(NET_WORTH_ITEM_NAME);
@@ -97,24 +97,24 @@ describe('NetWorthTrendGraph', () => {
   });
 
   it('renders net worth totals with correct data', () => {
-    render(<NetWorthTrendGraph />);
+    render(<NetWorthTrendGraphPage />);
     
     expect(screen.getByTestId('net-worth-totals')).toBeInTheDocument();
     expect(screen.getByTestId('net-worths')).toHaveTextContent('1000000, 1200000');
   });
 
   it('renders trend graph table', () => {
-    render(<NetWorthTrendGraph />);
+    render(<NetWorthTrendGraphPage />);
     
     expect(screen.getByTestId('trend-graph-table')).toBeInTheDocument();
     expect(screen.getByText('Table rendered')).toBeInTheDocument();
   });
 
   it('handles null trend graph data gracefully', () => {
-    const { rerender } = render(<NetWorthTrendGraph />);
+    const { rerender } = render(<NetWorthTrendGraphPage />);
     
     // Mock the DashboardPage to return null data
-    jest.doMock('../components', () => ({
+    jest.doMock('@/app/dashboards', () => ({
       DashboardPage: ({ children }: { children: (props: { trendGraphData: unknown }) => React.ReactElement }) => (
         <div data-testid="dashboard-page">
           {children({ trendGraphData: null })}
@@ -123,7 +123,7 @@ describe('NetWorthTrendGraph', () => {
       TrendGraph: jest.fn(),
     }));
 
-    rerender(<NetWorthTrendGraph />);
+    rerender(<NetWorthTrendGraphPage />);
     
     expect(screen.getByTestId('dashboard-page')).toBeInTheDocument();
   });

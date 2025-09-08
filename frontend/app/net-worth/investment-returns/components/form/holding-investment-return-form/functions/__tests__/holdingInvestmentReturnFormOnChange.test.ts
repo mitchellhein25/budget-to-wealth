@@ -3,6 +3,7 @@ import { holdingInvestmentReturnFormOnChange, HoldingInvestmentReturnFormData, H
 
 jest.mock('@/app/lib/utils', () => ({
   cleanCurrencyInput: jest.fn(),
+  replaceSpacesWithDashes: jest.fn(),
 }));
 
 const mockCleanCurrencyInput = cleanCurrencyInput as jest.MockedFunction<typeof cleanCurrencyInput>;

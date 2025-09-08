@@ -1,7 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
 import { HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnInputs } from '@/app/net-worth/investment-returns';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturnInputs } from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/HoldingInvestmentReturnInputs';
+
 
 const editHoldingsLinkTestId = 'edit-holdings-link';
 

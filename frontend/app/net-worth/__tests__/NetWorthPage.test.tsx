@@ -7,6 +7,7 @@ const netWorthSideBarText = 'Net Worth Side Bar';
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => false,
+  useSidebarDetection: () => true,
 }));
 
 jest.mock('@/app/net-worth', () => ({
@@ -33,11 +34,12 @@ describe('NetWorthPage', () => {
     // Mock useMobileDetection to return true for mobile
     jest.doMock('@/app/hooks', () => ({
       useMobileDetection: () => true,
+      useSidebarDetection: () => false,
     }));
 
     // Clear the module cache and re-import
     jest.resetModules();
-    const MobileNetWorthPage = jest.requireMock('../page').default;
+    const MobileNetWorthPage = jest.requireMock('@/app/net-worth').NetWorthPage;
     
     render(<MobileNetWorthPage />);
 
