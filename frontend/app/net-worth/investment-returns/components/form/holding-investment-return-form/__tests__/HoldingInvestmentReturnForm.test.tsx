@@ -2,7 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { FormState } from '@/app/hooks';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings';
-import { HoldingInvestmentReturnFormData, HoldingInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnForm } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturnFormData, HoldingInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturnForm } from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/HoldingInvestmentReturnForm';
 
 const formTemplateTestId = 'form-template';
 const holdingInvestmentReturnInputsTestId = 'holding-investment-return-inputs';
