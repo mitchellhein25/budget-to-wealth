@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CategoriesInputs } from '@/app/components';
 import { INCOME_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
+import { CategoriesInputs } from '@/app/components/categories/form/CategoriesInputs';
 
 jest.mock('@/app/components', () => ({
   InputFieldSetTemplate: jest.fn(({ label, isRequired, inputChild }) => (

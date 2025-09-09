@@ -76,7 +76,7 @@ describe('DesktopCategoryRow', () => {
     expect(mockOnDelete).toHaveBeenCalledWith(mockCategory.id);
   });
 
-  it('handles category with string id', () => {
+  it('handles category with id', () => {
     const categoryWithStringId: Category = {
       ...mockCategory,
       id: 1,
@@ -91,7 +91,7 @@ describe('DesktopCategoryRow', () => {
     );
     
     fireEvent.click(screen.getByTestId(deleteButtonTestId));
-    expect(mockOnDelete).toHaveBeenCalledWith('string-id');
+    expect(mockOnDelete).toHaveBeenCalledWith(1);
   });
 
   it('handles category with number id', () => {

@@ -1,65 +1,47 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { CategoriesList } from '@/app/components/categories/list/CategoriesList';
 
 const listTableTestId = 'list-table';
-const listTableText = 'List Table';
 const titleTestId = 'title';
 const itemsCountTestId = 'items-count';
 const isErrorTestId = 'is-error';
 const isLoadingTestId = 'is-loading';
 
+jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
+  deleteRequest: jest.fn(() => Promise.resolve({ successful: true })),
+}));
+
 jest.mock('@/app/components', () => ({
-  __esModule: true,
   ListTable: ({ title, items, isError, isLoading }: { 
     title: string; 
-    headerRow: unknown; 
-    bodyRow: (item: unknown) => React.ReactElement; 
-    items: unknown[]; 
+    headerRow: React.ReactElement; 
+    bodyRow: (item: any) => React.ReactElement; 
+    mobileRow: (item: any) => React.ReactElement;
+    items: any[]; 
     isError: boolean; 
     isLoading: boolean; 
   }) => (
     <div data-testid={listTableTestId}>
-      <div>{listTableText}</div>
       <div data-testid={titleTestId}>{title}</div>
       <div data-testid={itemsCountTestId}>{items?.length || 0}</div>
       <div data-testid={isErrorTestId}>{isError.toString()}</div>
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
       <div data-testid="table-content">
-                 {items?.map((item: unknown, index: number) => {
-           return (
-            <div key={index} data-testid={`item-${index}`}>
-              <div data-testid={`item-name-${index}`}>
-                {(item as { name: string }).name}
-              </div>
-              <div data-testid={`item-actions-${index}`}>
-                <button>Edit</button>
-                <button>Delete</button>
-              </div>
+        {items?.map((item: any, index: number) => (
+          <div key={index} data-testid={`item-${index}`}>
+            <div data-testid={`item-name-${index}`}>{item.name}</div>
+            <div data-testid={`item-actions-${index}`}>
+              <button>Edit</button>
+              <button>Delete</button>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   ),
-}));
-
-jest.mock('@/app/lib/api', () => ({
-  deleteRequest: jest.fn(),
-}));
-
-jest.mock('@/app/components', () => ({
-  DesktopListItemRow: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
-    <tr>
-      {children}
-      <td>
-        <button onClick={onEdit}>Edit</button>
-        <button onClick={onDelete}>Delete</button>
-      </td>
-    </tr>
-  ),
-  DesktopListItemCell: ({ children, title }: { children: React.ReactNode; title?: string }) => (
-    <td title={title}>{children}</td>
-  ),
+  DesktopCategoryRow: () => <div>DesktopCategoryRow</div>,
+  MobileCategoryCard: () => <div>MobileCategoryCard</div>,
 }));
 
 describe('CategoriesList', () => {
@@ -90,7 +72,6 @@ describe('CategoriesList', () => {
   it('renders the component correctly', () => {
     render(<CategoriesList {...defaultProps} />);
     expect(screen.getByTestId(listTableTestId)).toBeInTheDocument();
-    expect(screen.getByText(listTableText)).toBeInTheDocument();
   });
 
   it('displays correct title with category type name', () => {
