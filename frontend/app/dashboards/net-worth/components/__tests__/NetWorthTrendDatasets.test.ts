@@ -4,6 +4,10 @@ const assetItemNamePlural = 'Assets';
 const debtItemNamePlural = 'Debts';
 const netWorthItemName = 'Net Worth';
 
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
+
 describe('NetWorthTrendDatasets', () => {
   it('returns empty array when data is null', () => {
     const result = NetWorthTrendDatasets(null);

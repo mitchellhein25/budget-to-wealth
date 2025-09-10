@@ -10,6 +10,10 @@ import { FetchResult, getRequestList, getRequestSingle, fetchWithAuth } from '@/
   },
 }));
 
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
+
 const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;
 
 describe('Get Request Methods', () => {

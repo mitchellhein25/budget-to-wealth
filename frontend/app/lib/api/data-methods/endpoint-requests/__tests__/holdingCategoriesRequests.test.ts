@@ -8,8 +8,8 @@ jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
-  HOLDING_CATEGORIES_ENDPOINT: 'HoldingCategories',
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
 }));
 
 const createMockFetchResult = <T>(data: T): FetchResult<T> => ({

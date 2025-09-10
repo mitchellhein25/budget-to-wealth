@@ -10,6 +10,10 @@ jest.mock('@/app/lib/api/apiClient', () => ({
   },
 }));
 
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
+
 describe('deleteRequest', () => {
   const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;
 

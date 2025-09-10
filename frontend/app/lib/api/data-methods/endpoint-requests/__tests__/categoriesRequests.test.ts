@@ -5,6 +5,10 @@ jest.mock('@/app/lib/api/rest-methods/getRequest', () => ({
   getRequestList: jest.fn(),
 }));
 
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
+
 const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
   data,
   responseMessage: 'Success',

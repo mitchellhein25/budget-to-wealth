@@ -9,8 +9,8 @@ jest.mock('@/app/lib/api/rest-methods/deleteRequest', () => ({
   deleteRequest: jest.fn(),
 }));
 
-jest.mock('@/app/lib/api/data-methods/endpoints', () => ({
-  HOLDINGS_ENDPOINT: 'Holdings',
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
 }));
 
 const mockGetRequestList = getRequestList as jest.MockedFunction<typeof getRequestList>;

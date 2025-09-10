@@ -3,6 +3,10 @@ import { postRequest } from '@/app/lib/api';
 
 jest.mock('@/app/lib/api');
 
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
+
 const mockPostRequest = postRequest as jest.MockedFunction<typeof postRequest>;
 
 describe('uploadImportData', () => {

@@ -1,9 +1,14 @@
+import { RecurrenceFrequency } from '@/app/cashflow';
 import { fetchWithAuth, HttpMethod } from '@/app/lib/api';
 import { getAccessToken } from '@/app/lib/auth';
 
 // Mock dependencies
 jest.mock('@/app/lib/auth/getAccessToken', () => ({
   getAccessToken: jest.fn()
+}));
+
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
 }));
 
 global.fetch = jest.fn();
