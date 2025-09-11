@@ -10,7 +10,6 @@ import { CashFlowEntry, CashFlowEntryFormData, CashFlowSideBar, CashFlowType, co
 export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashFlowType, recurringOnly?: boolean}) {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
 
-  const [items, setItems] = useState<CashFlowEntry[]>([]);
   const fetchCashFlowEntries = useCallback(() => {
     if (recurringOnly) {
       return getRecurringCashFlowEntries(cashFlowType);
@@ -18,10 +17,9 @@ export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashF
       return getCashFlowEntriesByDateRangeAndType(dateRange, cashFlowType);
     }
   }, [dateRange, cashFlowType, recurringOnly]);
-  const { fetchItems, isPending, message } = useFormListItemsFetch<CashFlowEntry>({
+  const { fetchItems, isPending, message, items } = useFormListItemsFetch<CashFlowEntry>({
     fetchItems: fetchCashFlowEntries,
-    itemName: cashFlowType.toLowerCase(),
-    setItems: setItems,
+    itemName: cashFlowType.toLowerCase()
   });
 
   const formState = useForm<CashFlowEntry, CashFlowEntryFormData>(
