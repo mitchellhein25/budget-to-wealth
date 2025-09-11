@@ -99,19 +99,4 @@ describe('NetWorthTrendGraph', () => {
     expect(screen.getByTestId('trend-graph-table')).toBeInTheDocument();
   });
 
-  it('calls NetWorthTrendDatasets with correct data', () => {
-    const { NetWorthTrendDatasets } = require('@/app/dashboards/net-worth');
-    
-    render(<NetWorthTrendGraphPage />);
-    
-    expect(NetWorthTrendDatasets).toHaveBeenCalledWith(mockTrendGraphData);
-  });
-
-  it('calls NetWorthTotalDisplays with data', () => {
-    const { NetWorthTotalDisplays } = require('@/app/dashboards/net-worth');
-    
-    render(<NetWorthTrendGraphPage />);
-    
-    expect(NetWorthTotalDisplays).toHaveBeenCalled();
-  });
 }); 

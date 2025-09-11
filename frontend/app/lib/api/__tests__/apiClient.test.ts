@@ -1,4 +1,3 @@
-import { RecurrenceFrequency } from '@/app/cashflow';
 import { fetchWithAuth, HttpMethod } from '@/app/lib/api';
 import { getAccessToken } from '@/app/lib/auth';
 
@@ -55,7 +54,7 @@ describe('fetchWithAuth', () => {
   it('returns data and success on 200 OK', async () => {
     mockGetAccessToken.mockResolvedValue('token');
     mockFetch.mockResolvedValue(createMockResponse({
-      body: {} as any,
+      body: {} as unknown as ReadableStream<Uint8Array<ArrayBuffer>>,
       json: async () => apiResponse
     }));
 
@@ -104,7 +103,7 @@ describe('fetchWithAuth', () => {
   it('sends correct method and body for POST', async () => {
     mockGetAccessToken.mockResolvedValue('token');
     mockFetch.mockResolvedValue(createMockResponse({
-      body: {} as any,
+      body: {} as unknown as ReadableStream<Uint8Array<ArrayBuffer>>,
       json: async () => apiResponse
     }));
 

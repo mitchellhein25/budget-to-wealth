@@ -3,9 +3,9 @@ import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, getManualInvestmentReturnVa
 
 jest.mock('@/app/cashflow', () => ({
   RecurrenceFrequency: {
-    WEEKLY: 'WEEKLY',
-    EVERY_2_WEEKS: 'EVERY_2_WEEKS',
-    MONTHLY: 'MONTHLY',
+    WEEKLY: 'Weekly',
+    EVERY_2_WEEKS: 'Every2Weeks',
+    MONTHLY: 'Monthly',
   }
 }));
 

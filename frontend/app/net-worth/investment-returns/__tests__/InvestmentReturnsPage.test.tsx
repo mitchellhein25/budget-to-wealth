@@ -32,7 +32,7 @@ jest.mock('@/app/hooks', () => ({
 
 jest.mock('@/app/components', () => ({
   DatePicker: () => <div data-testid={datePickerTestId}>{datePickerText}</div>,
-  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list }: any) => (
+  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list }: { sideBar: React.ReactNode; totalDisplay: React.ReactNode; datePicker: React.ReactNode; form: React.ReactNode; list: React.ReactNode }) => (
     <div data-testid="responsive-form-list-page">
       {sideBar}
       {totalDisplay}

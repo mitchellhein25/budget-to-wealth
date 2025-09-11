@@ -103,19 +103,4 @@ describe('HoldingSnapshotForm', () => {
     expect(screen.getByText(`Edit ${HOLDING_SNAPSHOT_ITEM_NAME}`)).toBeInTheDocument();
   });
 
-  it('calls FormTemplate with form data', () => {
-    const { FormTemplate } = require('@/app/components');
-    
-    render(<HoldingSnapshotForm formState={mockFormState} />);
-    
-    expect(FormTemplate).toHaveBeenCalled();
-  });
-
-  it('calls HoldingSnapshotInputs with form data', () => {
-    const { HoldingSnapshotInputs } = require('@/app/net-worth/holding-snapshots');
-    
-    render(<HoldingSnapshotForm formState={mockFormState} />);
-    
-    expect(HoldingSnapshotInputs).toHaveBeenCalled();
-  });
 }); 

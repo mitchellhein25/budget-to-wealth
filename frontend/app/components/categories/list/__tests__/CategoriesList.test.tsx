@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { CategoriesList } from '@/app/components/categories/list/CategoriesList';
+import { Category } from '@/app/components';
 
 const listTableTestId = 'list-table';
 const titleTestId = 'title';
@@ -16,9 +17,9 @@ jest.mock('@/app/components', () => ({
   ListTable: ({ title, items, isError, isLoading }: { 
     title: string; 
     headerRow: React.ReactElement; 
-    bodyRow: (item: any) => React.ReactElement; 
-    mobileRow: (item: any) => React.ReactElement;
-    items: any[]; 
+    bodyRow: (item: unknown) => React.ReactElement; 
+    mobileRow: (item: unknown) => React.ReactElement;
+    items: Category[]; 
     isError: boolean; 
     isLoading: boolean; 
   }) => (
@@ -28,7 +29,7 @@ jest.mock('@/app/components', () => ({
       <div data-testid={isErrorTestId}>{isError.toString()}</div>
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
       <div data-testid="table-content">
-        {items?.map((item: any, index: number) => (
+        {items?.map((item: Category, index: number) => (
           <div key={index} data-testid={`item-${index}`}>
             <div data-testid={`item-name-${index}`}>{item.name}</div>
             <div data-testid={`item-actions-${index}`}>

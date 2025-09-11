@@ -1,5 +1,5 @@
 import { useCallback, useState, useTransition } from "react";
-import { MessageState, MessageType } from "@/app/components";
+import { MessageState, MessageType } from "@/app/lib/utils";
 import { FetchResult } from "@/app/lib/api";
 
 export type useItemsFetchResult = {
@@ -32,7 +32,7 @@ export const useFormListItemsFetch = <T>(args: useItemsFetchArgs<T>) : useItemsF
     } catch {
       setErrorMessage(`An error occurred while loading ${args.itemName}s. Please try again.`);
     }
-  }, [args.fetchItems, args.itemName, args.setItems]);
+  }, [args]);
 
 
   const fetchItemsWithTransition = useCallback(() => {

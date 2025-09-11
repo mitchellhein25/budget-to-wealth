@@ -13,7 +13,7 @@ jest.mock('@/app/lib/utils', () => ({
 }));
 
 jest.mock('@/app/cashflow', () => ({
-  getRecurrenceText: jest.fn((entry) => 'Monthly'),
+  getRecurrenceText: jest.fn(() => 'Monthly'),
   CashFlowType: {
     INCOME: 'Income',
     EXPENSE: 'Expense',

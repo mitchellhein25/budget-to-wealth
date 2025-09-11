@@ -9,7 +9,7 @@ jest.mock('@/app/lib/auth/auth0', () => ({
 const mockAuth0 = auth0 as jest.Mocked<typeof auth0>;
 
 describe('getAccessToken', () => {
-  const createMockSession = (overrides: any = {}) => ({
+  const createMockSession = (overrides: Record<string, unknown> = {}) => ({
     user: {
       name: 'Test User',
       email: 'test@example.com',

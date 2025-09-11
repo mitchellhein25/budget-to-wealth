@@ -26,7 +26,7 @@ describe('transformFormDataToHolding', () => {
     mockGetHoldingValidationResult.mockReturnValue({
       success: true,
       data: mockValidatedData
-    } as any);
+    } as { success: true; data: typeof mockValidatedData });
 
     const result = transformFormDataToHolding(mockFormData);
 
@@ -44,11 +44,34 @@ describe('transformFormDataToHolding', () => {
     const mockValidationError = {
       success: false,
       error: {
-        errors: [{ message: 'Invalid holding name' }]
+        issues: [{ 
+          message: 'Invalid holding name', 
+          code: 'invalid_type' as const, 
+          path: ['name'],
+          expected: 'string' as const,
+          received: 'undefined' as const
+        }],
+        format: () => ({ _errors: ['Invalid holding name'] }),
+        message: 'Invalid holding name',
+        isEmpty: false,
+        name: 'ZodError',
+        cause: undefined,
+        stack: undefined,
+        errors: [{ 
+          message: 'Invalid holding name', 
+          code: 'invalid_type' as const, 
+          path: ['name'],
+          expected: 'string' as const,
+          received: 'undefined' as const
+        }],
+        addIssue: jest.fn(),
+        addIssues: jest.fn(),
+        flatten: jest.fn(() => ({ fieldErrors: {}, formErrors: ['Invalid holding name'] })),
+        formErrors: { formErrors: ['Invalid holding name'], fieldErrors: {} }
       }
     };
 
-    mockGetHoldingValidationResult.mockReturnValue(mockValidationError as any);
+    mockGetHoldingValidationResult.mockReturnValue(mockValidationError as unknown as ReturnType<typeof getHoldingValidationResult>);
 
     const result = transformFormDataToHolding(mockFormData);
 

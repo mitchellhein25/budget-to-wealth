@@ -42,7 +42,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -68,7 +68,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -92,7 +92,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -110,7 +110,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -128,7 +128,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -154,7 +154,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
         }
       };
 
-      mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+      mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
       const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -171,10 +171,16 @@ describe('transformFormDataToManualInvestmentReturn', () => {
           { message: 'Category field is required' },
           { message: 'Return date field is required' }
         ]
+      },
+      data: {
+        manualInvestmentCategoryId: '',
+        manualInvestmentReturnDate: new Date(),
+        manualInvestmentPercentageReturn: '',
+        manualInvestmentRecurrenceFrequency: undefined
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as any);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 

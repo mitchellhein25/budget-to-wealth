@@ -52,24 +52,24 @@ jest.mock('@/app/components', () => ({
 
 jest.mock('@/app/cashflow/budget', () => ({
   BUDGET_ITEM_NAME: 'Budget',
-  DesktopBudgetRow: ({ budget, onEdit, onDelete }: any) => (
+  DesktopBudgetRow: ({ budget, onEdit, onDelete }: { budget: Budget; onEdit: (budget: Budget) => void; onDelete: (id: number) => void }) => (
     <tr data-testid="desktop-budget-row">
-      <td data-testid="budget-category">{budget.category?.name || budget.category}</td>
+      <td data-testid="budget-category">{budget.category?.name}</td>
       <td data-testid="budget-amount">${(budget.amount / 100).toFixed(2)}</td>
       <td data-testid="budget-spent">$0.00</td>
       <td data-testid="budget-remaining">${(budget.amount / 100).toFixed(2)}</td>
       <td>
         <button data-testid="edit-button" onClick={() => onEdit(budget)}>Edit</button>
-        <button data-testid="delete-button" onClick={() => onDelete(budget.id)}>Delete</button>
+        <button data-testid="delete-button" onClick={() => onDelete(budget.id as number)}>Delete</button>
       </td>
     </tr>
   ),
-  MobileBudgetCard: ({ budget, onEdit, onDelete }: any) => (
+  MobileBudgetCard: ({ budget, onEdit, onDelete }: { budget: Budget; onEdit: (budget: Budget) => void; onDelete: (id: number) => void }) => (
     <div data-testid="mobile-budget-card">
-      <span data-testid="budget-category">{budget.category?.name || budget.category}</span>
+      <span data-testid="budget-category">{budget.category?.name}</span>
       <span data-testid="budget-amount">${(budget.amount / 100).toFixed(2)}</span>
       <button data-testid="edit-button" onClick={() => onEdit(budget)}>Edit</button>
-      <button data-testid="delete-button" onClick={() => onDelete(budget.id)}>Delete</button>
+      <button data-testid="delete-button" onClick={() => onDelete(budget.id as number)}>Delete</button>
     </div>
   ),
 }));

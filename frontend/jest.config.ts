@@ -21,7 +21,7 @@ const config: Config = {
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
   ],
-  collectCoverage: false,
+  collectCoverage: true,
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     '!app/**/*.d.ts',

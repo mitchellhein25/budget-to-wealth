@@ -23,17 +23,44 @@ const mockConvertDollarsToCents = convertDollarsToCents as jest.MockedFunction<t
 const mockGetCashFlowValidationResult = getCashFlowValidationResult as jest.MockedFunction<typeof getCashFlowValidationResult>;
 
 // Helper functions to reduce duplication
-const createValidValidationResult = (data: any) => ({
+const createValidValidationResult = (data: { amount: string; categoryId: string; date: Date; id?: string; description?: string; recurrenceFrequency?: string; recurrenceEndDate?: string }) => ({
   success: true as const,
   data,
 });
 
-const createInvalidValidationResult = (message: string) => ({
-  success: false as const,
-  error: {
-    errors: [{ message, code: 'invalid_type' as const, path: [], severity: 'error' as const }],
-  },
-} as any);
+const createInvalidValidationResult = (message: string) => {
+  const mockError = {
+    issues: [{ 
+      message, 
+      code: 'invalid_type' as const, 
+      path: [],
+      expected: 'string' as const,
+      received: 'undefined' as const
+    }],
+    format: () => ({ _errors: [message] }),
+    message,
+    isEmpty: false,
+    name: 'ZodError',
+    cause: undefined,
+    stack: undefined,
+    errors: [{ 
+      message, 
+      code: 'invalid_type' as const, 
+      path: [],
+      expected: 'string' as const,
+      received: 'undefined' as const
+    }],
+    addIssue: jest.fn(),
+    addIssues: jest.fn(),
+    flatten: jest.fn(() => ({ fieldErrors: {}, formErrors: [message] })),
+    formErrors: { formErrors: [message], fieldErrors: {} }
+  };
+  
+  return {
+    success: false as const,
+    error: mockError,
+  };
+};
 
 const createFormData = (type: string, fields: Record<string, string>) => {
   const formData = new FormData();

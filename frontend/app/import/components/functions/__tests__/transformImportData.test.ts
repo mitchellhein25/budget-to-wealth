@@ -1,4 +1,4 @@
-import { transformImportData, ImportDataTypeString, ImportDataType, CashFlowEntryImport } from '@/app/import';
+import { transformImportData, ImportDataTypeString, CashFlowEntryImport } from '@/app/import';
 
 describe('transformImportData', () => {
   it('transforms CashFlow Entries data correctly', () => {

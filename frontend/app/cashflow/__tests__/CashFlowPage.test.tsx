@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { CashFlowPage } from '@/app/cashflow/CashFlowPage';
 import { INCOME_ITEM_NAME, EXPENSE_ITEM_NAME } from '@/app/cashflow/components/constants';
+import { useForm, useMobileDetection, useFormListItemsFetch, useSidebarDetection } from '@/app/hooks';
+import { messageTypeIsError } from '@/app/lib/utils';
 
 jest.mock('@/app/hooks', () => ({
   useForm: jest.fn(),
@@ -20,19 +22,19 @@ jest.mock('@/app/lib/utils', () => ({
 }));
 
 jest.mock('@/app/components', () => ({
-  DatePicker: ({ dateRange, setDateRange }: any) => (
+  DatePicker: () => (
     <div data-testid="date-picker">
       <span>Date Picker</span>
     </div>
   ),
-  TotalDisplay: ({ label, amount, isLoading }: any) => (
+  TotalDisplay: ({ label, amount, isLoading }: { label: string; amount: number; isLoading: boolean }) => (
     <div data-testid="total-display">
       <span>{label}</span>
       <span>{isLoading ? 'Loading...' : `$${(amount / 100).toFixed(2)}`}</span>
     </div>
   ),
-  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list, showTotalAndDatePicker }: any) => {
-    const mockUseSidebarDetection = jest.mocked(require('@/app/hooks').useSidebarDetection);
+  ResponsiveFormListPage: ({ sideBar, totalDisplay, datePicker, form, list, showTotalAndDatePicker }: { sideBar: React.ReactNode; totalDisplay: React.ReactNode; datePicker: React.ReactNode; form: React.ReactNode; list: React.ReactNode; showTotalAndDatePicker?: boolean }) => {
+    const mockUseSidebarDetection = jest.mocked(useSidebarDetection);
     const showSidebar = mockUseSidebarDetection();
     
     return (
@@ -49,12 +51,12 @@ jest.mock('@/app/components', () => ({
 
 jest.mock('@/app/cashflow', () => ({
   CashFlowSideBar: () => <div data-testid="cash-flow-side-bar">Cash Flow Side Bar</div>,
-  CashFlowEntriesForm: ({ cashFlowType, formState }: any) => (
+  CashFlowEntriesForm: ({ cashFlowType }: { cashFlowType: string }) => (
     <div data-testid="cash-flow-entries-form">
       <span>Cash Flow Entries Form - {cashFlowType}</span>
     </div>
   ),
-  CashFlowEntriesList: ({ cashFlowType, entries, onEntryDeleted, onEntryIsEditing, isLoading, isError, recurringOnly }: any) => (
+  CashFlowEntriesList: ({ cashFlowType, entries, onEntryDeleted, isLoading, isError, recurringOnly }: { cashFlowType: string; entries: unknown[]; onEntryDeleted: () => void; isLoading: boolean; isError: boolean; recurringOnly?: boolean }) => (
     <div data-testid="cash-flow-entries-list">
       <span>Cash Flow Entries List - {cashFlowType}</span>
       <span>Entries: {entries.length}</span>
@@ -70,10 +72,10 @@ jest.mock('@/app/cashflow', () => ({
 }));
 
 describe('CashFlowPage', () => {
-  const mockUseForm = jest.mocked(require('@/app/hooks').useForm);
-  const mockUseMobileDetection = jest.mocked(require('@/app/hooks').useMobileDetection);
-  const mockUseFormListItemsFetch = jest.mocked(require('@/app/hooks').useFormListItemsFetch);
-  const mockUseSidebarDetection = jest.mocked(require('@/app/hooks').useSidebarDetection);
+  const mockUseForm = jest.mocked(useForm);
+  const mockUseMobileDetection = jest.mocked(useMobileDetection);
+  const mockUseFormListItemsFetch = jest.mocked(useFormListItemsFetch);
+  const mockUseSidebarDetection = jest.mocked(useSidebarDetection);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -86,7 +88,6 @@ describe('CashFlowPage', () => {
       isSubmitting: false,
       message: { type: null, text: '' },
       onReset: jest.fn(),
-      onSubmit: jest.fn(),
     });
     
     mockUseMobileDetection.mockReturnValue('large');
@@ -145,7 +146,7 @@ describe('CashFlowPage', () => {
   });
 
   it('handles API error response', () => {
-    const mockMessageTypeIsError = jest.mocked(require('@/app/lib/utils').messageTypeIsError);
+    const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
     mockMessageTypeIsError.mockReturnValue(true);
     
     mockUseFormListItemsFetch.mockReturnValue({
@@ -160,7 +161,7 @@ describe('CashFlowPage', () => {
   });
 
   it('calls messageTypeIsError with message state', () => {
-    const mockMessageTypeIsError = jest.mocked(require('@/app/lib/utils').messageTypeIsError);
+    const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
     
     render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
     

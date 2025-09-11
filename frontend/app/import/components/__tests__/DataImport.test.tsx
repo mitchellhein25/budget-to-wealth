@@ -11,12 +11,12 @@ jest.mock('@/app/import', () => ({
   validateImportData: jest.fn(),
   uploadImportData: jest.fn(),
   transformImportData: jest.fn(),
-  ImportPreview: ({ data, onClose }: any) => (
+  ImportPreview: ({ onClose }: { onClose: () => void }) => (
     <div data-testid="import-preview">
       <button onClick={onClose}>Close Preview</button>
     </div>
   ),
-  ImportTemplate: ({ dataType, onClose }: any) => (
+  ImportTemplate: ({ onClose }: { onClose: () => void }) => (
     <div data-testid="import-template">
       <button onClick={onClose}>Close Template</button>
     </div>

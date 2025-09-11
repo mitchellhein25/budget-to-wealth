@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useMobileDetection, useSidebarDetection } from '@/app/hooks';
+import { useSidebarDetection } from '@/app/hooks';
 import { DateRangeResponse, FetchResult } from '@/app/lib/api';
 import { DatePicker, DateRange } from '@/app/components';
 import { DashboardSideBar, HistoryToggle, TrendGraphData, TrendGraphEntry, getCompletedMonthsDefaultRange } from '@/app/dashboards';
@@ -20,7 +20,6 @@ export function DashboardPage<T extends TrendGraphData<TrendGraphEntry>>({
   children
 }: DashboardPageProps<T>) {
   const [trendGraphData, setTrendGraphData] = useState<T | null>(null);
-  const isMobile = useMobileDetection();
   const showSidebar = useSidebarDetection();
   const [dateRange, setDateRange] = useState<DateRange>(getCompletedMonthsDefaultRange(new Date()));
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);

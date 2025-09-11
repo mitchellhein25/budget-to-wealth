@@ -32,12 +32,12 @@ jest.mock('@/app/lib/utils', () => ({
 }));
 
 jest.mock('@/app/components', () => ({
-  CategoriesPage: ({ categoryTypeName }: any) => (
+  CategoriesPage: ({ categoryTypeName }: { categoryTypeName: string }) => (
     <div data-testid="categories-page">
       <h1>{categoryTypeName}</h1>
     </div>
   ),
-  BackArrow: ({ link }: any) => (
+  BackArrow: ({ link }: { link: string }) => (
     <div data-testid="back-arrow">
       <a href={link}>Back</a>
     </div>
