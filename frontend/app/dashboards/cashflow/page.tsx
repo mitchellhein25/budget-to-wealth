@@ -8,7 +8,7 @@ import { CASHFLOW_ITEM_NAME } from '@/app/cashflow';
 import { DashboardPage, TrendGraph } from '@/app/dashboards';
 import { CashFlowTrendDatasets, CashFlowTotalDisplays, CashFlowTrendGraphListTable, CashFlowTrendGraphData } from '@/app/dashboards/cashflow';
 
-export function CashFlowTrendGraph() {
+export default function CashFlowTrendGraph() {
   const renderContent = (trendGraphData: CashFlowTrendGraphData | null) => {
     if (!trendGraphData?.entries) 
       return null;

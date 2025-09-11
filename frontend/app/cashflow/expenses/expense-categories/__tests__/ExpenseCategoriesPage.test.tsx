@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import { ExpenseCategoriesPage } from '@/app/cashflow/expenses/expense-categories/page';
+import ExpenseCategoriesPage from '@/app/cashflow/expenses/expense-categories/page';
 
 jest.mock('next/navigation', () => ({
   useSearchParams: () => ({

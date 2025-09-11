@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { HoldingsPage } from '@/app/net-worth/holding-snapshots/holdings/page';
+import HoldingsPage from '@/app/net-worth/holding-snapshots/holdings/page';
 
 jest.mock('@/app/hooks', () => ({
   useForm: () => ({

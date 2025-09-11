@@ -5,7 +5,7 @@ import { HOLDING_CATEGORIES_ENDPOINT } from '@/app/lib/api';
 import { CategoriesPage, BackArrow } from '@/app/components';
 import { HOLDING_ITEM_NAME } from '@/app/net-worth/holding-snapshots/holdings';
 
-export function HoldingCategoriesPage() {
+export default function HoldingCategoriesPage() {
   const parentPath = useParentPath();
 
   return (

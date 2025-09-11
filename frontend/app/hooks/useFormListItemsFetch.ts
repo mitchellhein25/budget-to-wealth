@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useState, useTransition } from "react";
 import { MessageState, MessageType } from "@/app/lib/utils";
 import { FetchResult } from "@/app/lib/api";

@@ -8,7 +8,7 @@ import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components'
 import { NetWorthSideBar } from '@/app/net-worth';
 import { convertHoldingSnapshotToFormData, HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE, HoldingSnapshot, HoldingSnapshotForm, HoldingSnapshotFormData, HoldingSnapshotsList, transformFormDataToHoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 
-export function HoldingSnapshotsPage() {
+export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [items, setItems] = useState<HoldingSnapshot[]>([]);
   const [showLatestOnly, setShowLatestOnly] = useState<boolean>(true);

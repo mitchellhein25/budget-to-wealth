@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
-import { InvestmentReturnsPage } from '@/app/net-worth/investment-returns/page';
+import InvestmentReturnsPage from '@/app/net-worth/investment-returns/page';
 
 const investmentReturnFormTestId = 'investment-return-form';
 const investmentReturnListTestId = 'investment-return-list';

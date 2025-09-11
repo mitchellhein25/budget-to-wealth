@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { EXPENSE_ITEM_NAME } from '@/app/cashflow';
-import { ExpensesPage } from '@/app/cashflow/expenses/page';
+import ExpensesPage from '@/app/cashflow/expenses/page';
 
 const cashFlowPageTestId = 'cash-flow-page';
 const cashFlowPageText = 'Cash Flow Page';

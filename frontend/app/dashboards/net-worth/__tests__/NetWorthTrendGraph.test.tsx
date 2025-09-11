@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { NetWorthTrendGraphPage } from '@/app/dashboards/net-worth/page';
+import NetWorthTrendGraphPage from '@/app/dashboards/net-worth/page';
 import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots';
 
 jest.mock('@/app/lib/api', () => ({

@@ -8,7 +8,7 @@ import { NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots'
 import { DashboardPage, TrendGraph } from '@/app/dashboards';
 import { NetWorthTrendDatasets, NetWorthTotalDisplays, NetWorthTrendGraphListTable, NetWorthTrendGraphData } from '@/app/dashboards/net-worth';
 
-export function NetWorthTrendGraphPage() {
+export default function NetWorthTrendGraphPage() {
   const renderContent = (trendGraphData: NetWorthTrendGraphData | null) => {
     if (!trendGraphData?.entries) 
       return null;

@@ -5,7 +5,7 @@ import { CASH_FLOW_CATEGORIES_ENDPOINT } from '@/app/lib/api';
 import { CategoriesPage, BackArrow } from '@/app/components';
 import { INCOME_ITEM_NAME } from '@/app/cashflow';
 
-export function IncomeCategoriesPage() {
+export default function IncomeCategoriesPage() {
   const parentPath = useParentPath();
 
 	return (

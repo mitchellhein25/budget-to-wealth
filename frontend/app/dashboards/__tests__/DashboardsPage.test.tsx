@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { DashboardsPage } from '@/app/dashboards/page';
+import DashboardsPage from '@/app/dashboards/page';
 
 jest.mock('@/app/dashboards', () => ({
   __esModule: true,

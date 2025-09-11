@@ -8,7 +8,7 @@ import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components'
 import { CashFlowSideBar, CashFlowEntry, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
 import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, BudgetsForm, BudgetsList, BudgetSummary, BUDGET_ITEM_NAME_LOWERCASE, convertBudgetToFormData } from '@/app/cashflow/budget';
 
-export function BudgetsPage() {
+export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
 
   const [budgets, setBudgets] = useState<Budget[]>([]);

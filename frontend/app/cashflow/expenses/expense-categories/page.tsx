@@ -28,7 +28,7 @@ function ExpenseCategoriesContent() {
   )	
 }
 
-export function ExpenseCategoriesPage() {
+export default function ExpenseCategoriesPage() {
   return (
     <Suspense fallback={<div className="p-3 sm:p-6">Loading...</div>}>
       <ExpenseCategoriesContent />

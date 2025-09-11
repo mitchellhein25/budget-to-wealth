@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMobileDetection } from '@/app/hooks';
-import { ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+// import { ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 export type TrendGraphProps = {
   title: string;
@@ -36,7 +36,7 @@ export function TrendGraph(props: TrendGraphProps) {
         <h3 className="text-base sm:text-lg font-semibold text-base-content">{props.title}</h3>
       </div>
       <div className="w-full" style={{ height }}>
-        <ResponsiveContainer width="100%" height="100%">
+        {/* <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 16, right: 16, bottom: 8, left: 8 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
@@ -61,7 +61,7 @@ export function TrendGraph(props: TrendGraphProps) {
               )
             )}
           </ComposedChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> */}
       </div>
     </div>
   );

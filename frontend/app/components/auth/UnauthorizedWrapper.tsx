@@ -6,7 +6,7 @@ interface UnauthorizedWrapperProps {
   children: React.ReactNode;
 }
 
-export default function UnauthorizedWrapper({ session, children }: UnauthorizedWrapperProps) {
+export function UnauthorizedWrapper({ session, children }: UnauthorizedWrapperProps) {
   const unauthorizedComponent = unauthorized(session);
   
   if (unauthorizedComponent) {

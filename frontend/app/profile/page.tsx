@@ -2,7 +2,7 @@ import Image from "next/image";
 import { User } from "lucide-react";
 import { auth0 } from "@/app/lib/auth";
 
-export default async function Profile() {
+export default async function ProfilePage() {
   const session = await auth0.getSession();
   
   if (!session?.user) {

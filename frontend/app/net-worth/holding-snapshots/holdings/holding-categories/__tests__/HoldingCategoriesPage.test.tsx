@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { HoldingCategoriesPage } from '@/app/net-worth/holding-snapshots/holdings';
+import HoldingCategoriesPage from '@/app/net-worth/holding-snapshots/holdings/holding-categories/page';
 
 jest.mock('@/app/hooks', () => ({
   useParentPath: () => '/net-worth/holdings',

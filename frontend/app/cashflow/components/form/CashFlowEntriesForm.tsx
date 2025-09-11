@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { UpdateCreateButton, ResetButton, formHasAnyValue, FormTemplate } from '@/app/components';

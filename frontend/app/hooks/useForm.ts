@@ -1,3 +1,5 @@
+'use client';
+
 import { ChangeEventHandler, useState } from "react";
 import { cleanCurrencyInput, cleanPercentageInput, MessageState, replaceSpacesWithDashes } from "@/app/lib/utils";
 import { handleFormSubmit } from "@/app/components";

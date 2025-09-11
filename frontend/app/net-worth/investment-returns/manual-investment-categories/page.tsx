@@ -3,7 +3,7 @@ import { MANUAL_INVESTMENT_CATEGORIES_ENDPOINT } from '@/app/lib/api'
 import { CategoriesPage } from '@/app/components'
 import { MANUAL_INVESTMENT_ITEM_NAME } from '@/app/net-worth/investment-returns'
 
-export function ManualInvestmentCategoriesPage() {
+export default function ManualInvestmentCategoriesPage() {
   return (
     <CategoriesPage
     isLoggedIn={true} 

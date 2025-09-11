@@ -7,7 +7,7 @@ import { messageTypeIsError } from '@/app/lib/utils';
 import { BackArrow } from '@/app/components';
 import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding, HOLDING_ITEM_NAME_LOWERCASE, convertHoldingToFormData } from '@/app/net-worth/holding-snapshots/holdings';
 
-export function HoldingsPage() {
+export default function HoldingsPage() {
   const parentPath = useParentPath();
   const mobileState = useMobileDetection();
 

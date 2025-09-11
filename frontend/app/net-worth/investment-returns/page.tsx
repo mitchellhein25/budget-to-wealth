@@ -8,7 +8,7 @@ import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components'
 import { NetWorthSideBar } from '@/app/net-worth';
 import { InvestmentReturnList, ManualInvestmentReturn, HoldingInvestmentReturn, InvestmentReturnForm, HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn, convertManualInvestmentReturnItemToFormData, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, convertHoldingInvestmentReturnItemToFormData } from '@/app/net-worth/investment-returns';
 
-export function InvestmentReturnsPage() {
+export default function InvestmentReturnsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
 

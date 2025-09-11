@@ -1,8 +1,7 @@
-import { ImportDataTypeStrings } from './ImportDataTypeStrings';
-import { ImportResult } from './ImportResult';
+import { ImportDataTypeString, ImportResult } from '@/app/import';
 
 export interface DataImportProps {
-  dataType: ImportDataTypeStrings;
+  dataType: ImportDataTypeString;
   onImportComplete?: (result: ImportResult) => void;
   onCancel?: () => void;
   className?: string;

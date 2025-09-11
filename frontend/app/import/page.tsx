@@ -1,7 +1,7 @@
 import React from 'react'
 import { DataImport } from '@/app/import'
 
-export function ImportPage() {
+export default function ImportPage() {
   return (
     <DataImport />
   )

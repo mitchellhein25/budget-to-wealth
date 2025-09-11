@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ManualInvestmentCategoriesPage } from '@/app/net-worth/investment-returns';
+import ManualInvestmentCategoriesPage from '@/app/net-worth/investment-returns/manual-investment-categories/page';
 
 const categoriesPageTestId = 'categories-page';
 const categoriesPageText = 'Categories Page';

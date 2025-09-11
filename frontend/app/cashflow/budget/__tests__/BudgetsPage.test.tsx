@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import { BudgetsPage } from '@/app/cashflow/budget/page';
+import BudgetsPage from '@/app/cashflow/budget/page';
 
 const cashFlowSideBarTestId = 'cash-flow-side-bar';
 const budgetsFormTestId = 'budgets-form';

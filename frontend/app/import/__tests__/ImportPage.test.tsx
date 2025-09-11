@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ImportPage } from '@/app/import/page';
+import ImportPage from '@/app/import/page';
 
 jest.mock('@/app/import', () => ({
   __esModule: true,
