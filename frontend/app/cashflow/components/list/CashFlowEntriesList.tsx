@@ -29,8 +29,8 @@ export function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		date: "w-2/12",
 		amount: "w-2/12", 
 		category: "w-2/12",
-		description: "w-4/12",
-		recurrence: "w-1/12",
+		description: props.recurringOnly ? "w-3/12" : "w-4/12",
+		recurrence: "w-2/12",
 		actions: "w-1/12"
 	};
 

@@ -23,12 +23,19 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 		}
 	};
 
+	const columnWidths = {
+		holding: "w-6/12",
+		date: "w-2/12",
+		balance: "w-2/12",
+		actions: "w-2/12"
+	};
+
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-3/10">Holding</th>
-			<th className="w-1/5">Date</th>
-			<th className="w-1/5">Balance</th>
-			<th className="w-20 text-right">Actions</th>
+			<th className={columnWidths.holding}>Holding</th>
+			<th className={columnWidths.date}>Date</th>
+			<th className={columnWidths.balance}>Balance</th>
+			<th className={columnWidths.actions + " text-right"}>Actions</th>
 		</tr>
 	);
 
@@ -36,6 +43,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 		<DesktopHoldingSnapshotRow
 			key={snapshot.id}
 			snapshot={snapshot}
+			columnWidths={columnWidths}
 			onEdit={props.onSnapshotIsEditing}
 			onDelete={handleDelete}
       onUpdate={(s) => {

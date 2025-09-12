@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {  useForm, useFormListItemsFetch } from '@/app/hooks';
 import { HOLDING_SNAPSHOTS_ENDPOINT, getHoldingSnapshotsByDateRange, getLatestHoldingSnapshots } from '@/app/lib/api';
 import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
@@ -11,9 +11,9 @@ import { convertHoldingSnapshotToFormData, HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_S
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [showLatestOnly, setShowLatestOnly] = useState<boolean>(true);
-
+  
   const fetchHoldingSnapshotsFunction = useCallback(() => showLatestOnly ? getLatestHoldingSnapshots() : getHoldingSnapshotsByDateRange(dateRange), [dateRange, showLatestOnly]);
-  const { fetchItems: fetchHoldingSnapshots, isPending: isPendingHoldingSnapshots, message: messageHoldingSnapshots, items: snapshots } = useFormListItemsFetch<HoldingSnapshot>({
+  const { fetchItems, isPending: isPendingHoldingSnapshots, message: messageHoldingSnapshots, items: snapshots } = useFormListItemsFetch<HoldingSnapshot>({
     fetchItems: fetchHoldingSnapshotsFunction,
     itemName: HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE,
   });
@@ -24,7 +24,7 @@ export default function HoldingSnapshotsPage() {
       itemEndpoint: HOLDING_SNAPSHOTS_ENDPOINT,
       transformFormDataToItem: transformFormDataToHoldingSnapshot,
       convertItemToFormData: convertHoldingSnapshotToFormData,
-      fetchItems: fetchHoldingSnapshots,
+      fetchItems: fetchItems,
     }
   );
 
@@ -48,6 +48,10 @@ export default function HoldingSnapshotsPage() {
       )}
     </>
   );
+
+	useEffect(() => {
+		fetchItems();
+	}, [fetchItems]);
   
   return (
     <ResponsiveFormListPage
@@ -62,7 +66,7 @@ export default function HoldingSnapshotsPage() {
       list={
         <HoldingSnapshotsList
           snapshots={snapshots}
-          onSnapshotDeleted={fetchHoldingSnapshots}
+          onSnapshotDeleted={fetchItems}
           onSnapshotIsEditing={formState.onItemIsEditing}
           isLoading={isPendingHoldingSnapshots}
           isError={messageTypeIsError(messageHoldingSnapshots)}

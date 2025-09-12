@@ -81,7 +81,7 @@ export function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
           </div>
         ) : (
           <>
-            <div className="flex-shrink-0">
+            <div className="w-[25%]">
               {props.form}
             </div>
             <div className="flex flex-1 flex-col gap-3 sm:gap-4">

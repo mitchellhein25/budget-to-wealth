@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm, useFormListItemsFetch } from '@/app/hooks';
 import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api';
 import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
@@ -47,36 +47,41 @@ export default function InvestmentReturnsPage() {
     holdingInvestmentReturnFormState.onItemIsEditing(investmentReturn);
   };
 
-    return (
-      <ResponsiveFormListPage
-        sideBar={<NetWorthSideBar />}
-        totalDisplay={<div className="w-full"></div>}
-        datePicker={
-          <DatePicker
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-          />
-        }
-        form={
-          <InvestmentReturnForm 
-            isManualActive={isManualActive}
-            setIsManualActive={setIsManualActive}
-            manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
-            holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
-          />
-        }
-        list={
-          <InvestmentReturnList
-            manualInvestmentReturns={manualInvestmentReturnItems}
-            holdingInvestmentReturns={holdingInvestmentReturns}
-            onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
-            onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
-            onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
-            onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
-            isLoading={isPendingManualInvestmentReturns || isPendingHoldingInvestmentReturns}
-            isError={messageTypeIsError(messageManualInvestmentReturns) || messageTypeIsError(messageHoldingInvestmentReturns)}
-          />
-        }
-      />
-    );
+  useEffect(() => {
+    fetchManualInvestmentReturnItems();
+    fetchHoldingInvestmentReturnItems();
+  }, [fetchManualInvestmentReturnItems, fetchHoldingInvestmentReturnItems]);
+
+  return (
+    <ResponsiveFormListPage
+      sideBar={<NetWorthSideBar />}
+      totalDisplay={<div className="w-full"></div>}
+      datePicker={
+        <DatePicker
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
+      }
+      form={
+        <InvestmentReturnForm 
+          isManualActive={isManualActive}
+          setIsManualActive={setIsManualActive}
+          manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
+          holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
+        />
+      }
+      list={
+        <InvestmentReturnList
+          manualInvestmentReturns={manualInvestmentReturnItems}
+          holdingInvestmentReturns={holdingInvestmentReturns}
+          onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
+          onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
+          onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
+          onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
+          isLoading={isPendingManualInvestmentReturns || isPendingHoldingInvestmentReturns}
+          isError={messageTypeIsError(messageManualInvestmentReturns) || messageTypeIsError(messageHoldingInvestmentReturns)}
+        />
+      }
+    />
+  );
 }
