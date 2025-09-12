@@ -12,12 +12,10 @@ export default function InvestmentReturnsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
 
-  const [manualInvestmentReturns, setManualInvestmentReturns] = useState<ManualInvestmentReturn[]>([]);
   const fetchManualInvestmentReturnItemsFunction = useCallback(() => getManualInvestmentReturnsByDateRange(dateRange), [dateRange]);
-  const { fetchItems: fetchManualInvestmentReturnItems, isPending: isPendingManualInvestmentReturns, message: messageManualInvestmentReturns } = useFormListItemsFetch<ManualInvestmentReturn>({
+  const { fetchItems: fetchManualInvestmentReturnItems, isPending: isPendingManualInvestmentReturns, message: messageManualInvestmentReturns, items: manualInvestmentReturnItems } = useFormListItemsFetch<ManualInvestmentReturn>({
     fetchItems: fetchManualInvestmentReturnItemsFunction,
     itemName: MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE,
-    setItems: setManualInvestmentReturns,
   });
   const manualInvestmentReturnFormState = useForm<ManualInvestmentReturn, ManualInvestmentReturnFormData>({
     itemName: MANUAL_INVESTMENT_RETURN_ITEM_NAME,
@@ -27,12 +25,10 @@ export default function InvestmentReturnsPage() {
     fetchItems: fetchManualInvestmentReturnItems,
   });
 
-  const [holdingInvestmentReturns, setHoldingInvestmentReturns] = useState<HoldingInvestmentReturn[]>([]);
   const fetchHoldingInvestmentReturnItemsFunction = useCallback(() => getHoldingInvestmentReturnsByDateRange(dateRange), [dateRange]);
-  const { fetchItems: fetchHoldingInvestmentReturnItems, isPending: isPendingHoldingInvestmentReturns, message: messageHoldingInvestmentReturns } = useFormListItemsFetch<HoldingInvestmentReturn>({
+  const { fetchItems: fetchHoldingInvestmentReturnItems, isPending: isPendingHoldingInvestmentReturns, message: messageHoldingInvestmentReturns, items: holdingInvestmentReturns } = useFormListItemsFetch<HoldingInvestmentReturn>({
     fetchItems: fetchHoldingInvestmentReturnItemsFunction,
     itemName: HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE,
-    setItems: setHoldingInvestmentReturns,
   });
   const holdingInvestmentReturnFormState = useForm<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>({
     itemName: HOLDING_INVESTMENT_RETURN_ITEM_NAME,
@@ -71,7 +67,7 @@ export default function InvestmentReturnsPage() {
         }
         list={
           <InvestmentReturnList
-            manualInvestmentReturns={manualInvestmentReturns}
+            manualInvestmentReturns={manualInvestmentReturnItems}
             holdingInvestmentReturns={holdingInvestmentReturns}
             onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
             onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}

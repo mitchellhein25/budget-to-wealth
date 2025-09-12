@@ -31,7 +31,6 @@ describe('NetWorthPage', () => {
   });
 
   it('does not render NetWorthSideBar when on mobile', () => {
-    // Mock useMobileDetection to return true for mobile
     jest.doMock('@/app/hooks', () => ({
       useMobileDetection: () => true,
       useSidebarDetection: () => false,
@@ -39,9 +38,9 @@ describe('NetWorthPage', () => {
 
     // Clear the module cache and re-import
     jest.resetModules();
-    const MobileNetWorthPage = jest.requireMock('@/app/net-worth').NetWorthPage;
+    const NetWorthPage = jest.requireMock('@/app/net-worth/page').default;
     
-    render(<MobileNetWorthPage />);
+    render(<NetWorthPage />);
 
     expect(screen.queryByTestId(netWorthSideBarTestId)).not.toBeInTheDocument();
     expect(screen.queryByText(netWorthSideBarText)).not.toBeInTheDocument();

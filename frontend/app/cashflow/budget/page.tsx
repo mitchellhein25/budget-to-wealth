@@ -11,20 +11,16 @@ import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, Bu
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
 
-  const [budgets, setBudgets] = useState<Budget[]>([]);
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
-  const { fetchItems: fetchBudgetItems, isPending: isPendingBudgets, message: messageBudgets } = useFormListItemsFetch<Budget>({
+  const { fetchItems: fetchBudgetItems, isPending: isPendingBudgets, message: messageBudgets, items: budgets } = useFormListItemsFetch<Budget>({
     fetchItems: fetchBudgets,
     itemName: BUDGET_ITEM_NAME_LOWERCASE,
-    setItems: setBudgets,
   });
 
-  const [expenses, setExpenses] = useState<CashFlowEntry[]>([]);
   const fetchExpenses = useCallback(() => getCashFlowEntriesByDateRangeAndType(dateRange, 'Expense'), [dateRange]);
-  const { fetchItems: fetchExpenseItems, isPending: isPendingExpenses, message: messageExpenses } = useFormListItemsFetch<CashFlowEntry>({
+  const { fetchItems: fetchExpenseItems, isPending: isPendingExpenses, message: messageExpenses, items: expenses } = useFormListItemsFetch<CashFlowEntry>({
     fetchItems: fetchExpenses,
     itemName: EXPENSE_ITEM_NAME_LOWERCASE,
-    setItems: setExpenses,
   });
 
   const formState = useForm<Budget, BudgetFormData>(

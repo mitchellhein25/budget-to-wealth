@@ -97,6 +97,7 @@ describe('CashFlowPage', () => {
       fetchItems: jest.fn(),
       isPending: false,
       message: { type: null, text: '' },
+      items: [],
     });
   });
 
@@ -138,6 +139,7 @@ describe('CashFlowPage', () => {
       fetchItems: mockFetchItems,
       isPending: false,
       message: { type: null, text: '' },
+      items: [],
     });
     
     render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);
@@ -153,6 +155,7 @@ describe('CashFlowPage', () => {
       fetchItems: jest.fn(),
       isPending: false,
       message: { type: 'error', text: 'Failed to load entries' },
+      items: [],
     });
     
     render(<CashFlowPage cashFlowType={INCOME_ITEM_NAME} />);

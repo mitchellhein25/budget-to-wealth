@@ -60,19 +60,19 @@ export function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
               </div>
               
               {showTotalAndDatePicker && 
-                 <div className="flex flex-col gap-3 sm:gap-4 w-full h-full justify-between">
-                   <div className="flex-1"></div>
-                   <div className="flex justify-center">
-                       <div className="h-1/3">
-                         {props.totalDisplay}
-                       </div>
-                   </div>
-                   <div className="flex-1"></div>
-                   <div className="w-full">
-                     {props.datePicker}
-                   </div>
-                 </div>
-               }
+                <div className="flex flex-col gap-3 sm:gap-4 w-full h-full justify-between">
+                  <div className="flex-1"></div>
+                  <div className="flex justify-center">
+                      <div className="h-1/3">
+                        {props.totalDisplay}
+                      </div>
+                  </div>
+                  <div className="flex-1"></div>
+                  <div className="w-full">
+                    {props.datePicker}
+                  </div>
+                </div>
+              }
             </div>
             
             <div className="flex-1 w-full">

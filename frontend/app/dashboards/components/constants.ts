@@ -1,2 +1,1 @@
-export const DASHBOARDS_ITEM_NAME = "Dashboards";
-export const DASHBOARDS_ITEM_NAME_LOWERCASE = DASHBOARDS_ITEM_NAME.toLowerCase();
+export { DASHBOARDS_ITEM_NAME, DASHBOARDS_ITEM_NAME_LOWERCASE } from "@/app/lib/constants/Constants";

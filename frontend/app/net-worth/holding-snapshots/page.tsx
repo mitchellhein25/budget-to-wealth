@@ -10,14 +10,12 @@ import { convertHoldingSnapshotToFormData, HOLDING_SNAPSHOT_ITEM_NAME, HOLDING_S
 
 export default function HoldingSnapshotsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-  const [items, setItems] = useState<HoldingSnapshot[]>([]);
   const [showLatestOnly, setShowLatestOnly] = useState<boolean>(true);
 
   const fetchHoldingSnapshotsFunction = useCallback(() => showLatestOnly ? getLatestHoldingSnapshots() : getHoldingSnapshotsByDateRange(dateRange), [dateRange, showLatestOnly]);
-  const { fetchItems: fetchHoldingSnapshots, isPending: isPendingHoldingSnapshots, message: messageHoldingSnapshots } = useFormListItemsFetch<HoldingSnapshot>({
+  const { fetchItems: fetchHoldingSnapshots, isPending: isPendingHoldingSnapshots, message: messageHoldingSnapshots, items: snapshots } = useFormListItemsFetch<HoldingSnapshot>({
     fetchItems: fetchHoldingSnapshotsFunction,
     itemName: HOLDING_SNAPSHOT_ITEM_NAME_LOWERCASE,
-    setItems: setItems,
   });
 
   const formState = useForm<HoldingSnapshot, HoldingSnapshotFormData>(
@@ -63,7 +61,7 @@ export default function HoldingSnapshotsPage() {
       }
       list={
         <HoldingSnapshotsList
-          snapshots={items}
+          snapshots={snapshots}
           onSnapshotDeleted={fetchHoldingSnapshots}
           onSnapshotIsEditing={formState.onItemIsEditing}
           isLoading={isPendingHoldingSnapshots}

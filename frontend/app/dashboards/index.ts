@@ -1,5 +1,3 @@
-export * from '@/app/dashboards/page';
-
 export * from '@/app/dashboards/components/constants';
 export * from '@/app/dashboards/components/DashboardPage';
 export * from '@/app/dashboards/components/DashboardSideBar';
