@@ -7,6 +7,12 @@ type ManualInvestmentReturnListProps = {
   onManualInvestmentReturnDeleted: () => void,
   onManualInvestmentReturnIsEditing: (investmentReturn: ManualInvestmentReturn) => void,
   tableHeaderRow: React.ReactNode,
+  columnWidths: {
+    investment: string;
+    return: string;
+    month: string;
+    actions: string;
+  },
   handleDelete: (id: number) => void,
   isLoading: boolean,
 	isError: boolean
@@ -26,6 +32,7 @@ export function ManualInvestmentReturnList(props: ManualInvestmentReturnListProp
       investmentReturn={investmentReturn}
       onEdit={props.onManualInvestmentReturnIsEditing}
       onDelete={props.handleDelete}
+      columnWidths={props.columnWidths}
     />
   );
 

@@ -26,12 +26,19 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
         onDeleted();
 		}
 	};
+  
+  const columnWidths = {
+    investment: "w-5/12",
+    return: "w-2/12",
+    month: "w-3/12",
+    actions: "w-2/12",
+  };
 
   const tableHeaderRow = (
     <tr>
-      <th className="w-1/2 text-left">Investment</th>
-      <th className="text-left">Return</th>
-      <th className="text-left">Month</th>
+      <th className={columnWidths.investment}>Investment</th>
+      <th className={columnWidths.return}>Return</th>
+      <th className={columnWidths.month}>Month</th>
     </tr>
   );
 
@@ -42,6 +49,7 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
         onHoldingInvestmentReturnDeleted={props.onHoldingInvestmentReturnDeleted}
         onHoldingInvestmentReturnIsEditing={props.onHoldingInvestmentReturnIsEditing}
         tableHeaderRow={tableHeaderRow}
+        columnWidths={columnWidths}
         handleDelete={(id: number) => handleDelete(id, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
         isLoading={props.isLoading}
         isError={props.isError}
@@ -51,6 +59,7 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
         onManualInvestmentReturnDeleted={props.onManualInvestmentReturnDeleted}
         onManualInvestmentReturnIsEditing={props.onManualInvestmentReturnIsEditing}
         tableHeaderRow={tableHeaderRow}
+        columnWidths={columnWidths}
         handleDelete={(id: number) => handleDelete(id, deleteManualInvestmentReturn, props.onManualInvestmentReturnDeleted)}
         isLoading={props.isLoading}
         isError={props.isError}
