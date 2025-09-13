@@ -56,8 +56,8 @@ export function DatePicker({ dateRange, setDateRange, className = "" }: DatePick
 
   return (
     <div className={`card bg-base-100 shadow-sm ${className}`}>
-      <div className={`card-body p-4 ${isXSmall ? 'justify-center items-center' : ''}`}>
-        <h3 className="card-title text-base mb-3 sm:mb-4">Date Range Filter</h3>
+      <div className={`card-body p-2 sm:p-4 ${isXSmall ? 'justify-center items-center' : ''}`}>
+        <h3 className="card-title text-base mb-1 sm:mb-4">Date Range Filter</h3>
         <div className={`flex ${isXSmall ? 'flex-col' : 'flex-row'} items-center gap-3`}>
           <div className='flex flex-row items-center gap-3' >
             <div className="form-control w-full sm:w-auto">

@@ -9,7 +9,7 @@ interface MobileListItemCardProps {
 export function MobileListItemCard({ children, className = '' }: MobileListItemCardProps) {
 	return (
 		<div className={`card bg-base-100 border border-base-300 shadow-sm ${className}`}>
-			<div className="card-body card-responsive">
+			<div className="card-body card-responsive p-3 sm:p-1.5">
 				{children}
 			</div>
 		</div>

@@ -18,16 +18,16 @@ export function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
   return (
     <div className="page-layout">
       {showSidebar && props.sideBar}
-      <div className="flex flex-1 gap-3 sm:gap-6">
+      <div className="flex flex-1 sm:gap-6">
         {mobileStateIsSmallOrSmaller(mobileState) ? (
-          <div className="flex-1 flex flex-col gap-3 sm:gap-6">
+          <div className="flex-1 flex flex-col sm:gap-6">
             <div className="w-full flex justify-center">
               {props.form}
             </div>
             
             {showTotalAndDatePicker && 
               (mobileState === MobileState.XSMALL ? (
-                <div className={`flex gap-3 sm:gap-4 flex-col`}>
+                <div className={`flex gap-1 sm:gap-4 flex-col`}>
                   <div className="flex justify-center">
                     {props.totalDisplay}
                   </div>
@@ -81,7 +81,7 @@ export function ResponsiveFormListPage(props: ResponsiveFormListPageProps) {
           </div>
         ) : (
           <>
-            <div className="w-[25%]">
+            <div className="w-full lg:w-[25%]">
               {props.form}
             </div>
             <div className="flex flex-1 flex-col gap-3 sm:gap-4">
