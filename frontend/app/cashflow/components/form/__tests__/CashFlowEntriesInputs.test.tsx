@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { getCategoriesList } from '@/app/lib/api';
 import { CashFlowCategory, CashFlowType, RecurrenceFrequency } from '@/app/cashflow';
 import { CashFlowEntriesInputs } from '@/app/cashflow/components/form/CashFlowEntriesInputs';
@@ -64,7 +64,9 @@ describe('CashFlowEntriesInputs', () => {
   });
 
   it('renders all required form fields', async () => {
-    render(<CashFlowEntriesInputs {...defaultProps} />);
+    await act(async () => {
+      render(<CashFlowEntriesInputs {...defaultProps} />);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Amount*')).toBeInTheDocument();
@@ -76,7 +78,9 @@ describe('CashFlowEntriesInputs', () => {
   });
 
   it('renders edit categories link for income', async () => {
-    render(<CashFlowEntriesInputs {...defaultProps} />);
+    await act(async () => {
+      render(<CashFlowEntriesInputs {...defaultProps} />);
+    });
 
     await waitFor(() => {
       const editLink = screen.getByTitle('Edit Income Categories');
@@ -91,7 +95,9 @@ describe('CashFlowEntriesInputs', () => {
       cashFlowType: CashFlowType.EXPENSE,
     };
 
-    render(<CashFlowEntriesInputs {...expenseProps} />);
+    await act(async () => {
+      render(<CashFlowEntriesInputs {...expenseProps} />);
+    });
 
     await waitFor(() => {
       const editLink = screen.getByTitle('Edit Expense Categories');
@@ -104,7 +110,9 @@ describe('CashFlowEntriesInputs', () => {
     const editingFormData = { 
       recurrenceFrequency: RecurrenceFrequency.MONTHLY
     };
-    render(<CashFlowEntriesInputs {...defaultProps} editingFormData={editingFormData} />);
+    await act(async () => {
+      render(<CashFlowEntriesInputs {...defaultProps} editingFormData={editingFormData} />);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Recurrence End Date')).toBeInTheDocument();
@@ -113,7 +121,9 @@ describe('CashFlowEntriesInputs', () => {
   });
 
   it('does not show recurrence end date when no recurrence frequency', async () => {
-    render(<CashFlowEntriesInputs {...defaultProps} />);
+    await act(async () => {
+      render(<CashFlowEntriesInputs {...defaultProps} />);
+    });
 
     expect(screen.queryByText('Recurrence End Date')).not.toBeInTheDocument();
     expect(screen.queryByText('No end date')).not.toBeInTheDocument();

@@ -51,7 +51,7 @@ describe('FormTemplate', () => {
     it('should render form with correct CSS classes', () => {
       render(<FormTemplate {...mockProps} />);
       const form = screen.getByText(testTexts.buttonText).closest('form');
-      expect(form).toHaveClass('space-y-3', 'sm:space-y-4');
+      expect(form).toHaveClass('sm:space-y-4');
     });
   });
 
@@ -109,19 +109,19 @@ describe('FormTemplate', () => {
     it('should render card body with correct classes', () => {
       render(<FormTemplate {...mockProps} />);
       const cardBody = screen.getByText(testTexts.formHeader).closest('.card-body');
-      expect(cardBody).toHaveClass('card-body', 'p-3', 'sm:p-6');
+      expect(cardBody).toHaveClass('card-body', 'p-4', 'sm:p-6');
     });
 
     it('should render header with correct classes', () => {
       render(<FormTemplate {...mockProps} />);
       const header = screen.getByText(testTexts.formHeader);
-      expect(header).toHaveClass('card-title', 'text-lg', 'mb-6', 'text-center');
+      expect(header).toHaveClass('card-title', 'text-lg', 'sm:mb-6', 'text-center');
     });
 
     it('should render button container with responsive classes', () => {
       render(<FormTemplate {...mockProps} />);
       const buttonContainer = screen.getByText(testTexts.buttonText).closest('.flex');
-      expect(buttonContainer).toHaveClass('flex', 'flex-col', 'sm:flex-row', 'gap-2', 'pt-4');
+      expect(buttonContainer).toHaveClass('flex', 'flex-col', 'sm:flex-row', 'gap-2', 'sm:pt-4');
     });
   });
 

@@ -4,6 +4,7 @@ import { MobileHoldingSnapshotCard, HoldingSnapshot } from '@/app/net-worth/hold
 
 jest.mock('@/app/lib/utils', () => ({
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`),
+  replaceSpacesWithDashes: jest.fn((text) => text.replace(/\s+/g, '-')),
 }));
 
 jest.mock('@/app/components', () => ({

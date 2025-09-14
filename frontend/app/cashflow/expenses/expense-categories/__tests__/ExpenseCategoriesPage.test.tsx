@@ -29,6 +29,7 @@ jest.mock('@/app/lib/utils', () => ({
   messageTypeIsInfo: jest.fn((message) => message?.type === 'INFO'),
   convertDollarsToCents: jest.fn((amount) => Math.round(parseFloat(amount) * 100)),
   convertCentsToDollars: jest.fn((cents) => (cents / 100).toFixed(2)),
+  replaceSpacesWithDashes: jest.fn((text) => text.replace(/\s+/g, '-')),
 }));
 
 jest.mock('@/app/components', () => ({
