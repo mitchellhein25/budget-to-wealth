@@ -152,12 +152,12 @@ describe('Utils', () => {
   describe('convertToDate', () => {
     it('converts valid date string to Date', () => {
       const result = convertToDate('2024-01-15');
-      expect(result).toEqual(new Date(2024, 0, 15));
+      expect(result).toEqual(new Date(Date.UTC(2024, 0, 15)));
     });
 
     it('handles different months correctly', () => {
       const result = convertToDate('2024-12-25');
-      expect(result).toEqual(new Date(2024, 11, 25));
+      expect(result).toEqual(new Date(Date.UTC(2024, 11, 25)));
     });
 
     it('returns current date for undefined input', () => {

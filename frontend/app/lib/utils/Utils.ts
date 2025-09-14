@@ -48,7 +48,7 @@ export const convertToDate = (date: string | undefined): Date => {
   if (!date)
     return new Date();
   const [year, month, day] = date.split('-').map(Number);
-  return new Date(year, month - 1, day);
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
 export const cleanCurrencyInput = (value: string): string | null => {
