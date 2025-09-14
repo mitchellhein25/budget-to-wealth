@@ -93,7 +93,8 @@ export const formatDate = (date: Date | undefined, noDay: boolean = false): stri
   return date?.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: noDay ? undefined : 'numeric'
+    day: noDay ? undefined : 'numeric',
+    timeZone: 'UTC'
   });
 }
 

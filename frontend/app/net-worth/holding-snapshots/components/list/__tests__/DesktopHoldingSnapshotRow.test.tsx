@@ -6,8 +6,11 @@ import { HoldingType } from '@/app/net-worth/holding-snapshots/holdings/componen
 
 jest.mock('@/app/lib/utils', () => ({
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
-  convertToDate: jest.fn((date: string) => new Date(date)),
-  formatDate: jest.fn((date: Date) => date.toLocaleDateString()),
+  convertToDate: jest.fn((date: string) => {
+    const [year, month, day] = date.split('-').map(Number);
+    return new Date(Date.UTC(year, month - 1, day));
+  }),
+  formatDate: jest.fn((date: Date) => date.toLocaleDateString('en-US', { timeZone: 'UTC' })),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -93,7 +96,7 @@ describe('DesktopHoldingSnapshotRow', () => {
     const holdingCell = screen.getAllByTestId('desktop-list-item-cell')[0];
     expect(holdingCell).toHaveTextContent('Test Holding - Test Institution - Test Category (Asset)');
     const dateCell = screen.getAllByTestId('desktop-list-item-cell')[1];
-    expect(dateCell).toHaveTextContent('1/14/2024');
+    expect(dateCell).toHaveTextContent('1/15/2024');
     const balanceCell = screen.getAllByTestId('desktop-list-item-cell')[2];
     expect(balanceCell).toHaveTextContent('$1000.00');
     const cells = screen.getAllByTestId('desktop-list-item-cell');
@@ -301,7 +304,7 @@ describe('DesktopHoldingSnapshotRow', () => {
     );
     
     const dateCell = screen.getAllByTestId('desktop-list-item-cell')[1];
-    expect(dateCell).toHaveTextContent('12/30/2024');
+    expect(dateCell).toHaveTextContent('12/31/2024');
   });
 
   it('handles snapshot with missing holding data', () => {
