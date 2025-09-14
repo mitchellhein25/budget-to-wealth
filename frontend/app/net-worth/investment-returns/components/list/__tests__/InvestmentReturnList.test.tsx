@@ -17,7 +17,7 @@ Object.defineProperty(window, 'confirm', {
 
 jest.mock('@/app/net-worth/investment-returns', () => ({
   ...jest.requireActual('@/app/net-worth/investment-returns'),
-  HoldingInvestmentReturnList: ({ holdingInvestmentReturns, onHoldingInvestmentReturnDeleted, onHoldingInvestmentReturnIsEditing, tableHeaderRow, columnWidths, handleDelete, isLoading, isError }: any) => (
+  HoldingInvestmentReturnList: ({ holdingInvestmentReturns, handleDelete, isLoading, isError }: { holdingInvestmentReturns: HoldingInvestmentReturn[], handleDelete: (id: number) => void, isLoading: boolean, isError: boolean }) => (
     <div data-testid="holding-investment-return-list">
       <div data-testid="holding-investment-returns-count">{holdingInvestmentReturns.length}</div>
       <div data-testid="holding-is-loading">{isLoading.toString()}</div>
@@ -30,7 +30,7 @@ jest.mock('@/app/net-worth/investment-returns', () => ({
       </button>
     </div>
   ),
-  ManualInvestmentReturnList: ({ manualInvestmentReturns, onManualInvestmentReturnDeleted, onManualInvestmentReturnIsEditing, tableHeaderRow, columnWidths, handleDelete, isLoading, isError }: any) => (
+  ManualInvestmentReturnList: ({ manualInvestmentReturns, handleDelete, isLoading, isError }: { manualInvestmentReturns: ManualInvestmentReturn[], handleDelete: (id: number) => void, isLoading: boolean, isError: boolean }) => (
     <div data-testid="manual-investment-return-list">
       <div data-testid="manual-investment-returns-count">{manualInvestmentReturns.length}</div>
       <div data-testid="manual-is-loading">{isLoading.toString()}</div>
