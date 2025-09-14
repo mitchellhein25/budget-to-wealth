@@ -1,12 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { Edit } from 'lucide-react'
-import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form'
-import { convertDateToISOString, convertToDate, formatDate } from '@/app/components/Utils'
-import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '../../../../holding-snapshots/holdings/components'
-import { HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '../../../../holding-snapshots/components'
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
-import { HoldingInvestmentReturnFormData } from '.'
+import { convertDateToISOString, convertToDate, formatDate } from '@/app/lib/utils'
+import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components'
+import { HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots'
+import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings'
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnFormData } from '@/app/net-worth/investment-returns'
 
 interface HoldingInvestmentReturnInputsProps {
   editingFormData: HoldingInvestmentReturnFormData;

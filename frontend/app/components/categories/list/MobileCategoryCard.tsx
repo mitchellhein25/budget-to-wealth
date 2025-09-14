@@ -1,5 +1,4 @@
-import { Category } from "..";
-import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
+import { Category, MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
 
 interface MobileCategoryCardProps<T extends Category> {
 	category: T;

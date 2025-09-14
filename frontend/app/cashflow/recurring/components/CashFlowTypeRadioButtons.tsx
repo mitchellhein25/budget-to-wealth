@@ -1,13 +1,13 @@
 import React from 'react'
-import { EXPENSE_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '../../components/components/constants'
-import { CashFlowType } from '../../components';
+import { EXPENSE_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
+import { CashFlowType } from '@/app/cashflow';
 
 type CashFlowTypeRadioButtonsProps = {
   selectedType: CashFlowType;
   setSelectedType: (type: CashFlowType) => void;
 }
 
-export default function CashFlowTypeRadioButtons({selectedType, setSelectedType}: CashFlowTypeRadioButtonsProps) {
+export function CashFlowTypeRadioButtons({selectedType, setSelectedType}: CashFlowTypeRadioButtonsProps) {
   return (
     <div>
       <div className="flex justify-center">

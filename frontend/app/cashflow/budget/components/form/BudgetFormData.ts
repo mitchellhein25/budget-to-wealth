@@ -1,5 +1,5 @@
 import z from "zod";
-import { currencyRegex } from "@/app/components";
+import { currencyRegex } from "@/app/lib/utils";
 
 export const budgetFormSchema = z.object({
   id: z.string().uuid().optional(),

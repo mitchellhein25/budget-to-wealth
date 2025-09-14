@@ -2,10 +2,7 @@
 
 import React from "react"
 import { FormState } from "@/app/hooks";
-import { formHasAnyValue, FormTemplate } from "../../form";
-import { UpdateCreateButton, ResetButton } from "../../buttons";
-import { Category, CategoryFormData } from "..";
-import { CategoriesInputs } from "./CategoriesInputs";
+import { formHasAnyValue, FormTemplate, Category, CategoryFormData, UpdateCreateButton, ResetButton, CategoriesInputs } from "@/app/components";
 
 interface CategoriesFormProps<T extends Category> {
   formState: FormState<T, CategoryFormData>;

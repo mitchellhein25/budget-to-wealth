@@ -1,11 +1,8 @@
 import React from 'react'
-import { InputFieldSetTemplate } from '@/app/components/form'
-
-import { Category } from '@/app/components/categories/Category';
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../'
-import { ManualInvestmentReturnFormData } from '.';
-import { convertDateToISOString } from '@/app/components/Utils';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { convertDateToISOString } from '@/app/lib/utils';
+import { InputFieldSetTemplate, Category } from '@/app/components'
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData } from '@/app/net-worth/investment-returns';
 
 interface ManualInvestmentInputsProps {
   editingFormData: Partial<ManualInvestmentReturnFormData>;

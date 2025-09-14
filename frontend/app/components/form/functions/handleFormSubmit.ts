@@ -1,6 +1,5 @@
-import { putRequest } from "@/app/lib/api/rest-methods/putRequest";
-import { postRequest } from "@/app/lib/api/rest-methods/postRequest";
-import { MessageState, replaceSpacesWithDashes } from "../../Utils";
+import { putRequest, postRequest } from "@/app/lib/api";
+import { MessageState, replaceSpacesWithDashes } from "@/app/lib/utils";
 
 type HandleFormSubmitArgs<T, FormDataT> = {
   formData: FormData,

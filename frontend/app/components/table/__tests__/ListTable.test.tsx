@@ -1,5 +1,5 @@
 import { render, screen, act } from '@testing-library/react';
-import { ListTable } from '../ListTable';
+import { ListTable } from '@/app/components';
 
 interface TestItem {
   id: number;

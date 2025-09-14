@@ -1,6 +1,5 @@
-import { getHoldingSnapshotValidationResult } from "./getHoldingSnapshotValidationResult";
-import { convertDateToISOString, convertDollarsToCents } from "../../../../../components/Utils";
-import { HoldingSnapshot } from "../..";
+import { convertDateToISOString, convertDollarsToCents } from "@/app/lib/utils";
+import { HoldingSnapshot, getHoldingSnapshotValidationResult } from "@/app/net-worth/holding-snapshots";
 
 export const transformFormDataToHoldingSnapshot = (formData: FormData): { item: HoldingSnapshot | null; errors: string[] } => {
   try {

@@ -1,8 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileCashFlowEntryCard } from '../MobileCashFlowEntryCard';
-import { CashFlowEntry, CashFlowType } from '../..';
-import { Category } from '@/app/components/categories';
-import { RecurrenceFrequency } from '../../components/RecurrenceFrequency';
+import { MobileCashFlowEntryCard, CashFlowType, RecurrenceFrequency, CashFlowEntry } from '@/app/cashflow';
+import { Category } from '@/app/components';
 
 const editLabel = 'Edit';
 const deleteLabel = 'Delete';
@@ -36,7 +34,7 @@ describe('MobileCashFlowEntryCard', () => {
     description: 'Test description',
     categoryId: 'c1',
     category: { id: 'c1', name: 'Category A' } as unknown as Category,
-    entryType: 'Income' as CashFlowType,
+    entryType: CashFlowType.INCOME,
   } as unknown as CashFlowEntry;
 
   const mockOnEdit = jest.fn();

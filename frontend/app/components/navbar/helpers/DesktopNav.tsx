@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { NavItems } from './utils';
+import { NavItems } from '@/app/components';
 
 export function DesktopNav({ pathname }: { pathname: string }) {
   return (

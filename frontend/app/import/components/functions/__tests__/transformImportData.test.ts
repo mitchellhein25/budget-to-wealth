@@ -1,5 +1,4 @@
-import { transformImportData } from '../transformImportData';
-import { ImportDataTypeStringMappings } from '../../models/ImportDataTypeStringMappings';
+import { transformImportData, ImportDataTypeString, CashFlowEntryImport } from '@/app/import';
 
 describe('transformImportData', () => {
   it('transforms CashFlow Entries data correctly', () => {
@@ -22,7 +21,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = transformImportData(rawData, ImportDataTypeString.CashFlowEntries);
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -59,7 +58,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.Holdings);
+    const result = transformImportData(rawData, ImportDataTypeString.Holdings);
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -96,7 +95,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.HoldingSnapshots);
+    const result = transformImportData(rawData, ImportDataTypeString.HoldingSnapshots);
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -129,7 +128,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.Budgets);
+    const result = transformImportData(rawData, ImportDataTypeString.Budgets);
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -149,7 +148,7 @@ describe('transformImportData', () => {
       { name: 'Investments' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.HoldingCategories);
+    const result = transformImportData(rawData, ImportDataTypeString.HoldingCategories);
 
     expect(result).toHaveLength(3);
     expect(result[0]).toMatchObject({ name: 'Cash' });
@@ -169,7 +168,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowCategories);
+    const result = transformImportData(rawData, ImportDataTypeString.CashFlowCategories);
 
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -189,7 +188,7 @@ describe('transformImportData', () => {
       { amount: '1000000.00', date: '2024-01-15', categoryName: 'Test', description: 'Test', categoryType: 'Expense' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as unknown[];
+    const result = transformImportData(rawData, ImportDataTypeString.CashFlowEntries) as CashFlowEntryImport[];
 
     expect(result).toHaveLength(3);
     expect(result[0].amountInCents).toBe(123456);
@@ -209,7 +208,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.HoldingSnapshots);
+    const result = transformImportData(rawData, ImportDataTypeString.HoldingSnapshots);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -234,7 +233,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = transformImportData(rawData, ImportDataTypeString.CashFlowEntries);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -257,7 +256,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.Holdings);
+    const result = transformImportData(rawData, ImportDataTypeString.Holdings);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -280,7 +279,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.HoldingSnapshots);
+    const result = transformImportData(rawData, ImportDataTypeString.HoldingSnapshots);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
@@ -299,13 +298,13 @@ describe('transformImportData', () => {
       { field1: 'value3', field2: 'value4' }
     ];
 
-    const result = transformImportData(rawData, 'Unknown Type' as ImportDataTypeStringMappings);
+    const result = transformImportData(rawData, 'Unknown Type' as ImportDataTypeString);
 
     expect(result).toEqual(rawData);
   });
 
   it('handles empty data array', () => {
-    const result = transformImportData([], ImportDataTypeStringMappings.CashFlowEntries);
+    const result = transformImportData([], ImportDataTypeString.CashFlowEntries);
 
     expect(result).toEqual([]);
   });
@@ -322,7 +321,7 @@ describe('transformImportData', () => {
       }
     ];
 
-    const result = transformImportData(cashFlowData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = transformImportData(cashFlowData, ImportDataTypeString.CashFlowEntries);
 
     expect(result[0]).toHaveProperty('amountInCents');
     expect(result[0]).toHaveProperty('date');
@@ -339,7 +338,7 @@ describe('transformImportData', () => {
       { amount: '1234.56', date: '2024-01-15', categoryName: 'Test', description: 'Test', categoryType: 'Expense' }
     ];
 
-    const result = transformImportData(rawData, ImportDataTypeStringMappings.CashFlowEntries) as unknown[];
+    const result = transformImportData(rawData, ImportDataTypeString.CashFlowEntries) as CashFlowEntryImport[];
 
     expect(result).toHaveLength(3);
     expect(result[0].amountInCents).toBe(123456);

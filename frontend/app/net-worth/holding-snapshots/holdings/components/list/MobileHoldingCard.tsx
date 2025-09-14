@@ -1,4 +1,4 @@
-import { Holding } from "..";
+import { Holding } from "@/app/net-worth/holding-snapshots/holdings";
 import { MobileListItemCard, MobileListItemCardHeader, MobileListItemCardContent } from "@/app/components";
 
 interface MobileHoldingCardProps {

@@ -3,10 +3,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { getExpenseCategoriesList  } from '@/app/lib/api/data-methods';
-import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components/form';
-import { CashFlowCategory } from '@/app/cashflow/components';
-import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from '..';
+import { getExpenseCategoriesList  } from '@/app/lib/api';
+import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components';
+import { CashFlowCategory } from '@/app/cashflow';
+import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from '@/app/cashflow/budget';
 
 interface BudgetInputsProps {
   editingFormData: Partial<BudgetFormData>;

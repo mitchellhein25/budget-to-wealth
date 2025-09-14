@@ -1,9 +1,7 @@
 import React from 'react'
-import { deleteHolding } from '@/app/lib/api/data-methods';
-import { ListTable } from '@/app/components/table/ListTable';
-import { HOLDING_ITEM_NAME, Holding } from '..';
-import { MobileHoldingCard } from './MobileHoldingCard';
-import { DesktopHoldingRow } from './DesktopHoldingRow';
+import { deleteHolding } from '@/app/lib/api';
+import { ListTable } from '@/app/components';
+import { HOLDING_ITEM_NAME, Holding, DesktopHoldingRow, MobileHoldingCard } from '@/app/net-worth/holding-snapshots/holdings';
 
 type HoldingsListProps = {
   holdings: Holding[],
@@ -20,7 +18,7 @@ export function HoldingsList(props: HoldingsListProps) {
       <th className="w-1/5">Institution</th>
       <th className="w-2/5">Category</th>
       <th className="w-1/5">Type</th>
-      <th className="text-right">Actions</th>
+      <th className="w-20 text-right">Actions</th>
     </tr>
   );
 

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ResetButton } from '../ResetButton';
+import { ResetButton } from '@/app/components';
 
 describe('ResetButton', () => {
   const mockOnClick = jest.fn();

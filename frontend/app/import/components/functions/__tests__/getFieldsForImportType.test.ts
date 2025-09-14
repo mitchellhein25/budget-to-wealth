@@ -1,4 +1,4 @@
-import { getFieldsForImportType } from '../getFieldsForImportType';
+import { getFieldsForImportType } from '@/app/import';
 
 interface MockField {
   name: string;

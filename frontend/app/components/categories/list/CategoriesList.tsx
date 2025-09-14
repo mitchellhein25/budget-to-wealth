@@ -1,10 +1,7 @@
 'use client'
 
 import { deleteRequest } from '@/app/lib/api/rest-methods/deleteRequest';
-import { ListTable } from '../../table/ListTable';
-import { Category } from '../Category';
-import { MobileCategoryCard } from './MobileCategoryCard';
-import { DesktopCategoryRow } from './DesktopCategoryRow';
+import { ListTable, Category, MobileCategoryCard, DesktopCategoryRow } from '@/app/components';
 
 type CategoriesListProps<T extends Category> = {
   categories: T[],
@@ -26,7 +23,7 @@ export function CategoriesList<T extends Category>(props: CategoriesListProps<T>
   const tableHeaderRow = (
     <tr>
       <th className="w-3/4">Name</th>
-      <th className="w-1/4 text-right">Actions</th>
+        <th className="w-20 text-right">Actions</th>
     </tr>
   );
 

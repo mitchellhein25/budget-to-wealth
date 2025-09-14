@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import TablePagination from '../TablePagination';
+import { TablePagination } from '@/app/components';
 
 describe('TablePagination', () => {
   const mockProps = {

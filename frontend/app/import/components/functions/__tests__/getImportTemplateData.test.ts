@@ -1,6 +1,4 @@
-import { getImportTemplateData } from '../getImportTemplateData';
-import { ImportDataTypeStringMappings } from '../../models/ImportDataTypeStringMappings';
-import { ImportDataTypeStrings } from '../../models/ImportDataTypeStrings';
+import { getImportTemplateData, ImportDataTypeString } from '@/app/import';
 
 interface MockTemplateData {
   headers: string[];
@@ -10,7 +8,7 @@ interface MockTemplateData {
 
 describe('getImportTemplateData', () => {
   it('returns correct template data for CashFlowEntries', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.CashFlowEntries);
+    const templateData = getImportTemplateData(ImportDataTypeString.CashFlowEntries);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -24,7 +22,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('returns correct template data for Budgets', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.Budgets);
+    const templateData = getImportTemplateData(ImportDataTypeString.Budgets);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -38,7 +36,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('returns correct template data for CashFlowCategories', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.CashFlowCategories);
+    const templateData = getImportTemplateData(ImportDataTypeString.CashFlowCategories);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -52,7 +50,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('returns correct template data for Holdings', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.Holdings);
+    const templateData = getImportTemplateData(ImportDataTypeString.Holdings);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -66,7 +64,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('returns correct template data for HoldingCategories', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.HoldingCategories);
+    const templateData = getImportTemplateData(ImportDataTypeString.HoldingCategories);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -80,7 +78,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('returns correct template data for HoldingSnapshots', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.HoldingSnapshots);
+    const templateData = getImportTemplateData(ImportDataTypeString.HoldingSnapshots);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -94,7 +92,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('handles unknown data type', () => {
-    const templateData = getImportTemplateData('UnknownType' as ImportDataTypeStrings);
+    const templateData = getImportTemplateData('UnknownType' as ImportDataTypeString);
     
     expect(templateData).toBeDefined();
     expect(templateData).toHaveProperty('headers');
@@ -109,7 +107,7 @@ describe('getImportTemplateData', () => {
   });
 
   it('returns template data with correct structure', () => {
-    const templateData = getImportTemplateData(ImportDataTypeStringMappings.CashFlowEntries);
+    const templateData = getImportTemplateData(ImportDataTypeString.CashFlowEntries);
     
     const mockTemplate = templateData as MockTemplateData;
     

@@ -1,7 +1,6 @@
-import { RecurrenceFrequency } from "@/app/cashflow/components/components/RecurrenceFrequency";
-import { getManualInvestmentReturnValidationResult, ManualInvestmentReturnFormData } from "..";
-import { ManualInvestmentReturn } from "../../../ManualInvestmentReturn";
-import { convertDateToISOString } from "@/app/components/Utils";
+import { convertDateToISOString } from "@/app/lib/utils";
+import { RecurrenceFrequency } from "@/app/cashflow";
+import { getManualInvestmentReturnValidationResult, ManualInvestmentReturnFormData, ManualInvestmentReturn } from "@/app/net-worth/investment-returns";
 
 export const transformFormDataToManualInvestmentReturn = (formData: FormData): { item: ManualInvestmentReturn | null; errors: string[] } => {
   try {

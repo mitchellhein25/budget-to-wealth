@@ -1,6 +1,5 @@
-import { RecurrenceFrequency } from "@/app/cashflow/components/components/RecurrenceFrequency";
-import { ListTableItem } from "@/app/components";
-import { Category } from "@/app/components/categories";
+import { RecurrenceFrequency } from "@/app/cashflow";
+import { ListTableItem, Category } from "@/app/components";
 
 export type ManualInvestmentReturn = ListTableItem & {
   id?: number;

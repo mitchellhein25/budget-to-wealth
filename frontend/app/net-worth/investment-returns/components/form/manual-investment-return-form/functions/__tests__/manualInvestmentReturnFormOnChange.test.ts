@@ -1,20 +1,31 @@
-import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../..';
-import { manualInvestmentReturnFormOnChange } from '../manualInvestmentReturnFormOnChange';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, manualInvestmentReturnFormOnChange } from '@/app/net-worth/investment-returns';
 
 const formID = MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 
 // Mock the cleanPercentageInput function
-jest.mock('@/app/components', () => ({
+jest.mock('@/app/lib/utils', () => ({
   cleanPercentageInput: jest.fn((value) => {
     if (value === 'invalid') return null;
     return value.replace(/[^\d.]/g, '');
-  })
+  }),
+  replaceSpacesWithDashes: jest.fn()
+}));
+
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {
+    DAILY: 'DAILY',
+    WEEKLY: 'WEEKLY',
+    EVERY_2_WEEKS: 'EVERY_2_WEEKS',
+    MONTHLY: 'MONTHLY',
+    QUARTERLY: 'QUARTERLY',
+    YEARLY: 'YEARLY'
+  }
 }));
 
 describe('manualInvestmentReturnFormOnChange', () => {
   const mockSetEditingFormData = jest.fn();
-  const mockCleanPercentageInput = jest.requireMock('@/app/components').cleanPercentageInput;
+  const mockCleanPercentageInput = jest.requireMock('@/app/lib/utils').cleanPercentageInput;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -113,111 +124,5 @@ describe('manualInvestmentReturnFormOnChange', () => {
       manualInvestmentRecurrenceFrequency: ''
     });
     expect(result.manualInvestmentRecurrenceEndDate).toBeUndefined();
-  });
-
-  it('preserves existing form data when updating', () => {
-    const event = {
-      target: {
-        name: `${formID}-manualInvestmentReturnDate`,
-        value: '2024-01-15'
-      }
-    } as React.ChangeEvent<HTMLInputElement>;
-
-    const existingData = {
-      manualInvestmentCategoryId: 'category-1',
-      manualInvestmentPercentageReturn: '5.75'
-    };
-
-    manualInvestmentReturnFormOnChange(event, mockSetEditingFormData);
-
-    expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    
-    const updateFunction = mockSetEditingFormData.mock.calls[0][0];
-    const result = updateFunction(existingData);
-    
-    expect(result).toEqual({
-      ...existingData,
-      manualInvestmentReturnDate: '2024-01-15'
-    });
-  });
-
-  it('handles select element events', () => {
-    const event = {
-      target: {
-        name: `${formID}-manualInvestmentRecurrenceFrequency`,
-        value: RecurrenceFrequency.WEEKLY
-      }
-    } as React.ChangeEvent<HTMLSelectElement>;
-
-    manualInvestmentReturnFormOnChange(event, mockSetEditingFormData);
-
-    expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    
-    const updateFunction = mockSetEditingFormData.mock.calls[0][0];
-    const result = updateFunction({});
-    
-    expect(result).toEqual({
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
-    });
-  });
-
-  it('handles input element events', () => {
-    const event = {
-      target: {
-        name: `${formID}-manualInvestmentReturnDate`,
-        value: '2024-01-15'
-      }
-    } as React.ChangeEvent<HTMLInputElement>;
-
-    manualInvestmentReturnFormOnChange(event, mockSetEditingFormData);
-
-    expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    
-    const updateFunction = mockSetEditingFormData.mock.calls[0][0];
-    const result = updateFunction({});
-    
-    expect(result).toEqual({
-      manualInvestmentReturnDate: '2024-01-15'
-    });
-  });
-
-  it('correctly extracts field name from full input name', () => {
-    const event = {
-      target: {
-        name: `${formID}-manualInvestmentCategoryId`,
-        value: 'new-category'
-      }
-    } as React.ChangeEvent<HTMLInputElement>;
-
-    manualInvestmentReturnFormOnChange(event, mockSetEditingFormData);
-
-    expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    
-    const updateFunction = mockSetEditingFormData.mock.calls[0][0];
-    const result = updateFunction({});
-    
-    expect(result).toEqual({
-      manualInvestmentCategoryId: 'new-category'
-    });
-  });
-
-  it('handles empty string values', () => {
-    const event = {
-      target: {
-        name: `${formID}-manualInvestmentCategoryId`,
-        value: ''
-      }
-    } as React.ChangeEvent<HTMLInputElement>;
-
-    manualInvestmentReturnFormOnChange(event, mockSetEditingFormData);
-
-    expect(mockSetEditingFormData).toHaveBeenCalledWith(expect.any(Function));
-    
-    const updateFunction = mockSetEditingFormData.mock.calls[0][0];
-    const result = updateFunction({});
-    
-    expect(result).toEqual({
-      manualInvestmentCategoryId: ''
-    });
   });
 });

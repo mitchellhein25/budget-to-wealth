@@ -1,83 +1,22 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { NetWorthSideBar } from '../holding-snapshots/components/NetWorthSideBar';
-import { useForm, useMobileDetection } from '@/app/hooks';
-import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api/data-methods';
-import { ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn } from './components/form/manual-investment-return-form';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE } from './components/form';
-import { InvestmentReturnForm } from './components/form/InvestmentReturnForm';
-import { HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn } from './components/form/holding-investment-return-form';
-import { ManualInvestmentReturn } from './components/ManualInvestmentReturn';
-import { HoldingInvestmentReturn } from './components/HoldingInvestmentReturn';
-import { InvestmentReturnList } from './components/list/InvestmentReturnList';
-import { DatePicker, DateRange, getCurrentMonthRange, ListTableItem, MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from '@/app/components';
-import { FetchResult } from '@/app/lib/api/apiClient';
+import { useForm, useFormListItemsFetch } from '@/app/hooks';
+import { getHoldingInvestmentReturnsByDateRange, getManualInvestmentReturnsByDateRange, HOLDING_INVESTMENT_RETURNS_ENDPOINT, MANUAL_INVESTMENT_RETURNS_ENDPOINT } from '@/app/lib/api';
+import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
+import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components';
+import { NetWorthSideBar } from '@/app/net-worth';
+import { InvestmentReturnList, ManualInvestmentReturn, HoldingInvestmentReturn, InvestmentReturnForm, HoldingInvestmentReturnFormData, transformFormDataToHoldingInvestmentReturn, convertManualInvestmentReturnItemToFormData, ManualInvestmentReturnFormData, transformFormDataToManualInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE, convertHoldingInvestmentReturnItemToFormData } from '@/app/net-worth/investment-returns';
 
 export default function InvestmentReturnsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
-  const [manualInvestmentReturns, setManualInvestmentReturns] = useState<ManualInvestmentReturn[]>([]);
-  const [holdingInvestmentReturns, setHoldingInvestmentReturns] = useState<HoldingInvestmentReturn[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<MessageState>({ type: null, text: '' });
   const [isManualActive, setIsManualActive] = useState<boolean>(false);
-  const isMobile = useMobileDetection();
 
-  const fetchReturnItems = useCallback(async <T extends ListTableItem>(
-    fetchItems: (dateRange: DateRange) => Promise<FetchResult<T[]>>, 
-    setItems: (items: T[]) => void, 
-    itemName: string
-  ) => {
-    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
-    try {
-      setIsLoading(true);
-      setMessage({ type: null, text: '' });
-    const response = await fetchItems(dateRange);
-    if (!response.successful) {
-      setErrorMessage(`Failed to load ${itemName}s. Please try again.`);
-        return;
-      }
-      setItems(response.data as T[]);
-    } catch (error) {
-      setErrorMessage(`An error occurred while loading ${itemName}s. Please try again.`);
-      console.error("Fetch error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [dateRange]);
-
-  const fetchHoldingInvestmentReturnItems = useCallback(() => fetchReturnItems(
-    getHoldingInvestmentReturnsByDateRange, 
-    setHoldingInvestmentReturns, 
-    HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [fetchReturnItems]);
-
-    
-  const fetchManualInvestmentReturnItems = useCallback(() => fetchReturnItems(
-    getManualInvestmentReturnsByDateRange, 
-    setManualInvestmentReturns, 
-    MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE), [fetchReturnItems]);
-    
-  const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn) : ManualInvestmentReturnFormData => ({
-      id: item.id?.toString(),
-      manualInvestmentCategoryId: item.manualInvestmentCategoryId,
-      manualInvestmentReturnDate: new Date(item.manualInvestmentReturnDate),
-      manualInvestmentPercentageReturn: item.manualInvestmentPercentageReturn.toString(),
-      manualInvestmentRecurrenceFrequency: item.manualInvestmentRecurrenceFrequency,
-      manualInvestmentRecurrenceEndDate: item.manualInvestmentRecurrenceEndDate,
-    });
-
-  const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvestmentReturn) : HoldingInvestmentReturnFormData => ({
-    id: item.id?.toString(),
-    startHoldingSnapshotDate: new Date(item.startHoldingSnapshot?.date ?? ''),
-    startHoldingSnapshotId: item.startHoldingSnapshotId,
-    endHoldingSnapshotId: item.endHoldingSnapshotId,
-    endHoldingSnapshotHoldingId: item.endHoldingSnapshot?.holdingId ?? '',
-    endHoldingSnapshotDate: new Date(item.endHoldingSnapshot?.date ?? ''),
-    endHoldingSnapshotBalance: (item.endHoldingSnapshot?.balance ?? 0 / 100).toFixed(2),
-    totalContributions: (item.totalContributions / 100).toFixed(2),
-    totalWithdrawals: (item.totalWithdrawals / 100).toFixed(2),
+  const fetchManualInvestmentReturnItemsFunction = useCallback(() => getManualInvestmentReturnsByDateRange(dateRange), [dateRange]);
+  const { fetchItems: fetchManualInvestmentReturnItems, isPending: isPendingManualInvestmentReturns, message: messageManualInvestmentReturns, items: manualInvestmentReturnItems } = useFormListItemsFetch<ManualInvestmentReturn>({
+    fetchItems: fetchManualInvestmentReturnItemsFunction,
+    itemName: MANUAL_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE,
   });
-
   const manualInvestmentReturnFormState = useForm<ManualInvestmentReturn, ManualInvestmentReturnFormData>({
     itemName: MANUAL_INVESTMENT_RETURN_ITEM_NAME,
     itemEndpoint: MANUAL_INVESTMENT_RETURNS_ENDPOINT,
@@ -86,6 +25,11 @@ export default function InvestmentReturnsPage() {
     fetchItems: fetchManualInvestmentReturnItems,
   });
 
+  const fetchHoldingInvestmentReturnItemsFunction = useCallback(() => getHoldingInvestmentReturnsByDateRange(dateRange), [dateRange]);
+  const { fetchItems: fetchHoldingInvestmentReturnItems, isPending: isPendingHoldingInvestmentReturns, message: messageHoldingInvestmentReturns, items: holdingInvestmentReturns } = useFormListItemsFetch<HoldingInvestmentReturn>({
+    fetchItems: fetchHoldingInvestmentReturnItemsFunction,
+    itemName: HOLDING_INVESTMENT_RETURN_ITEM_NAME_LOWERCASE,
+  });
   const holdingInvestmentReturnFormState = useForm<HoldingInvestmentReturn, HoldingInvestmentReturnFormData>({
     itemName: HOLDING_INVESTMENT_RETURN_ITEM_NAME,
     itemEndpoint: HOLDING_INVESTMENT_RETURNS_ENDPOINT,
@@ -98,7 +42,6 @@ export default function InvestmentReturnsPage() {
     setIsManualActive(true);
     manualInvestmentReturnFormState.onItemIsEditing(investmentReturn);
   };
-
   const onHoldingInvestmentReturnIsEditing = (investmentReturn: HoldingInvestmentReturn) => {
     setIsManualActive(false);
     holdingInvestmentReturnFormState.onItemIsEditing(investmentReturn);
@@ -109,62 +52,36 @@ export default function InvestmentReturnsPage() {
     fetchHoldingInvestmentReturnItems();
   }, [fetchManualInvestmentReturnItems, fetchHoldingInvestmentReturnItems]);
 
-  const form = 
-    <InvestmentReturnForm 
-      isManualActive={isManualActive}
-      setIsManualActive={setIsManualActive}
-      manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
-      holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
-    />
-
-  const list = 
-    <InvestmentReturnList
-      manualInvestmentReturns={manualInvestmentReturns}
-      holdingInvestmentReturns={holdingInvestmentReturns}
-      onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
-      onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
-      onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
-      onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
-      isLoading={isLoading}
-      isError={messageTypeIsError(message)}
-    />
-
-  const datePicker = 
-    <DatePicker
-      dateRange={dateRange}
-      setDateRange={setDateRange}
-    />
-
   return (
-    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
-      {!isMobile && <NetWorthSideBar />}
-      <div className="flex flex-1 gap-6">
-        {isMobile ? (
-          <div className="flex-1 flex flex-col gap-6">
-            <div className="w-full">
-                {form}
-            </div>
-            <div className="flex flex-col gap-4">
-              <div className="w-full">
-                {datePicker}
-              </div>
-            </div>
-            <div className="flex-1">
-              {list}
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="flex-shrink-0">
-              {form}
-            </div>
-            <div className="flex flex-1 flex-col gap-2">
-              {datePicker}
-              {list}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  )
+    <ResponsiveFormListPage
+      sideBar={<NetWorthSideBar />}
+      totalDisplay={<div className="w-full"></div>}
+      datePicker={
+        <DatePicker
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
+      }
+      form={
+        <InvestmentReturnForm 
+          isManualActive={isManualActive}
+          setIsManualActive={setIsManualActive}
+          manualInvestmentReturnFormState={manualInvestmentReturnFormState} 
+          holdingInvestmentReturnFormState={holdingInvestmentReturnFormState} 
+        />
+      }
+      list={
+        <InvestmentReturnList
+          manualInvestmentReturns={manualInvestmentReturnItems}
+          holdingInvestmentReturns={holdingInvestmentReturns}
+          onManualInvestmentReturnDeleted={fetchManualInvestmentReturnItems}
+          onHoldingInvestmentReturnDeleted={fetchHoldingInvestmentReturnItems}
+          onManualInvestmentReturnIsEditing={onManualInvestmentReturnIsEditing}
+          onHoldingInvestmentReturnIsEditing={onHoldingInvestmentReturnIsEditing}
+          isLoading={isPendingManualInvestmentReturns || isPendingHoldingInvestmentReturns}
+          isError={messageTypeIsError(messageManualInvestmentReturns) || messageTypeIsError(messageHoldingInvestmentReturns)}
+        />
+      }
+    />
+  );
 }

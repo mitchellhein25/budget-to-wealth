@@ -1,1 +1,5 @@
-export type HoldingType = "Asset" | "Debt";
+export const HoldingType = {
+  ASSET: "Asset",
+  DEBT: "Debt"
+}
+export type HoldingType = typeof HoldingType[keyof typeof HoldingType];

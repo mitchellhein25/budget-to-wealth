@@ -1,6 +1,5 @@
-import { cleanCurrencyInput } from "@/app/components";
-import { HoldingInvestmentReturnFormData } from "..";
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../";
+import { cleanCurrencyInput } from "@/app/lib/utils";
+import { HoldingInvestmentReturnFormData, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "@/app/net-worth/investment-returns";
 
 export const holdingInvestmentReturnFormOnChange = (
   event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,

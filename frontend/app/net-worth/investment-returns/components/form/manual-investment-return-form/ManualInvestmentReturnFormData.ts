@@ -1,4 +1,4 @@
-import { RecurrenceFrequency } from "@/app/cashflow/components/components/RecurrenceFrequency";
+import { RecurrenceFrequency } from "@/app/cashflow/components/RecurrenceFrequency";
 import z from "zod";
 
 export const ManualInvestmentReturnFormSchema = z.object({

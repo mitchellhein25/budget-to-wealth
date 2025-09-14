@@ -1,6 +1,6 @@
-import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots/components';
-import { TrendGraphDataset } from '../../components';
-import { NetWorthTrendGraphData } from './';
+import { ASSET_ITEM_NAME_PLURAL, DEBT_ITEM_NAME_PLURAL, NET_WORTH_ITEM_NAME } from '@/app/net-worth/holding-snapshots'
+import { TrendGraphDataset } from '@/app/dashboards';
+import { NetWorthTrendGraphData } from '@/app/dashboards/net-worth';
 
 export function NetWorthTrendDatasets(data: NetWorthTrendGraphData | null): TrendGraphDataset[] {
   if (!data?.entries) return [];

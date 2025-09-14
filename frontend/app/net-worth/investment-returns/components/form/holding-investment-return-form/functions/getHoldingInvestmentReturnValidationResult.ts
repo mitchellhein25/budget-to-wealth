@@ -1,5 +1,4 @@
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../";
-import { HoldingInvestmentReturnFormSchema } from "..";
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnFormSchema } from "@/app/net-worth/investment-returns";
 
 export const getHoldingInvestmentReturnValidationResult = (formData: FormData) => {
   const investRetFormId = HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;

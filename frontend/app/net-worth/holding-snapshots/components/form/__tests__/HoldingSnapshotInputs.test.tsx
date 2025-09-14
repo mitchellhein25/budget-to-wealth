@@ -1,23 +1,20 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
-import { HoldingSnapshotInputs } from '../HoldingSnapshotInputs';
-import { HoldingSnapshotFormData } from '../HoldingSnapshotFormData';
-import { waitFor } from '@testing-library/react';
-import { getAllHoldings } from '@/app/lib/api/data-methods';
-import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '../../constants';
-import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL, HoldingType } from '../../../holdings/components';
-import { GetRequestResultList } from '@/app/lib/api/rest-methods';
+import { waitFor, render, screen, act } from '@testing-library/react';
+import { FetchResult, getAllHoldings } from '@/app/lib/api';
+import { HoldingSnapshotInputs, HoldingSnapshotFormData, HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
+import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL, HoldingType } from '@/app/net-worth/holding-snapshots/holdings';
 
 // Mock getAllHoldings globally before imports
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getAllHoldings: jest.fn().mockResolvedValue({ successful: true, data: [] })
 }));
 
 // Unmock InputFieldSetTemplate for the entire file
-jest.unmock('@/app/components/form');
+jest.unmock('@/app/components');
 
-jest.mock('@/app/components', () => ({
-  convertDateToISOString: (date: Date) => date.toISOString().split('T')[0]
+jest.mock('@/app/lib/utils', () => ({
+  convertDateToISOString: (date: Date) => date.toISOString().split('T')[0],
+  replaceSpacesWithDashes: jest.fn()
 }));
 
 jest.mock('next/link', () => ({
@@ -175,7 +172,7 @@ describe('HoldingSnapshotInputs', () => {
       { id: 1, name: 'Account 1', institution: 'Bank', holdingCategory: { name: 'Cat' }, type: 'Asset' as HoldingType, holdingCategoryId: 'cat1' },
       { id: 2, name: 'Account 2', institution: '', holdingCategory: { name: 'Cat2' }, type: 'Debt' as HoldingType, holdingCategoryId: 'cat2' },
     ];
-    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<GetRequestResultList<Holding>>>;
+    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<FetchResult<Holding[]>>>;
     mockGetAllHoldings.mockResolvedValueOnce({ successful: true, data: holdings, responseMessage: '' });
     
     await act(async () => {
@@ -191,7 +188,7 @@ describe('HoldingSnapshotInputs', () => {
   });
 
   it('does not set holdings if fetch is unsuccessful', async () => {
-    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<GetRequestResultList<Holding>>>;
+    const mockGetAllHoldings = getAllHoldings as jest.MockedFunction<() => Promise<FetchResult<Holding[]>>>;
     mockGetAllHoldings.mockResolvedValueOnce({ successful: false, data: [], responseMessage: '' });
     
     await act(async () => {

@@ -1,12 +1,10 @@
 'use client'
 
 import React from 'react';
-import { ListTable } from '@/app/components/table/ListTable';
-import { CashFlowEntry } from '@/app/cashflow/components';
-import { deleteBudget } from '@/app/lib/api/data-methods';
-import { BUDGET_ITEM_NAME, Budget } from '..';
-import { DesktopBudgetRow } from './DesktopBudgetRow';
-import { MobileBudgetCard } from './MobileBudgetCard';
+import { deleteBudget } from '@/app/lib/api';
+import { ListTable } from '@/app/components';
+import { CashFlowEntry } from '@/app/cashflow';
+import { BUDGET_ITEM_NAME, Budget, DesktopBudgetRow, MobileBudgetCard } from '@/app/cashflow/budget';
 
 interface BudgetsListProps {
 	budgets: Budget[],
@@ -27,16 +25,21 @@ export function BudgetsList(props: BudgetsListProps) {
 		}
 	};
 
-
+	const columnWidths = {
+		category: "w-4/12",
+		amount: "w-2/12",
+		spent: "w-2/12",
+		remaining: "w-2/12",
+		actions: "w-2/12"
+	};
 
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-1/6">Category</th>
-			<th className="w-1/6">Amount</th>
-      <th className="w-1/6">Spent</th>
-      <th className="w-1/6">Remaining</th>
-			<th className="w-1/6">Status</th>
-			<th className="w-1/6 text-right">Actions</th>
+			<th className={columnWidths.category}>Category</th>
+			<th className={columnWidths.amount}>Amount</th>
+      <th className={columnWidths.spent}>Spent</th>
+      <th className={columnWidths.remaining}>Remaining</th>
+			<th className={columnWidths.actions + " text-center"}>Actions</th>
 		</tr>
 	);
 
@@ -47,6 +50,7 @@ export function BudgetsList(props: BudgetsListProps) {
 			expenses={props.expenses}
 			onEdit={props.onBudgetIsEditing}
 			onDelete={handleDelete}
+			columnWidths={columnWidths}
 		/>
 	);
 

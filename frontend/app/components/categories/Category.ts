@@ -1,5 +1,5 @@
-import { ListTableItem } from "@/app/components/table/ListTable";
 import z from "zod";
+import { ListTableItem } from "@/app/components";
 
 export type Category = ListTableItem & {
   id?: number;

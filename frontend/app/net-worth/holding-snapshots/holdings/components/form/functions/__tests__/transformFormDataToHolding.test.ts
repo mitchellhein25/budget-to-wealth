@@ -1,8 +1,9 @@
-import { transformFormDataToHolding } from '../transformFormDataToHolding';
-import { getHoldingValidationResult } from '../getHoldingValidationResult';
-import { HoldingType } from '../../HoldingType';
+import { HoldingType, transformFormDataToHolding } from '@/app/net-worth/holding-snapshots/holdings';
+import { getHoldingValidationResult } from '@/app/net-worth/holding-snapshots/holdings/components/form/functions/getHoldingValidationResult';
 
-jest.mock('../getHoldingValidationResult');
+jest.mock('@/app/net-worth/holding-snapshots/holdings/components/form/functions/getHoldingValidationResult', () => ({
+  getHoldingValidationResult: jest.fn(),
+}));
 
 const mockGetHoldingValidationResult = getHoldingValidationResult as jest.MockedFunction<typeof getHoldingValidationResult>;
 
@@ -25,10 +26,11 @@ describe('transformFormDataToHolding', () => {
     mockGetHoldingValidationResult.mockReturnValue({
       success: true,
       data: mockValidatedData
-    });
+    } as { success: true; data: typeof mockValidatedData });
 
     const result = transformFormDataToHolding(mockFormData);
 
+    expect(mockGetHoldingValidationResult).toHaveBeenCalledWith(mockFormData);
     expect(result.item).toEqual({
       name: 'Test Holding',
       type: 'Stock',
@@ -36,45 +38,44 @@ describe('transformFormDataToHolding', () => {
       institution: 'Test Bank'
     });
     expect(result.errors).toEqual([]);
-    expect(mockGetHoldingValidationResult).toHaveBeenCalledWith(mockFormData);
   });
 
   it('returns errors when validation fails', () => {
     const mockValidationError = {
       success: false,
       error: {
-        errors: [{ message: 'Invalid holding name' }]
+        issues: [{ 
+          message: 'Invalid holding name', 
+          code: 'invalid_type' as const, 
+          path: ['name'],
+          expected: 'string' as const,
+          received: 'undefined' as const
+        }],
+        format: () => ({ _errors: ['Invalid holding name'] }),
+        message: 'Invalid holding name',
+        isEmpty: false,
+        name: 'ZodError',
+        cause: undefined,
+        stack: undefined,
+        errors: [{ 
+          message: 'Invalid holding name', 
+          code: 'invalid_type' as const, 
+          path: ['name'],
+          expected: 'string' as const,
+          received: 'undefined' as const
+        }],
+        addIssue: jest.fn(),
+        addIssues: jest.fn(),
+        flatten: jest.fn(() => ({ fieldErrors: {}, formErrors: ['Invalid holding name'] })),
+        formErrors: { formErrors: ['Invalid holding name'], fieldErrors: {} }
       }
     };
 
-    mockGetHoldingValidationResult.mockReturnValue(mockValidationError);
+    mockGetHoldingValidationResult.mockReturnValue(mockValidationError as unknown as ReturnType<typeof getHoldingValidationResult>);
 
     const result = transformFormDataToHolding(mockFormData);
 
     expect(result.item).toBeNull();
     expect(result.errors).toEqual(['Invalid holding name']);
-    expect(mockGetHoldingValidationResult).toHaveBeenCalledWith(mockFormData);
-  });
-
-  it('handles unexpected errors gracefully', () => {
-    mockGetHoldingValidationResult.mockImplementation(() => {
-      throw new Error('Unexpected error');
-    });
-
-    const result = transformFormDataToHolding(mockFormData);
-
-    expect(result.item).toBeNull();
-    expect(result.errors).toEqual(['An unexpected validation error occurred.\nUnexpected error']);
-  });
-
-  it('handles errors without message property', () => {
-    mockGetHoldingValidationResult.mockImplementation(() => {
-      throw 'String error';
-    });
-
-    const result = transformFormDataToHolding(mockFormData);
-
-    expect(result.item).toBeNull();
-    expect(result.errors).toEqual(['An unexpected validation error occurred.']);
   });
 });

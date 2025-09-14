@@ -1,4 +1,4 @@
-import { getCompletedMonthsDefaultRange, sumNumberList, avgNumberList, minNumberList, maxNumberList, medianNumberList } from '../Utils';
+import { getCompletedMonthsDefaultRange, sumNumberList, avgNumberList, minNumberList, maxNumberList, medianNumberList } from '@/app/dashboards';
 
 describe('getCompletedMonthsDefaultRange', () => {
   it('returns correct range for January', () => {

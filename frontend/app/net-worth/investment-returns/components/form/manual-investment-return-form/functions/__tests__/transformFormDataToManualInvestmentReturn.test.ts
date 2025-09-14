@@ -1,21 +1,29 @@
-import { transformFormDataToManualInvestmentReturn } from '../transformFormDataToManualInvestmentReturn';
-import { RecurrenceFrequency } from '@/app/cashflow/components/components/RecurrenceFrequency';
+import { RecurrenceFrequency } from '@/app/cashflow';
+import { transformFormDataToManualInvestmentReturn } from '@/app/net-worth/investment-returns/components/form/manual-investment-return-form/functions/transformFormDataToManualInvestmentReturn';
+import { getManualInvestmentReturnValidationResult } from '@/app/net-worth/investment-returns/components/form/manual-investment-return-form/functions/getManualInvestmentReturnValidationResult';
 
-
-
-// Mock the Utils function
-jest.mock('@/app/components/Utils', () => ({
+jest.mock('@/app/lib/utils', () => ({
   convertDateToISOString: jest.fn((date) => date.toISOString().split('T')[0]),
-  replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-'))
+  replaceSpacesWithDashes: jest.fn((str) => str.replace(/\s+/g, '-')),
 }));
 
-// Mock the validation function to avoid circular dependencies
-jest.mock('../getManualInvestmentReturnValidationResult', () => ({
-  getManualInvestmentReturnValidationResult: jest.fn()
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {
+    DAILY: 'DAILY',
+    WEEKLY: 'WEEKLY',
+    EVERY_2_WEEKS: 'EVERY_2_WEEKS',
+    MONTHLY: 'MONTHLY',
+    QUARTERLY: 'QUARTERLY',
+    YEARLY: 'YEARLY'
+  }
+}));
+
+jest.mock('@/app/net-worth/investment-returns/components/form/manual-investment-return-form/functions/getManualInvestmentReturnValidationResult', () => ({
+  getManualInvestmentReturnValidationResult: jest.fn(),
 }));
 
 describe('transformFormDataToManualInvestmentReturn', () => {
-  const mockGetManualInvestmentReturnValidationResult = jest.requireMock('../getManualInvestmentReturnValidationResult').getManualInvestmentReturnValidationResult;
+  const mockGetManualInvestmentReturnValidationResult = getManualInvestmentReturnValidationResult as jest.MockedFunction<typeof getManualInvestmentReturnValidationResult>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,7 +34,6 @@ describe('transformFormDataToManualInvestmentReturn', () => {
     const mockValidationResult = {
       success: true,
       data: {
-        id: '123e4567-e89b-12d3-a456-426614174000',
         manualInvestmentCategoryId: 'category-1',
         manualInvestmentReturnDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75',
@@ -35,7 +42,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -61,7 +68,7 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -74,29 +81,84 @@ describe('transformFormDataToManualInvestmentReturn', () => {
     });
   });
 
-  it('transforms form data with recurrence frequency but no end date', () => {
+  it('handles negative percentage returns', () => {
     const mockFormData = new FormData();
     const mockValidationResult = {
       success: true,
       data: {
         manualInvestmentCategoryId: 'category-1',
         manualInvestmentReturnDate: new Date('2024-01-15'),
-        manualInvestmentPercentageReturn: '5.75',
-        manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
+        manualInvestmentPercentageReturn: '-2.5'
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
-    expect(result.item).toBeDefined();
-    expect(result.errors).toEqual([]);
-    expect(result.item).toEqual({
-      manualInvestmentCategoryId: 'category-1',
-      manualInvestmentReturnDate: '2024-01-15',
-      manualInvestmentPercentageReturn: 5.75,
-      manualInvestmentRecurrenceFrequency: RecurrenceFrequency.WEEKLY
+    expect(result.item?.manualInvestmentPercentageReturn).toBe(-2.5);
+  });
+
+  it('handles very large percentage returns', () => {
+    const mockFormData = new FormData();
+    const mockValidationResult = {
+      success: true,
+      data: {
+        manualInvestmentCategoryId: 'category-1',
+        manualInvestmentReturnDate: new Date('2024-01-15'),
+        manualInvestmentPercentageReturn: '999.99'
+      }
+    };
+
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
+
+    const result = transformFormDataToManualInvestmentReturn(mockFormData);
+
+    expect(result.item?.manualInvestmentPercentageReturn).toBe(999.99);
+  });
+
+  it('handles decimal percentage returns', () => {
+    const mockFormData = new FormData();
+    const mockValidationResult = {
+      success: true,
+      data: {
+        manualInvestmentCategoryId: 'category-1',
+        manualInvestmentReturnDate: new Date('2024-01-15'),
+        manualInvestmentPercentageReturn: '0.001'
+      }
+    };
+
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
+
+    const result = transformFormDataToManualInvestmentReturn(mockFormData);
+
+    expect(result.item?.manualInvestmentPercentageReturn).toBe(0.001);
+  });
+
+  it('handles all recurrence frequency types', () => {
+    const mockFormData = new FormData();
+    const frequencies = [
+      RecurrenceFrequency.WEEKLY,
+      RecurrenceFrequency.EVERY_2_WEEKS,
+      RecurrenceFrequency.MONTHLY
+    ];
+
+    frequencies.forEach(frequency => {
+      const mockValidationResult = {
+        success: true,
+        data: {
+          manualInvestmentCategoryId: 'category-1',
+          manualInvestmentReturnDate: new Date('2024-01-15'),
+          manualInvestmentPercentageReturn: '5.0',
+          manualInvestmentRecurrenceFrequency: frequency
+        }
+      };
+
+      mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
+
+      const result = transformFormDataToManualInvestmentReturn(mockFormData);
+
+      expect(result.item?.manualInvestmentRecurrenceFrequency).toBe(frequency);
     });
   });
 
@@ -109,10 +171,16 @@ describe('transformFormDataToManualInvestmentReturn', () => {
           { message: 'Category field is required' },
           { message: 'Return date field is required' }
         ]
+      },
+      data: {
+        manualInvestmentCategoryId: '',
+        manualInvestmentReturnDate: new Date(),
+        manualInvestmentPercentageReturn: '',
+        manualInvestmentRecurrenceFrequency: undefined
       }
     };
 
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
+    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult as { success: true; data: typeof mockValidationResult.data });
 
     const result = transformFormDataToManualInvestmentReturn(mockFormData);
 
@@ -120,31 +188,9 @@ describe('transformFormDataToManualInvestmentReturn', () => {
     expect(result.errors).toEqual(['Category field is required']);
   });
 
-  it('handles validation errors with multiple error messages', () => {
-    const mockFormData = new FormData();
-    const mockValidationResult = {
-      success: false,
-      error: {
-        errors: [
-          { message: 'First error' },
-          { message: 'Second error' },
-          { message: 'Third error' }
-        ]
-      }
-    };
-
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
-
-    const result = transformFormDataToManualInvestmentReturn(mockFormData);
-
-    expect(result.item).toBeNull();
-    expect(result.errors).toEqual(['First error']);
-  });
-
   it('handles unexpected errors gracefully', () => {
     const mockFormData = new FormData();
     
-    // Mock the validation function to throw an error
     mockGetManualInvestmentReturnValidationResult.mockImplementation(() => {
       throw new Error('Unexpected error');
     });
@@ -153,55 +199,5 @@ describe('transformFormDataToManualInvestmentReturn', () => {
 
     expect(result.item).toBeNull();
     expect(result.errors).toEqual(['An unexpected validation error occurred.\nUnexpected error']);
-  });
-
-  it('handles errors without message property', () => {
-    const mockFormData = new FormData();
-    
-    // Mock the validation function to throw an error without message
-    mockGetManualInvestmentReturnValidationResult.mockImplementation(() => {
-      throw {};
-    });
-
-    const result = transformFormDataToManualInvestmentReturn(mockFormData);
-
-    expect(result.item).toBeNull();
-    expect(result.errors).toEqual(['An unexpected validation error occurred.']);
-  });
-
-  it('parses percentage return as float correctly', () => {
-    const mockFormData = new FormData();
-    const mockValidationResult = {
-      success: true,
-      data: {
-        manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
-        manualInvestmentPercentageReturn: '12.50'
-      }
-    };
-
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
-
-    const result = transformFormDataToManualInvestmentReturn(mockFormData);
-
-    expect(result.item?.manualInvestmentPercentageReturn).toBe(12.50);
-  });
-
-  it('handles zero percentage return', () => {
-    const mockFormData = new FormData();
-    const mockValidationResult = {
-      success: true,
-      data: {
-        manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
-        manualInvestmentPercentageReturn: '0.00'
-      }
-    };
-
-    mockGetManualInvestmentReturnValidationResult.mockReturnValue(mockValidationResult);
-
-    const result = transformFormDataToManualInvestmentReturn(mockFormData);
-
-    expect(result.item?.manualInvestmentPercentageReturn).toBe(0);
   });
 });

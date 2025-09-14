@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { DashboardPage } from '../DashboardPage';
-import { useMobileDetection } from '@/app/hooks';
-import { TrendGraphData, TrendGraphEntry } from '../';
+import { MobileState, useMobileDetection, useSidebarDetection } from '@/app/hooks';
+import { TrendGraphData, TrendGraphEntry } from '@/app/dashboards';
+import { DashboardPage } from '@/app/dashboards/components/DashboardPage';
 
 // Mock console.error to prevent it from appearing in tests
 const originalConsoleError = console.error;
@@ -16,6 +16,8 @@ afterAll(() => {
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: jest.fn(),
+  MobileState: { },
+  useSidebarDetection: jest.fn(() => true),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -28,7 +30,7 @@ jest.mock('@/app/components', () => ({
   ),
 }));
 
-jest.mock('../', () => ({
+jest.mock('@/app/dashboards', () => ({
   DashboardSideBar: () => <div data-testid="dashboard-sidebar">Sidebar</div>,
   HistoryToggle: ({ onToggle }: { onToggle: (checked: boolean) => void }) => (
     <button onClick={() => onToggle(true)} data-testid="history-toggle">
@@ -39,6 +41,7 @@ jest.mock('../', () => ({
 }));
 
 const mockUseMobileDetection = useMobileDetection as jest.MockedFunction<typeof useMobileDetection>;
+const mockUseSidebarDetection = useSidebarDetection as jest.MockedFunction<typeof useSidebarDetection>;
 
 describe('DashboardPage', () => {
   const mockGetAvailableDateRange = jest.fn();
@@ -51,7 +54,7 @@ describe('DashboardPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseMobileDetection.mockReturnValue(false);
+    mockUseMobileDetection.mockReturnValue(MobileState.LARGE);
     
     // Set up default mocks to prevent undefined response errors
     mockGetTrendGraph.mockResolvedValue({
@@ -81,8 +84,8 @@ describe('DashboardPage', () => {
   });
 
   it('hides sidebar on mobile', () => {
-    mockUseMobileDetection.mockReturnValue(true);
-
+    mockUseMobileDetection.mockReturnValue(MobileState.SMALL);
+    mockUseSidebarDetection.mockReturnValue(false);
     render(
       <DashboardPage
         getAvailableDateRange={mockGetAvailableDateRange}

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileCategoryCard } from '../MobileCategoryCard';
-import { Category } from '..';
+import { Category } from '@/app/components';
+import { MobileCategoryCard } from '@/app/components/categories/list/MobileCategoryCard';
 
 const editButtonTestId = 'edit-button';
 const deleteButtonTestId = 'delete-button';
@@ -29,9 +29,6 @@ describe('MobileCategoryCard', () => {
   const mockCategory: Category = {
     id: 1,
     name: 'Test Category',
-    type: 'expense',
-    color: '#FF0000',
-    icon: 'test-icon',
   };
 
   const mockOnEdit = jest.fn();
@@ -85,7 +82,7 @@ describe('MobileCategoryCard', () => {
   it('handles category with string id', () => {
     const categoryWithStringId: Category = {
       ...mockCategory,
-      id: 'string-id',
+      id: 1,
     };
     
     render(
@@ -97,7 +94,7 @@ describe('MobileCategoryCard', () => {
     );
     
     fireEvent.click(screen.getByTestId(deleteButtonTestId));
-    expect(mockOnDelete).toHaveBeenCalledWith('string-id');
+    expect(mockOnDelete).toHaveBeenCalledWith(1);
   });
 
   it('handles category with number id', () => {

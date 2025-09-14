@@ -1,15 +1,18 @@
 import React from 'react'
-import { ListTable } from '@/app/components/table/ListTable';
-import { getHoldingInvestmentReturnDisplayName, HoldingInvestmentReturn } from '../../HoldingInvestmentReturn';
-import { DesktopHoldingInvestmentReturnRow } from './DesktopHoldingInvestmentReturnRow';
-import { MobileHoldingInvestmentReturnCard } from './MobileHoldingInvestmentReturnCard';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_PLURAL } from '../../form';
+import { ListTable } from '@/app/components';
+import { getHoldingInvestmentReturnDisplayName, HoldingInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME_PLURAL, DesktopHoldingInvestmentReturnRow, MobileHoldingInvestmentReturnCard } from '@/app/net-worth/investment-returns';
 
 type HoldingInvestmentReturnListProps = {
   holdingInvestmentReturns: HoldingInvestmentReturn[],
   onHoldingInvestmentReturnDeleted: () => void,
   onHoldingInvestmentReturnIsEditing: (investmentReturn: HoldingInvestmentReturn) => void,
   tableHeaderRow: React.ReactNode,
+  columnWidths: {
+    investment: string;
+    return: string;
+    month: string;
+    actions: string;
+  },
   handleDelete: (id: number) => void,
   isLoading: boolean,
 	isError: boolean
@@ -29,6 +32,7 @@ export function HoldingInvestmentReturnList(props: HoldingInvestmentReturnListPr
       investmentReturn={investmentReturn}
       onEdit={props.onHoldingInvestmentReturnIsEditing}
       onDelete={props.handleDelete}
+      columnWidths={props.columnWidths}
     />
   );
 

@@ -1,11 +1,7 @@
-import { ImportDataType } from '../models/ImportDataType';
-import { ImportDataTypeStringMappings } from '../models/ImportDataTypeStringMappings';
-import { ImportDataTypeStrings } from '../models/ImportDataTypeStrings';
-import { ImportResult } from '../models/ImportResult';
-import { ImportItemResult } from '../models/ImportItemResult';
-import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
+import { postRequest } from '@/app/lib/api';
+import { ImportItemResult, ImportResult, ImportDataTypeString, ImportDataType } from '@/app/import';
 
-export async function uploadImportData(data: ImportDataType[], dataType: ImportDataTypeStrings): Promise<ImportResult> {
+export async function uploadImportData(data: ImportDataType[], dataType: ImportDataTypeString): Promise<ImportResult> {
   const batchSize = 100;
   const batches = [];
   for (let i = 0; i < data.length; i += batchSize) {
@@ -65,19 +61,19 @@ export async function uploadImportData(data: ImportDataType[], dataType: ImportD
   };
 }
 
-function getEndpointForDataType(dataType: ImportDataTypeStrings): string {
+function getEndpointForDataType(dataType: ImportDataTypeString): string {
   switch (dataType) {
-    case ImportDataTypeStringMappings.CashFlowCategories:
+    case ImportDataTypeString.CashFlowCategories:
       return 'CashFlowCategories/Import';
-    case ImportDataTypeStringMappings.Budgets:
+    case ImportDataTypeString.Budgets:
       return 'Budgets/Import';
-    case ImportDataTypeStringMappings.CashFlowEntries:
+    case ImportDataTypeString.CashFlowEntries:
       return 'CashFlowEntries/Import';
-    case ImportDataTypeStringMappings.HoldingCategories:
+    case ImportDataTypeString.HoldingCategories:
       return 'HoldingCategories/Import';
-    case ImportDataTypeStringMappings.Holdings:
+    case ImportDataTypeString.Holdings:
       return 'Holdings/Import';
-    case ImportDataTypeStringMappings.HoldingSnapshots:
+    case ImportDataTypeString.HoldingSnapshots:
       return 'HoldingSnapshots/Import';
     default:
       throw new Error(`Unknown data type: ${dataType}`);

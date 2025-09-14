@@ -1,11 +1,9 @@
 'use client'
 
 import React from 'react';
-import { deleteCashFlowEntry } from '@/app/lib/api/data-methods';
-import { ListTable } from '@/app/components/table/ListTable';
-import { CashFlowEntry, CashFlowType } from '..';
-import { MobileCashFlowEntryCard } from './MobileCashFlowEntryCard';
-import { DesktopCashFlowEntryRow } from './DesktopCashFlowEntryRow';
+import { deleteCashFlowEntry } from '@/app/lib/api';
+import { ListTable } from '@/app/components';
+import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '@/app/cashflow';
 
 interface CashFlowEntriesListProps {
 	entries: CashFlowEntry[],
@@ -17,7 +15,7 @@ interface CashFlowEntriesListProps {
 	recurringOnly?: boolean,
 }
 
-export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
+export function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 	
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
@@ -27,14 +25,23 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		}
 	};
 
+	const columnWidths = {
+		date: "w-2/12",
+		amount: "w-2/12", 
+		category: "w-2/12",
+		description: props.recurringOnly ? "w-3/12" : "w-4/12",
+		recurrence: "w-2/12",
+		actions: "w-1/12"
+	};
+
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-1/6">Date</th>
-			<th className="w-1/6">Amount</th>
-			<th className="w-1/5">Category</th>
-			<th className="w-1/5">Description</th>
-			{props.recurringOnly && <th className="w-1/5">Recurrence</th>}
-			<th className="text-right">Actions</th>
+			<th className={columnWidths.date}>Date</th>
+			<th className={columnWidths.amount}>Amount</th>
+			<th className={columnWidths.category}>Category</th>
+			<th className={columnWidths.description}>Description</th>
+			{props.recurringOnly && <th className={columnWidths.recurrence}>Recurrence</th>}
+			<th className={columnWidths.actions + " text-center"}>Actions</th>
 		</tr>
 	);
 
@@ -42,9 +49,11 @@ export default function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 		<DesktopCashFlowEntryRow
 			key={entry.id}
 			entry={entry}
+			columnWidths={columnWidths}
 			onEdit={props.onEntryIsEditing}
 			onDelete={handleDelete}
 			recurringOnly={props.recurringOnly}
+			actionColumnWidth={columnWidths.actions}
 		/>
 	);
 

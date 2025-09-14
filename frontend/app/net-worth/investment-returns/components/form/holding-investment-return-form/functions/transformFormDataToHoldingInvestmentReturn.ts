@@ -1,13 +1,11 @@
-import { convertDollarsToCents } from "@/app/components/Utils";
-import { getHoldingInvestmentReturnValidationResult } from "..";
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from "../../";
-import { HoldingInvestmentReturn } from "../../../HoldingInvestmentReturn";
+import { convertDollarsToCents } from "@/app/lib/utils";
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, getHoldingInvestmentReturnValidationResult, HoldingInvestmentReturn } from "@/app/net-worth/investment-returns";
 
 export const transformFormDataToHoldingInvestmentReturn = (formData: FormData): { item: HoldingInvestmentReturn | null; errors: string[] } => {
     try {
     const validation = getHoldingInvestmentReturnValidationResult(formData);
     if (!validation.success) {
-      const errors = validation.error.errors.map(e => e.message);
+      const errors = validation.error.errors.map((e: { message: string }) => e.message);
       return { item: null, errors: [errors[0]] };
     }
 

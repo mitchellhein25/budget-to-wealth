@@ -1,16 +1,6 @@
 import React from 'react';
 import { useMobileDetection } from '@/app/hooks';
-import {
-  ResponsiveContainer,
-  ComposedChart,
-  Line,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  CartesianGrid,
-} from 'recharts';
+import { ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 export type TrendGraphProps = {
   title: string;
@@ -41,13 +31,13 @@ export function TrendGraph(props: TrendGraphProps) {
   const height = isMobile ? 240 : 420;
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col min-w-0">
       <div className="mb-2">
         <h3 className="text-base sm:text-lg font-semibold text-base-content">{props.title}</h3>
       </div>
-      <div className="w-full" style={{ height }}>
+      <div className="w-full min-w-0" style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={chartData} margin={{ top: 16, right: 16, bottom: 8, left: 8 }}>
+          <ComposedChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />

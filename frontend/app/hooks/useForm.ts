@@ -1,6 +1,8 @@
+'use client';
+
 import { ChangeEventHandler, useState } from "react";
-import { cleanCurrencyInput, cleanPercentageInput, MessageState, replaceSpacesWithDashes } from "../components/Utils";
-import { handleFormSubmit } from "../components/form/functions/handleFormSubmit";
+import { cleanCurrencyInput, cleanPercentageInput, MessageState, replaceSpacesWithDashes } from "@/app/lib/utils";
+import { handleFormSubmit } from "@/app/components";
 
 export type FormState<T, FormDataT> = {
   isSubmitting: boolean;

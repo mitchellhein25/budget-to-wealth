@@ -1,7 +1,5 @@
-import { cleanCurrencyInput } from '../../../components/Utils';
-import { ImportDataTypeStrings } from '../models/ImportDataTypeStrings';
-import { ImportError } from '../models/ImportError';
-import { getFieldsForImportType } from './getFieldsForImportType';
+import { cleanCurrencyInput } from '@/app/lib/utils';
+import { ImportDataTypeString, ImportError, getFieldsForImportType } from '@/app/import';
 
 // Type for raw CSV data
 type RawCsvData = Record<string, string | number | boolean>;
@@ -12,7 +10,7 @@ interface ValidationResult {
   errors: ImportError[];
 }
 
-export function validateImportData(data: RawCsvData[], dataType: ImportDataTypeStrings | undefined): ValidationResult {
+export function validateImportData(data: RawCsvData[], dataType: ImportDataTypeString | undefined): ValidationResult {
   const errors: ImportError[] = [];
   const successRows: RawCsvData[] = [];
 

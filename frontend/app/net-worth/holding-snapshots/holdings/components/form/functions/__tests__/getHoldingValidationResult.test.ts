@@ -1,4 +1,4 @@
-import { getHoldingValidationResult } from '../getHoldingValidationResult';
+import { getHoldingValidationResult } from '@/app/net-worth/holding-snapshots/holdings';
 
 describe('getHoldingValidationResult', () => {
   const createMockFormData = (data: Record<string, string | undefined>) => {

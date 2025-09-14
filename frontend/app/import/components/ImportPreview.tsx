@@ -1,16 +1,15 @@
 import React from 'react';
-import { ImportDataTypeStrings } from './models/ImportDataTypeStrings';
-import { ImportDataType } from './models/ImportDataType';
+import { ImportDataTypeString, ImportDataType } from '@/app/import';
 
 interface ImportPreviewProps {
   data: ImportDataType[];
-  dataTypeString: ImportDataTypeStrings;
+  dataTypeString: ImportDataTypeString;
   onImport: () => void;
   onCancel: () => void;
   isProcessing: boolean;
 }
 
-export default function ImportPreview(props: ImportPreviewProps) {
+export function ImportPreview(props: ImportPreviewProps) {
   const getColumns = () => {
     if (props.data.length === 0) return [];
     
@@ -28,7 +27,7 @@ export default function ImportPreview(props: ImportPreviewProps) {
   const totalColumns = props.data.length > 0 ? Object.keys(props.data[0]).length : 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">
           Preview ({props.data.length} items)
@@ -107,4 +106,4 @@ export default function ImportPreview(props: ImportPreviewProps) {
       </div>
     </div>
   );
-} 
+}  

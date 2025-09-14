@@ -1,4 +1,4 @@
-import { getHoldingSnapshotValidationResult } from '../getHoldingSnapshotValidationResult';
+import { getHoldingSnapshotValidationResult } from '@/app/net-worth/holding-snapshots';
 
 describe('getHoldingSnapshotValidationResult', () => {
   it('validates correct form data successfully', () => {

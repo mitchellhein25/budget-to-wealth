@@ -1,8 +1,11 @@
-import { uploadImportData } from '../uploadImportData';
-import { ImportDataTypeStringMappings } from '../../models/ImportDataTypeStringMappings';
-import { postRequest } from '@/app/lib/api/rest-methods/postRequest';
+import { uploadImportData, ImportDataTypeString } from '@/app/import';
+import { postRequest } from '@/app/lib/api';
 
-jest.mock('@/app/lib/api/rest-methods/postRequest');
+jest.mock('@/app/lib/api');
+
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
 
 const mockPostRequest = postRequest as jest.MockedFunction<typeof postRequest>;
 
@@ -30,7 +33,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(true);
     expect(result.importedCount).toBe(300);
@@ -49,7 +52,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Not authorized.'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(0);
@@ -85,7 +88,7 @@ describe('uploadImportData', () => {
         responseMessage: 'Server error'
       });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(100);
@@ -113,7 +116,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Partial success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(1);
@@ -125,7 +128,7 @@ describe('uploadImportData', () => {
   });
 
   it('handles empty data array', async () => {
-    const result = await uploadImportData([], ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData([], ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(true);
     expect(result.importedCount).toBe(0);
@@ -150,13 +153,13 @@ describe('uploadImportData', () => {
       responseMessage: 'Success'
     });
 
-    await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
     expect(mockPostRequest).toHaveBeenCalledWith('CashFlowEntries/Import', mockData);
 
-    await uploadImportData(mockData, ImportDataTypeStringMappings.Budgets);
+    await uploadImportData(mockData, ImportDataTypeString.Budgets);
     expect(mockPostRequest).toHaveBeenCalledWith('Budgets/Import', mockData);
 
-    await uploadImportData(mockData, ImportDataTypeStringMappings.Holdings);
+    await uploadImportData(mockData, ImportDataTypeString.Holdings);
     expect(mockPostRequest).toHaveBeenCalledWith('Holdings/Import', mockData);
   });
 
@@ -179,7 +182,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(true);
     expect(result.importedCount).toBe(400);
@@ -223,7 +226,7 @@ describe('uploadImportData', () => {
         responseMessage: 'Success'
       });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.results[0].row).toBe(1);
     expect(result.results[99].row).toBe(100);
@@ -236,14 +239,14 @@ describe('uploadImportData', () => {
     
     mockPostRequest.mockRejectedValue(new Error('Network error'));
 
-    await expect(uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries))
+    await expect(uploadImportData(mockData, ImportDataTypeString.CashFlowEntries))
       .rejects.toThrow('Network error');
   });
 
   it('handles unknown data types', async () => {
     const mockData = [{ id: 1, name: 'Test Item' }];
 
-    await expect(uploadImportData(mockData, 'Unknown Type' as ImportDataTypeStringMappings))
+    await expect(uploadImportData(mockData, 'Unknown Type' as ImportDataTypeString))
       .rejects.toThrow('Unknown data type: Unknown Type');
   });
 
@@ -262,7 +265,7 @@ describe('uploadImportData', () => {
         responseMessage: 'Second batch failed'
       });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(0);
@@ -298,7 +301,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Partial success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(30);
@@ -315,10 +318,10 @@ describe('uploadImportData', () => {
     mockPostRequest.mockResolvedValue({
       successful: false,
       data: null,
-      responseMessage: undefined as string | undefined
+      responseMessage: ""
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(0);
@@ -346,7 +349,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(0);
@@ -382,7 +385,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Partial success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(true);
     expect(result.importedCount).toBe(8);
@@ -412,7 +415,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(true);
     expect(result.importedCount).toBe(5);
@@ -449,7 +452,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Partial success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(false);
     expect(result.importedCount).toBe(8);
@@ -486,7 +489,7 @@ describe('uploadImportData', () => {
       responseMessage: 'Partial success'
     });
 
-    const result = await uploadImportData(mockData, ImportDataTypeStringMappings.CashFlowEntries);
+    const result = await uploadImportData(mockData, ImportDataTypeString.CashFlowEntries);
 
     expect(result.success).toBe(true);
     expect(result.importedCount).toBe(12);

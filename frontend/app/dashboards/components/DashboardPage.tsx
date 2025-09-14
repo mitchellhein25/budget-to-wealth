@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useMobileDetection } from '@/app/hooks';
+import { useSidebarDetection } from '@/app/hooks';
+import { DateRangeResponse, FetchResult } from '@/app/lib/api';
 import { DatePicker, DateRange } from '@/app/components';
-import { DashboardSideBar, HistoryToggle, TrendGraphData, TrendGraphEntry, getCompletedMonthsDefaultRange } from './';
-import { DateRangeResponse } from '@/app/lib/api/data-methods';
-import { FetchResult } from '@/app/lib/api/apiClient';
+import { DashboardSideBar, HistoryToggle, TrendGraphData, TrendGraphEntry, getCompletedMonthsDefaultRange } from '@/app/dashboards';
 
 export type DashboardPageProps<T extends TrendGraphData<TrendGraphEntry>> = {
   getAvailableDateRange: () => Promise<FetchResult<DateRangeResponse>>;
@@ -21,7 +20,7 @@ export function DashboardPage<T extends TrendGraphData<TrendGraphEntry>>({
   children
 }: DashboardPageProps<T>) {
   const [trendGraphData, setTrendGraphData] = useState<T | null>(null);
-  const isMobile = useMobileDetection();
+  const showSidebar = useSidebarDetection();
   const [dateRange, setDateRange] = useState<DateRange>(getCompletedMonthsDefaultRange(new Date()));
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,10 +50,10 @@ export function DashboardPage<T extends TrendGraphData<TrendGraphEntry>>({
   }, [dateRange, getTrendGraph]);
 
   return (
-    <div className="flex gap-6 pt-6 px-6 pb-0 h-full min-h-screen">
-      {!isMobile && <DashboardSideBar />}
-      <div className="flex flex-1 flex-col gap-2">
-        <div className="flex items-center gap-4">
+    <div className="flex gap-3 sm:gap-6 p-2 sm:pt-6 sm:px-6 pb-0 h-full min-h-screen">
+      {showSidebar && <DashboardSideBar />}
+      <div className="flex flex-1 flex-col gap-2 min-w-0 w-full">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
           <DatePicker dateRange={dateRange} setDateRange={setDateRange} />
           <HistoryToggle
             isLoading={isHistoryLoading}

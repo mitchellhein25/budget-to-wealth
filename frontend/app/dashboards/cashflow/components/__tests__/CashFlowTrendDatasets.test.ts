@@ -1,6 +1,9 @@
-import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow/components';
-import { CashFlowTrendDatasets } from '../CashFlowTrendDatasets';
-import { CashFlowTrendGraphData } from '../CashFlowTrendGraphData';
+import { CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME_PLURAL, INCOME_ITEM_NAME } from '@/app/cashflow';
+import { CashFlowTrendGraphData, CashFlowTrendDatasets } from '@/app/dashboards/cashflow';
+
+jest.mock('@/app/cashflow', () => ({
+  RecurrenceFrequency: {  },
+}));
 
 describe('CashFlowTrendDatasets', () => {
   it('returns empty array when data is null', () => {

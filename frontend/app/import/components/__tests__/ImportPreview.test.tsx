@@ -1,15 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ImportPreview from '../ImportPreview';
-import { ImportDataTypeStringMappings } from '../models/ImportDataTypeStringMappings';
+import { ImportPreview, ImportDataTypeString } from '@/app/import';
 
 const mockOnImport = jest.fn();
 const mockOnCancel = jest.fn();
 
 const defaultProps = {
   data: [],
-  dataTypeString: ImportDataTypeStringMappings.CashFlowEntries,
+  dataTypeString: ImportDataTypeString.CashFlowEntries,
   onImport: mockOnImport,
   onCancel: mockOnCancel,
   isProcessing: false,
@@ -36,7 +35,7 @@ const largeDataSet = Array.from({ length: 15 }, (_, index) => ({
   amountInCents: (index + 1) * 10000,
   date: `2024-01-${String(index + 1).padStart(2, '0')}`,
   categoryName: `Category ${index + 1}`,
-  categoryType: (index % 2 === 0 ? 'Expense' : 'Income') as const,
+  categoryType: index % 2 === 0 ? 'Expense' : 'Income',
   description: `Test Entry ${index + 1}`,
   field1: `Field 1 ${index + 1}`,
   field2: `Field 2 ${index + 1}`,

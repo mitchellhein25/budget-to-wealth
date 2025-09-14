@@ -1,5 +1,4 @@
-import { getHoldingInvestmentReturnValidationResult } from '../getHoldingInvestmentReturnValidationResult';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../../constants';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, getHoldingInvestmentReturnValidationResult } from '@/app/net-worth/investment-returns';
 
 const FORM_ID = HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID;
 

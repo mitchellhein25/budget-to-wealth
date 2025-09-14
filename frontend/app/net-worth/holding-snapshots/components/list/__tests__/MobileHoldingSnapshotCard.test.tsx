@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MobileHoldingSnapshotCard } from '../MobileHoldingSnapshotCard';
-import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
+import { MobileHoldingSnapshotCard, HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 
-jest.mock('@/app/components/Utils', () => ({
+jest.mock('@/app/lib/utils', () => ({
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`),
+  replaceSpacesWithDashes: jest.fn((text) => text.replace(/\s+/g, '-')),
 }));
 
 jest.mock('@/app/components', () => ({

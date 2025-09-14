@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DesktopCategoryRow } from '../DesktopCategoryRow';
-import { Category } from '..';
+import { Category } from '@/app/components';
+import { DesktopCategoryRow } from '@/app/components/categories/list/DesktopCategoryRow';
 
 const editButtonTestId = 'edit-button';
 const deleteButtonTestId = 'delete-button';
@@ -20,15 +20,13 @@ jest.mock('@/app/components', () => ({
   DesktopListItemCell: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="desktop-list-item-cell">{children}</div>
   ),
+  CategoriesInputs: () => <div>CategoriesInputs</div>,
 }));
 
 describe('DesktopCategoryRow', () => {
   const mockCategory: Category = {
     id: 1,
     name: 'Test Category',
-    type: 'expense',
-    color: '#FF0000',
-    icon: 'test-icon',
   };
 
   const mockOnEdit = jest.fn();
@@ -78,10 +76,10 @@ describe('DesktopCategoryRow', () => {
     expect(mockOnDelete).toHaveBeenCalledWith(mockCategory.id);
   });
 
-  it('handles category with string id', () => {
+  it('handles category with id', () => {
     const categoryWithStringId: Category = {
       ...mockCategory,
-      id: 'string-id',
+      id: 1,
     };
     
     render(
@@ -93,7 +91,7 @@ describe('DesktopCategoryRow', () => {
     );
     
     fireEvent.click(screen.getByTestId(deleteButtonTestId));
-    expect(mockOnDelete).toHaveBeenCalledWith('string-id');
+    expect(mockOnDelete).toHaveBeenCalledWith(1);
   });
 
   it('handles category with number id', () => {

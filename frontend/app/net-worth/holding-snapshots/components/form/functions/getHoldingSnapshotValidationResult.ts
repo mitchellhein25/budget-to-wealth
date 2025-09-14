@@ -1,4 +1,4 @@
-import { HoldingSnapshotFormSchema } from "../HoldingSnapshotFormData";
+import { HoldingSnapshotFormSchema } from "@/app/net-worth/holding-snapshots";
 
 export const getHoldingSnapshotValidationResult = (formData: FormData) => {
   const rawData = {

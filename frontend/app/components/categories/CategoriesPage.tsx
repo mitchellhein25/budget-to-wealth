@@ -2,12 +2,10 @@
 
 import { useEffect, useCallback, useState } from "react";
 import { useForm, useMobileDetection } from "@/app/hooks";
-import { getRequestList } from "@/app/lib/api/rest-methods";
-import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow/components";
-import { MESSAGE_TYPE_ERROR, MessageState, messageTypeIsError } from "../Utils";
-import { Category, CategoryFormData } from "./Category";
-import { CategoriesForm } from "./form/CategoriesForm";
-import { CategoriesList } from "./list/CategoriesList";
+import { getRequestList } from "@/app/lib/api";
+import { MessageState, MessageType, messageTypeIsError } from "@/app/lib/utils";
+import { Category, CategoryFormData, CategoriesForm, CategoriesList } from "@/app/components";
+import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow";
 
 type CategoriesPageProps = {
   isLoggedIn: boolean;
@@ -26,7 +24,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   const fetchCategories = useCallback(() => getRequestList<T>(props.getEndpoint), [props.getEndpoint]);
 
   const fetchItems = useCallback(async () => {
-    const setErrorMessage = (text: string) => setMessage({ type: MESSAGE_TYPE_ERROR, text });
+    const setErrorMessage = (text: string) => setMessage({ type: MessageType.ERROR, text });
     try {
       setIsLoading(true);
       setMessage({ type: null, text: '' });
@@ -76,7 +74,7 @@ export function CategoriesPage<T extends Category>(props: CategoriesPageProps) {
   }, [fetchItems]);
 
   return (
-    <div className={`flex gap-6 p-6 ${isMobile ? 'flex-col' : ''}`}>
+    <div className={`flex gap-3 sm:gap-6 p-3 sm:p-6 ${isMobile ? 'flex-col' : ''}`}>
       <CategoriesForm
         formState={formState}
         categoryTypeName={props.categoryTypeName}

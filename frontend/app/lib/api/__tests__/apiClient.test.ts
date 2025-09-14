@@ -1,9 +1,13 @@
-import { fetchWithAuth, HttpMethod } from '../apiClient';
-import { getAccessToken } from '@/app/lib/auth/getAccessToken';
+import { fetchWithAuth, HttpMethod } from '@/app/lib/api';
+import { getAccessToken } from '@/app/lib/auth';
 
 // Mock dependencies
 jest.mock('@/app/lib/auth/getAccessToken', () => ({
   getAccessToken: jest.fn()
+}));
+
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
 }));
 
 global.fetch = jest.fn();
@@ -14,6 +18,25 @@ describe('fetchWithAuth', () => {
 
   const endpoint = 'test-endpoint';
   const apiResponse = { foo: 'bar' };
+
+  const createMockResponse = (overrides: Partial<Response> = {}) => ({
+    ok: true,
+    status: 200,
+    statusText: 'OK',
+    body: null,
+    bodyUsed: false,
+    headers: new Headers(),
+    redirected: false,
+    type: 'basic' as ResponseType,
+    url: '',
+    clone: jest.fn(),
+    arrayBuffer: jest.fn(),
+    blob: jest.fn(),
+    formData: jest.fn(),
+    text: jest.fn(),
+    json: jest.fn(),
+    ...overrides
+  } as unknown as Response);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,13 +53,10 @@ describe('fetchWithAuth', () => {
 
   it('returns data and success on 200 OK', async () => {
     mockGetAccessToken.mockResolvedValue('token');
-    mockFetch.mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      body: true,
+    mockFetch.mockResolvedValue(createMockResponse({
+      body: {} as unknown as ReadableStream<Uint8Array<ArrayBuffer>>,
       json: async () => apiResponse
-    });
+    }));
 
     const result = await fetchWithAuth({ endpoint, method: HttpMethod.GET });
     expect(result.successful).toBe(true);
@@ -46,13 +66,12 @@ describe('fetchWithAuth', () => {
 
   it('returns error message and unsuccessful on !ok', async () => {
     mockGetAccessToken.mockResolvedValue('token');
-    mockFetch.mockResolvedValue({
+    mockFetch.mockResolvedValue(createMockResponse({
       ok: false,
       status: 401,
       statusText: 'Unauthorized',
-      text: async () => 'Unauthorized',
-      body: true
-    });
+      text: async () => 'Unauthorized'
+    }));
 
     const result = await fetchWithAuth({ endpoint, method: HttpMethod.GET });
     expect(result.successful).toBe(false);
@@ -62,13 +81,9 @@ describe('fetchWithAuth', () => {
 
   it('returns null data if response has no body', async () => {
     mockGetAccessToken.mockResolvedValue('token');
-    mockFetch.mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      body: false,
+    mockFetch.mockResolvedValue(createMockResponse({
       json: async () => null
-    });
+    }));
 
     const result = await fetchWithAuth({ endpoint, method: HttpMethod.GET });
     expect(result.successful).toBe(true);
@@ -87,13 +102,10 @@ describe('fetchWithAuth', () => {
 
   it('sends correct method and body for POST', async () => {
     mockGetAccessToken.mockResolvedValue('token');
-    mockFetch.mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      body: true,
+    mockFetch.mockResolvedValue(createMockResponse({
+      body: {} as unknown as ReadableStream<Uint8Array<ArrayBuffer>>,
       json: async () => apiResponse
-    });
+    }));
 
     const body = { hello: 'world' };
     await fetchWithAuth({ endpoint, method: HttpMethod.POST, body });

@@ -1,5 +1,4 @@
-import { CashFlowType } from "../../components/CashFlowType";
-import { cashFlowEntryFormSchema } from "../CashFlowEntryFormData";
+import { cashFlowEntryFormSchema, CashFlowType } from "@/app/cashflow";
 
 export const getCashFlowValidationResult = (formData: FormData, cashFlowType: CashFlowType) => {
   const cashFlowTypeString = cashFlowType.toString().toLocaleLowerCase();

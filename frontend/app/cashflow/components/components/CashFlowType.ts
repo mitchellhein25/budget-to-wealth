@@ -1,1 +1,0 @@
-export type CashFlowType = "Income" | "Expense";

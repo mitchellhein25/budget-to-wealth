@@ -1,12 +1,12 @@
 import { SessionData } from '@auth0/nextjs-auth0/types';
-import { unauthorized } from '@/app/lib/auth/unauthorized';
+import { unauthorized } from '@/app/lib/auth';
 
 interface UnauthorizedWrapperProps {
   session: SessionData | null;
   children: React.ReactNode;
 }
 
-export default function UnauthorizedWrapper({ session, children }: UnauthorizedWrapperProps) {
+export function UnauthorizedWrapper({ session, children }: UnauthorizedWrapperProps) {
   const unauthorizedComponent = unauthorized(session);
   
   if (unauthorizedComponent) {

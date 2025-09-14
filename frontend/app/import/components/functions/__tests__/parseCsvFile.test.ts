@@ -1,4 +1,4 @@
-import { parseCsvFile } from '../parseCsvFile';
+import { parseCsvFile } from '@/app/import';
 
 interface MockCsvRow {
   [key: string]: string | number;

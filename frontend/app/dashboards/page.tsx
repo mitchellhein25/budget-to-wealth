@@ -1,14 +1,14 @@
 'use client';
 
 import React from 'react'
-import { useMobileDetection } from '@/app/hooks'
-import { DashboardSideBar } from './components';
+import { useSidebarDetection } from '@/app/hooks'
+import { DashboardSideBar } from '@/app/dashboards';
 
 export default function DashboardsPage() {
-  const isMobile = useMobileDetection();
+  const showSidebar = useSidebarDetection();
   return (
-    <div className="flex gap-6 p-6 h-full min-h-screen">
-      {!isMobile && <DashboardSideBar />}
+    <div className="page-layout">
+      {showSidebar && <DashboardSideBar />}
     </div>
   )
 }

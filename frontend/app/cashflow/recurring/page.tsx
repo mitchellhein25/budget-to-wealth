@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react'
-import { CashFlowPage, CashFlowType, EXPENSE_ITEM_NAME } from '@/app/cashflow/components';
-import CashFlowTypeRadioButtons from './components/CashFlowTypeRadioButtons';
+import { CashFlowPage, CashFlowType, EXPENSE_ITEM_NAME } from '@/app/cashflow';
+import { CashFlowTypeRadioButtons } from '@/app/cashflow/recurring';
 
 export default function RecurringCashFlowPage() {
 	const [selectedType, setSelectedType] = useState<CashFlowType>(EXPENSE_ITEM_NAME);

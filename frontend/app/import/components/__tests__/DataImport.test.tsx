@@ -1,26 +1,26 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import DataImport from '../DataImport';
+import { DataImport } from '@/app/import/components/DataImport';
 
-jest.mock('../functions/getFieldsForImportType', () => ({
+jest.mock('@/app/import', () => ({
+  ...jest.requireActual('@/app/import'),
   getFieldsForImportType: jest.fn(),
-}));
-
-jest.mock('../functions/getImportTemplateData', () => ({
   getImportTemplateData: jest.fn(),
-}));
-
-jest.mock('../functions/parseCsvFile', () => ({
   parseCsvFile: jest.fn(),
-}));
-
-jest.mock('../functions/validateImportData', () => ({
   validateImportData: jest.fn(),
-}));
-
-jest.mock('../functions/uploadImportData', () => ({
   uploadImportData: jest.fn(),
+  transformImportData: jest.fn(),
+  ImportPreview: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="import-preview">
+      <button onClick={onClose}>Close Preview</button>
+    </div>
+  ),
+  ImportTemplate: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="import-template">
+      <button onClick={onClose}>Close Template</button>
+    </div>
+  ),
 }));
 
 describe('DataImport', () => {

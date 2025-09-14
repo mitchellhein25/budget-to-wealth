@@ -1,11 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { HoldingInvestmentReturnForm } from '../HoldingInvestmentReturnForm';
 import { FormState } from '@/app/hooks';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '../../constants';
-import { HoldingInvestmentReturnFormData } from '../HoldingInvestmentReturnFormData';
-import { HoldingInvestmentReturn } from '../../../HoldingInvestmentReturn';
-import { Holding } from '@/app/net-worth/holding-snapshots/holdings/components';
-import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
+import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
+import { Holding } from '@/app/net-worth/holding-snapshots/holdings';
+import { HoldingInvestmentReturnFormData, HoldingInvestmentReturn, HOLDING_INVESTMENT_RETURN_ITEM_NAME, HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/investment-returns';
+import { HoldingInvestmentReturnForm } from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/HoldingInvestmentReturnForm';
 
 const formTemplateTestId = 'form-template';
 const holdingInvestmentReturnInputsTestId = 'holding-investment-return-inputs';
@@ -14,7 +12,7 @@ const holdingInvestmentReturnInputsText = 'Holding Investment Return Inputs';
 const updateCreateButtonText = 'Update/Create Button';
 const resetButtonText = 'Reset Button';
 
-jest.mock('@/app/components/form', () => ({
+jest.mock('@/app/components', () => ({
   formHasAnyValue: () => true,
   FormTemplate: ({ formId, formHeader, inputs, buttons, message }: { formId: string, formHeader: string, inputs: React.ReactNode, buttons: React.ReactNode, message: { type: string | null, text: string } }) => (
     <div data-testid={formTemplateTestId}>
@@ -26,9 +24,6 @@ jest.mock('@/app/components/form', () => ({
       {message && <div data-testid="message">{JSON.stringify(message)}</div>}
     </div>
   ),
-}));
-
-jest.mock('@/app/components/buttons', () => ({
   UpdateCreateButton: ({ isUpdateState, isDisabled }: { isUpdateState: boolean, isDisabled: boolean }) => (
     <div data-testid="update-create-button" data-is-update={isUpdateState} data-is-disabled={isDisabled}>
       {updateCreateButtonText}
@@ -41,7 +36,7 @@ jest.mock('@/app/components/buttons', () => ({
   ),
 }));
 
-jest.mock('../HoldingInvestmentReturnInputs', () => ({
+jest.mock('@/app/net-worth/investment-returns', () => ({
   HoldingInvestmentReturnInputs: ({ editingFormData, startSnapshots, holdings, isEndHoldingLocked }: {
     editingFormData: unknown;
     startSnapshots: unknown[];
@@ -58,17 +53,17 @@ jest.mock('../HoldingInvestmentReturnInputs', () => ({
   ),
 }));
 
-jest.mock('@/app/lib/api/data-methods', () => ({
+jest.mock('@/app/lib/api', () => ({
   getAllHoldings: jest.fn(),
   getHoldingSnapshotsByDateRange: jest.fn(),
   createHoldingSnapshot: jest.fn(),
   updateHoldingSnapshot: jest.fn(),
 }));
 
-const mockGetAllHoldings = jest.requireMock('@/app/lib/api/data-methods').getAllHoldings;
-const mockGetHoldingSnapshotsByDateRange = jest.requireMock('@/app/lib/api/data-methods').getHoldingSnapshotsByDateRange;
-const mockCreateHoldingSnapshot = jest.requireMock('@/app/lib/api/data-methods').createHoldingSnapshot;
-const mockUpdateHoldingSnapshot = jest.requireMock('@/app/lib/api/data-methods').updateHoldingSnapshot;
+const mockGetAllHoldings = jest.requireMock('@/app/lib/api').getAllHoldings;
+const mockGetHoldingSnapshotsByDateRange = jest.requireMock('@/app/lib/api').getHoldingSnapshotsByDateRange;
+const mockCreateHoldingSnapshot = jest.requireMock('@/app/lib/api').createHoldingSnapshot;
+const mockUpdateHoldingSnapshot = jest.requireMock('@/app/lib/api').updateHoldingSnapshot;
 
 describe('HoldingInvestmentReturnForm', () => {
   const mockFormState: FormState<HoldingInvestmentReturn, HoldingInvestmentReturnFormData> = {

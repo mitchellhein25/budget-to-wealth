@@ -1,4 +1,4 @@
-import { deleteRequest } from '../deleteRequest';
+import { fetchWithAuth, deleteRequest } from '@/app/lib/api';
 
 jest.mock('@/app/lib/api/apiClient', () => ({
   fetchWithAuth: jest.fn(),
@@ -10,7 +10,9 @@ jest.mock('@/app/lib/api/apiClient', () => ({
   },
 }));
 
-import { fetchWithAuth } from '@/app/lib/api/apiClient';
+jest.mock('@/app/components', () => ({
+  RecurrenceFrequency: {  }
+}));
 
 describe('deleteRequest', () => {
   const mockFetchWithAuth = fetchWithAuth as jest.MockedFunction<typeof fetchWithAuth>;

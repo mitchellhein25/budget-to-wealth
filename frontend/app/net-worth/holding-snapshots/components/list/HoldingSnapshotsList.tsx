@@ -1,11 +1,9 @@
 'use client'
 
 import React from 'react';
-import { HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot } from '@/app/net-worth/holding-snapshots/components';
-import { deleteHoldingSnapshot } from '@/app/lib/api/data-methods';
-import { ListTable } from '@/app/components/table/ListTable';
-import { MobileHoldingSnapshotCard } from './MobileHoldingSnapshotCard';
-import { DesktopHoldingSnapshotRow } from './DesktopHoldingSnapshotRow';
+import { deleteHoldingSnapshot } from '@/app/lib/api';
+import { ListTable } from '@/app/components';
+import { DesktopHoldingSnapshotRow, HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot, MobileHoldingSnapshotCard } from '@/app/net-worth/holding-snapshots';
 
 type HoldingSnapshotsListProps = {
 	snapshots: HoldingSnapshot[],
@@ -25,12 +23,19 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 		}
 	};
 
+	const columnWidths = {
+		holding: "w-6/12",
+		date: "w-2/12",
+		balance: "w-2/12",
+		actions: "w-2/12"
+	};
+
 	const tableHeaderRow = (
 		<tr>
-			<th className="w-3/10">Holding</th>
-			<th className="w-1/5">Date</th>
-			<th className="w-1/5">Balance</th>
-			<th className="text-right">Actions</th>
+			<th className={columnWidths.holding}>Holding</th>
+			<th className={columnWidths.date}>Date</th>
+			<th className={columnWidths.balance}>Balance</th>
+			<th className={columnWidths.actions + " text-right"}>Actions</th>
 		</tr>
 	);
 
@@ -38,6 +43,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 		<DesktopHoldingSnapshotRow
 			key={snapshot.id}
 			snapshot={snapshot}
+			columnWidths={columnWidths}
 			onEdit={props.onSnapshotIsEditing}
 			onDelete={handleDelete}
       onUpdate={(s) => {

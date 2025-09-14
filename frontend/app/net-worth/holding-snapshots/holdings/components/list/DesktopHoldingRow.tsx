@@ -1,5 +1,5 @@
-import { Holding } from '..';
 import { DesktopListItemRow, DesktopListItemCell } from '@/app/components';
+import { Holding } from '@/app/net-worth/holding-snapshots/holdings';
 
 interface DesktopHoldingRowProps {
 	holding: Holding;
