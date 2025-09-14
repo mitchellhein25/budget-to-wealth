@@ -33,7 +33,7 @@ describe('MobileHoldingCard', () => {
     type: HoldingType.ASSET,
     holdingCategoryId: '1',
     holdingCategory: {
-      id: '1',
+      id: 1,
       name: 'Test Category',
     },
     institution: 'Test Institution',
@@ -206,7 +206,7 @@ describe('MobileHoldingCard', () => {
     const holdingWithSpecialCategory: Holding = {
       ...baseHolding,
       holdingCategory: {
-        id: '1',
+        id: 1,
         name: 'Test & Category <script>alert("xss")</script>',
       },
     };
@@ -244,7 +244,7 @@ describe('MobileHoldingCard', () => {
     const holdingWithEmptyCategory: Holding = {
       ...baseHolding,
       holdingCategory: {
-        id: '1',
+        id: 1,
         name: '',
       },
     };

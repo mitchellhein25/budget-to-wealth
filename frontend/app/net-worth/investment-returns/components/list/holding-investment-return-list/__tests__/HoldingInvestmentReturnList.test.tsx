@@ -183,6 +183,12 @@ describe('HoldingInvestmentReturnList', () => {
     onHoldingInvestmentReturnDeleted: mockOnHoldingInvestmentReturnDeleted,
     onHoldingInvestmentReturnIsEditing: mockOnHoldingInvestmentReturnIsEditing,
     tableHeaderRow: mockTableHeaderRow,
+    columnWidths: {
+      investment: '30%',
+      return: '20%',
+      month: '20%',
+      actions: '30%'
+    },
     handleDelete: mockHandleDelete,
     isLoading: false,
     isError: false

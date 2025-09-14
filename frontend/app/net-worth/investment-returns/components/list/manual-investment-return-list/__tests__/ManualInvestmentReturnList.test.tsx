@@ -113,6 +113,12 @@ describe('ManualInvestmentReturnList', () => {
     onManualInvestmentReturnDeleted: mockOnManualInvestmentReturnDeleted,
     onManualInvestmentReturnIsEditing: mockOnManualInvestmentReturnIsEditing,
     tableHeaderRow: mockTableHeaderRow,
+    columnWidths: {
+      investment: '30%',
+      return: '20%',
+      month: '20%',
+      actions: '30%'
+    },
     handleDelete: mockHandleDelete,
     isLoading: false,
     isError: false

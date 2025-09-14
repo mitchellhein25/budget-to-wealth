@@ -28,7 +28,7 @@ export function CurrencyInputField({
         id={id}
         name={name}
         type="text"
-        value={value}
+        value={value || ''}
         onChange={onChange}
         placeholder={placeholder}
         className={`${className} pl-8`}
