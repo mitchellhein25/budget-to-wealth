@@ -7,18 +7,36 @@ const totalDisplayText = 'Total Display';
 const labelTestId = 'label';
 const amountTestId = 'amount';
 const isLoadingTestId = 'is-loading';
+const amountPrefixTestId = 'amount-prefix';
+const labelSuffixTestId = 'label-suffix';
 
 interface TotalDisplayProps {
   label: string;
   amount: number;
   isLoading: boolean;
+  amountPrefix: string;
+  labelSuffix: string;
 }
 
+jest.mock('@/app/hooks', () => ({
+  useMobileDetection: () => false,
+  MobileState: {
+    XSMALL: 'xsmall',
+    SMALL: 'small',
+    MEDIUM: 'medium',
+    LARGE: 'large',
+    XLARGE: 'xlarge',
+    XXLARGE: 'xxlarge',
+  }
+}));
+
 jest.mock('@/app/components', () => ({
-  TotalDisplay: ({ label, amount, isLoading }: TotalDisplayProps) => (
+  TotalDisplay: ({ label, amount, isLoading, amountPrefix, labelSuffix }: TotalDisplayProps) => (
     <div data-testid={totalDisplayTestId}>
       <div>{totalDisplayText}</div>
       <div data-testid={labelTestId}>{label}</div>
+      {labelSuffix && <div data-testid={labelSuffixTestId}>{labelSuffix}</div>}
+      {amountPrefix && <div data-testid={amountPrefixTestId}>{amountPrefix}</div>}
       <div data-testid={amountTestId}>{amount}</div>
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
     </div>
@@ -51,7 +69,7 @@ describe('BudgetSummary', () => {
   it('renders total budget display', () => {
     render(<BudgetSummary {...mockProps} />);
     const totalDisplays = screen.getAllByTestId(totalDisplayTestId);
-    expect(totalDisplays).toHaveLength(2);
+    expect(totalDisplays).toHaveLength(3);
     expect(screen.getByText(`Total ${BUDGET_ITEM_NAME}`)).toBeInTheDocument();
   });
 
@@ -70,7 +88,7 @@ describe('BudgetSummary', () => {
     render(<BudgetSummary {...mockProps} />);
     
     const totalDisplays = screen.getAllByTestId(totalDisplayTestId);
-    expect(totalDisplays).toHaveLength(2);
+    expect(totalDisplays).toHaveLength(3);
     
     const amounts = screen.getAllByTestId(amountTestId);
     expect(amounts[0]).toHaveTextContent('3000');
@@ -80,7 +98,9 @@ describe('BudgetSummary', () => {
   it('shows correct over/under amount', () => {
     render(<BudgetSummary {...mockProps} />);
     
-    expect(screen.getByText('+10.00')).toBeInTheDocument();
+    const prefix = screen.getByTestId(amountPrefixTestId);
+    expect(prefix).toHaveTextContent('+');
+    expect(screen.getByText('1000')).toBeInTheDocument();
     expect(screen.getByText(`Under ${BUDGET_ITEM_NAME}`)).toBeInTheDocument();
   });
 
@@ -97,7 +117,7 @@ describe('BudgetSummary', () => {
     
     render(<BudgetSummary {...propsWithOverBudget} />);
     
-    expect(screen.getByText('-15.00')).toBeInTheDocument();
+    expect(screen.getByText('-1500')).toBeInTheDocument();
     expect(screen.getByText(`Over ${BUDGET_ITEM_NAME}`)).toBeInTheDocument();
   });
 
@@ -114,7 +134,7 @@ describe('BudgetSummary', () => {
     
     render(<BudgetSummary {...propsWithExactBudget} />);
     
-    expect(screen.getByText('+0.00')).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByText(`On ${BUDGET_ITEM_NAME}`)).toBeInTheDocument();
   });
 
@@ -130,6 +150,5 @@ describe('BudgetSummary', () => {
     const amounts = screen.getAllByTestId(amountTestId);
     expect(amounts[0]).toHaveTextContent('0');
     expect(amounts[1]).toHaveTextContent('0');
-    expect(screen.getByText('+0.00')).toBeInTheDocument();
   });
 }); 
