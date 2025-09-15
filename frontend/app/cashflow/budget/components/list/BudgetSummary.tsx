@@ -47,15 +47,13 @@ export function BudgetSummary(props: BudgetSummaryProps) {
           isLoading={isLoading}
         />
       </div>
-      <div className="bg-base-200 rounded p-2">
-        <div className="text-xs font-medium text-base-content/70 flex items-center gap-1">
-          {getOverUnderLabel()}
-          {getStatusIcon()}
-        </div>
-        <div className="text-lg font-bold text-base-content">
-          {isLoading ? '...' : (overUnder >= 0 ? '+' : '') + (overUnder / 100).toFixed(2)}
-        </div>
-      </div>
+      <TotalDisplay
+          label={getOverUnderLabel()}
+          labelSuffix={getStatusIcon()}
+          amount={overUnder}
+          isLoading={isLoading}
+          amountPrefix={overUnder >= 0 ? '+' : ''}
+        />
     </div>
   );
 } 

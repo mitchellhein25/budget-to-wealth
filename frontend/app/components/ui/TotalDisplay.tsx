@@ -10,6 +10,8 @@ interface TotalDisplayProps {
   className?: string;
   compact?: boolean;
   marginOverride?: string;
+  labelSuffix?: React.ReactNode;
+  amountPrefix?: React.ReactNode;
 }
 
 export function TotalDisplay(props: TotalDisplayProps) {
@@ -18,11 +20,13 @@ export function TotalDisplay(props: TotalDisplayProps) {
   const labelClass = props.compact ? 'text-xs sm:text-sm' : 'text-sm sm:text-base';
   const valueClass = props.compact ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl';
   return (
-    <div className={`bg-base-200 rounded-lg ${paddingClass} ${props.marginOverride || 'm-2 sm:m-0'} w-full sm:w-auto h-min flex flex-col justify-center items-center ${minWidthClass} ${props.className || ''}`}>
-      <div className={`${labelClass} font-medium text-base-content/70`}>
+    <div className={`bg-base-200 rounded-lg ${paddingClass} ${props.marginOverride || 'm-2 sm:m-0'} w-full sm:w-full h-min flex flex-col justify-center items-center ${minWidthClass} ${props.className || ''}`}>
+      <div className={`${labelClass} font-medium text-base-content/70 ${props.labelSuffix ? ' flex gap-1' : ''}`}>
         {props.label}
+        {props.labelSuffix}
       </div>
-      <div className={`${valueClass} font-bold text-base-content`}>
+      <div className={`${valueClass} font-bold text-base-content ${props.amountPrefix ? 'flex gap-1' : ''}`}>
+        {props.amountPrefix}
         {props.isLoading ? '...' : convertCentsToDollars(props.amount)}
       </div>
     </div>

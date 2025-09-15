@@ -42,12 +42,15 @@ export default function BudgetsPage() {
     <ResponsiveFormListPage
       sideBar={<CashFlowSideBar />}
       totalDisplay={
-        <BudgetSummary
-          budgets={budgets}
-          expenses={expenses}
-          dateRange={dateRange}
-          isLoading={isPendingBudgets || isPendingExpenses}
-        />
+        <>
+          <BudgetSummary
+            budgets={budgets}
+            expenses={expenses}
+            dateRange={dateRange}
+            isLoading={isPendingBudgets || isPendingExpenses}
+          />
+          <div className="w-full"></div>
+        </>
       }
       datePicker={
         <DatePicker
