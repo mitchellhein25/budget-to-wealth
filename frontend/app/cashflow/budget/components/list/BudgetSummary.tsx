@@ -34,17 +34,19 @@ export function BudgetSummary(props: BudgetSummaryProps) {
   const isLoading = props.isLoading;
 
   return (
-    <div className="flex flex-col gap-1 w-full">
-      <div className="flex gap-2">
+    <div className="flex flex-col sm:gap-1 w-full">
+      <div className="flex sm:gap-2">
         <TotalDisplay
           label={`Total ${BUDGET_ITEM_NAME}`}
           amount={totalBudget}
           isLoading={isLoading}
+          marginOverride="m-1"
         />
         <TotalDisplay
           label="Total Expenses"
           amount={totalExpenses}
           isLoading={isLoading}
+          marginOverride="m-1"
         />
       </div>
       <TotalDisplay
@@ -53,6 +55,7 @@ export function BudgetSummary(props: BudgetSummaryProps) {
           amount={overUnder}
           isLoading={isLoading}
           amountPrefix={overUnder >= 0 ? '+' : ''}
+          marginOverride="m-1"
         />
     </div>
   );

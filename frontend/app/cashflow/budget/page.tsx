@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { useForm, useFormListItemsFetch } from '@/app/hooks';
+import { MobileState, useForm, useFormListItemsFetch, useMobileDetection } from '@/app/hooks';
 import { BUDGETS_ENDPOINT, getBudgetsByDateRange, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api';
 import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
 import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components';
@@ -10,6 +10,7 @@ import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, Bu
 
 export default function BudgetsPage() {
 	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+  const mobileState = useMobileDetection();
 
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);
   const { fetchItems: fetchBudgetItems, isPending: isPendingBudgets, message: messageBudgets, items: budgets } = useFormListItemsFetch<Budget>({
@@ -49,7 +50,7 @@ export default function BudgetsPage() {
             dateRange={dateRange}
             isLoading={isPendingBudgets || isPendingExpenses}
           />
-          <div className="w-full"></div>
+          {mobileState !== MobileState.XSMALL && <div className="w-full"></div>}
         </>
       }
       datePicker={
