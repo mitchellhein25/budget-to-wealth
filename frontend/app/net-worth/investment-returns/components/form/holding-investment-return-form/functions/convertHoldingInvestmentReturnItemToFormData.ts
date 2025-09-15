@@ -7,7 +7,7 @@ export const convertHoldingInvestmentReturnItemToFormData = (item: HoldingInvest
   endHoldingSnapshotId: item.endHoldingSnapshotId,
   endHoldingSnapshotHoldingId: item.endHoldingSnapshot?.holdingId ?? '',
   endHoldingSnapshotDate: new Date(item.endHoldingSnapshot?.date ?? ''),
-  endHoldingSnapshotBalance: (item.endHoldingSnapshot?.balance ?? 0 / 100).toFixed(2),
+  endHoldingSnapshotBalance: ((item.endHoldingSnapshot?.balance ?? 0) / 100).toFixed(2),
   totalContributions: (item.totalContributions / 100).toFixed(2),
   totalWithdrawals: (item.totalWithdrawals / 100).toFixed(2),
 });

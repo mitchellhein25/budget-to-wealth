@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "concurrently \"npm run frontend:dev\" \"npm run backend:dev\"",
     "lint": "cd frontend && npm run lint",
+    "lint:fix": "cd frontend && npm run lint:fix",
     "test": "npm run frontend:test && npm run backend:test",
     "build": "npm run frontend:build && npm run backend:build",
     "start": "concurrently \"npm run frontend:start\" \"npm run backend:start\"",

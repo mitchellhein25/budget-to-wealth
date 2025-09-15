@@ -26,7 +26,15 @@ jest.mock('@/app/hooks', () => ({
     isPending: false,
     message: null,
   }),
-  useMobileDetection: () => false,
+  useMobileDetection: () => 'large',
+  MobileState: {
+    XSMALL: 'xsmall',
+    SMALL: 'small',
+    MEDIUM: 'medium',
+    LARGE: 'large',
+    XLARGE: 'xlarge',
+    XXLARGE: 'xxlarge',
+  }
 }));
 
 jest.mock('@/app/lib/api', () => ({
