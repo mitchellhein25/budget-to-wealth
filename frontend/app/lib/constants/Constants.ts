@@ -14,6 +14,9 @@ export const INCOME_ITEM_NAME_LOWERCASE = INCOME_ITEM_NAME.toLowerCase();
 export const RECURRENCE_ITEM_NAME = "Recurring";
 export const RECURRENCE_ITEM_NAME_LOWERCASE = RECURRENCE_ITEM_NAME.toLowerCase();
 
+export const SUMMARY_ITEM_NAME = "Summary";
+export const SUMMARY_ITEM_NAME_LOWERCASE = SUMMARY_ITEM_NAME.toLowerCase();
+
 export const BUDGET_ITEM_NAME = "Budget";
 export const BUDGET_ITEM_NAME_LOWERCASE = BUDGET_ITEM_NAME.toLowerCase();
 

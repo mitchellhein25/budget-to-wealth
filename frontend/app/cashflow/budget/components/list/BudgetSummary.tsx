@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { ArrowUp, ArrowDown, Equal } from 'lucide-react';
 import { DateRange, TotalDisplay } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow';
 import { BUDGET_ITEM_NAME, Budget } from '@/app/cashflow/budget';
+import OverUnderOnIcon from '@/app/components/ui/OverUnderOnIcon';
 
 interface BudgetSummaryProps {
   budgets: Budget[];
@@ -18,12 +18,6 @@ export function BudgetSummary(props: BudgetSummaryProps) {
   const totalBudget = useMemo(() => props.budgets.reduce((sum, budget) => sum + budget.amount, 0), [props.budgets]);
   const totalExpenses = useMemo(() => props.expenses.reduce((sum, expense) => sum + expense.amount, 0), [props.expenses]);
   const overUnder = totalBudget - totalExpenses;
-
-  const getStatusIcon = () => {
-    if (overUnder === 0) return <Equal size={20} className="text-yellow-500" />;
-    if (overUnder > 0) return <ArrowDown size={20} className="text-green-500" />;
-    return <ArrowUp size={20} className="text-red-500" />;
-  };
 
   const getOverUnderLabel = () => {
     if (overUnder === 0) return `On ${BUDGET_ITEM_NAME}`;
@@ -51,7 +45,7 @@ export function BudgetSummary(props: BudgetSummaryProps) {
       </div>
       <TotalDisplay
           label={getOverUnderLabel()}
-          labelSuffix={getStatusIcon()}
+          labelSuffix={<OverUnderOnIcon value={overUnder} size={20} />}
           amount={overUnder}
           isLoading={isLoading}
           amountPrefix={overUnder >= 0 ? '+' : ''}

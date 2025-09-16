@@ -1,8 +1,8 @@
-import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
 import { convertCentsToDollars } from '@/app/lib/utils';
 import { EditButton, DeleteButton, MobileListItemCard, MobileListItemCardHeader } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow';
 import { Budget } from '@/app/cashflow/budget';
+import OverUnderOnIcon from '@/app/components/ui/OverUnderOnIcon';
 
 interface MobileBudgetCardProps {
 	budget: Budget;
@@ -24,16 +24,6 @@ export function MobileBudgetCard({ budget, expenses, onEdit, onDelete }: MobileB
 	const remainingBudget = getRemainingBudget(budget);
 	const amountSpent = getAmountSpentInCategory(budget.categoryId);
 
-	const getStatusIcon = () => {
-		if (remainingBudget === 0) {
-			return <Equal size={20} className="text-yellow-500" />;
-		} else if (remainingBudget > 0) {
-			return <ArrowDown size={20} className="text-green-500" />;
-		} else {
-			return <ArrowUp size={20} className="text-red-500" />;
-		}
-	};
-
 	return (
 		<MobileListItemCard>
 			<MobileListItemCardHeader
@@ -42,7 +32,7 @@ export function MobileBudgetCard({ budget, expenses, onEdit, onDelete }: MobileB
 						<div className="text-sm font-medium text-base-content">
 							{budget.category?.name}
 						</div>
-						{getStatusIcon()}
+						<OverUnderOnIcon value={remainingBudget} size={18} />
 					</>
 				}
 				rightContent={

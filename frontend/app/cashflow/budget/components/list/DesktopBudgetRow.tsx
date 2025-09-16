@@ -1,8 +1,8 @@
-import { Equal, ArrowUp, ArrowDown } from 'lucide-react';
 import { convertCentsToDollars } from '@/app/lib/utils';
 import { DesktopListItemRow, DesktopListItemCell, TruncatedBadge } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow';
 import { Budget } from '@/app/cashflow/budget';
+import OverUnderOnIcon from '@/app/components/ui/OverUnderOnIcon';
 
 interface DesktopBudgetRowProps {
 	budget: Budget;
@@ -51,7 +51,7 @@ export function DesktopBudgetRow({ budget, expenses, onEdit, onDelete, columnWid
 				<div className="flex items-center space-x-2">
 					<span>{convertCentsToDollars(remainingBudget)}</span>
 					<span className={remainingBudget === 0 ? "text-yellow-500" : remainingBudget > 0 ? "text-green-500" : "text-red-500"}>
-						{remainingBudget === 0 ? <Equal size={18} /> : remainingBudget > 0 ? <ArrowDown size={18} /> : <ArrowUp size={18} />}
+						<OverUnderOnIcon value={remainingBudget} size={18} />
 					</span>
 				</div>
 			</DesktopListItemCell>
