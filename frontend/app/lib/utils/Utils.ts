@@ -1,3 +1,5 @@
+import { DateRange } from "@/app/components";
+
 export const currencyRegex = /^\d+(\.\d{0,2})?$/;
 export const percentageRegex = /^-?\d+(\.\d*)?$/;
 
@@ -30,25 +32,63 @@ export const convertCentsToDollars = (cents: number): string => {
   }).format(cents / 100);
 };
 
-export const getCurrentMonthRange = (date: Date) => {
+export const getCurrentMonthRange = (date: Date) : DateRange => {
   return {
-    from: new Date(date.getFullYear(), date.getMonth(), 1),
-    to: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+    from: new Date(date.getUTCFullYear(), date.getUTCMonth(), 1, 12),
+    to: new Date(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12),
   };
 };
 
-export const getCurrentYearRange = (date: Date) => {
+export const getCurrentYearRange = (date: Date) : DateRange => {
   return {
-    from: new Date(date.getFullYear(), 0, 1),
-    to: new Date(date.getFullYear(), 11, 31),
+    from: new Date(date.getUTCFullYear(), 0, 1, 12),
+    to: new Date(date.getUTCFullYear(), 11, 31, 12),
   };
 };
 
-export const convertToDate = (date: string | undefined): Date => {
-  if (!date)
+export const datesAreCurrentFullMonthRange = (from: Date | string, to: Date | string) => {
+  const fromDate = from instanceof Date ? from : convertToDate(from);
+  const toDate = to instanceof Date ? to : convertToDate(to);
+
+  const currentMonthRange = getCurrentMonthRange(new Date());
+  if (!currentMonthRange.from || !currentMonthRange.to)
+    return false;
+  
+  return datesAreSameDay(fromDate, currentMonthRange.from) 
+        && datesAreSameDay(toDate, currentMonthRange.to);
+};
+
+const datesAreSameDay = (date1: Date, date2: Date) => {
+  return date1?.getUTCFullYear() === date2?.getUTCFullYear() 
+        && date1?.getUTCMonth() === date2?.getUTCMonth() 
+        && date1?.getUTCDate() === date2?.getUTCDate();
+};
+
+export const convertToDate = (date: string | undefined, noMonthAdjustment?: boolean): Date => {
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!date || !dateRegex.test(date)) {
     return new Date();
-  const [year, month, day] = date.split('-').map(Number);
-  return new Date(Date.UTC(year, month - 1, day));
+  }
+
+  const parts = date.split('-');
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const day = parseInt(parts[2], 10);
+
+  if (isNaN(year) || isNaN(month) || isNaN(day) || month < 1 || month > 12 || day < 1 || day > 31) {
+    return new Date();
+  }
+
+  const adjustedMonth = noMonthAdjustment ? month : month - 1;
+  const resultDate = new Date(Date.UTC(year, adjustedMonth, day, 12));
+  
+  if (resultDate.getUTCFullYear() !== year || 
+      resultDate.getUTCMonth() !== adjustedMonth || 
+      resultDate.getUTCDate() !== day) {
+    return new Date();
+  }
+
+  return resultDate;
 }
 
 export const cleanCurrencyInput = (value: string): string | null => {

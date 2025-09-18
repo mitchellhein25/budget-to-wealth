@@ -35,8 +35,9 @@ export * from '@/app/components/table/DesktopListItemRow';
 export * from '@/app/components/table/ListTable';
 export * from '@/app/components/table/TablePagination';
 
-export * from '@/app/components/ui/DatePicker';
 export * from '@/app/components/ui/ResponsiveFormListPage';
 export * from '@/app/components/ui/SideBar';
 export * from '@/app/components/ui/TotalDisplay';
 export * from '@/app/components/ui/TruncatedBadge';
+
+export * from '@/app/components/ui/date-picker/DatePicker';
