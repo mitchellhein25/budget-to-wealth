@@ -23,7 +23,7 @@ export function DatePicker({ dateRange, setDateRange, className = "" }: DatePick
   const fromDateString = dateRange.from ? convertDateToISOString(dateRange.from) : '';
   const toDateString = dateRange.to ? convertDateToISOString(dateRange.to) : '';
   const dateRangeIsFullMonth = datesAreCurrentFullMonthRange(dateRange.from, dateRange.to);
-  const selectedMonthValue = dateRangeIsFullMonth ? dateRange.from?.getUTCMonth().toString() : '';
+  const selectedMonthValue = dateRangeIsFullMonth ? ((dateRange.from?.getUTCMonth() ?? 0) + 1).toString() : '';
   const selectedYearValue = dateRangeIsFullMonth ? dateRange.from?.getUTCFullYear().toString() : '';
 
   const [fromInputValue, setFromInputValue] = useState(() => fromDateString);
@@ -49,7 +49,9 @@ export function DatePicker({ dateRange, setDateRange, className = "" }: DatePick
     setter(newValue);
 
     if (datesAreCurrentFullMonthRange(fromDateValue, toDateValue)) {
+      console.log('datesAreCurrentFullMonthRange', fromDateValue, toDateValue);
       const dateObj = convertToDate(fromDateValue, true);
+      console.log('dateObj', dateObj);
       setSelectedMonth(dateObj.getUTCMonth().toString());
       setSelectedYear(dateObj.getUTCFullYear().toString());
     } else {
