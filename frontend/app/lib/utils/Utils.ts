@@ -46,7 +46,10 @@ export const getCurrentYearRange = (date: Date) : DateRange => {
   };
 };
 
-export const datesAreCurrentFullMonthRange = (from: Date | string, to: Date | string) => {
+export const datesAreCurrentFullMonthRange = (from: Date | string | undefined, to: Date | string | undefined) => {
+  if (!from || !to)
+    return false;
+
   const fromDate = from instanceof Date ? from : convertToDate(from);
   const toDate = to instanceof Date ? to : convertToDate(to);
 
