@@ -44,7 +44,7 @@ jest.mock('@/app/lib/api', () => ({
 }));
 
 jest.mock('@/app/lib/utils', () => ({
-  getCurrentMonthRange: jest.fn(() => ({ start: new Date(), end: new Date() })),
+  getFullMonthRange: jest.fn(() => ({ start: new Date(), end: new Date() })),
   messageTypeIsError: jest.fn(() => false),
 }));
 

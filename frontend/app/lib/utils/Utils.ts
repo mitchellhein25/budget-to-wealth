@@ -32,28 +32,28 @@ export const convertCentsToDollars = (cents: number): string => {
   }).format(cents / 100);
 };
 
-export const getCurrentMonthRange = (date: Date) : DateRange => {
+export const getFullMonthRange = (date: Date) : DateRange => {
   return {
     from: new Date(date.getUTCFullYear(), date.getUTCMonth(), 1, 12),
     to: new Date(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12),
   };
 };
 
-export const getCurrentYearRange = (date: Date) : DateRange => {
+export const getFullYearRange = (date: Date) : DateRange => {
   return {
     from: new Date(date.getUTCFullYear(), 0, 1, 12),
     to: new Date(date.getUTCFullYear(), 11, 31, 12),
   };
 };
 
-export const datesAreCurrentFullMonthRange = (from: Date | string | undefined, to: Date | string | undefined) => {
+export const datesAreFullMonthRange = (from: Date | string | undefined, to: Date | string | undefined) => {
   if (!from || !to)
     return false;
 
   const fromDate = from instanceof Date ? from : convertToDate(from);
   const toDate = to instanceof Date ? to : convertToDate(to);
 
-  const currentMonthRange = getCurrentMonthRange(new Date());
+  const currentMonthRange = getFullMonthRange(fromDate);
   if (!currentMonthRange.from || !currentMonthRange.to)
     return false;
   

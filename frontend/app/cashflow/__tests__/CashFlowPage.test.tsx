@@ -17,7 +17,7 @@ jest.mock('@/app/lib/api', () => ({
 }));
 
 jest.mock('@/app/lib/utils', () => ({
-  getCurrentMonthRange: jest.fn(() => ({ from: new Date('2024-01-01'), to: new Date('2024-01-31') })),
+  getFullMonthRange: jest.fn(() => ({ from: new Date('2024-01-01'), to: new Date('2024-01-31') })),
   messageTypeIsError: jest.fn(() => false),
   replaceSpacesWithDashes: jest.fn((str: string) => str.replace(/\s+/g, '-')),
 }));

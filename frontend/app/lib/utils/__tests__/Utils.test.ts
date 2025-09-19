@@ -6,8 +6,8 @@ import {
   messageTypeIsInfo,
   convertDollarsToCents,
   convertCentsToDollars,
-  getCurrentMonthRange,
-  getCurrentYearRange,
+  getFullMonthRange,
+  getFullYearRange,
   convertToDate,
   cleanCurrencyInput,
   cleanPercentageInput,
@@ -114,50 +114,50 @@ describe('Utils', () => {
   describe('getCurrentMonthRange', () => {
     it('returns correct month range for January', () => {
       const date = new Date('2024-01-15');
-      const result = getCurrentMonthRange(date);
-      expect(result.from).toEqual(new Date(2024, 0, 1));
-      expect(result.to).toEqual(new Date(2024, 0, 31));
+      const result = getFullMonthRange(date);
+      expect(result.from).toEqual(new Date(2024, 0, 1, 12));
+      expect(result.to).toEqual(new Date(2024, 0, 31, 12));
     });
 
     it('returns correct month range for February (leap year)', () => {
       const date = new Date('2024-02-15');
-      const result = getCurrentMonthRange(date);
-      expect(result.from).toEqual(new Date(2024, 1, 1));
-      expect(result.to).toEqual(new Date(2024, 1, 29));
+      const result = getFullMonthRange(date);
+      expect(result.from).toEqual(new Date(2024, 1, 1, 12));
+      expect(result.to).toEqual(new Date(2024, 1, 29, 12));
     });
 
     it('returns correct month range for December', () => {
       const date = new Date('2024-12-15');
-      const result = getCurrentMonthRange(date);
-      expect(result.from).toEqual(new Date(2024, 11, 1));
-      expect(result.to).toEqual(new Date(2024, 11, 31));
+      const result = getFullMonthRange(date);
+      expect(result.from).toEqual(new Date(2024, 11, 1, 12));
+      expect(result.to).toEqual(new Date(2024, 11, 31, 12));
     });
   });
 
   describe('getCurrentYearRange', () => {
     it('returns correct year range', () => {
       const date = new Date('2024-06-15');
-      const result = getCurrentYearRange(date);
-      expect(result.from).toEqual(new Date(2024, 0, 1));
-      expect(result.to).toEqual(new Date(2024, 11, 31));
+      const result = getFullYearRange(date);
+      expect(result.from).toEqual(new Date(2024, 0, 1, 12));
+      expect(result.to).toEqual(new Date(2024, 11, 31, 12));
     });
 
     it('handles leap year correctly', () => {
       const date = new Date('2024-06-15');
-      const result = getCurrentYearRange(date);
-      expect(result.to.getDate()).toBe(31);
+      const result = getFullYearRange(date);
+      expect(result.to?.getDate()).toBe(31);
     });
   });
 
   describe('convertToDate', () => {
     it('converts valid date string to Date', () => {
       const result = convertToDate('2024-01-15');
-      expect(result).toEqual(new Date(Date.UTC(2024, 0, 15)));
+      expect(result).toEqual(new Date(Date.UTC(2024, 0, 15, 12)));
     });
 
     it('handles different months correctly', () => {
       const result = convertToDate('2024-12-25');
-      expect(result).toEqual(new Date(Date.UTC(2024, 11, 25)));
+      expect(result).toEqual(new Date(Date.UTC(2024, 11, 25, 12)));
     });
 
     it('returns current date for undefined input', () => {

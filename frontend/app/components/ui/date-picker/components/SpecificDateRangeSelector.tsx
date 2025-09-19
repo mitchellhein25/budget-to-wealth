@@ -1,5 +1,5 @@
-import { MobileState, useMobileDetection } from '@/app/hooks/useMobileDetection';
 import React from 'react'
+import { MobileState, useMobileDetection } from '@/app/hooks/useMobileDetection';
 
 type SpecificDateRangeSelectorProps = {
   fromInputValue: string;

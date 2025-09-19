@@ -12,11 +12,23 @@ jest.mock('@/app/lib/utils', () => ({
     const adjustedMonth = noMonthAdjustment ? month - 1 : month - 1;
     return new Date(Date.UTC(year, adjustedMonth, day, 12));
   }),
-  datesAreCurrentFullMonthRange: jest.fn((from: string, to: string) => {
+  datesAreFullMonthRange: jest.fn((from: Date | string | undefined, to: Date | string | undefined) => {
     if (!from || !to) return false;
     
-    const fromParts = from.split('-');
-    const toParts = to.split('-');
+    let fromStr: string, toStr: string;
+    if (from instanceof Date) {
+      fromStr = from.toISOString().slice(0, 10);
+    } else {
+      fromStr = from;
+    }
+    if (to instanceof Date) {
+      toStr = to.toISOString().slice(0, 10);
+    } else {
+      toStr = to;
+    }
+    
+    const fromParts = fromStr.split('-');
+    const toParts = toStr.split('-');
     
     if (fromParts.length !== 3 || toParts.length !== 3) return false;
     
@@ -33,7 +45,7 @@ jest.mock('@/app/lib/utils', () => ({
     }
     return false;
   }),
-  getCurrentMonthRange: jest.fn((date: Date) => ({
+  getFullMonthRange: jest.fn((date: Date) => ({
     from: new Date(date.getFullYear(), date.getMonth(), 1),
     to: new Date(date.getFullYear(), date.getMonth() + 1, 0),
   })),
@@ -51,47 +63,43 @@ describe('DatePicker', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the component with title and month/year selects by default', () => {
+  it('renders the component with title and date range inputs by default when no dates provided', () => {
     render(<DatePicker {...defaultProps} />);
     
-    expect(screen.getByText('Date Range Filter')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Select Month')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Year')).toBeInTheDocument();
-    expect(screen.getByLabelText('Select specific date range')).toBeInTheDocument();
+    expect(screen.getByText('Date Range')).toBeInTheDocument();
+    expect(screen.getByText('From')).toBeInTheDocument();
+    expect(screen.getByText('To')).toBeInTheDocument();
+    expect(screen.getByLabelText('Specific date range')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /apply filter/i })).toBeInTheDocument();
+    
+    const checkbox = screen.getByLabelText('Specific date range');
+    expect(checkbox).toBeChecked();
   });
 
-  it('shows date inputs when checkbox is checked', () => {
+  it('shows month/year selects when checkbox is unchecked', () => {
     render(<DatePicker {...defaultProps} />);
     
-    const checkbox = screen.getByLabelText('Select specific date range');
+    const checkbox = screen.getByLabelText('Specific date range');
     
-    // Initially, date inputs should not be visible
-    expect(screen.queryByText('From Date')).not.toBeInTheDocument();
-    expect(screen.queryByText('To Date')).not.toBeInTheDocument();
+    // Initially in date range mode (checkbox checked)
+    expect(checkbox).toBeChecked();
+    expect(screen.getByText('From')).toBeInTheDocument();
+    expect(screen.getByText('To')).toBeInTheDocument();
     
-    // Check the checkbox
+    // Uncheck the checkbox to switch to month/year mode
     fireEvent.click(checkbox);
     
-    // Now date inputs should be visible
-    expect(screen.getByText('From Date')).toBeInTheDocument();
-    expect(screen.getByText('To Date')).toBeInTheDocument();
-    
-    const inputs = screen.getAllByPlaceholderText('MM/DD/YYYY');
-    expect(inputs).toHaveLength(2);
-    
-    inputs.forEach(input => {
-      expect(input).toHaveAttribute('type', 'date');
-    });
+    // Now month/year selects should be visible
+    expect(checkbox).not.toBeChecked();
+    expect(screen.getByDisplayValue('Select Month')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('YYYY')).toBeInTheDocument();
+    expect(screen.queryByText('From')).not.toBeInTheDocument();
   });
 
   it('updates input values when user types in date range mode', () => {
     render(<DatePicker {...defaultProps} />);
     
-    // Enable date range mode
-    const checkbox = screen.getByLabelText('Select specific date range');
-    fireEvent.click(checkbox);
-    
+    // Already in date range mode by default
     const inputs = screen.getAllByPlaceholderText('MM/DD/YYYY');
     const fromInput = inputs[0];
     const toInput = inputs[1];
@@ -106,14 +114,18 @@ describe('DatePicker', () => {
   it('enables apply button when month and year are selected', () => {
     render(<DatePicker {...defaultProps} />);
     
+    // Switch to month/year mode first
+    const checkbox = screen.getByLabelText('Specific date range');
+    fireEvent.click(checkbox);
+    
     const applyButton = screen.getByRole('button', { name: /apply filter/i });
     expect(applyButton).toBeDisabled();
     
     const monthSelect = screen.getByDisplayValue('Select Month');
-    const yearSelect = screen.getByDisplayValue('Year');
+    const yearInput = screen.getByDisplayValue('');
     
     fireEvent.change(monthSelect, { target: { value: '1' } });
-    fireEvent.change(yearSelect, { target: { value: '2024' } });
+    fireEvent.change(yearInput, { target: { value: '2024' } });
     
     expect(applyButton).toBeEnabled();
   });
@@ -121,12 +133,16 @@ describe('DatePicker', () => {
   it('calls setDateRange when apply button is clicked with month/year', async () => {
     render(<DatePicker {...defaultProps} />);
     
+    // Switch to month/year mode first
+    const checkbox = screen.getByLabelText('Specific date range');
+    fireEvent.click(checkbox);
+    
     const monthSelect = screen.getByDisplayValue('Select Month');
-    const yearSelect = screen.getByDisplayValue('Year');
+    const yearInput = screen.getByDisplayValue('');
     const applyButton = screen.getByRole('button', { name: /apply filter/i });
     
     fireEvent.change(monthSelect, { target: { value: '1' } });
-    fireEvent.change(yearSelect, { target: { value: '2024' } });
+    fireEvent.change(yearInput, { target: { value: '2024' } });
     fireEvent.click(applyButton);
     
     await waitFor(() => {
@@ -137,46 +153,50 @@ describe('DatePicker', () => {
     });
   });
 
-  it('toggles between month/year and date range modes', () => {
+  it('toggles between date range and month/year modes', () => {
     render(<DatePicker {...defaultProps} />);
     
-    const checkbox = screen.getByLabelText('Select specific date range');
+    const checkbox = screen.getByLabelText('Specific date range');
     
-    // Initially in month/year mode
+    // Initially in date range mode
+    expect(checkbox).toBeChecked();
+    expect(screen.getByText('From')).toBeInTheDocument();
+    expect(screen.getByText('To')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('Select Month')).not.toBeInTheDocument();
+    
+    // Switch to month/year mode
+    fireEvent.click(checkbox);
     expect(checkbox).not.toBeChecked();
     expect(screen.getByDisplayValue('Select Month')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Year')).toBeInTheDocument();
-    expect(screen.queryByText('From Date')).not.toBeInTheDocument();
+    expect(screen.getByPlaceholderText('YYYY')).toBeInTheDocument();
+    expect(screen.queryByText('From')).not.toBeInTheDocument();
     
-    // Switch to date range mode
+    // Switch back to date range mode
     fireEvent.click(checkbox);
     expect(checkbox).toBeChecked();
     expect(screen.queryByDisplayValue('Select Month')).not.toBeInTheDocument();
-    expect(screen.getByText('From Date')).toBeInTheDocument();
-    expect(screen.getByText('To Date')).toBeInTheDocument();
-    
-    // Switch back to month/year mode
-    fireEvent.click(checkbox);
-    expect(checkbox).not.toBeChecked();
-    expect(screen.getByDisplayValue('Select Month')).toBeInTheDocument();
-    expect(screen.queryByText('From Date')).not.toBeInTheDocument();
+    expect(screen.getByText('From')).toBeInTheDocument();
   });
 
   it('applies custom className when provided', () => {
     render(<DatePicker {...defaultProps} className="custom-class" />);
     
-    const container = screen.getByText('Date Range Filter').closest('.card');
+    const container = screen.getByText('Date Range').closest('.card');
     expect(container).toHaveClass('custom-class');
   });
 
   it('updates internal dates when month/year is selected', () => {
     render(<DatePicker {...defaultProps} />);
     
+    // Switch to month/year mode first
+    const checkbox = screen.getByLabelText('Specific date range');
+    fireEvent.click(checkbox);
+    
     const monthSelect = screen.getByDisplayValue('Select Month');
-    const yearSelect = screen.getByDisplayValue('Year');
+    const yearInput = screen.getByDisplayValue('');
     
     fireEvent.change(monthSelect, { target: { value: '1' } });
-    fireEvent.change(yearSelect, { target: { value: '2024' } });
+    fireEvent.change(yearInput, { target: { value: '2024' } });
     
     const applyButton = screen.getByRole('button', { name: /apply filter/i });
     expect(applyButton).toBeEnabled();
@@ -193,10 +213,14 @@ describe('DatePicker', () => {
     
     render(<DatePicker {...propsWithFullMonth} />);
     
-    const monthSelect = screen.getByDisplayValue('January');
-    const yearSelect = screen.getByDisplayValue('2024');
-    expect(monthSelect).toBeInTheDocument();
-    expect(yearSelect).toBeInTheDocument();
+    // Should be in month/year mode for full month range
+    const checkbox = screen.getByLabelText('Specific date range');
+    expect(checkbox).not.toBeChecked();
+    
+    // Verify month/year inputs are present and year is set correctly  
+    expect(screen.getByText('Month')).toBeInTheDocument();
+    expect(screen.getByText('Year')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('2024')).toBeInTheDocument();
   });
 
   it('switches to date range mode when partial month is provided', () => {
@@ -210,9 +234,13 @@ describe('DatePicker', () => {
     
     render(<DatePicker {...propsWithPartialMonth} />);
     
-    const checkbox = screen.getByLabelText('Select specific date range');
+    const checkbox = screen.getByLabelText('Specific date range');
     expect(checkbox).toBeChecked();
-    expect(screen.getByText('From Date')).toBeInTheDocument();
-    expect(screen.getByText('To Date')).toBeInTheDocument();
+    expect(screen.getByText('From')).toBeInTheDocument();
+    expect(screen.getByText('To')).toBeInTheDocument();
+    
+    const inputs = screen.getAllByPlaceholderText('MM/DD/YYYY');
+    expect(inputs[0]).toHaveValue('2024-01-15');
+    expect(inputs[1]).toHaveValue('2024-01-25');
   });
 }); 

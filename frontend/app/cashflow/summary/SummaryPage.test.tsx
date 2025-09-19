@@ -3,7 +3,7 @@ import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SummaryPage from './page';
 import { useFormListItemsFetch, useSidebarDetection, useMobileDetection, MobileState } from '@/app/hooks';
-import { getCurrentMonthRange } from '@/app/lib/utils';
+import { getFullMonthRange } from '@/app/lib/utils';
 import { CashFlowEntry, CashFlowType } from '@/app/cashflow';
 import { DateRange } from '@/app/components';
 
@@ -22,7 +22,7 @@ jest.mock('@/app/hooks', () => ({
 }));
 
 jest.mock('@/app/lib/utils', () => ({
-  getCurrentMonthRange: jest.fn(),
+  getFullMonthRange: jest.fn(),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -78,7 +78,7 @@ jest.mock('@/app/components/ui/OverUnderOnIcon', () => {
 const mockUseFormListItemsFetch = useFormListItemsFetch as jest.MockedFunction<typeof useFormListItemsFetch>;
 const mockUseSidebarDetection = useSidebarDetection as jest.MockedFunction<typeof useSidebarDetection>;
 const mockUseMobileDetection = useMobileDetection as jest.MockedFunction<typeof useMobileDetection>;
-const mockGetCurrentMonthRange = getCurrentMonthRange as jest.MockedFunction<typeof getCurrentMonthRange>;
+const mockGetCurrentMonthRange = getFullMonthRange as jest.MockedFunction<typeof getFullMonthRange>;
 
 const mockDateRange = {
   from: new Date('2024-01-01'),

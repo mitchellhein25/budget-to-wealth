@@ -3,13 +3,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { MobileState, useForm, useFormListItemsFetch, useMobileDetection } from '@/app/hooks';
 import { BUDGETS_ENDPOINT, getBudgetsByDateRange, getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api';
-import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
+import { getFullMonthRange, messageTypeIsError } from '@/app/lib/utils';
 import { DatePicker, DateRange, ResponsiveFormListPage } from '@/app/components';
 import { CashFlowSideBar, CashFlowEntry, EXPENSE_ITEM_NAME_LOWERCASE } from '@/app/cashflow';
 import { BUDGET_ITEM_NAME, Budget, BudgetFormData, transformFormDataToBudget, BudgetsForm, BudgetsList, BudgetSummary, BUDGET_ITEM_NAME_LOWERCASE, convertBudgetToFormData } from '@/app/cashflow/budget';
 
 export default function BudgetsPage() {
-	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+	const [dateRange, setDateRange] = useState<DateRange>(getFullMonthRange(new Date()));
   const mobileState = useMobileDetection();
 
   const fetchBudgets = useCallback(() => getBudgetsByDateRange(dateRange), [dateRange]);

@@ -3,13 +3,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormListItemsFetch, useSidebarDetection, useMobileDetection, MobileState } from '@/app/hooks';
 import { getCashFlowEntriesByDateRangeAndType } from '@/app/lib/api';
-import { getCurrentMonthRange } from '@/app/lib/utils';
+import { getFullMonthRange } from '@/app/lib/utils';
 import { DatePicker, DateRange, TotalDisplay } from '@/app/components';
 import { CashFlowType, CashFlowEntry, EXPENSE_ITEM_NAME_LOWERCASE, INCOME_ITEM_NAME_LOWERCASE, INCOME_ITEM_NAME, CASHFLOW_ITEM_NAME, EXPENSE_ITEM_NAME, CashFlowSideBar } from '@/app/cashflow';
 import OverUnderOnIcon from '@/app/components/ui/OverUnderOnIcon';
 
 export default function SummaryPage() {
-  const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+  const [dateRange, setDateRange] = useState<DateRange>(getFullMonthRange(new Date()));
   const showSidebar = useSidebarDetection();
   const mobileState = useMobileDetection();
 

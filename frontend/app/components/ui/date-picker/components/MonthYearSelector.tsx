@@ -1,10 +1,11 @@
 import React from 'react'
+import { maxYearOption, minYearOption } from '@/app/components/ui/date-picker/components/functions';
 
 type MonthYearSelectorProps = {
   selectedMonth: string;
   selectedYear: string;
   handleMonthChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleYearChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function MonthYearSelector(props: MonthYearSelectorProps) {
@@ -31,42 +32,34 @@ export default function MonthYearSelector(props: MonthYearSelectorProps) {
       </option>
     )));
 
-  const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 41 }, (_, i) => currentYear - 20 + i);
-
-  const yearSelectorOptions = (
-    yearOptions.map(year => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    )));
-
-  function SelectorComponent(
-    label: string,
-    value: string,
-    handleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void,
-    options: React.ReactNode
-  ) {
-    return (
-      <div className="flex flex-col form-control">
-        <label className="label">
-          <span className="label-text">{label}</span>
-        </label>
-        <select
-          value={value}
-          onChange={handleChange}
-          className="select select-bordered"
-        >
-          {options}
-        </select>
-      </div>
-    );
-  }
-
   return (
     <div className="flex gap-3 justify-center items-end">
-      {SelectorComponent("Month", props.selectedMonth, props.handleMonthChange, monthSelectorOptions)}
-      {SelectorComponent("Year", props.selectedYear, props.handleYearChange, yearSelectorOptions)}
+      <div className="flex flex-col form-control">
+        <label className="label">
+          <span className="label-text">Month</span>
+        </label>
+        <select
+          value={props.selectedMonth}
+          onChange={props.handleMonthChange}
+          className="select select-bordered"
+        >
+          {monthSelectorOptions}
+        </select>
+      </div>
+      <div className="flex flex-col form-control">
+        <label className="label">
+          <span className="label-text">Year</span>
+        </label>
+        <input 
+          type="number" 
+          min={minYearOption} 
+          max={maxYearOption} 
+          value={props.selectedYear}
+          onChange={props.handleYearChange}
+          placeholder="YYYY"
+          className="input input-bordered"
+        />
+      </div>
     </div>
   )
 }

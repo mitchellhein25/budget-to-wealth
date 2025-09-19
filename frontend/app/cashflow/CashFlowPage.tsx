@@ -3,12 +3,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm, useFormListItemsFetch } from '@/app/hooks';
 import { CASH_FLOW_ENTRIES_ENDPOINT, getCashFlowEntriesByDateRangeAndType, getRecurringCashFlowEntries } from '@/app/lib/api';
-import { getCurrentMonthRange, messageTypeIsError } from '@/app/lib/utils';
+import { getFullMonthRange, messageTypeIsError } from '@/app/lib/utils';
 import { DatePicker, DateRange, ResponsiveFormListPage, TotalDisplay, } from '@/app/components';
 import { CashFlowEntry, CashFlowEntryFormData, CashFlowSideBar, CashFlowType, convertCashFlowEntryToFormData, transformCashFlowFormDataToEntry, CashFlowEntriesList, CashFlowEntriesForm } from '@/app/cashflow';
 
 export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashFlowType, recurringOnly?: boolean}) {
-	const [dateRange, setDateRange] = useState<DateRange>(getCurrentMonthRange(new Date()));
+	const [dateRange, setDateRange] = useState<DateRange>(getFullMonthRange(new Date()));
 
   const fetchCashFlowEntries = useCallback(() => {
     if (recurringOnly) {
