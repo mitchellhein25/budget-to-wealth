@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MonthYearSelector from '@/app/components/ui/date-picker/components/MonthYearSelector';
 
-// Mock the functions import
 jest.mock('@/app/components/ui/date-picker/components/functions', () => ({
   minYearOption: 2005,
   maxYearOption: 2045,

@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import SpecificDateRangeSelector from '@/app/components/ui/date-picker/components/SpecificDateRangeSelector';
 import { MobileState } from '@/app/hooks/useMobileDetection';
 
-// Mock the useMobileDetection hook
 jest.mock('@/app/hooks/useMobileDetection', () => ({
   useMobileDetection: jest.fn(),
   MobileState: {
@@ -70,7 +69,7 @@ describe('SpecificDateRangeSelector', () => {
     
     render(<SpecificDateRangeSelector {...defaultProps} />);
     
-    const container = screen.getByText('From').closest('div').parentElement;
+    const container = screen.getByText('From').closest('div')?.parentElement;
     expect(container).toHaveClass('flex-row', 'items-end');
     expect(container).not.toHaveClass('flex-col');
   });
@@ -80,7 +79,7 @@ describe('SpecificDateRangeSelector', () => {
     
     render(<SpecificDateRangeSelector {...defaultProps} />);
     
-    const container = screen.getByText('From').closest('div').parentElement;
+    const container = screen.getByText('From').closest('div')?.parentElement;
     expect(container).toHaveClass('flex-col');
     expect(container).not.toHaveClass('flex-row');
   });
@@ -172,7 +171,7 @@ describe('SpecificDateRangeSelector', () => {
       
       const { unmount } = render(<SpecificDateRangeSelector {...defaultProps} />);
       
-      const container = screen.getByText('From').closest('div').parentElement;
+      const container = screen.getByText('From').closest('div')?.parentElement;
       
       if (state === MobileState.XSMALL) {
         expect(container).toHaveClass('flex-col');
