@@ -15,7 +15,8 @@ jest.mock('@/app/hooks/useMobileDetection', () => ({
   }
 }));
 
-const mockUseMobileDetection = require('@/app/hooks/useMobileDetection').useMobileDetection;
+import { useMobileDetection } from '@/app/hooks/useMobileDetection';
+const mockUseMobileDetection = useMobileDetection as jest.MockedFunction<typeof useMobileDetection>;
 
 describe('SpecificDateRangeSelector', () => {
   const mockHandleFromChange = jest.fn();
