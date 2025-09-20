@@ -30,15 +30,14 @@ public class HoldingInvestmentReturnsController : ControllerBase
         {
             query = query.Where(investmentReturn =>
                 investmentReturn.StartHoldingSnapshot != null &&
-                investmentReturn.EndHoldingSnapshot != null &&
                 investmentReturn.StartHoldingSnapshot.Date >= startDate &&
-                investmentReturn.EndHoldingSnapshot.Date <= endDate);
+                investmentReturn.StartHoldingSnapshot.Date <= endDate);
         }
         else if (startDate.HasValue)
         {
             query = query.Where(investmentReturn =>
-                investmentReturn.EndHoldingSnapshot != null &&
-                investmentReturn.EndHoldingSnapshot.Date >= startDate);
+                investmentReturn.StartHoldingSnapshot != null &&
+                investmentReturn.StartHoldingSnapshot.Date >= startDate);
         }
         else if (endDate.HasValue)
         {

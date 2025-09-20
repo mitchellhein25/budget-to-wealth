@@ -78,8 +78,7 @@ public class HoldingInvestmentReturnsControllerTests : IDisposable
         IEnumerable<HoldingInvestmentReturn> investmentReturns = Assert.IsAssignableFrom<IEnumerable<HoldingInvestmentReturn>>(result!.Value);
 
         Assert.Contains(investmentReturns, ir => ir.TotalContributions == _testObjects.TestUser1InvestmentReturn3.TotalContributions);
-        Assert.Contains(investmentReturns, ir => ir.TotalContributions == _testObjects.TestUser1SecondInvestmentReturn4.TotalContributions);
-        Assert.Equal(2, investmentReturns.Count());
+        Assert.Single(investmentReturns);
     }
 
     [Fact]
@@ -100,7 +99,8 @@ public class HoldingInvestmentReturnsControllerTests : IDisposable
 
         Assert.Contains(investmentReturns, ir => ir.TotalContributions == _testObjects.TestDefaultInvestmentReturn1.TotalContributions);
         Assert.Contains(investmentReturns, ir => ir.TotalContributions == _testObjects.TestUser1InvestmentReturn3.TotalContributions);
-        Assert.Equal(2, investmentReturns.Count());
+        Assert.Contains(investmentReturns, ir => ir.TotalContributions == _testObjects.TestUser1SecondInvestmentReturn4.TotalContributions);
+        Assert.Equal(3, investmentReturns.Count());
     }
 
     [Fact]
