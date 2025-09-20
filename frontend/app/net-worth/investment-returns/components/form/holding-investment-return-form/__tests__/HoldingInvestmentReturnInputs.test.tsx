@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HoldingInvestmentReturnInputs } from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/HoldingInvestmentReturnInputs';
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID } from '@/app/net-worth/investment-returns';
-import { NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK } from '@/app/net-worth/investment-returns';
+import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
 import { HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings';
 
 
@@ -187,7 +187,7 @@ describe('HoldingInvestmentReturnInputs', () => {
     render(<HoldingInvestmentReturnInputs {...defaultProps} />);
 
     const editLink = screen.getByTestId(editHoldingsLinkTestId);
-    expect(editLink).toHaveAttribute('href', `/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}`);
+    expect(editLink).toHaveAttribute('href', `/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_SNAPSHOT_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}?returnUrl=/${NET_WORTH_ITEM_NAME_LINK}/${INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK}`);
     expect(editLink).toHaveAttribute('title', 'Edit Holdings');
     expect(editLink).toHaveClass('btn', 'btn-ghost', 'btn-sm', 'btn-circle');
   });

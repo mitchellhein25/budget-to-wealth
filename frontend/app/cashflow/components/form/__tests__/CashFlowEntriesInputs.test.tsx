@@ -34,7 +34,8 @@ jest.mock('@/app/cashflow', () => ({
     EXPENSE: 'Expense'
   },
   INCOME_ITEM_NAME_LOWERCASE: 'income',
-  EXPENSE_ITEM_NAME_LOWERCASE_PLURAL: 'expenses'
+  EXPENSE_ITEM_NAME_LOWERCASE_PLURAL: 'expenses',
+  CASHFLOW_ITEM_NAME_LOWERCASE: 'cashflow'
 }));
 
 

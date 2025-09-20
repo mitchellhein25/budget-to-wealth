@@ -2,7 +2,7 @@ import React from 'react'
 import { convertDateToISOString } from '@/app/lib/utils';
 import { InputFieldSetTemplate, Category } from '@/app/components'
 import { RecurrenceFrequency } from '@/app/cashflow';
-import { INVESTMENT_RETURN_ITEM_NAME, INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData } from '@/app/net-worth/investment-returns';
+import { INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK, MANUAL_INVESTMENT_RETURN_ITEM_NAME, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, ManualInvestmentReturnFormData } from '@/app/net-worth/investment-returns';
 import Link from 'next/link';
 import { Edit } from 'lucide-react';
 import { NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots';
@@ -53,7 +53,7 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
           </div>
         }
       />
-      < InputFieldSetTemplate
+      <InputFieldSetTemplate
         label="Return Date"
         isRequired={true}
         inputChild={

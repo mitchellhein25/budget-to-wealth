@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import HoldingsPage from '@/app/net-worth/holding-snapshots/holdings/page';
 
+jest.mock('next/navigation', () => ({
+  useSearchParams: () => ({
+    get: jest.fn(() => null),
+  }),
+}));
+
 jest.mock('@/app/hooks', () => ({
   useForm: () => ({
     formData: {},

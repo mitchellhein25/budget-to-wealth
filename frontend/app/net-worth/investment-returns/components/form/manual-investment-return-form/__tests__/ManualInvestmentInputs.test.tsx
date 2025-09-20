@@ -39,12 +39,12 @@ describe('ManualInvestmentInputs', () => {
   it('renders all form fields with correct labels and requirements', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
-    expect(screen.getByTestId('field-manual-investment-category')).toBeInTheDocument();
+    expect(screen.getByTestId('field-manual-investment-return-category')).toBeInTheDocument();
     expect(screen.getByTestId('field-return-date')).toBeInTheDocument();
     expect(screen.getByTestId('field-percentage-return')).toBeInTheDocument();
     expect(screen.getByTestId('field-recurrence')).toBeInTheDocument();
 
-    expect(screen.getByTestId('required-manual-investment-category')).toHaveTextContent('true');
+    expect(screen.getByTestId('required-manual-investment-return-category')).toHaveTextContent('true');
     expect(screen.getByTestId('required-return-date')).toHaveTextContent('true');
     expect(screen.getByTestId('required-percentage-return')).toHaveTextContent('true');
     expect(screen.getByTestId('required-recurrence')).toHaveTextContent('false');
@@ -53,7 +53,7 @@ describe('ManualInvestmentInputs', () => {
   it('renders hidden id input with correct attributes', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
-    const idInput = screen.getByTestId('field-manual-investment-category').parentElement?.querySelector('input[hidden]') as HTMLInputElement;
+    const idInput = screen.getByTestId('field-manual-investment-return-category').parentElement?.querySelector('input[hidden]') as HTMLInputElement;
     expect(idInput).toHaveAttribute('id', `${formId}-id`);
     expect(idInput).toHaveAttribute('name', `${formId}-id`);
     expect(idInput).toHaveAttribute('readonly');
@@ -64,7 +64,7 @@ describe('ManualInvestmentInputs', () => {
   it('renders manual investment category select with correct options', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
-    const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
+    const categorySelect = screen.getByTestId('field-manual-investment-return-category').querySelector('select') as HTMLSelectElement;
     expect(categorySelect).toHaveAttribute('id', `${formId}-manualInvestmentCategoryId`);
     expect(categorySelect).toHaveAttribute('name', `${formId}-manualInvestmentCategoryId`);
     expect(categorySelect).toHaveClass('select', 'w-full');
@@ -126,7 +126,7 @@ describe('ManualInvestmentInputs', () => {
 
     render(<ManualInvestmentInputs {...defaultProps} editingFormData={editingFormData} />);
 
-    const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
+    const categorySelect = screen.getByTestId('field-manual-investment-return-category').querySelector('select') as HTMLSelectElement;
     expect(categorySelect).toHaveValue('1');
 
     const dateInput = screen.getByTestId('field-return-date').querySelector('input') as HTMLInputElement;
@@ -175,7 +175,7 @@ describe('ManualInvestmentInputs', () => {
   it('calls onChange when form fields are modified', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
-    const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
+    const categorySelect = screen.getByTestId('field-manual-investment-return-category').querySelector('select') as HTMLSelectElement;
     fireEvent.change(categorySelect, { target: { value: '1' } });
 
     expect(mockOnChange).toHaveBeenCalled();
@@ -233,7 +233,7 @@ describe('ManualInvestmentInputs', () => {
 
     render(<ManualInvestmentInputs {...propsWithEmptyCategories} />);
 
-    const categorySelect = screen.getByTestId('field-manual-investment-category').querySelector('select') as HTMLSelectElement;
+    const categorySelect = screen.getByTestId('field-manual-investment-return-category').querySelector('select') as HTMLSelectElement;
     const options = categorySelect.querySelectorAll('option');
     expect(options).toHaveLength(1); // Only "Pick a category" option
     expect(options[0]).toHaveTextContent('Pick a category');
@@ -260,7 +260,7 @@ describe('ManualInvestmentInputs', () => {
 
     render(<ManualInvestmentInputs {...propsWithEmptyData} />);
 
-    expect(screen.getByTestId('field-manual-investment-category')).toBeInTheDocument();
+    expect(screen.getByTestId('field-manual-investment-return-category')).toBeInTheDocument();
     expect(screen.getByTestId('field-return-date')).toBeInTheDocument();
     expect(screen.getByTestId('field-percentage-return')).toBeInTheDocument();
     expect(screen.getByTestId('field-recurrence')).toBeInTheDocument();

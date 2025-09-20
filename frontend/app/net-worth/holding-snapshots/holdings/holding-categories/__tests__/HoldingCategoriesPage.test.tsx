@@ -8,8 +8,7 @@ jest.mock('@/app/hooks', () => ({
 
 jest.mock('@/app/components', () => ({
   BackArrow: ({ link }: { link: string }) => <div data-testid="back-arrow" data-link={link}>Back Arrow</div>,
-  CategoriesPage: ({ 
-    isLoggedIn, 
+CategoriesPage: ({ 
     categoryTypeName, 
     getEndpoint, 
     createUpdateDeleteEndpoint 
@@ -20,7 +19,6 @@ jest.mock('@/app/components', () => ({
     createUpdateDeleteEndpoint: string; 
   }) => (
     <div data-testid="categories-page" 
-         data-is-logged-in={isLoggedIn}
          data-category-type={categoryTypeName}
          data-get-endpoint={getEndpoint}
          data-create-endpoint={createUpdateDeleteEndpoint}>
@@ -41,7 +39,6 @@ describe('Holding Categories Page', () => {
     expect(backArrow).toHaveAttribute('data-link', '/net-worth/holdings');
     
     const categoriesPage = screen.getByTestId('categories-page');
-    expect(categoriesPage).toHaveAttribute('data-is-logged-in', 'true');
     expect(categoriesPage).toHaveAttribute('data-category-type', 'Holding');
     expect(categoriesPage).toHaveAttribute('data-get-endpoint', 'HoldingCategories');
     expect(categoriesPage).toHaveAttribute('data-create-endpoint', 'HoldingCategories');
