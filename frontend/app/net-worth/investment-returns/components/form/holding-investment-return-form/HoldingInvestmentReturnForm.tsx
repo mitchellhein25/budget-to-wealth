@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { createHoldingSnapshot, getAllHoldings, getHoldingSnapshotsByDateRange, updateHoldingSnapshot, FetchResult } from '@/app/lib/api';
-import { convertDateToISOString } from '@/app/lib/utils';
+import { convertDateToISOString, convertDollarsToCents } from '@/app/lib/utils';
 import { UpdateCreateButton, ResetButton, formHasAnyValue, FormTemplate } from '@/app/components';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings';
@@ -87,7 +87,7 @@ export function HoldingInvestmentReturnForm(
     const endHoldingSnapshot = {
       holdingId: endHoldingId,
       date: convertDateToISOString(new Date(date)),
-      balance: Number(balance) ?? 0,
+      balance: convertDollarsToCents(balance) ?? 0,
     }
     let result: FetchResult<HoldingSnapshot> | null = null;
     if (endHoldingSnapshotId) {
