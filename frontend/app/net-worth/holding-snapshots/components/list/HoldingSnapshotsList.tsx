@@ -48,7 +48,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 			onDelete={handleDelete}
       onUpdate={(s) => {
         const todayIso = new Date().toISOString();
-        props.onSnapshotIsEditing({ ...s, id: undefined, date: todayIso, balance: 0 } as HoldingSnapshot);
+        props.onSnapshotIsEditing({ ...s, id: undefined, date: todayIso } as HoldingSnapshot);
       }}
 		/>
 	);
