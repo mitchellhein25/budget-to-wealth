@@ -19,9 +19,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <NavBar session={session} />
           </header>
           <main className="flex-1">
-            <UnauthorizedWrapper session={session}>
+            {/* <UnauthorizedWrapper session={session}> */}
               {children}
-            </UnauthorizedWrapper>
+            {/* </UnauthorizedWrapper> */}
           </main>
         </div>
       </body>
