@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { Edit } from 'lucide-react'
 import { convertDateToISOString, convertToDate, formatDate } from '@/app/lib/utils'
 import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components'
-import { HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots'
+import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots'
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings'
-import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnFormData } from '@/app/net-worth/investment-returns'
+import { HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, HoldingInvestmentReturnFormData, INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK } from '@/app/net-worth/investment-returns'
 
 interface HoldingInvestmentReturnInputsProps {
   editingFormData: HoldingInvestmentReturnFormData;
@@ -14,6 +14,10 @@ interface HoldingInvestmentReturnInputsProps {
   holdings: Holding[];
   isEndHoldingLocked?: boolean;
 }
+
+const getHoldingsPageUrl = () => `/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_SNAPSHOT_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}`;
+
+const getHoldingInvestmentReturnPageUrl = () => `/${NET_WORTH_ITEM_NAME_LINK}/${INVESTMENT_RETURN_ITEM_NAME_PLURAL_LINK}`;
 
 export function HoldingInvestmentReturnInputs({
   editingFormData,
@@ -102,7 +106,7 @@ export function HoldingInvestmentReturnInputs({
                 <option key={h.id} value={h.id}>{`${h.name} ${h.institution ? `- ${h.institution}` : ''} - ${h.holdingCategory?.name} (${h.type})`}</option>
               ))}
             </select>
-            <Link href={`/${NET_WORTH_ITEM_NAME_LINK}/${HOLDING_ITEM_NAME_LOWERCASE_PLURAL}`} className="btn btn-ghost btn-sm btn-circle" title="Edit Holdings">
+            <Link href={`${getHoldingsPageUrl()}?returnUrl=${getHoldingInvestmentReturnPageUrl()}`} className="btn btn-ghost btn-sm btn-circle" title="Edit Holdings">
               <Edit size={16} />
             </Link>
           </div>

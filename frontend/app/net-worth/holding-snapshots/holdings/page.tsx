@@ -6,9 +6,12 @@ import { getAllHoldings, HOLDINGS_ENDPOINT } from '@/app/lib/api';
 import { messageTypeIsError } from '@/app/lib/utils';
 import { BackArrow } from '@/app/components';
 import { HOLDING_ITEM_NAME, Holding, HoldingsList, HoldingForm, HoldingFormData, transformFormDataToHolding, HOLDING_ITEM_NAME_LOWERCASE, convertHoldingToFormData } from '@/app/net-worth/holding-snapshots/holdings';
+import { useSearchParams } from 'next/navigation';
 
 export default function HoldingsPage() {
+  const searchParams = useSearchParams();  
   const parentPath = useParentPath();
+  const returnUrl = searchParams.get('returnUrl') || parentPath;
   const mobileState = useMobileDetection();
 
   const fetchHoldings = useCallback( () => getAllHoldings(), []);
@@ -28,7 +31,7 @@ export default function HoldingsPage() {
   return (
     <div className="p-3 sm:p-6">
       <div className="mb-3 sm:mb-4">
-        <BackArrow link={parentPath} />
+        <BackArrow link={returnUrl} />
       </div>
       
       <div className="flex gap-3 sm:gap-6 h-full min-h-screen">

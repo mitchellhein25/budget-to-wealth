@@ -19,7 +19,6 @@ function ExpenseCategoriesContent() {
       </div>
       
       <CategoriesPage 
-        isLoggedIn={true} 
         categoryTypeName={EXPENSE_ITEM_NAME}
         getEndpoint={`${CASH_FLOW_CATEGORIES_ENDPOINT}?cashFlowType=${EXPENSE_ITEM_NAME}`}
         createUpdateDeleteEndpoint={CASH_FLOW_CATEGORIES_ENDPOINT}

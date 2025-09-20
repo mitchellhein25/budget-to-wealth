@@ -15,7 +15,6 @@ export default function IncomeCategoriesPage() {
 			</div>
 			
 			<CategoriesPage 
-				isLoggedIn={true} 
 				categoryTypeName={INCOME_ITEM_NAME}
 				getEndpoint={`${CASH_FLOW_CATEGORIES_ENDPOINT}?cashFlowType=${INCOME_ITEM_NAME}`}
 				createUpdateDeleteEndpoint={CASH_FLOW_CATEGORIES_ENDPOINT}

@@ -14,7 +14,6 @@ export default function HoldingCategoriesPage() {
         <BackArrow link={parentPath} />
       </div>
       <CategoriesPage 
-        isLoggedIn={true} 
         categoryTypeName={HOLDING_ITEM_NAME}
         getEndpoint={HOLDING_CATEGORIES_ENDPOINT}
         createUpdateDeleteEndpoint={HOLDING_CATEGORIES_ENDPOINT}

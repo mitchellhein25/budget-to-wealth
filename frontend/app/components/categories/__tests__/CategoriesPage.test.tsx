@@ -56,7 +56,6 @@ describe('CategoriesPage', () => {
   const mockMessageTypeIsError = jest.mocked(messageTypeIsError);
 
   const mockProps = {
-    isLoggedIn: true,
     categoryTypeName: 'Test',
     getEndpoint: '/api/test-categories',
     createUpdateDeleteEndpoint: '/api/test-categories',

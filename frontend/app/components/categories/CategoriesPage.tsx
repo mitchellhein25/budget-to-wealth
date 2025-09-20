@@ -8,7 +8,6 @@ import { Category, CategoryFormData, CategoriesForm, CategoriesList } from "@/ap
 import { EXPENSE_ITEM_NAME, INCOME_ITEM_NAME, CashFlowCategory } from "@/app/cashflow";
 
 type CategoriesPageProps = {
-  isLoggedIn: boolean;
   categoryTypeName: string;
   getEndpoint: string;
   createUpdateDeleteEndpoint: string;
