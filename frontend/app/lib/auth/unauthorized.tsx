@@ -1,13 +1,13 @@
 import { AlertTriangle } from 'lucide-react';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
-export const isTokenExpired = (session: SessionData | null): boolean => {
+export function isTokenExpired(session: SessionData | null): boolean {
   return session?.tokenSet?.expiresAt
     ? session.tokenSet.expiresAt * 1000 < Date.now()
     : false;
 };
 
-export const isAuthenticated = (session: SessionData | null): boolean => {
+export function isAuthenticated(session: SessionData | null): boolean {
   return (session ?? false) && !isTokenExpired(session);
 };
 
