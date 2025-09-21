@@ -58,12 +58,15 @@ public class BudgetsController : ControllerBase
             .FirstOrDefaultAsync(budget => budget.CategoryId == newBudget.CategoryId && budget.EndDate == null);
         if (activeExistingBudget != null)
         {
-            activeExistingBudget.EndDate = DateOnly.FromDateTime(DateTime.Now);
+            activeExistingBudget.EndDate = GetLastDayOfPreviousMonth();
             _context.Budgets.Update(activeExistingBudget);
         }
 
         if (newBudget.StartDate == DateOnly.MinValue)
-            newBudget.StartDate = DateOnly.FromDateTime(DateTime.Now);
+        {
+            DateOnly firstDayOfThisMonth = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+            newBudget.StartDate = firstDayOfThisMonth;
+        }
 
         newBudget.UserId = userId;
         _context.Budgets.Add(newBudget);
@@ -85,16 +88,18 @@ public class BudgetsController : ControllerBase
         if (existingbudget == null)
             return NotFound();
 
+        existingbudget.EndDate = GetLastDayOfPreviousMonth();
+        _context.Budgets.Update(existingbudget);
+        
         IActionResult? validationResult = await ValidateBudget(updatedBudget, userId);
         if (validationResult != null)
             return validationResult;
 
-        existingbudget.Amount = updatedBudget.Amount;
-        existingbudget.CategoryId = updatedBudget.CategoryId;
+        DateOnly firstDayOfThisMonth = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+        updatedBudget.StartDate = firstDayOfThisMonth;
         existingbudget.UpdatedAt = DateTime.UtcNow;
-        existingbudget.EndDate = updatedBudget.EndDate;
 
-        _context.Budgets.Update(existingbudget);
+        _context.Budgets.Add(updatedBudget);
         await _context.SaveChangesAsync();
 
         return Ok(existingbudget);
@@ -113,7 +118,9 @@ public class BudgetsController : ControllerBase
         if (budget == null)
             return NotFound();
 
-        _context.Budgets.Remove(budget);
+        budget.EndDate = GetLastDayOfPreviousMonth();
+        _context.Budgets.Update(budget);
+        
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -191,7 +198,7 @@ public class BudgetsController : ControllerBase
                 
                 if (activeExistingBudget != null)
                 {
-                    activeExistingBudget.EndDate = DateOnly.FromDateTime(DateTime.Now);
+                    activeExistingBudget.EndDate = GetLastDayOfPreviousMonth();
                     _context.Budgets.Update(activeExistingBudget);
                 }
 
@@ -199,7 +206,7 @@ public class BudgetsController : ControllerBase
                 {
                     Amount = budgetImport.AmountInCents,
                     CategoryId = category.Id,
-                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    StartDate = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
                     EndDate = null,
                     UserId = userId
                 };
@@ -271,4 +278,6 @@ public class BudgetsController : ControllerBase
 
         return null;
     }
+
+    private DateOnly GetLastDayOfPreviousMonth() => new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month - 1, DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month - 1));
 }
