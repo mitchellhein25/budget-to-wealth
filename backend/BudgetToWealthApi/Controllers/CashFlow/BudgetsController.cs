@@ -88,21 +88,21 @@ public class BudgetsController : ControllerBase
         if (existingbudget == null)
             return NotFound();
 
-        existingbudget.EndDate = GetLastDayOfPreviousMonth();
-        _context.Budgets.Update(existingbudget);
-        
         IActionResult? validationResult = await ValidateBudget(updatedBudget, userId);
         if (validationResult != null)
             return validationResult;
 
+        existingbudget.EndDate = GetLastDayOfPreviousMonth();
+        _context.Budgets.Update(existingbudget);
+        
         DateOnly firstDayOfThisMonth = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
         updatedBudget.StartDate = firstDayOfThisMonth;
-        existingbudget.UpdatedAt = DateTime.UtcNow;
+        updatedBudget.UpdatedAt = DateTime.UtcNow;
 
         _context.Budgets.Add(updatedBudget);
         await _context.SaveChangesAsync();
 
-        return Ok(existingbudget);
+        return Ok(updatedBudget);
     }
 
     [HttpDelete("{id}")]
@@ -279,5 +279,9 @@ public class BudgetsController : ControllerBase
         return null;
     }
 
-    private DateOnly GetLastDayOfPreviousMonth() => new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month - 1, DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month - 1));
-}
+    public static DateOnly GetLastDayOfPreviousMonth()
+    {
+        var now = DateTime.UtcNow;
+        var previousMonth = now.AddMonths(-1);
+        return new DateOnly(previousMonth.Year, previousMonth.Month, DateTime.DaysInMonth(previousMonth.Year, previousMonth.Month));
+    }}

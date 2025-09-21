@@ -53,13 +53,6 @@ public class BudgetsControllerTests : IDisposable
         };
     }
 
-    private async Task<Budget> CreateTestBudget(Budget budget)
-    {
-        _context.Budgets.Add(budget);
-        await _context.SaveChangesAsync();
-        return budget;
-    }
-
     public void Dispose()
     {
         _transaction.Rollback();
@@ -233,7 +226,7 @@ public class BudgetsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_StartDateIsSet_WhenNewBudgetCreated()
+    public async Task Create_StartDateIsSetToFirstDayOfThisMonth_WhenNewBudgetCreated()
     {
         Budget newBudget = new()
         {
@@ -247,7 +240,7 @@ public class BudgetsControllerTests : IDisposable
         var objectResult = Assert.IsType<ObjectResult>(result);
         Budget createdBudget = Assert.IsType<Budget>(objectResult.Value);
         Assert.NotEqual(DateOnly.MinValue, createdBudget.StartDate);
-        Assert.Equal(DateOnly.FromDateTime(DateTime.Now), createdBudget.StartDate);
+        Assert.Equal(new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1), createdBudget.StartDate);
     }
 
     [Fact]
@@ -284,8 +277,8 @@ public class BudgetsControllerTests : IDisposable
 
         Assert.Equal(new DateOnly(2024, 01, 05), createdOldestBudget.EndDate);
         Assert.NotEqual(DateOnly.MinValue, createdOldBudget.EndDate);
-        Assert.Equal(DateOnly.FromDateTime(DateTime.Now), createdOldBudget.EndDate);
-        Assert.Equal(DateOnly.FromDateTime(DateTime.Now), createdNewBudget.StartDate);
+        Assert.Equal(BudgetsController.GetLastDayOfPreviousMonth(), createdOldBudget.EndDate);
+        Assert.Equal(new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1), createdNewBudget.StartDate);
     }
 
     [Fact]
@@ -318,7 +311,7 @@ public class BudgetsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Update_ReturnsOk_WhenBudgetIsUpdatedSuccessfully()
+    public async Task Update_ReturnsOkAndArchivesPreviousBudget_WhenBudgetIsUpdatedSuccessfully()
     {
         Budget updatedBudget = new()
         {
@@ -327,12 +320,17 @@ public class BudgetsControllerTests : IDisposable
             Category = _testObjects.TestUser1CategoryExpense
         };
         Budget? budgetToUpdate = _context.Budgets.FirstOrDefault(budget => budget.UserId == _user1Id);
+        Guid budgetToUpdateGuid = budgetToUpdate!.Id;
         var result = await _controller.Update(budgetToUpdate!.Id, updatedBudget);
 
+        Budget? budgetToUpdateArchived = _context.Budgets.FirstOrDefault(budget => budget.Id == budgetToUpdateGuid);
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnedBudget = Assert.IsType<Budget>(okResult.Value);
 
+        Assert.Equal(BudgetsController.GetLastDayOfPreviousMonth(), budgetToUpdateArchived!.EndDate);
+
         Assert.Equal(updatedBudget.Amount, returnedBudget.Amount);
+        Assert.Equal(new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1), returnedBudget.StartDate);
         Assert.Null(returnedBudget.EndDate);
         Assert.Equal(updatedBudget.CategoryId, returnedBudget.CategoryId);
     }
