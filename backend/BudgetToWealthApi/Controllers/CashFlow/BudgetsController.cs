@@ -31,12 +31,18 @@ public class BudgetsController : ControllerBase
             query = query.Where(budget => budget.CategoryId == categoryId);
 
         if (startDate.HasValue)
-            query = query.Where(budget => budget.StartDate >= startDate ||
-                                         (budget.StartDate <= startDate &&
-                                         (budget.EndDate == null || budget.EndDate >= startDate)));
+            query = query.Where(budget => budget.EndDate == null || budget.EndDate >= startDate);
 
         if (endDate.HasValue)
-            query = query.Where(budget => budget.StartDate <= endDate);
+            query = query.Where(budget => budget.StartDate <= endDate && 
+                                          (budget.EndDate == null || budget.EndDate <= endDate));
+
+        query = query.GroupBy(budget => budget.CategoryId)
+                     .Select(group => group.OrderByDescending(budget => budget.StartDate)
+                                           .ThenByDescending(budget => budget.EndDate)
+                                           .ThenByDescending(budget => budget.UpdatedAt)
+                                           .ThenByDescending(budget => budget.CreatedAt)
+                                           .First());
 
         List<Budget> budgets = await query.ToListAsync();
 
@@ -59,6 +65,11 @@ public class BudgetsController : ControllerBase
         if (activeExistingBudget != null)
         {
             activeExistingBudget.EndDate = GetLastDayOfPreviousMonth();
+            var firstDayOfLastMonth = new DateOnly(activeExistingBudget.EndDate.Value.Year, activeExistingBudget.EndDate.Value.Month, 1);
+            if (activeExistingBudget.StartDate > firstDayOfLastMonth)
+            {
+                activeExistingBudget.StartDate = firstDayOfLastMonth;
+            }
             _context.Budgets.Update(activeExistingBudget);
         }
 
@@ -93,11 +104,17 @@ public class BudgetsController : ControllerBase
             return validationResult;
 
         existingbudget.EndDate = GetLastDayOfPreviousMonth();
+        var firstDayOfLastMonth = new DateOnly(existingbudget.EndDate.Value.Year, existingbudget.EndDate.Value.Month, 1);
+        if (existingbudget.StartDate > firstDayOfLastMonth)
+        {
+            existingbudget.StartDate = firstDayOfLastMonth;
+        }
         _context.Budgets.Update(existingbudget);
         
         DateOnly firstDayOfThisMonth = new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
         updatedBudget.StartDate = firstDayOfThisMonth;
         updatedBudget.UpdatedAt = DateTime.UtcNow;
+        updatedBudget.UserId = userId;
 
         _context.Budgets.Add(updatedBudget);
         await _context.SaveChangesAsync();
@@ -106,7 +123,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, [FromQuery] bool archive = false)
     {
         string? userId = User.GetUserId();
         if (userId == null)
@@ -118,8 +135,15 @@ public class BudgetsController : ControllerBase
         if (budget == null)
             return NotFound();
 
-        budget.EndDate = GetLastDayOfPreviousMonth();
-        _context.Budgets.Update(budget);
+        if (archive)
+        {
+            budget.EndDate = GetLastDayOfPreviousMonth();
+            _context.Budgets.Update(budget);
+        }
+        else
+        {
+            _context.Budgets.Remove(budget);
+        }
         
         await _context.SaveChangesAsync();
 

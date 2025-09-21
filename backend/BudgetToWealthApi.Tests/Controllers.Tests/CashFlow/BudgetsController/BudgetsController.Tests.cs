@@ -30,6 +30,8 @@ public class BudgetsControllerTests : IDisposable
         _context.Budgets.Add(_testObjects.TestBudget4);
         _context.Budgets.Add(_testObjects.TestBudget5);
         _context.Budgets.Add(_testObjects.TestBudget6);
+        _context.Budgets.Add(_testObjects.TestBudget7);
+        _context.Budgets.Add(_testObjects.TestBudget8);
         _context.SaveChanges();
     }
 
@@ -69,17 +71,19 @@ public class BudgetsControllerTests : IDisposable
         var budgets = Assert.IsAssignableFrom<IEnumerable<Budget>>(result.Value);
         Assert.NotNull(budgets);
 
-        Assert.Contains(budgets, budget => budget.Amount == _testObjects.TestBudget1.Amount);
+        Assert.Contains(budgets, budget => budget.Amount == _testObjects.TestBudget3.Amount);
         Assert.Equal(3, budgets.Count());
     }
 
     [Theory]
-    [InlineData("2025-01-01", 3)]
-    [InlineData("2025-01-02", 3)]
-    [InlineData("2025-01-03", 2)]
-    [InlineData("2024-12-23", 3)]
-    [InlineData("2024-12-22", 3)]
-    [InlineData("2024-12-21", 3)]
+    [InlineData("2024-09-01", 3)]
+    [InlineData("2024-10-15", 3)]
+    [InlineData("2024-11-15", 3)]
+    [InlineData("2024-12-15", 3)]
+    [InlineData("2025-01-15", 3)]
+    [InlineData("2025-03-15", 3)]
+    [InlineData("2025-04-15", 3)]
+    [InlineData("2025-05-15", 2)]
     public async Task Get_FilterByStartDate_ReturnsCorrectBudgets(string startDateString, int expectedCount)
     {
         var startDate = DateOnly.Parse(startDateString);
@@ -93,12 +97,13 @@ public class BudgetsControllerTests : IDisposable
     }
 
     [Theory]
-    [InlineData("2025-01-02", 3)]
-    [InlineData("2025-01-03", 3)]
-    [InlineData("2024-12-23", 2)]
-    [InlineData("2025-01-01", 2)]
-    [InlineData("2024-12-22", 2)]
-    [InlineData("2024-12-21", 2)]
+    [InlineData("2024-09-30", 0)]
+    [InlineData("2024-10-31", 1)]
+    [InlineData("2024-11-30", 1)]
+    [InlineData("2025-01-31", 2)]
+    [InlineData("2025-02-28", 2)]
+    [InlineData("2025-04-30", 3)]
+    [InlineData("2025-05-31", 3)]
     public async Task Get_FilterByEndDate_ReturnsCorrectBudgets(string endDateString, int expectedCount)
     {
         var endDate = DateOnly.Parse(endDateString);
@@ -112,12 +117,13 @@ public class BudgetsControllerTests : IDisposable
     }
 
     [Theory]
-    [InlineData("2025-01-01", "2025-01-01", 2)]
-    [InlineData("2025-01-01", "2025-01-03", 3)]
-    [InlineData("2025-01-03", "2025-01-10", 2)]
-    [InlineData("2024-12-22", "2024-12-24", 2)]
-    [InlineData("2024-12-23", "2024-12-28", 2)]
-    [InlineData("2024-12-02", "2025-12-22", 3)]
+    [InlineData("2024-09-01", "2024-09-30", 0)]
+    [InlineData("2024-10-01", "2024-10-31", 1)]
+    [InlineData("2024-11-01", "2024-11-30", 1)]
+    [InlineData("2025-01-01", "2025-01-31", 2)]
+    [InlineData("2025-02-01", "2025-02-28", 2)]
+    [InlineData("2025-03-01", "2025-04-30", 3)]
+    [InlineData("2025-04-01", "2025-05-31", 3)]
     public async Task Get_FilterByStartAndEndDate_ReturnsCorrectBudgets(string startDateString, string endDateString, int expectedCount)
     {
         var startDate = DateOnly.Parse(startDateString);
@@ -141,7 +147,7 @@ public class BudgetsControllerTests : IDisposable
         var budgets = Assert.IsAssignableFrom<IEnumerable<Budget>>(result.Value);
         Assert.NotNull(budgets);
 
-        Assert.Equal(2, budgets.Count());
+        Assert.Single(budgets);
     }
 
     [Fact]
@@ -574,7 +580,7 @@ public class BudgetsControllerTests : IDisposable
         var activeBudget = new Budget
         {
             Amount = 100000,
-            CategoryId = _testObjects.TestUser1CategoryExpense.Id,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
             StartDate = new DateOnly(2025, 1, 1),
             EndDate = null,
             UserId = _user1Id
@@ -584,7 +590,7 @@ public class BudgetsControllerTests : IDisposable
 
         var budgetsToImport = new List<BudgetImport>
         {
-            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1CategoryExpense.Name }
+            new() { AmountInCents = 150000, CategoryName = _testObjects.TestUser1Category2Expense.Name }
         };
         
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
@@ -670,5 +676,239 @@ public class BudgetsControllerTests : IDisposable
         var response = await ExecuteImportAndGetResponse(budgetsToImport);
         await ValidateImportResponse(response, 0, 3, false);
         await ValidateSavedBudgets(budgetsToImport, 0);
+    }
+
+    [Fact]
+    public async Task Create_ArchivesExistingActiveBudget_WhenCreatingNewBudgetForSameCategory()
+    {
+        var existingBudget = new Budget
+        {
+            Amount = 5000,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            StartDate = new DateOnly(2025, 8, 15),
+            EndDate = null,
+            UserId = _user1Id
+        };
+        _context.Budgets.Add(existingBudget);
+        await _context.SaveChangesAsync();
+
+        var newBudget = new Budget
+        {
+            Amount = 7500,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            Category = _testObjects.TestUser1Category2Expense
+        };
+
+        var result = await _controller.Create(newBudget);
+
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        var createdBudget = Assert.IsType<Budget>(objectResult.Value);
+
+        var archivedBudget = await _context.Budgets.FindAsync(existingBudget.Id);
+        Assert.NotNull(archivedBudget);
+        Assert.NotNull(archivedBudget.EndDate);
+        Assert.Equal(BudgetsController.GetLastDayOfPreviousMonth(), archivedBudget.EndDate);
+
+        Assert.Equal(newBudget.Amount, createdBudget.Amount);
+        Assert.Equal(new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1), createdBudget.StartDate);
+        Assert.Null(createdBudget.EndDate);
+    }
+
+    [Fact]
+    public async Task Create_AdjustsStartDate_WhenExistingBudgetStartDateIsAfterFirstDayOfLastMonth()
+    {
+        var existingBudget = new Budget
+        {
+            Amount = 3000,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            StartDate = new DateOnly(2025, 8, 15),
+            EndDate = null,
+            UserId = _user1Id
+        };
+        _context.Budgets.Add(existingBudget);
+        await _context.SaveChangesAsync();
+
+        var newBudget = new Budget
+        {
+            Amount = 4000,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            Category = _testObjects.TestUser1Category2Expense
+        };
+
+        await _controller.Create(newBudget);
+
+        var archivedBudget = await _context.Budgets.FindAsync(existingBudget.Id);
+        Assert.NotNull(archivedBudget);
+        
+        var lastDayOfPreviousMonth = BudgetsController.GetLastDayOfPreviousMonth();
+        var firstDayOfLastMonth = new DateOnly(lastDayOfPreviousMonth.Year, lastDayOfPreviousMonth.Month, 1);
+        
+        Assert.Equal(firstDayOfLastMonth, archivedBudget.StartDate);
+        Assert.Equal(lastDayOfPreviousMonth, archivedBudget.EndDate);
+    }
+
+    [Fact]
+    public async Task Create_DoesNotAdjustStartDate_WhenExistingBudgetStartDateIsBeforeFirstDayOfLastMonth()
+    {
+        var originalStartDate = new DateOnly(2024, 12, 1);
+        var existingBudget = new Budget
+        {
+            Amount = 3000,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            StartDate = originalStartDate,
+            EndDate = null,
+            UserId = _user1Id
+        };
+        _context.Budgets.Add(existingBudget);
+        await _context.SaveChangesAsync();
+
+        var newBudget = new Budget
+        {
+            Amount = 4000,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            Category = _testObjects.TestUser1Category2Expense
+        };
+
+        await _controller.Create(newBudget);
+
+        var archivedBudget = await _context.Budgets.FindAsync(existingBudget.Id);
+        Assert.NotNull(archivedBudget);
+        
+        Assert.Equal(originalStartDate, archivedBudget.StartDate);
+        Assert.Equal(BudgetsController.GetLastDayOfPreviousMonth(), archivedBudget.EndDate);
+    }
+
+    [Fact]
+    public async Task Update_ArchivesExistingBudget_WhenUpdatingBudget()
+    {
+        var existingBudget = new Budget
+        {
+            Amount = 5000,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            StartDate = new DateOnly(2025, 8, 1),
+            EndDate = null,
+            UserId = _user1Id
+        };
+        _context.Budgets.Add(existingBudget);
+        await _context.SaveChangesAsync();
+
+        var updatedBudget = new Budget
+        {
+            Amount = 7500,
+            CategoryId = _testObjects.TestUser1Category2Expense.Id,
+            Category = _testObjects.TestUser1Category2Expense
+        };
+
+        var result = await _controller.Update(existingBudget.Id, updatedBudget);
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnedBudget = Assert.IsType<Budget>(okResult.Value);
+
+        var archivedBudget = await _context.Budgets.FindAsync(existingBudget.Id);
+        Assert.NotNull(archivedBudget);
+        Assert.NotNull(archivedBudget.EndDate);
+        Assert.Equal(BudgetsController.GetLastDayOfPreviousMonth(), archivedBudget.EndDate);
+
+        Assert.Equal(updatedBudget.Amount, returnedBudget.Amount);
+        Assert.Equal(new DateOnly(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1), returnedBudget.StartDate);
+        Assert.Null(returnedBudget.EndDate);
+    }
+
+    [Fact]
+    public async Task Get_ReturnsLatestBudgetPerCategory_WhenMultipleBudgetsExistForSameCategory()
+    {
+        var categoryId = _testObjects.TestUser1CategoryExpense.Id;
+        
+        var oldBudget = new Budget
+        {
+            Amount = 1000,
+            CategoryId = categoryId,
+            StartDate = new DateOnly(2024, 10, 1),
+            EndDate = new DateOnly(2024, 11, 30),
+            UserId = _user1Id
+        };
+        
+        var middleBudget = new Budget
+        {
+            Amount = 2000,
+            CategoryId = categoryId,
+            StartDate = new DateOnly(2024, 12, 1),
+            EndDate = new DateOnly(2025, 1, 31),
+            UserId = _user1Id
+        };
+        
+        var latestBudget = new Budget
+        {
+            Amount = 9000,
+            CategoryId = categoryId,
+            StartDate = new DateOnly(2025, 6, 1),
+            EndDate = null,
+            UserId = _user1Id
+        };
+
+        _context.Budgets.AddRange(oldBudget, middleBudget, latestBudget);
+        await _context.SaveChangesAsync();
+
+        var result = await _controller.Get(categoryId: categoryId) as OkObjectResult;
+        Assert.NotNull(result);
+
+        var budgets = Assert.IsAssignableFrom<IEnumerable<Budget>>(result.Value);
+        Assert.Single(budgets);
+        
+        var returnedBudget = budgets.First();
+        Assert.Equal(latestBudget.Amount, returnedBudget.Amount);
+        Assert.Equal(latestBudget.StartDate, returnedBudget.StartDate);
+        Assert.Equal(latestBudget.EndDate, returnedBudget.EndDate);
+    }
+    
+    [Theory]
+    [InlineData("2024-11-15", "2024-11-30", 2000)]
+    [InlineData("2024-11-15", null, 9000)]
+    [InlineData(null, "2024-11-30", 2000)]
+    public async Task Get_ReturnsCorrectBudget_WhenFilteringByDateRangeWithMultipleBudgets(string startDateString, string? endDateString, int expectedAmount)
+    {
+        var categoryId = _testObjects.TestUser1Category3Expense.Id;
+        
+        var budget1 = new Budget
+        {
+            Amount = 1000,
+            CategoryId = categoryId,
+            StartDate = new DateOnly(2024, 10, 1),
+            EndDate = new DateOnly(2024, 10, 31),
+            UserId = _user1Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-3)
+        };
+        
+        var budget2 = new Budget
+        {
+            Amount = 2000,
+            CategoryId = categoryId,
+            StartDate = new DateOnly(2024, 11, 1),
+            EndDate = new DateOnly(2024, 11, 30),
+            UserId = _user1Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-2)
+        };
+        
+        var budget3 = new Budget
+        {
+            Amount = 9000,
+            CategoryId = categoryId,
+            StartDate = new DateOnly(2024, 12, 1),
+            EndDate = null,
+            UserId = _user1Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-1)
+        };
+
+        _context.Budgets.AddRange(budget1, budget2, budget3);
+        await _context.SaveChangesAsync();
+
+        var result = await _controller.Get(categoryId: categoryId, startDate: startDateString != null ? DateOnly.Parse(startDateString) : null, endDate: endDateString != null ? DateOnly.Parse(endDateString) : null) as OkObjectResult;
+        Assert.NotNull(result);
+
+        var budgets = Assert.IsAssignableFrom<IEnumerable<Budget>>(result.Value);
+        Assert.Single(budgets);
+        
+        var returnedBudget = budgets.First();
+        Assert.Equal(expectedAmount, returnedBudget.Amount);
     }
 }
