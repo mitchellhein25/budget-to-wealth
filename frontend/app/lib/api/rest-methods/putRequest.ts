@@ -10,3 +10,12 @@ export async function putRequest<T>(endpoint: string, id: string, body: object):
     }
   )
 };
+
+export async function archivePutRequest<T>(endpoint: string, id: number): Promise<FetchResult<T>> {
+  return await fetchWithAuth<T>(
+    {
+      endpoint: `${endpoint}/${id}/archive`,
+      method: HttpMethod.PUT
+    }
+  )
+};

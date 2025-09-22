@@ -1,10 +1,10 @@
 import { DateRange } from "@/app/components";
-import { BUDGETS_ENDPOINT, deleteRequest, FetchResult, getQueryStringForDateRange, getRequestList } from '@/app/lib/api';
-import { getBudgetsByDateRange, deleteBudget } from '@/app/lib/api/data-methods/endpoint-requests/budgetRequests';
+import { archivePutRequest, BUDGETS_ENDPOINT, FetchResult, getQueryStringForDateRange, getRequestList } from '@/app/lib/api';
+import { getBudgetsByDateRange, archiveBudget } from '@/app/lib/api/data-methods/endpoint-requests/budgetRequests';
 
 jest.mock('@/app/lib/api', () => ({
   getRequestList: jest.fn(),
-  deleteRequest: jest.fn(),
+  archivePutRequest: jest.fn(),
   getQueryStringForDateRange: jest.fn(),
 }));
 
@@ -16,7 +16,7 @@ const createMockFetchResult = <T>(data: T): FetchResult<T> => ({
 
 describe('budgetRequests', () => {
   const mockGetRequestList = jest.mocked(getRequestList);
-  const mockDeleteRequest = jest.mocked(deleteRequest);
+  const mockArchivePutRequest = jest.mocked(archivePutRequest);
   const mockGetQueryStringForDateRange = jest.mocked(getQueryStringForDateRange);
 
   beforeEach(() => {
@@ -135,43 +135,43 @@ describe('budgetRequests', () => {
     });
   });
 
-  describe('deleteBudget', () => {
+  describe('archiveBudget', () => {
     const mockBudgetId = 123;
 
     it('should call deleteRequest with correct endpoint and id', async () => {
       const mockResponse = { successful: true, data: null, responseMessage: 'Success' };
-      mockDeleteRequest.mockResolvedValue(mockResponse as FetchResult<unknown>);
+      mockArchivePutRequest.mockResolvedValue(mockResponse as FetchResult<unknown>);
 
-      await deleteBudget(mockBudgetId);
+      await archiveBudget(mockBudgetId);
 
-      expect(mockDeleteRequest).toHaveBeenCalledWith(BUDGETS_ENDPOINT, mockBudgetId);
+      expect(mockArchivePutRequest).toHaveBeenCalledWith(BUDGETS_ENDPOINT, mockBudgetId);
     });
 
     it('should return successful response from deleteRequest', async () => {
       const mockResponse = { successful: true, data: null, responseMessage: 'Success' };
-      mockDeleteRequest.mockResolvedValue(mockResponse as FetchResult<unknown>);
+      mockArchivePutRequest.mockResolvedValue(mockResponse as FetchResult<unknown>);
 
-      const result = await deleteBudget(mockBudgetId);
+      const result = await archiveBudget(mockBudgetId);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('should return unsuccessful response from deleteRequest', async () => {
       const mockResponse = { successful: false, data: null, responseMessage: 'Budget not found' };
-      mockDeleteRequest.mockResolvedValue(mockResponse);
+      mockArchivePutRequest.mockResolvedValue(mockResponse);
 
-      const result = await deleteBudget(mockBudgetId);
+      const result = await archiveBudget(mockBudgetId);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('should handle different budget ids', async () => {
       const mockResponse = { successful: true, data: null, responseMessage: 'Success' };
-      mockDeleteRequest.mockResolvedValue(mockResponse);
+      mockArchivePutRequest.mockResolvedValue(mockResponse);
 
-      await deleteBudget(456);
+      await archiveBudget(456);
 
-      expect(mockDeleteRequest).toHaveBeenCalledWith(BUDGETS_ENDPOINT, 456);
+      expect(mockArchivePutRequest).toHaveBeenCalledWith(BUDGETS_ENDPOINT, 456);
     });
   });
 }); 

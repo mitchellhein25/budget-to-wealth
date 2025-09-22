@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { deleteBudget } from '@/app/lib/api';
+import { archiveBudget } from '@/app/lib/api';
 import { ListTable } from '@/app/components';
 import { CashFlowEntry } from '@/app/cashflow';
 import { BUDGET_ITEM_NAME, Budget, DesktopBudgetRow, MobileBudgetCard } from '@/app/cashflow/budget';
@@ -19,7 +19,7 @@ export function BudgetsList(props: BudgetsListProps) {
 
 	async function handleDelete(id: number) {
 		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteBudget(id);
+			const result = await archiveBudget(id);
 			if (result.successful)
 				props.onBudgetDeleted();
 		}

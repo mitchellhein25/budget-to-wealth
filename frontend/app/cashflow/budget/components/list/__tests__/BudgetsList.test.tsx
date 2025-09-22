@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { deleteBudget } from '@/app/lib/api';
+import { archiveBudget } from '@/app/lib/api';
 import { CashFlowEntry } from '@/app/cashflow';
 import { Budget, BUDGET_ITEM_NAME } from '@/app/cashflow/budget';
 import { BudgetsList } from '@/app/cashflow/budget/components/list/BudgetsList';
@@ -9,7 +9,7 @@ jest.mock('@/app/hooks', () => ({
 }));
 
 jest.mock('@/app/lib/api', () => ({
-  deleteBudget: jest.fn(),
+  archiveBudget: jest.fn(),
 }));
 
 jest.mock('@/app/components', () => ({
@@ -74,7 +74,7 @@ jest.mock('@/app/cashflow/budget', () => ({
   ),
 }));
 
-const mockDeleteBudget = jest.mocked(deleteBudget);
+const mockArchiveBudget = jest.mocked(archiveBudget);
 
 describe('BudgetsList', () => {
   const mockBudgets: Budget[] = [
@@ -209,7 +209,7 @@ describe('BudgetsList', () => {
 
   it('calls deleteBudget and onBudgetDeleted when delete is confirmed', async () => {
     global.confirm = jest.fn(() => true);
-    mockDeleteBudget.mockResolvedValue({ 
+    mockArchiveBudget.mockResolvedValue({ 
       successful: true, 
       data: null, 
       responseMessage: 'Budget deleted successfully' 
@@ -221,7 +221,7 @@ describe('BudgetsList', () => {
     fireEvent.click(deleteButtons[0]);
     
     expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockDeleteBudget).toHaveBeenCalledWith(1);
+    expect(mockArchiveBudget).toHaveBeenCalledWith(1);
     
     await waitFor(() => {
       expect(mockProps.onBudgetDeleted).toHaveBeenCalled();
@@ -230,7 +230,7 @@ describe('BudgetsList', () => {
 
   it('does not call onBudgetDeleted when delete is cancelled', async () => {
     global.confirm = jest.fn(() => false);
-    mockDeleteBudget.mockClear();
+    mockArchiveBudget.mockClear();
     mockProps.onBudgetDeleted.mockClear();
     
     render(<BudgetsList {...mockProps} />);
@@ -239,18 +239,19 @@ describe('BudgetsList', () => {
     fireEvent.click(deleteButtons[0]);
     
     expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockDeleteBudget).not.toHaveBeenCalled();
+    expect(mockArchiveBudget).not.toHaveBeenCalled();
     expect(mockProps.onBudgetDeleted).not.toHaveBeenCalled();
   });
 
   it('does not call onBudgetDeleted when delete API call fails', async () => {
     global.confirm = jest.fn(() => true);
-    mockDeleteBudget.mockResolvedValue({ 
+    mockArchiveBudget.mockClear();
+    mockProps.onBudgetDeleted.mockClear();
+    mockArchiveBudget.mockResolvedValue({ 
       successful: false, 
       data: null, 
       responseMessage: 'Failed to delete budget' 
     });
-    mockProps.onBudgetDeleted.mockClear();
     
     render(<BudgetsList {...mockProps} />);
     
@@ -258,7 +259,7 @@ describe('BudgetsList', () => {
     fireEvent.click(deleteButtons[0]);
     
     await waitFor(() => {
-      expect(mockDeleteBudget).toHaveBeenCalledWith(1);
+      expect(mockArchiveBudget).toHaveBeenCalledWith(1);
       expect(mockProps.onBudgetDeleted).not.toHaveBeenCalled();
     });
   });

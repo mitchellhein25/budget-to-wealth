@@ -123,7 +123,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id, [FromQuery] bool archive = false)
+    public async Task<IActionResult> Delete(Guid id)
     {
         string? userId = User.GetUserId();
         if (userId == null)
@@ -135,19 +135,32 @@ public class BudgetsController : ControllerBase
         if (budget == null)
             return NotFound();
 
-        if (archive)
-        {
-            budget.EndDate = GetLastDayOfPreviousMonth();
-            _context.Budgets.Update(budget);
-        }
-        else
-        {
-            _context.Budgets.Remove(budget);
-        }
+        _context.Budgets.Remove(budget);
         
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    [HttpPut("{id}/archive")]
+    public async Task<IActionResult> Archive(Guid id)
+    {
+        string? userId = User.GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        Budget? budget = await _context.Budgets
+            .FirstOrDefaultAsync(budget => budget.Id == id && budget.UserId == userId);
+
+        if (budget == null)
+            return NotFound();
+
+        budget.EndDate = GetLastDayOfPreviousMonth();
+        _context.Budgets.Update(budget);
+        
+        await _context.SaveChangesAsync();
+
+        return Ok(budget);
     }
 
     [HttpPost("Import")]

@@ -2,7 +2,7 @@
 
 import { DateRange } from "@/app/components";
 import { Budget } from "@/app/cashflow/budget";
-import { BUDGETS_ENDPOINT, deleteRequest, getQueryStringForDateRange, getRequestList } from "@/app/lib/api";
+import { archivePutRequest, BUDGETS_ENDPOINT, getQueryStringForDateRange, getRequestList } from "@/app/lib/api";
 
 export async function getBudgetsByDateRange(dateRange: DateRange) {
   const fetchEndpoint = `${BUDGETS_ENDPOINT}?${getQueryStringForDateRange(dateRange)}`;
@@ -15,6 +15,6 @@ export async function getBudgetsByDateRange(dateRange: DateRange) {
   return response;
 }
 
-export async function deleteBudget(id: number) {
-  return await deleteRequest<Budget>(BUDGETS_ENDPOINT, id);
+export async function archiveBudget(id: number) {
+  return await archivePutRequest<Budget>(BUDGETS_ENDPOINT, id);
 }

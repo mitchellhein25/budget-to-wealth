@@ -342,11 +342,13 @@ public class BudgetsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_ReturnsNotFound_WhenBudgetDoesNotExist()
+    public async Task DeleteAndArchive_ReturnsNotFound_WhenBudgetDoesNotExist()
     {
         var budgetId = Guid.NewGuid();
         var result = await _controller.Delete(budgetId);
         Assert.IsType<NotFoundResult>(result);
+        var resultArchive = await _controller.Archive(budgetId);
+        Assert.IsType<NotFoundResult>(resultArchive);
     }
 
     [Fact]
@@ -366,11 +368,13 @@ public class BudgetsControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_DoesNotAllowDeletingOthersBudgets()
+    public async Task DeleteAndArchive_DoesNotAllowDeletingOthersBudgets()
     {
         Budget? otherUserBudget = _context.Budgets.FirstOrDefault(budget => budget.UserId == _user2Id);
         IActionResult result = await _controller.Delete(otherUserBudget!.Id);
         Assert.IsType<NotFoundResult>(result);
+        var resultArchive = await _controller.Archive(otherUserBudget!.Id);
+        Assert.IsType<NotFoundResult>(resultArchive);
     }
 
     [Theory]
@@ -378,6 +382,7 @@ public class BudgetsControllerTests : IDisposable
     [InlineData("Create")]
     [InlineData("Update")]
     [InlineData("Delete")]
+    [InlineData("Archive")]
     public async Task UnauthorizedUser_CannotAccessEndpoints(string action)
     {
         SetUserUnauthorized();
@@ -388,6 +393,7 @@ public class BudgetsControllerTests : IDisposable
             "Create" => await _controller.Create(userBudget!),
             "Update" => await _controller.Update(userBudget!.Id, userBudget),
             "Delete" => await _controller.Delete(userBudget!.Id),
+            "Archive" => await _controller.Archive(userBudget!.Id),
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, "Unsupported action")
         };
         Assert.IsType<UnauthorizedResult>(result);
