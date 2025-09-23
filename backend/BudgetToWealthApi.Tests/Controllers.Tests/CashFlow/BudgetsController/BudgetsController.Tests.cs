@@ -871,7 +871,7 @@ public class BudgetsControllerTests : IDisposable
     [InlineData("2024-11-15", "2024-11-30", 2000)]
     [InlineData("2024-11-15", null, 9000)]
     [InlineData(null, "2024-11-30", 2000)]
-    public async Task Get_ReturnsCorrectBudget_WhenFilteringByDateRangeWithMultipleBudgets(string startDateString, string? endDateString, int expectedAmount)
+    public async Task Get_ReturnsCorrectBudget_WhenFilteringByDateRangeWithMultipleBudgets(string? startDateString, string? endDateString, int expectedAmount)
     {
         var categoryId = _testObjects.TestUser1Category3Expense.Id;
         

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { Edit } from 'lucide-react'
-import { convertDateToISOString, convertToDate, formatDate } from '@/app/lib/utils'
+import { convertDateToISOString, convertToDate, formatDate, getFirstDayOfMonth } from '@/app/lib/utils'
 import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components'
 import { HOLDING_SNAPSHOT_ITEM_NAME_LINK, HoldingSnapshot, NET_WORTH_ITEM_NAME_LINK } from '@/app/net-worth/holding-snapshots'
 import { Holding, HOLDING_ITEM_NAME_LOWERCASE_PLURAL } from '@/app/net-worth/holding-snapshots/holdings'
@@ -62,7 +62,7 @@ export function HoldingInvestmentReturnInputs({
             type="date"
             value={editingFormData.startHoldingSnapshotDate 
               ? convertDateToISOString(new Date(editingFormData.startHoldingSnapshotDate)) 
-              : convertDateToISOString(new Date())}
+              : getFirstDayOfMonth(new Date(new Date().setMonth(new Date().getMonth() - 1)))}
             onChange={onChange}
             className="input w-full"
           />
@@ -122,7 +122,7 @@ export function HoldingInvestmentReturnInputs({
             type="date"
             value={editingFormData.endHoldingSnapshotDate 
               ? convertDateToISOString(new Date(editingFormData.endHoldingSnapshotDate)) 
-              : convertDateToISOString(new Date())}
+              : getFirstDayOfMonth(new Date(new Date().setMonth(new Date().getMonth())))}
             onChange={onChange}
             className="input w-full"
           />

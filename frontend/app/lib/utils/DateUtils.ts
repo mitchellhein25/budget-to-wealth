@@ -82,3 +82,12 @@ export const convertToDateMonthYear = (date: Date): string => {
 export const convertDateToISOString = (date: Date | undefined): string =>
   date?.toISOString().slice(0, 10) ?? '';
 
+export const getFirstDayOfMonth = (date: Date | undefined): string => {
+  var firstDayOfMonth = date ? new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 12)) : new Date();
+  return convertDateToISOString(firstDayOfMonth);
+}
+
+export const getLastDayOfMonth = (date: Date | undefined): string => {
+  var lastDayOfMonth = date ? new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12)) : new Date();
+  return convertDateToISOString(lastDayOfMonth);
+}

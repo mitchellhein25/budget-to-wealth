@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { createHoldingSnapshot, getAllHoldings, getHoldingSnapshotsByDateRange, updateHoldingSnapshot, FetchResult } from '@/app/lib/api';
-import { convertDateToISOString, convertDollarsToCents } from '@/app/lib/utils';
+import { convertDateToISOString, convertDollarsToCents, getFirstDayOfMonth } from '@/app/lib/utils';
 import { UpdateCreateButton, ResetButton, formHasAnyValue, FormTemplate } from '@/app/components';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 import { Holding } from '@/app/net-worth/holding-snapshots/holdings';
@@ -15,6 +15,7 @@ export function HoldingInvestmentReturnForm(
   const [isLoading, setIsLoading] = useState(false);
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [startSnapshots, setStartSnapshots] = useState<HoldingSnapshot[]>([]);
+  const [endSnapshotCreateUpdateError, setEndSnapshotCreateUpdateError] = useState("");
   
   const formHeader: string = formState.editingFormData?.id ? `Edit ${HOLDING_INVESTMENT_RETURN_ITEM_NAME}` : `New ${HOLDING_INVESTMENT_RETURN_ITEM_NAME}`;
 
@@ -80,15 +81,42 @@ export function HoldingInvestmentReturnForm(
   }, [selectedStartSnapshotHoldingId, endHoldingId, formState, hasStartSnapshot]);
 
   const onFormSubmit = async (formData: FormData) => {
-    const endHoldingSnapshotId = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`) as string;
-    const date = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotDate`) as string;
-    const balance = formData.get(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotBalance`) as string;
+    const formId = HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID
+    const startDateValue = formData.get(`${formId}-startHoldingSnapshotDate`) as string;
+    const endDateValue = formData.get(`${formId}-endHoldingSnapshotDate`) as string;
+    const firstDayOfStartDateMonth = getFirstDayOfMonth(new Date(startDateValue));
+    const firstDayOfEndDateMonth = getFirstDayOfMonth(new Date(endDateValue));
+    if (startDateValue !== firstDayOfStartDateMonth  || startDateValue > endDateValue || new Date(endDateValue).getMonth() - new Date(startDateValue).getMonth() > 1) {
+      setEndSnapshotCreateUpdateError("The start snapshot date must be the first day of the month before the end snapshot date.");
+      return;
+    }
+    if (endDateValue !== firstDayOfEndDateMonth) {
+      setEndSnapshotCreateUpdateError("The end snapshot date must be the first day of the month after the start snapshot date.");
+      return;
+    }
+
+    const endHoldingSnapshotId = formData.get(`${formId}-endHoldingSnapshotId`) as string;
+    const date = formData.get(`${formId}-endHoldingSnapshotDate`) as string;
+    const balance = formData.get(`${formId}-endHoldingSnapshotBalance`) as string;
 
     const endHoldingSnapshot = {
       holdingId: endHoldingId,
       date: convertDateToISOString(new Date(date)),
       balance: convertDollarsToCents(balance) ?? 0,
     }
+    if (!endHoldingId) {
+      setEndSnapshotCreateUpdateError("End holding is required.");
+      return;
+    }
+    if (!date) {
+      setEndSnapshotCreateUpdateError("End holding snapshot date is required.");
+      return;
+    }
+    if (!balance) {
+      setEndSnapshotCreateUpdateError("End holding snapshot balance is required.");
+      return;
+    }
+
     let result: FetchResult<HoldingSnapshot> | null = null;
     if (endHoldingSnapshotId) {
       result = await updateHoldingSnapshot(endHoldingSnapshotId, endHoldingSnapshot);
@@ -96,7 +124,7 @@ export function HoldingInvestmentReturnForm(
       result = await createHoldingSnapshot(endHoldingSnapshot);
     }
     if (!result.successful) {
-      formState.message = { text: result.responseMessage, type: 'ERROR'};
+      setEndSnapshotCreateUpdateError("Failed to create/update end holding snapshot. New investment return will not be created." + result.responseMessage);
       return;
     }
     // Build a new FormData to avoid mutating a potentially read-only FormData
@@ -105,10 +133,10 @@ export function HoldingInvestmentReturnForm(
       updatedFormData.set(key, value as string);
     }
     if (endHoldingId) {
-      updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotHoldingId`, endHoldingId);
+      updatedFormData.set(`${formId}-endHoldingSnapshotHoldingId`, endHoldingId);
     }
     const newId = result.data?.id?.toString() ?? '';
-    updatedFormData.set(`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-endHoldingSnapshotId`, newId);
+    updatedFormData.set(`${formId}-endHoldingSnapshotId`, newId);
     formState.handleSubmit(updatedFormData);
   }
 
@@ -134,6 +162,8 @@ export function HoldingInvestmentReturnForm(
     </>
   )
 
+  const message = formState.message.text ? formState.message : endSnapshotCreateUpdateError ? { text: endSnapshotCreateUpdateError, type: 'ERROR' } : { text: '', type: null };
+
   return (
     <FormTemplate
       formId={`${HOLDING_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-form`}
@@ -141,7 +171,7 @@ export function HoldingInvestmentReturnForm(
       formHeader={formHeader}
       inputs={inputs}
       buttons={buttons}
-      message={formState.message}
+      message={message}
     />
   )
 }
