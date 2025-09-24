@@ -399,7 +399,7 @@ describe('Utils', () => {
 
     it('limits decimal places to 2', () => {
       expect(cleanCurrencyInput('100.123')).toBe('100.12');
-      expect(cleanCurrencyInput('100.1')).toBe('100.10');
+      expect(cleanCurrencyInput('100.1')).toBe('100.1');
       expect(cleanCurrencyInput('100.12345')).toBe('100.12');
       expect(cleanCurrencyInput('0.999')).toBe('0.99');
     });
@@ -417,11 +417,11 @@ describe('Utils', () => {
 
     it('validates against currency regex and returns null for invalid', () => {
       expect(cleanCurrencyInput('100.123')).toBe('100.12');
-      expect(cleanCurrencyInput('.')).toBe("");
+      expect(cleanCurrencyInput('.')).toBe(".");
     });
 
     it('handles trailing decimal point', () => {
-      expect(cleanCurrencyInput('100.')).toBe('100');
+      expect(cleanCurrencyInput('100.')).toBe('100.');
     });
 
     it('returns empty string as is', () => {
@@ -429,7 +429,7 @@ describe('Utils', () => {
     });
 
     it('handles edge cases', () => {
-      expect(cleanCurrencyInput('0.0')).toBe('0.00');
+      expect(cleanCurrencyInput('0.0')).toBe('0.0');
       expect(cleanCurrencyInput('0.00')).toBe('0.00');
       expect(cleanCurrencyInput('   100   ')).toBe('100');
       expect(cleanCurrencyInput('100-')).toBe('100');

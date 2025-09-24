@@ -16,34 +16,31 @@ export const convertCentsToDollars = (cents: number): string => {
 };
 
 export const cleanCurrencyInput = (input: string): string | null => {
+  if (input === '') {
+    return '';
+  }
+
   let value = input.replace(/[^\d.]/g, '');
 
+  // remove all but the first decimal point
   const firstDecimal = value.indexOf('.');
   if (firstDecimal !== -1) {
-    value =
-      value.slice(0, firstDecimal + 1) +
-      value
-        .slice(firstDecimal + 1)
-        .replace(/\./g, '');
+    value = value.slice(0, firstDecimal + 1) + value.slice(firstDecimal + 1).replace(/\./g, '');
   }
 
-  if (value.endsWith('.')) {
-    value = value.slice(0, -1);
-  }
-
+  // remove leading zeros except when immediately before a decimal point
   while (value.length > 1 && value[0] === '0' && value[1] !== '.') {
     value = value.slice(1);
   }
 
+  // limit to 2 decimal places
   const decimalIndex = value.indexOf('.');
   if (decimalIndex !== -1) {
     value = value.slice(0, decimalIndex + 3);
-    if (value.length - decimalIndex === 2) {
-      value += '0';
-    }
   }
 
-  if (value !== '' && !currencyRegex.test(value)) {
+  // validate against currency regex
+  if (value !== '' && !currencyRegex.test(value) && !value.endsWith('.')) {
     return null;
   }
 
