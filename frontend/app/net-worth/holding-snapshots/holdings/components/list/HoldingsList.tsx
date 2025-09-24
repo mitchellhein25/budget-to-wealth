@@ -1,6 +1,7 @@
 import React from 'react'
 import { deleteHolding } from '@/app/lib/api';
-import { ListTable } from '@/app/components';
+import { ListTable, DeleteConfirmationModal } from '@/app/components';
+import { useDeleteConfirmation } from '@/app/hooks';
 import { HOLDING_ITEM_NAME, Holding, DesktopHoldingRow, MobileHoldingCard } from '@/app/net-worth/holding-snapshots/holdings';
 
 type HoldingsListProps = {
@@ -12,6 +13,17 @@ type HoldingsListProps = {
 }
 
 export function HoldingsList(props: HoldingsListProps) {
+  const {
+		isModalOpen,
+		isLoading: isDeleting,
+		openDeleteModal,
+		closeDeleteModal,
+		confirmDelete
+	} = useDeleteConfirmation({
+		deleteFunction: deleteHolding,
+		onSuccess: props.onHoldingDeleted
+	});
+
   const tableHeaderRow = (
     <tr>
       <th className="w-1/5">Name</th>
@@ -22,20 +34,12 @@ export function HoldingsList(props: HoldingsListProps) {
     </tr>
   );
 
-  async function handleDelete(id: number) {
-		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteHolding(id);
-			if (result.successful)
-      props.onHoldingDeleted();
-		}
-	};
-
   const desktopRow = (holding: Holding) => (
     <DesktopHoldingRow
       key={holding.id}
       holding={holding}
       onEdit={props.onHoldingIsEditing}
-      onDelete={handleDelete}
+      onDelete={openDeleteModal}
     />
   );
 
@@ -44,20 +48,30 @@ export function HoldingsList(props: HoldingsListProps) {
       key={holding.id}
       holding={holding}
       onEdit={props.onHoldingIsEditing}
-      onDelete={handleDelete}
+      onDelete={openDeleteModal}
     />
   );
 
   return (
-    <ListTable
-      items={props.holdings}
-      bodyRow={desktopRow}
-      mobileRow={mobileRow}
-      headerRow={tableHeaderRow}
-      isLoading={props.isLoading}
-      isError={props.isError}
-      title={`${HOLDING_ITEM_NAME}s`}
-    />
+    <>
+      <ListTable
+        items={props.holdings}
+        bodyRow={desktopRow}
+        mobileRow={mobileRow}
+        headerRow={tableHeaderRow}
+        isLoading={props.isLoading}
+        isError={props.isError}
+        title={`${HOLDING_ITEM_NAME}s`}
+      />
+      <DeleteConfirmationModal
+        isOpen={isModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+        title="Delete Holding"
+        message="Are you sure you want to delete this holding? This action cannot be undone."
+      />
+    </>
   )
 }
 

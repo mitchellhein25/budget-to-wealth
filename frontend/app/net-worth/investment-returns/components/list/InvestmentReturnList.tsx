@@ -1,5 +1,7 @@
 import React from 'react'
-import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn, FetchResult } from '@/app/lib/api';
+import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn } from '@/app/lib/api';
+import { DeleteConfirmationModal } from '@/app/components';
+import { useDeleteConfirmation } from '@/app/hooks';
 import { HoldingInvestmentReturn, ManualInvestmentReturn, HoldingInvestmentReturnList, ManualInvestmentReturnList } from '@/app/net-worth/investment-returns';
 
 type InvestmentReturnListProps = {
@@ -15,17 +17,15 @@ type InvestmentReturnListProps = {
 
 export function InvestmentReturnList(props: InvestmentReturnListProps) {
 
-  async function handleDelete<T>(
-    id: number, 
-    deleteRequest: (id: number) => Promise<FetchResult<T>>,   
-    onDeleted: () => void) 
-  {
-		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteRequest(id);
-			if (result.successful)
-        onDeleted();
-		}
-	};
+  const manualDeleteConfirmation = useDeleteConfirmation({
+    deleteFunction: deleteManualInvestmentReturn,
+    onSuccess: props.onManualInvestmentReturnDeleted
+  });
+
+  const holdingDeleteConfirmation = useDeleteConfirmation({
+    deleteFunction: deleteHoldingInvestmentReturn,
+    onSuccess: props.onHoldingInvestmentReturnDeleted
+  });
   
   const columnWidths = {
     investment: "w-5/12",
@@ -50,7 +50,7 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
         onHoldingInvestmentReturnIsEditing={props.onHoldingInvestmentReturnIsEditing}
         tableHeaderRow={tableHeaderRow}
         columnWidths={columnWidths}
-        handleDelete={(id: number) => handleDelete(id, deleteHoldingInvestmentReturn, props.onHoldingInvestmentReturnDeleted)}
+        handleDelete={holdingDeleteConfirmation.openDeleteModal}
         isLoading={props.isLoading}
         isError={props.isError}
       />
@@ -60,9 +60,25 @@ export function InvestmentReturnList(props: InvestmentReturnListProps) {
         onManualInvestmentReturnIsEditing={props.onManualInvestmentReturnIsEditing}
         tableHeaderRow={tableHeaderRow}
         columnWidths={columnWidths}
-        handleDelete={(id: number) => handleDelete(id, deleteManualInvestmentReturn, props.onManualInvestmentReturnDeleted)}
+        handleDelete={manualDeleteConfirmation.openDeleteModal}
         isLoading={props.isLoading}
         isError={props.isError}
+      />
+      <DeleteConfirmationModal
+        isOpen={holdingDeleteConfirmation.isModalOpen}
+        onClose={holdingDeleteConfirmation.closeDeleteModal}
+        onConfirm={holdingDeleteConfirmation.confirmDelete}
+        isLoading={holdingDeleteConfirmation.isLoading}
+        title="Delete Holding Investment Return"
+        message="Are you sure you want to delete this holding investment return? This action cannot be undone."
+      />
+      <DeleteConfirmationModal
+        isOpen={manualDeleteConfirmation.isModalOpen}
+        onClose={manualDeleteConfirmation.closeDeleteModal}
+        onConfirm={manualDeleteConfirmation.confirmDelete}
+        isLoading={manualDeleteConfirmation.isLoading}
+        title="Delete Manual Investment Return"
+        message="Are you sure you want to delete this manual investment return? This action cannot be undone."
       />
     </>
   )

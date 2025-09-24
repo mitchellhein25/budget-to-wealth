@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { deleteHoldingSnapshot } from '@/app/lib/api';
-import { ListTable } from '@/app/components';
+import { ListTable, DeleteConfirmationModal } from '@/app/components';
+import { useDeleteConfirmation } from '@/app/hooks';
 import { DesktopHoldingSnapshotRow, HOLDING_SNAPSHOT_ITEM_NAME, HoldingSnapshot, MobileHoldingSnapshotCard } from '@/app/net-worth/holding-snapshots';
 
 type HoldingSnapshotsListProps = {
@@ -15,13 +16,16 @@ type HoldingSnapshotsListProps = {
 
 export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 
-	async function handleDelete(id: number) {
-		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteHoldingSnapshot(id);
-			if (result.successful)
-				props.onSnapshotDeleted();
-		}
-	};
+	const {
+		isModalOpen,
+		isLoading: isDeleting,
+		openDeleteModal,
+		closeDeleteModal,
+		confirmDelete
+	} = useDeleteConfirmation({
+		deleteFunction: deleteHoldingSnapshot,
+		onSuccess: props.onSnapshotDeleted
+	});
 
 	const columnWidths = {
 		holding: "w-6/12",
@@ -45,7 +49,7 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 			snapshot={snapshot}
 			columnWidths={columnWidths}
 			onEdit={props.onSnapshotIsEditing}
-			onDelete={handleDelete}
+			onDelete={openDeleteModal}
       onUpdate={(s) => {
         const todayIso = new Date().toISOString();
         props.onSnapshotIsEditing({ ...s, id: undefined, date: todayIso } as HoldingSnapshot);
@@ -58,19 +62,29 @@ export function HoldingSnapshotsList(props: HoldingSnapshotsListProps) {
 			key={snapshot.id}
 			snapshot={snapshot}
 			onEdit={props.onSnapshotIsEditing}
-			onDelete={handleDelete}
+			onDelete={openDeleteModal}
 		/>
 	);
 
 	return (
-		<ListTable
-			title={`${HOLDING_SNAPSHOT_ITEM_NAME}s`}
-			headerRow={tableHeaderRow}
-			bodyRow={desktopRow}
-			mobileRow={mobileRow}
-			items={props.snapshots}
-			isError={props.isError}
-			isLoading={props.isLoading}
-		/>	
+		<>
+			<ListTable
+				title={`${HOLDING_SNAPSHOT_ITEM_NAME}s`}
+				headerRow={tableHeaderRow}
+				bodyRow={desktopRow}
+				mobileRow={mobileRow}
+				items={props.snapshots}
+				isError={props.isError}
+				isLoading={props.isLoading}
+			/>
+			<DeleteConfirmationModal
+				isOpen={isModalOpen}
+				onClose={closeDeleteModal}
+				onConfirm={confirmDelete}
+				isLoading={isDeleting}
+				title="Delete Snapshot"
+				message="Are you sure you want to delete this snapshot? This action cannot be undone."
+			/>
+		</>
 	);
 }

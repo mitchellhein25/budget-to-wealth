@@ -39,5 +39,6 @@ export * from '@/app/components/ui/ResponsiveFormListPage';
 export * from '@/app/components/ui/SideBar';
 export * from '@/app/components/ui/TotalDisplay';
 export * from '@/app/components/ui/TruncatedBadge';
+export * from '@/app/components/ui/DeleteConfirmationModal';
 
 export * from '@/app/components/ui/date-picker/DatePicker';

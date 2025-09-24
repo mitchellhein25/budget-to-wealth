@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { archiveBudget } from '@/app/lib/api';
-import { ListTable } from '@/app/components';
+import { ListTable, DeleteConfirmationModal } from '@/app/components';
+import { useDeleteConfirmation } from '@/app/hooks';
 import { CashFlowEntry } from '@/app/cashflow';
 import { BUDGET_ITEM_NAME, Budget, DesktopBudgetRow, MobileBudgetCard } from '@/app/cashflow/budget';
 
@@ -17,13 +18,16 @@ interface BudgetsListProps {
 
 export function BudgetsList(props: BudgetsListProps) {
 
-	async function handleDelete(id: number) {
-		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await archiveBudget(id);
-			if (result.successful)
-				props.onBudgetDeleted();
-		}
-	};
+	const {
+		isModalOpen,
+		isLoading: isDeleting,
+		openDeleteModal,
+		closeDeleteModal,
+		confirmDelete
+	} = useDeleteConfirmation({
+		deleteFunction: archiveBudget,
+		onSuccess: props.onBudgetDeleted
+	});
 
 	const columnWidths = {
 		category: "w-4/12",
@@ -49,7 +53,7 @@ export function BudgetsList(props: BudgetsListProps) {
 			budget={budget}
 			expenses={props.expenses}
 			onEdit={props.onBudgetIsEditing}
-			onDelete={handleDelete}
+			onDelete={openDeleteModal}
 			columnWidths={columnWidths}
 		/>
 	);
@@ -60,19 +64,29 @@ export function BudgetsList(props: BudgetsListProps) {
 			budget={budget}
 			expenses={props.expenses}
 			onEdit={props.onBudgetIsEditing}
-			onDelete={handleDelete}
+			onDelete={openDeleteModal}
 		/>
 	);
 
 	return (
-		<ListTable
-			title={`${BUDGET_ITEM_NAME}s`}
-			headerRow={tableHeaderRow}
-			bodyRow={desktopRow}
-			mobileRow={mobileRow}
-			items={props.budgets}
-			isError={props.isError}
-			isLoading={props.isLoading}
-		/>	
+		<>
+			<ListTable
+				title={`${BUDGET_ITEM_NAME}s`}
+				headerRow={tableHeaderRow}
+				bodyRow={desktopRow}
+				mobileRow={mobileRow}
+				items={props.budgets}
+				isError={props.isError}
+				isLoading={props.isLoading}
+			/>
+			<DeleteConfirmationModal
+				isOpen={isModalOpen}
+				onClose={closeDeleteModal}
+				onConfirm={confirmDelete}
+				isLoading={isDeleting}
+				title="Delete Budget"
+				message="Are you sure you want to delete this budget? This action cannot be undone."
+			/>
+		</>
 	);
 }
