@@ -14,6 +14,7 @@ export * from '@/app/net-worth/investment-returns/components/form/holding-invest
 export * from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/functions/holdingInvestmentReturnFormOnChange';
 export * from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/functions/transformFormDataToHoldingInvestmentReturn';
 export * from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/functions/getHoldingInvestmentReturnValidationResult';
+export * from '@/app/net-worth/investment-returns/components/form/holding-investment-return-form/functions/holdingInvestmentFormOnSubmit';
 
 export * from '@/app/net-worth/investment-returns/components/form/manual-investment-return-form/ManualInvestmentInputs';
 export * from '@/app/net-worth/investment-returns/components/form/manual-investment-return-form/ManualInvestmentReturnForm';

@@ -1,5 +1,5 @@
-export const currencyRegex = /^\d+(\.\d{0,2})?$/;
-export const percentageRegex = /^-?\d+(\.\d*)?$/;
+export const currencyRegex = /^(0|[1-9]\d*)(\.\d{1,2})?$/;
+export const percentageRegex = /^-?(0|[1-9]\d*)(\.\d+)?$/;
 
 export const convertDollarsToCents = (dollarAmount: string): number | null => {
   const parsed = Number.parseFloat(dollarAmount);
@@ -15,33 +15,49 @@ export const convertCentsToDollars = (cents: number): string => {
   }).format(cents / 100);
 };
 
-export const cleanCurrencyInput = (value: string): string | null => {
-  value = value.replace(/[^\d.]/g, '');
+export const cleanCurrencyInput = (input: string): string | null => {
+  let value = input.replace(/[^\d.]/g, '');
 
-  const decimalCount = (value.match(/\./g) || []).length;
-  if (decimalCount > 1) {
-    return null;
+  const firstDecimal = value.indexOf('.');
+  if (firstDecimal !== -1) {
+    value =
+      value.slice(0, firstDecimal + 1) +
+      value
+        .slice(firstDecimal + 1)
+        .replace(/\./g, '');
+  }
+
+  if (value.endsWith('.')) {
+    value = value.slice(0, -1);
+  }
+
+  while (value.length > 1 && value[0] === '0' && value[1] !== '.') {
+    value = value.slice(1);
   }
 
   const decimalIndex = value.indexOf('.');
-  if (decimalIndex !== -1 && value.length - decimalIndex > 3) {
-    value = value.substring(0, decimalIndex + 3);
-  }
-
-  if (value.length > 1 && value[0] === '0' && value[1] !== '.') {
-    value = value.substring(1);
+  if (decimalIndex !== -1) {
+    value = value.slice(0, decimalIndex + 3);
+    if (value.length - decimalIndex === 2) {
+      value += '0';
+    }
   }
 
   if (value !== '' && !currencyRegex.test(value)) {
     return null;
   }
+
   return value;
 }
 
-export const cleanPercentageInput = (value: string): string | null => {
-  value = value.replace(/[^\d.-]/g, '');
+export const cleanPercentageInput = (input: string): string | null => {
+  const value = input.replace(/[^\d.-]/g, '');
 
-  if (value !== '' && !percentageRegex.test(value)) {
+  if (value === '') {
+    return value;
+  }
+
+  if (!percentageRegex.test(value)) {
     return null;
   }
 

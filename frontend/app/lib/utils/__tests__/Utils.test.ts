@@ -175,29 +175,29 @@ describe('Utils', () => {
     it('returns correct month range for January', () => {
       const date = new Date('2024-01-15');
       const result = getFullMonthRange(date);
-      expect(result.from).toEqual(new Date(2024, 0, 1, 12));
-      expect(result.to).toEqual(new Date(2024, 0, 31, 12));
+      expect(result.from).toEqual(new Date(Date.UTC(2024, 0, 1, 12)));
+      expect(result.to).toEqual(new Date(Date.UTC(2024, 0, 31, 12)));
     });
 
     it('returns correct month range for February (leap year)', () => {
       const date = new Date('2024-02-15');
       const result = getFullMonthRange(date);
-      expect(result.from).toEqual(new Date(2024, 1, 1, 12));
-      expect(result.to).toEqual(new Date(2024, 1, 29, 12));
+      expect(result.from).toEqual(new Date(Date.UTC(2024, 1, 1, 12)));
+      expect(result.to).toEqual(new Date(Date.UTC(2024, 1, 29, 12)));
     });
 
     it('returns correct month range for February (non-leap year)', () => {
       const date = new Date('2023-02-15');
       const result = getFullMonthRange(date);
-      expect(result.from).toEqual(new Date(2023, 1, 1, 12));
-      expect(result.to).toEqual(new Date(2023, 1, 28, 12));
+      expect(result.from).toEqual(new Date(Date.UTC(2023, 1, 1, 12)));
+      expect(result.to).toEqual(new Date(Date.UTC(2023, 1, 28, 12)));
     });
 
     it('returns correct month range for December', () => {
       const date = new Date('2024-12-15');
       const result = getFullMonthRange(date);
-      expect(result.from).toEqual(new Date(2024, 11, 1, 12));
-      expect(result.to).toEqual(new Date(2024, 11, 31, 12));
+      expect(result.from).toEqual(new Date(Date.UTC(2024, 11, 1, 12)));
+      expect(result.to).toEqual(new Date(Date.UTC(2024, 11, 31, 12)));
     });
 
     it('handles month boundaries correctly', () => {
@@ -227,8 +227,8 @@ describe('Utils', () => {
     it('returns correct year range', () => {
       const date = new Date('2024-06-15');
       const result = getFullYearRange(date);
-      expect(result.from).toEqual(new Date(2024, 0, 1, 12));
-      expect(result.to).toEqual(new Date(2024, 11, 31, 12));
+      expect(result.from).toEqual(new Date(Date.UTC(2024, 0, 1, 12)));
+      expect(result.to).toEqual(new Date(Date.UTC(2024, 11, 31, 12)));
     });
 
     it('handles leap year correctly', () => {
@@ -245,10 +245,10 @@ describe('Utils', () => {
       const result2023 = getFullYearRange(date2023);
       const result2025 = getFullYearRange(date2025);
       
-      expect(result2023.from).toEqual(new Date(2023, 0, 1, 12));
-      expect(result2023.to).toEqual(new Date(2023, 11, 31, 12));
-      expect(result2025.from).toEqual(new Date(2025, 0, 1, 12));
-      expect(result2025.to).toEqual(new Date(2025, 11, 31, 12));
+      expect(result2023.from).toEqual(new Date(Date.UTC(2023, 0, 1, 12)));
+      expect(result2023.to).toEqual(new Date(Date.UTC(2023, 11, 31, 12)));
+      expect(result2025.from).toEqual(new Date(Date.UTC(2025, 0, 1, 12)));
+      expect(result2025.to).toEqual(new Date(Date.UTC(2025, 11, 31, 12)));
     });
 
     it('handles year boundaries correctly', () => {
@@ -392,14 +392,14 @@ describe('Utils', () => {
     });
 
     it('handles multiple decimal points by returning null', () => {
-      expect(cleanCurrencyInput('100.50.25')).toBeNull();
-      expect(cleanCurrencyInput('100..50')).toBeNull();
-      expect(cleanCurrencyInput('1.2.3.4')).toBeNull();
+      expect(cleanCurrencyInput('100.50.25')).toBe('100.50');
+      expect(cleanCurrencyInput('100..50')).toBe('100.50');
+      expect(cleanCurrencyInput('1.2.3.4')).toBe('1.23');
     });
 
     it('limits decimal places to 2', () => {
       expect(cleanCurrencyInput('100.123')).toBe('100.12');
-      expect(cleanCurrencyInput('100.1')).toBe('100.1');
+      expect(cleanCurrencyInput('100.1')).toBe('100.10');
       expect(cleanCurrencyInput('100.12345')).toBe('100.12');
       expect(cleanCurrencyInput('0.999')).toBe('0.99');
     });
@@ -412,16 +412,16 @@ describe('Utils', () => {
     });
 
     it('handles multiple leading zeros differently for large numbers', () => {
-      expect(cleanCurrencyInput('000100')).toBe('00100');
+      expect(cleanCurrencyInput('000100')).toBe('100');
     });
 
     it('validates against currency regex and returns null for invalid', () => {
       expect(cleanCurrencyInput('100.123')).toBe('100.12');
-      expect(cleanCurrencyInput('.')).toBeNull();
+      expect(cleanCurrencyInput('.')).toBe("");
     });
 
     it('handles trailing decimal point', () => {
-      expect(cleanCurrencyInput('100.')).toBe('100.');
+      expect(cleanCurrencyInput('100.')).toBe('100');
     });
 
     it('returns empty string as is', () => {
@@ -429,7 +429,7 @@ describe('Utils', () => {
     });
 
     it('handles edge cases', () => {
-      expect(cleanCurrencyInput('0.0')).toBe('0.0');
+      expect(cleanCurrencyInput('0.0')).toBe('0.00');
       expect(cleanCurrencyInput('0.00')).toBe('0.00');
       expect(cleanCurrencyInput('   100   ')).toBe('100');
       expect(cleanCurrencyInput('100-')).toBe('100');

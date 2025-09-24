@@ -3,15 +3,15 @@ import { DateRange } from "@/app/components";
 
 export const getFullMonthRange = (date: Date) : DateRange => {
   return {
-    from: new Date(date.getUTCFullYear(), date.getUTCMonth(), 1, 12),
-    to: new Date(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12),
+    from: new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 12)),
+    to: new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12)),
   };
 };
 
 export const getFullYearRange = (date: Date) : DateRange => {
   return {
-    from: new Date(date.getUTCFullYear(), 0, 1, 12),
-    to: new Date(date.getUTCFullYear(), 11, 31, 12),
+    from: new Date(Date.UTC(date.getUTCFullYear(), 0, 1, 12)),
+    to: new Date(Date.UTC(date.getUTCFullYear() + 1, 0, 0, 12)),
   };
 };
 
@@ -23,11 +23,9 @@ export const datesAreFullMonthRange = (from: Date | string | undefined, to: Date
   const toDate = to instanceof Date ? to : convertToDate(to);
 
   const currentMonthRange = getFullMonthRange(fromDate);
-  if (!currentMonthRange.from || !currentMonthRange.to)
-    return false;
   
-  return datesAreSameDay(fromDate, currentMonthRange.from) 
-        && datesAreSameDay(toDate, currentMonthRange.to);
+  return datesAreSameDay(fromDate, currentMonthRange.from!) 
+        && datesAreSameDay(toDate, currentMonthRange.to!);
 };
 
 const datesAreSameDay = (date1: Date, date2: Date) => {
@@ -76,6 +74,7 @@ export const convertToDateMonthYear = (date: Date): string => {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
+    timeZone: 'UTC'
   });
 }
 
@@ -83,11 +82,11 @@ export const convertDateToISOString = (date: Date | undefined): string =>
   date?.toISOString().slice(0, 10) ?? '';
 
 export const getFirstDayOfMonth = (date: Date | undefined): string => {
-  var firstDayOfMonth = date ? new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 12)) : new Date();
+  const firstDayOfMonth = date ? new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 12)) : new Date();
   return convertDateToISOString(firstDayOfMonth);
 }
 
 export const getLastDayOfMonth = (date: Date | undefined): string => {
-  var lastDayOfMonth = date ? new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12)) : new Date();
+  const lastDayOfMonth = date ? new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 12)) : new Date();
   return convertDateToISOString(lastDayOfMonth);
 }

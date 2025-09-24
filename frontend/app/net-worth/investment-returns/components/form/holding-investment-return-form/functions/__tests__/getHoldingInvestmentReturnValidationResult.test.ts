@@ -60,7 +60,7 @@ describe('getHoldingInvestmentReturnValidationResult', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.errors).toHaveLength(1);
-      expect(result.error.errors[0].message).toBe('End Holding Snapshot Holding Id field is required');
+      expect(result.error.errors[0].message).toBe('End Holding Snapshot Holding field is required');
     }
   });
 
