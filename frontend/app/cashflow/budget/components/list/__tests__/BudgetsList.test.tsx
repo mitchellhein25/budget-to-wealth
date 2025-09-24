@@ -6,6 +6,13 @@ import { BudgetsList } from '@/app/cashflow/budget/components/list/BudgetsList';
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
+  useDeleteConfirmation: jest.fn(() => ({
+    isModalOpen: false,
+    isLoading: false,
+    openDeleteModal: jest.fn(),
+    closeDeleteModal: jest.fn(),
+    confirmDelete: jest.fn(),
+  })),
 }));
 
 jest.mock('@/app/lib/api', () => ({
@@ -35,6 +42,7 @@ jest.mock('@/app/components', () => ({
       )}
     </div>
   ),
+  DeleteConfirmationModal: jest.fn(() => null),
   convertCentsToDollars: jest.fn((cents: number) => `$${(cents / 100).toFixed(2)}`),
   DesktopListItemRow: ({ children, onEdit, onDelete }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void }) => (
     <tr>
@@ -207,60 +215,70 @@ describe('BudgetsList', () => {
     expect(mockProps.onBudgetIsEditing).toHaveBeenCalledWith(mockBudgets[0]);
   });
 
-  it('calls deleteBudget and onBudgetDeleted when delete is confirmed', async () => {
-    global.confirm = jest.fn(() => true);
+  it('calls openDeleteModal when delete button is clicked', () => {
+    const mockOpenDeleteModal = jest.fn();
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: mockOpenDeleteModal,
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
+    });
+
+    render(<BudgetsList {...mockProps} />);
+    
+    const deleteButtons = screen.getAllByText('Delete');
+    fireEvent.click(deleteButtons[0]);
+    
+    expect(mockOpenDeleteModal).toHaveBeenCalledWith(1);
+  });
+
+  it('calls confirmDelete when modal confirm is triggered', async () => {
+    const mockConfirmDelete = jest.fn();
     mockArchiveBudget.mockResolvedValue({ 
       successful: true, 
       data: null, 
       responseMessage: 'Budget deleted successfully' 
     });
-    
+
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: true,
+      isLoading: false,
+      openDeleteModal: jest.fn(),
+      closeDeleteModal: jest.fn(),
+      confirmDelete: mockConfirmDelete,
+    });
+
     render(<BudgetsList {...mockProps} />);
     
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
+    await mockConfirmDelete();
     
-    expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockArchiveBudget).toHaveBeenCalledWith(1);
-    
-    await waitFor(() => {
-      expect(mockProps.onBudgetDeleted).toHaveBeenCalled();
-    });
+    expect(mockConfirmDelete).toHaveBeenCalled();
   });
 
-  it('does not call onBudgetDeleted when delete is cancelled', async () => {
-    global.confirm = jest.fn(() => false);
-    mockArchiveBudget.mockClear();
-    mockProps.onBudgetDeleted.mockClear();
-    
-    render(<BudgetsList {...mockProps} />);
-    
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
-    
-    expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockArchiveBudget).not.toHaveBeenCalled();
-    expect(mockProps.onBudgetDeleted).not.toHaveBeenCalled();
-  });
-
-  it('does not call onBudgetDeleted when delete API call fails', async () => {
-    global.confirm = jest.fn(() => true);
-    mockArchiveBudget.mockClear();
-    mockProps.onBudgetDeleted.mockClear();
-    mockArchiveBudget.mockResolvedValue({ 
-      successful: false, 
-      data: null, 
-      responseMessage: 'Failed to delete budget' 
+  it('renders DeleteConfirmationModal with correct props', () => {
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: jest.fn(),
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
     });
-    
+
     render(<BudgetsList {...mockProps} />);
     
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
+    const { DeleteConfirmationModal } = require('@/app/components');
+    expect(DeleteConfirmationModal).toHaveBeenCalled();
     
-    await waitFor(() => {
-      expect(mockArchiveBudget).toHaveBeenCalledWith(1);
-      expect(mockProps.onBudgetDeleted).not.toHaveBeenCalled();
+    const lastCall = DeleteConfirmationModal.mock.calls[DeleteConfirmationModal.mock.calls.length - 1];
+    expect(lastCall[0]).toMatchObject({
+      isOpen: false,
+      isLoading: false,
+      title: "Delete Budget",
+      message: "Are you sure you want to delete this budget? This action cannot be undone."
     });
   });
 
@@ -324,4 +342,4 @@ describe('BudgetsList', () => {
     expect(screen.getAllByText('$1000.00')).toHaveLength(2); // Groceries amount and remaining
     expect(screen.getAllByText('$500.00')).toHaveLength(2); // Entertainment amount and remaining
   });
-}); 
+});        

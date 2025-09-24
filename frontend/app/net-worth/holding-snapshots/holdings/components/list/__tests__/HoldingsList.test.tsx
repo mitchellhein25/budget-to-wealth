@@ -5,6 +5,13 @@ import { HoldingsList } from '@/app/net-worth/holding-snapshots/holdings/compone
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
+  useDeleteConfirmation: jest.fn(() => ({
+    isModalOpen: false,
+    isLoading: false,
+    openDeleteModal: jest.fn(),
+    closeDeleteModal: jest.fn(),
+    confirmDelete: jest.fn(),
+  })),
 }));
 
 jest.mock('@/app/lib/api', () => ({
@@ -39,7 +46,8 @@ jest.mock('@/app/components', () => ({
         </>
       )}
     </div>
-  ))
+  )),
+  DeleteConfirmationModal: jest.fn(() => null),
 }));
 
 jest.mock('@/app/net-worth/holding-snapshots/holdings', () => ({
@@ -104,7 +112,6 @@ describe('HoldingsList', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    global.confirm = jest.fn();
   });
 
   it('passes correct title to ListTable', () => {
@@ -131,12 +138,22 @@ describe('HoldingsList', () => {
     expect(mockProps.onHoldingIsEditing).toHaveBeenCalledWith(mockHoldings[0]);
   });
 
-  it('shows confirmation dialog when delete button is clicked', () => {
+  it('calls openDeleteModal when delete button is clicked', () => {
+    const mockOpenDeleteModal = jest.fn();
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: mockOpenDeleteModal,
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
+    });
+
     render(<HoldingsList {...mockProps} />);
     
     const deleteButton = screen.getByTestId('delete-1');
     fireEvent.click(deleteButton);
     
-    expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
+    expect(mockOpenDeleteModal).toHaveBeenCalledWith(1);
   });
-}); 
+});    

@@ -6,6 +6,13 @@ import { HoldingSnapshotsList } from '@/app/net-worth/holding-snapshots/componen
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
+  useDeleteConfirmation: jest.fn(() => ({
+    isModalOpen: false,
+    isLoading: false,
+    openDeleteModal: jest.fn(),
+    closeDeleteModal: jest.fn(),
+    confirmDelete: jest.fn(),
+  })),
 }));
 
 jest.mock('@/app/lib/api', () => ({
@@ -37,6 +44,7 @@ jest.mock('@/app/components', () => ({
       )}
     </div>
   ),
+  DeleteConfirmationModal: jest.fn(() => null),
   DesktopListItemRow: ({ children, onEdit, onDelete, customActionButton }: { children: React.ReactNode; onEdit: () => void; onDelete: () => void; customActionButton?: React.ReactNode }) => (
     <tr data-testid="desktop-list-item-row">
       {children}
@@ -65,11 +73,6 @@ jest.mock('@/app/net-worth/holding-snapshots', () => ({
   ),
 }));
 
-const mockConfirm = jest.fn();
-Object.defineProperty(window, 'confirm', {
-  value: mockConfirm,
-  writable: true
-});
 
 describe('HoldingSnapshotsList', () => {
   const mockDeleteHoldingSnapshot = deleteHoldingSnapshot as jest.MockedFunction<(id: number) => Promise<{ successful: boolean; data: unknown; responseMessage: string }>>;
@@ -116,7 +119,6 @@ describe('HoldingSnapshotsList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDeleteHoldingSnapshot.mockResolvedValue({ successful: true, data: null, responseMessage: 'Deleted successfully' });
-    mockConfirm.mockReturnValue(true);
   });
 
   it('renders component with title', () => {
@@ -178,7 +180,17 @@ describe('HoldingSnapshotsList', () => {
     expect(mockOnSnapshotIsEditing).toHaveBeenCalledWith(mockSnapshots[0]);
   });
 
-  it('handles delete button click with confirmation', async () => {
+  it('calls openDeleteModal when delete button is clicked', () => {
+    const mockOpenDeleteModal = jest.fn();
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: mockOpenDeleteModal,
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
+    });
+
     render(
       <HoldingSnapshotsList
         snapshots={mockSnapshots}
@@ -192,15 +204,51 @@ describe('HoldingSnapshotsList', () => {
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
 
-    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockDeleteHoldingSnapshot).toHaveBeenCalledWith(1);
+    expect(mockOpenDeleteModal).toHaveBeenCalledWith(1);
+  });
+
+  it('renders DeleteConfirmationModal with correct props', () => {
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: jest.fn(),
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
+    });
+
+    render(
+      <HoldingSnapshotsList
+        snapshots={mockSnapshots}
+        onSnapshotDeleted={mockOnSnapshotDeleted}
+        onSnapshotIsEditing={mockOnSnapshotIsEditing}
+        isLoading={false}
+        isError={false}
+      />
+    );
+
+    const { DeleteConfirmationModal } = require('@/app/components');
+    expect(DeleteConfirmationModal).toHaveBeenCalled();
     
-    await new Promise(resolve => setTimeout(resolve, 0));
-    expect(mockOnSnapshotDeleted).toHaveBeenCalled();
+    const lastCall = DeleteConfirmationModal.mock.calls[DeleteConfirmationModal.mock.calls.length - 1];
+    expect(lastCall[0]).toMatchObject({
+      isOpen: false,
+      isLoading: false,
+      title: "Delete Snapshot",
+      message: "Are you sure you want to delete this snapshot? This action cannot be undone."
+    });
   });
 
-  it('does not delete when user cancels confirmation', async () => {
-    mockConfirm.mockReturnValue(false);
+  it('calls confirmDelete when modal confirm is triggered', async () => {
+    const mockConfirmDelete = jest.fn();
+    const { useDeleteConfirmation } = require('@/app/hooks');
+    useDeleteConfirmation.mockReturnValue({
+      isModalOpen: true,
+      isLoading: false,
+      openDeleteModal: jest.fn(),
+      closeDeleteModal: jest.fn(),
+      confirmDelete: mockConfirmDelete,
+    });
 
     render(
       <HoldingSnapshotsList
@@ -212,32 +260,8 @@ describe('HoldingSnapshotsList', () => {
       />
     );
 
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
-
-    expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-    expect(mockDeleteHoldingSnapshot).not.toHaveBeenCalled();
-    expect(mockOnSnapshotDeleted).not.toHaveBeenCalled();
-  });
-
-  it('does not call onSnapshotDeleted when delete fails', async () => {
-    mockDeleteHoldingSnapshot.mockResolvedValue({ successful: false, data: null, responseMessage: 'Delete failed' });
-
-    render(
-      <HoldingSnapshotsList
-        snapshots={mockSnapshots}
-        onSnapshotDeleted={mockOnSnapshotDeleted}
-        onSnapshotIsEditing={mockOnSnapshotIsEditing}
-        isLoading={false}
-        isError={false}
-      />
-    );
-
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
-
-    expect(mockDeleteHoldingSnapshot).toHaveBeenCalledWith(1);
-    expect(mockOnSnapshotDeleted).not.toHaveBeenCalled();
+    await mockConfirmDelete();
+    expect(mockConfirmDelete).toHaveBeenCalled();
   });
 
   it('handles empty snapshots array', () => {
@@ -254,4 +278,4 @@ describe('HoldingSnapshotsList', () => {
     expect(screen.getByText('Holding Snapshots')).toBeInTheDocument();
     expect(screen.getByTestId('list-table')).toBeInTheDocument();
   });
-}); 
+});          

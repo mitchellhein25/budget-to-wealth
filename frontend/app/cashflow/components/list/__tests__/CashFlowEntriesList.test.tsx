@@ -16,6 +16,16 @@ interface ListTableProps {
   isLoading: boolean;
 }
 
+jest.mock('@/app/hooks', () => ({
+  useDeleteConfirmation: jest.fn(() => ({
+    isModalOpen: false,
+    isLoading: false,
+    openDeleteModal: jest.fn(),
+    closeDeleteModal: jest.fn(),
+    confirmDelete: jest.fn(),
+  })),
+}));
+
 jest.mock('@/app/components', () => ({
   ...jest.requireActual('@/app/components'),
   ListTable: ({ title, items, isError, isLoading }: ListTableProps) => (
@@ -27,6 +37,7 @@ jest.mock('@/app/components', () => ({
       <div data-testid={isLoadingTestId}>{isLoading.toString()}</div>
     </div>
   ),
+  DeleteConfirmationModal: jest.fn(() => null),
 }));
 
 jest.mock('@/app/cashflow', () => ({
@@ -69,4 +80,4 @@ describe('CashFlowEntriesList', () => {
     render(<CashFlowEntriesList {...mockProps} isError={true} />);
     expect(screen.getByTestId(isErrorTestId)).toHaveTextContent('true');
   });
-}); 
+});    
