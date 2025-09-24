@@ -3,6 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { deleteHoldingSnapshot } from '@/app/lib/api';
 import { HoldingSnapshot } from '@/app/net-worth/holding-snapshots';
 import { HoldingSnapshotsList } from '@/app/net-worth/holding-snapshots/components/list/HoldingSnapshotsList';
+import { useDeleteConfirmation } from '@/app/hooks';
+import { DeleteConfirmationModal } from '@/app/components';
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
@@ -182,8 +184,7 @@ describe('HoldingSnapshotsList', () => {
 
   it('calls openDeleteModal when delete button is clicked', () => {
     const mockOpenDeleteModal = jest.fn();
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: mockOpenDeleteModal,
@@ -208,8 +209,7 @@ describe('HoldingSnapshotsList', () => {
   });
 
   it('renders DeleteConfirmationModal with correct props', () => {
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: jest.fn(),
@@ -227,10 +227,9 @@ describe('HoldingSnapshotsList', () => {
       />
     );
 
-    const { DeleteConfirmationModal } = require('@/app/components');
     expect(DeleteConfirmationModal).toHaveBeenCalled();
     
-    const lastCall = DeleteConfirmationModal.mock.calls[DeleteConfirmationModal.mock.calls.length - 1];
+    const lastCall = (DeleteConfirmationModal as jest.Mock).mock.calls[(DeleteConfirmationModal as jest.Mock).mock.calls.length - 1];
     expect(lastCall[0]).toMatchObject({
       isOpen: false,
       isLoading: false,
@@ -241,8 +240,7 @@ describe('HoldingSnapshotsList', () => {
 
   it('calls confirmDelete when modal confirm is triggered', async () => {
     const mockConfirmDelete = jest.fn();
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: true,
       isLoading: false,
       openDeleteModal: jest.fn(),
@@ -278,4 +276,4 @@ describe('HoldingSnapshotsList', () => {
     expect(screen.getByText('Holding Snapshots')).toBeInTheDocument();
     expect(screen.getByTestId('list-table')).toBeInTheDocument();
   });
-});          
+});              

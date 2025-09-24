@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn } from '@/app/lib/api';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { HoldingInvestmentReturn, ManualInvestmentReturn } from '@/app/net-worth/investment-returns';
 import { InvestmentReturnList } from '@/app/net-worth/investment-returns/components/list/InvestmentReturnList';
+import { useDeleteConfirmation } from '@/app/hooks';
 
 jest.mock('@/app/hooks', () => ({
   useDeleteConfirmation: jest.fn(() => ({
@@ -157,8 +157,7 @@ describe('InvestmentReturnList', () => {
 
   it('calls openDeleteModal when holding delete button is clicked', () => {
     const mockOpenDeleteModal = jest.fn();
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: mockOpenDeleteModal,
@@ -175,8 +174,7 @@ describe('InvestmentReturnList', () => {
 
   it('calls openDeleteModal when manual delete button is clicked', () => {
     const mockOpenDeleteModal = jest.fn();
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: mockOpenDeleteModal,

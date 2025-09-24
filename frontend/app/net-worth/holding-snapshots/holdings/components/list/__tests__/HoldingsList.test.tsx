@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HOLDING_ITEM_NAME, Holding } from '@/app/net-worth/holding-snapshots/holdings';
 import { HoldingsList } from '@/app/net-worth/holding-snapshots/holdings/components/list/HoldingsList';
+import { useDeleteConfirmation } from '@/app/hooks';
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
@@ -140,8 +141,7 @@ describe('HoldingsList', () => {
 
   it('calls openDeleteModal when delete button is clicked', () => {
     const mockOpenDeleteModal = jest.fn();
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: mockOpenDeleteModal,
@@ -156,4 +156,4 @@ describe('HoldingsList', () => {
     
     expect(mockOpenDeleteModal).toHaveBeenCalledWith(1);
   });
-});    
+});        

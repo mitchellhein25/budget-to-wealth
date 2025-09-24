@@ -1,8 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { archiveBudget } from '@/app/lib/api';
 import { CashFlowEntry } from '@/app/cashflow';
 import { Budget, BUDGET_ITEM_NAME } from '@/app/cashflow/budget';
 import { BudgetsList } from '@/app/cashflow/budget/components/list/BudgetsList';
+import { useDeleteConfirmation } from '@/app/hooks';
+import { DeleteConfirmationModal } from '@/app/components';
 
 jest.mock('@/app/hooks', () => ({
   useMobileDetection: () => ({ isMobile: false, isDesktop: true }),
@@ -217,8 +219,7 @@ describe('BudgetsList', () => {
 
   it('calls openDeleteModal when delete button is clicked', () => {
     const mockOpenDeleteModal = jest.fn();
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: mockOpenDeleteModal,
@@ -242,8 +243,7 @@ describe('BudgetsList', () => {
       responseMessage: 'Budget deleted successfully' 
     });
 
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: true,
       isLoading: false,
       openDeleteModal: jest.fn(),
@@ -259,8 +259,7 @@ describe('BudgetsList', () => {
   });
 
   it('renders DeleteConfirmationModal with correct props', () => {
-    const { useDeleteConfirmation } = require('@/app/hooks');
-    useDeleteConfirmation.mockReturnValue({
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
       isModalOpen: false,
       isLoading: false,
       openDeleteModal: jest.fn(),
@@ -270,10 +269,9 @@ describe('BudgetsList', () => {
 
     render(<BudgetsList {...mockProps} />);
     
-    const { DeleteConfirmationModal } = require('@/app/components');
     expect(DeleteConfirmationModal).toHaveBeenCalled();
     
-    const lastCall = DeleteConfirmationModal.mock.calls[DeleteConfirmationModal.mock.calls.length - 1];
+    const lastCall = (DeleteConfirmationModal as jest.Mock).mock.calls[(DeleteConfirmationModal as jest.Mock).mock.calls.length - 1];
     expect(lastCall[0]).toMatchObject({
       isOpen: false,
       isLoading: false,
@@ -342,4 +340,4 @@ describe('BudgetsList', () => {
     expect(screen.getAllByText('$1000.00')).toHaveLength(2); // Groceries amount and remaining
     expect(screen.getAllByText('$500.00')).toHaveLength(2); // Entertainment amount and remaining
   });
-});        
+});            
