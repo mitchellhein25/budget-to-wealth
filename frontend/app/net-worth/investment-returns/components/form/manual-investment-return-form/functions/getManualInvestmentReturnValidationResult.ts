@@ -6,7 +6,8 @@ export const getManualInvestmentReturnValidationResult = (formData: FormData) =>
     id: formData.get(`${investRetFormId}-id`) as string || undefined,
 
     manualInvestmentCategoryId: formData.get(`${investRetFormId}-manualInvestmentCategoryId`) as string || undefined,
-    manualInvestmentReturnDate: formData.get(`${investRetFormId}-manualInvestmentReturnDate`) ? new Date(formData.get(`${investRetFormId}-manualInvestmentReturnDate`) as string) : undefined,
+    startDate: formData.get(`${investRetFormId}-startDate`) ? new Date(formData.get(`${investRetFormId}-startDate`) as string) : undefined,
+    endDate: formData.get(`${investRetFormId}-endDate`) ? new Date(formData.get(`${investRetFormId}-endDate`) as string) : undefined,
     manualInvestmentPercentageReturn: formData.get(`${investRetFormId}-manualInvestmentPercentageReturn`) as string || undefined,
     manualInvestmentRecurrenceFrequency: formData.get(`${investRetFormId}-manualInvestmentRecurrenceFrequency`) as string || undefined,
     manualInvestmentRecurrenceEndDate: formData.get(`${investRetFormId}-manualInvestmentRecurrenceEndDate`) as string || undefined

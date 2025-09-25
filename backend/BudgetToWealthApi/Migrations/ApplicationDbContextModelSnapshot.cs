@@ -349,7 +349,10 @@ namespace BudgetToWealthApi.Migrations
                     b.Property<int?>("ManualInvestmentRecurrenceFrequency")
                         .HasColumnType("integer");
 
-                    b.Property<DateOnly>("ManualInvestmentReturnDate")
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
                     b.Property<DateTime>("UpdatedAt")

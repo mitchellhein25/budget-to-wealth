@@ -46,7 +46,8 @@ public class RecurringManualInvestmentReturnsServiceTestObjects
         {
             ManualInvestmentCategoryId = TestUser1ManualCategory.Id,
             ManualInvestmentCategory = TestUser1ManualCategory,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-01-01"),
+            StartDate = DateOnly.Parse("2022-12-01"),
+            EndDate = DateOnly.Parse("2023-01-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-01-31"),
             ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Weekly,
             ManualInvestmentPercentageReturn = 0.10m,
@@ -57,7 +58,8 @@ public class RecurringManualInvestmentReturnsServiceTestObjects
         {
             ManualInvestmentCategoryId = TestUser1ManualCategory.Id,
             ManualInvestmentCategory = TestUser1ManualCategory,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-01-15"),
+            StartDate = DateOnly.Parse("2022-12-15"),
+            EndDate = DateOnly.Parse("2023-01-15"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-02-14"),
             ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Monthly,
             ManualInvestmentPercentageReturn = 0.15m,
@@ -68,7 +70,8 @@ public class RecurringManualInvestmentReturnsServiceTestObjects
         {
             ManualInvestmentCategoryId = TestUser2ManualCategory.Id,
             ManualInvestmentCategory = TestUser2ManualCategory,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-01-01"),
+            StartDate = DateOnly.Parse("2022-12-01"),
+            EndDate = DateOnly.Parse("2023-01-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-01-14"),
             ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Every2Weeks,
             ManualInvestmentPercentageReturn = 0.08m,
@@ -79,7 +82,8 @@ public class RecurringManualInvestmentReturnsServiceTestObjects
         {
             ManualInvestmentCategoryId = DefaultManualCategory.Id,
             ManualInvestmentCategory = DefaultManualCategory,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-01-01"),
+            StartDate = DateOnly.Parse("2022-12-01"),
+            EndDate = DateOnly.Parse("2023-01-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-01-31"),
             ManualInvestmentRecurrenceFrequency = null,
             ManualInvestmentPercentageReturn = 0.12m,
@@ -90,7 +94,8 @@ public class RecurringManualInvestmentReturnsServiceTestObjects
         {
             ManualInvestmentCategoryId = TestUser2ManualCategory.Id,
             ManualInvestmentCategory = TestUser2ManualCategory,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-01-01"),
+            StartDate = DateOnly.Parse("2022-12-01"),
+            EndDate = DateOnly.Parse("2023-01-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-01-31"),
             ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Weekly,
             ManualInvestmentPercentageReturn = 0.10m,

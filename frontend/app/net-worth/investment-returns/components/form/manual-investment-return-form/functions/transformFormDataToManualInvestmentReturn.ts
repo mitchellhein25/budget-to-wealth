@@ -14,7 +14,8 @@ export const transformFormDataToManualInvestmentReturn = (formData: FormData): {
     const item: ManualInvestmentReturn = {} as ManualInvestmentReturn;
 
     item.manualInvestmentCategoryId = data.manualInvestmentCategoryId;
-    item.manualInvestmentReturnDate = convertDateToISOString(data.manualInvestmentReturnDate);
+    item.startDate = convertDateToISOString(data.startDate);
+    item.endDate = convertDateToISOString(data.endDate);
     item.manualInvestmentPercentageReturn = parseFloat(data.manualInvestmentPercentageReturn);
     if (data.manualInvestmentRecurrenceFrequency) {
       item.manualInvestmentRecurrenceFrequency = data.manualInvestmentRecurrenceFrequency as RecurrenceFrequency;

@@ -26,7 +26,7 @@ export function MobileManualInvestmentReturnCard({ investmentReturn, onEdit, onD
 			/>
 			<MobileListItemCardContent
 				description={
-					`${convertToDateMonthYear(convertToDate(investmentReturn.manualInvestmentReturnDate))}`
+					`${convertToDateMonthYear(convertToDate(investmentReturn.startDate))} - ${convertToDateMonthYear(convertToDate(investmentReturn.endDate))}`
 				}
 				onEdit={handleEdit}
 				onDelete={handleDelete}

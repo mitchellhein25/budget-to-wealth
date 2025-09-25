@@ -108,7 +108,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         ManualInvestmentReturn newInvestmentReturn = new()
         {
             ManualInvestmentCategoryId = Guid.NewGuid(),
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-08-01"),
+            StartDate = DateOnly.Parse("2023-07-01"),
+            EndDate = DateOnly.Parse("2023-08-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-08-31"),
             ManualInvestmentPercentageReturn = 0.10m
         };
@@ -125,7 +126,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         ManualInvestmentReturn newInvestmentReturn = new()
         {
             ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-08-01"),
+            StartDate = DateOnly.Parse("2023-07-01"),
+            EndDate = DateOnly.Parse("2023-08-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-08-31"),
             ManualInvestmentPercentageReturn = 0.10m
         };
@@ -143,7 +145,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         ManualInvestmentReturn updatedInvestmentReturn = new()
         {
             ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-08-01"),
+            StartDate = DateOnly.Parse("2023-07-01"),
+            EndDate = DateOnly.Parse("2023-08-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-08-31"),
             ManualInvestmentPercentageReturn = 0.10m
         };
@@ -158,7 +161,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         ManualInvestmentReturn updatedInvestmentReturn = new()
         {
             ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-09-01"),
+            StartDate = DateOnly.Parse("2023-08-01"),
+            EndDate = DateOnly.Parse("2023-09-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-09-30"),
             ManualInvestmentPercentageReturn = 0.15m,
             ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Monthly,
@@ -171,7 +175,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         var returnedInvestmentReturn = Assert.IsType<ManualInvestmentReturn>(okResult.Value);
 
         Assert.Equal(updatedInvestmentReturn.ManualInvestmentCategoryId, returnedInvestmentReturn.ManualInvestmentCategoryId);
-        Assert.Equal(updatedInvestmentReturn.ManualInvestmentReturnDate, returnedInvestmentReturn.ManualInvestmentReturnDate);
+        Assert.Equal(updatedInvestmentReturn.StartDate, returnedInvestmentReturn.StartDate);
+        Assert.Equal(updatedInvestmentReturn.EndDate, returnedInvestmentReturn.EndDate);
         Assert.Equal(updatedInvestmentReturn.ManualInvestmentRecurrenceEndDate, returnedInvestmentReturn.ManualInvestmentRecurrenceEndDate);
         Assert.Equal(updatedInvestmentReturn.ManualInvestmentPercentageReturn, returnedInvestmentReturn.ManualInvestmentPercentageReturn);
         Assert.Equal(updatedInvestmentReturn.ManualInvestmentRecurrenceFrequency, returnedInvestmentReturn.ManualInvestmentRecurrenceFrequency);
@@ -191,7 +196,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         ManualInvestmentReturn newInvestmentReturnToDelete = new()
         {
             ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-08-01"),
+            StartDate = DateOnly.Parse("2023-07-01"),
+            EndDate = DateOnly.Parse("2023-08-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-08-31"),
             ManualInvestmentPercentageReturn = 0.10m,
             UserId = _user1Id
@@ -240,7 +246,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         ManualInvestmentReturn updatedInvestmentReturn = new()
         {
             ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
-            ManualInvestmentReturnDate = DateOnly.Parse("2023-08-01"),
+            StartDate = DateOnly.Parse("2023-07-01"),
+            EndDate = DateOnly.Parse("2023-08-01"),
             ManualInvestmentRecurrenceEndDate = DateOnly.Parse("2023-08-31"),
             ManualInvestmentPercentageReturn = 0.10m
         };

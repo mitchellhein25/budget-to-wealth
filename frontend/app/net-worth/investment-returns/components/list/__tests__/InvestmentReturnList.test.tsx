@@ -80,7 +80,8 @@ const mockManualInvestmentReturns: ManualInvestmentReturn[] = [
   {
     id: 1,
     manualInvestmentCategoryId: 'cat1',
-    manualInvestmentReturnDate: '2024-01-01',
+    startDate: '2023-12-01',
+    endDate: '2024-01-01',
     manualInvestmentPercentageReturn: 4.5,
     userId: 'user1',
     name: 'Test Manual Return 1',
@@ -88,7 +89,8 @@ const mockManualInvestmentReturns: ManualInvestmentReturn[] = [
   {
     id: 2,
     manualInvestmentCategoryId: 'cat2',
-    manualInvestmentReturnDate: '2024-01-02',
+    startDate: '2023-12-02',
+    endDate: '2024-01-02',
     manualInvestmentPercentageReturn: 6.1,
     userId: 'user1',
     name: 'Test Manual Return 2',

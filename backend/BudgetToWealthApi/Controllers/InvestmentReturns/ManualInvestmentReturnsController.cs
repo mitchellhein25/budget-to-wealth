@@ -73,7 +73,8 @@ public class ManualInvestmentReturnsController : ControllerBase
         existingInvestmentReturn.ManualInvestmentRecurrenceFrequency = updatedInvestmentReturn.ManualInvestmentRecurrenceFrequency;
         existingInvestmentReturn.ManualInvestmentRecurrenceEndDate = updatedInvestmentReturn.ManualInvestmentRecurrenceEndDate;
         existingInvestmentReturn.ManualInvestmentPercentageReturn = updatedInvestmentReturn.ManualInvestmentPercentageReturn;
-        existingInvestmentReturn.ManualInvestmentReturnDate = updatedInvestmentReturn.ManualInvestmentReturnDate;
+        existingInvestmentReturn.StartDate = updatedInvestmentReturn.StartDate;
+        existingInvestmentReturn.EndDate = updatedInvestmentReturn.EndDate;
 
         existingInvestmentReturn.UpdatedAt = DateTime.UtcNow;
 
@@ -116,10 +117,10 @@ public class ManualInvestmentReturnsController : ControllerBase
     private static IQueryable<ManualInvestmentReturn> ApplyDateFilter(IQueryable<ManualInvestmentReturn> query, DateOnly? startDate, DateOnly? endDate)
     {
         if (startDate.HasValue)
-            query = query.Where(investmentReturn => investmentReturn.ManualInvestmentReturnDate >= startDate);
+            query = query.Where(investmentReturn => investmentReturn.EndDate >= startDate);
 
         if (endDate.HasValue)
-            query = query.Where(investmentReturn => investmentReturn.ManualInvestmentReturnDate <= endDate);
+            query = query.Where(investmentReturn => investmentReturn.EndDate <= endDate);
 
         return query;
     }

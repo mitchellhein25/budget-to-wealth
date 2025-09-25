@@ -44,7 +44,7 @@ jest.mock('@/app/net-worth/investment-returns', () => ({
     <tr data-testid={`desktop-row-${investmentReturn.id}`}>
       <td>{investmentReturn.name}</td>
       <td>{investmentReturn.manualInvestmentPercentageReturn.toFixed(2)}%</td>
-      <td>{investmentReturn.manualInvestmentReturnDate}</td>
+      <td>{investmentReturn.startDate} - {investmentReturn.endDate}</td>
       <td>
         <button onClick={() => onEdit(investmentReturn)} data-testid={`edit-${investmentReturn.id}`}>Edit</button>
         <button onClick={() => onDelete(investmentReturn.id!)} data-testid={`delete-${investmentReturn.id}`}>Delete</button>
@@ -55,7 +55,7 @@ jest.mock('@/app/net-worth/investment-returns', () => ({
     <div data-testid={`mobile-card-${investmentReturn.id}`}>
       <div>{investmentReturn.name}</div>
       <div>{investmentReturn.manualInvestmentPercentageReturn.toFixed(2)}%</div>
-      <div>{investmentReturn.manualInvestmentReturnDate}</div>
+      <div>{investmentReturn.startDate} - {investmentReturn.endDate}</div>
       <button onClick={() => onEdit(investmentReturn)} data-testid={`mobile-edit-${investmentReturn.id}`}>Edit</button>
       <button onClick={() => onDelete(investmentReturn.id!)} data-testid={`mobile-delete-${investmentReturn.id}`}>Delete</button>
     </div>
@@ -87,7 +87,8 @@ describe('ManualInvestmentReturnList', () => {
         name: 'Stocks',
         date: '2024-01-01'
       },
-      manualInvestmentReturnDate: '2024-01-15',
+      startDate: '2024-01-01',
+      endDate: '2024-01-15',
       manualInvestmentPercentageReturn: 5.75,
       manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
@@ -102,7 +103,8 @@ describe('ManualInvestmentReturnList', () => {
         name: 'Bonds',
         date: '2024-01-01'
       },
-      manualInvestmentReturnDate: '2024-01-16',
+      startDate: '2024-01-01',
+      endDate: '2024-01-16',
       manualInvestmentPercentageReturn: 3.25,
       manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY
     }

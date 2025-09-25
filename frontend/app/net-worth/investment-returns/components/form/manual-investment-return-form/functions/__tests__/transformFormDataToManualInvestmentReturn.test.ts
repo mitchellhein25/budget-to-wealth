@@ -35,7 +35,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       success: true,
       data: {
         manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75',
         manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
         manualInvestmentRecurrenceEndDate: '2024-12-31'
@@ -50,7 +51,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
     expect(result.errors).toEqual([]);
     expect(result.item).toEqual({
       manualInvestmentCategoryId: 'category-1',
-      manualInvestmentReturnDate: '2024-01-15',
+      startDate: '2024-01-01',
+      endDate: '2024-01-15',
       manualInvestmentPercentageReturn: 5.75,
       manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
       manualInvestmentRecurrenceEndDate: '2024-12-31'
@@ -63,7 +65,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       success: true,
       data: {
         manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75'
       }
     };
@@ -76,7 +79,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
     expect(result.errors).toEqual([]);
     expect(result.item).toEqual({
       manualInvestmentCategoryId: 'category-1',
-      manualInvestmentReturnDate: '2024-01-15',
+      startDate: '2024-01-01',
+      endDate: '2024-01-15',
       manualInvestmentPercentageReturn: 5.75
     });
   });
@@ -87,7 +91,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       success: true,
       data: {
         manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '-2.5'
       }
     };
@@ -105,7 +110,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       success: true,
       data: {
         manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '999.99'
       }
     };
@@ -123,7 +129,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       success: true,
       data: {
         manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '0.001'
       }
     };
@@ -148,7 +155,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
         success: true,
         data: {
           manualInvestmentCategoryId: 'category-1',
-          manualInvestmentReturnDate: new Date('2024-01-15'),
+          startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
           manualInvestmentPercentageReturn: '5.0',
           manualInvestmentRecurrenceFrequency: frequency
         }
@@ -174,7 +182,8 @@ describe('transformFormDataToManualInvestmentReturn', () => {
       },
       data: {
         manualInvestmentCategoryId: '',
-        manualInvestmentReturnDate: new Date(),
+        startDate: new Date(),
+        endDate: new Date(),
         manualInvestmentPercentageReturn: '',
         manualInvestmentRecurrenceFrequency: undefined
       }
