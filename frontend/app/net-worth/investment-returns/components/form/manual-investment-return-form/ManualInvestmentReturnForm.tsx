@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormState } from '@/app/hooks';
 import { getManualInvestmentCategories, ManualInvestmentCategory } from '@/app/lib/api';
 import { UpdateCreateButton, ResetButton, FormTemplate, formHasAnyValue } from '@/app/components';
 import { ManualInvestmentReturnFormData, ManualInvestmentInputs, ManualInvestmentReturn, MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID, MANUAL_INVESTMENT_RETURN_ITEM_NAME } from '@/app/net-worth/investment-returns';
+import { manualInvestmentFormOnSubmit } from './functions/manualInvestmentFormOnSubmit';
 
 export function ManualInvestmentReturnForm(
   {formState} : {formState: FormState<ManualInvestmentReturn, ManualInvestmentReturnFormData>}
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [manualCategories, setManualCategories] = useState<ManualInvestmentCategory[]>([]);
+  const [manualInvestmentReturnCreateUpdateError, setManualInvestmentReturnCreateUpdateError] = useState("");
+
   const fetchManualCategories = useCallback(async () => {
     setIsLoading(true);
     const resp = await getManualInvestmentCategories();
@@ -45,15 +48,22 @@ export function ManualInvestmentReturnForm(
       />
     </>
   )
+  const message = useMemo(() => {
+    if (formState.message.text) 
+      return formState.message;
+    if (manualInvestmentReturnCreateUpdateError) 
+      return { text: manualInvestmentReturnCreateUpdateError, type: 'ERROR' };
+    return { text: '', type: null };
+  }, [formState.message, manualInvestmentReturnCreateUpdateError]);
 
   return (
     <FormTemplate
       formId={`${MANUAL_INVESTMENT_RETURN_ITEM_NAME_FORM_ID}-form`}
-      handleSubmit={formState.handleSubmit}
+      handleSubmit={(formData) => manualInvestmentFormOnSubmit(formData, setManualInvestmentReturnCreateUpdateError, formState)}
       formHeader={formHeader}
       inputs={inputs}
       buttons={buttons}
-      message={formState.message}
+      message={message}
     />
   )
 }

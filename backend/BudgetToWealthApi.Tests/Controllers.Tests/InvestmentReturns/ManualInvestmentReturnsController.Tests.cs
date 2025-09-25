@@ -76,9 +76,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         OkObjectResult? result = await _controller.Get(startDate: DateOnly.Parse("2023-04-01"), endDate: null) as OkObjectResult;
         IEnumerable<ManualInvestmentReturn> investmentReturns = Assert.IsAssignableFrom<IEnumerable<ManualInvestmentReturn>>(result!.Value);
 
-        Assert.Contains(investmentReturns, ir => ir.ManualInvestmentCategoryId == _testObjects.DefaultManualCategory.Id);
         Assert.Contains(investmentReturns, ir => ir.ManualInvestmentCategoryId == _testObjects.TestUser1ManualCategory.Id);
-        Assert.Equal(2, investmentReturns.Count());
+        Assert.Single(investmentReturns);
     }
 
     [Fact]
@@ -88,7 +87,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         IEnumerable<ManualInvestmentReturn> investmentReturns = Assert.IsAssignableFrom<IEnumerable<ManualInvestmentReturn>>(result!.Value);
 
         Assert.Contains(investmentReturns, ir => ir.ManualInvestmentCategoryId == _testObjects.DefaultManualCategory.Id);
-        Assert.Single(investmentReturns);
+        Assert.Contains(investmentReturns, ir => ir.ManualInvestmentCategoryId == _testObjects.TestUser1ManualCategory.Id);
+        Assert.Equal(2, investmentReturns.Count());
     }
 
     [Fact]
@@ -97,9 +97,8 @@ public class ManualInvestmentReturnsControllerTests : IDisposable
         OkObjectResult? result = await _controller.Get(startDate: DateOnly.Parse("2023-04-01"), endDate: DateOnly.Parse("2023-05-30")) as OkObjectResult;
         IEnumerable<ManualInvestmentReturn> investmentReturns = Assert.IsAssignableFrom<IEnumerable<ManualInvestmentReturn>>(result!.Value);
 
-        Assert.Contains(investmentReturns, ir => ir.ManualInvestmentCategoryId == _testObjects.DefaultManualCategory.Id);
         Assert.Contains(investmentReturns, ir => ir.ManualInvestmentCategoryId == _testObjects.TestUser1ManualCategory.Id);
-        Assert.Equal(2, investmentReturns.Count());
+        Assert.Single(investmentReturns);
     }
 
     [Fact]
