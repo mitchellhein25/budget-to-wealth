@@ -1,4 +1,3 @@
-import { AlertTriangle } from 'lucide-react';
 import { SessionData } from '@auth0/nextjs-auth0/types';
 
 export function isTokenExpired(session: SessionData | null): boolean {
@@ -17,10 +16,22 @@ export function unauthorized(session: SessionData | null) {
     return (
       <div className="section-padding container-max flex items-center justify-center min-h-[60vh]">
         <div className="card bg-base-100 shadow-lg w-full max-w-md mx-auto">
-          <div className="card-body p-3 sm:p-6 text-center">
-            <AlertTriangle className="w-12 h-12 mx-auto text-error mb-3 sm:mb-4" />
-            <h2 className="text-xl font-semibold text-error mb-3">Access Restricted</h2>
-            <p className="text-base-content/70">Please log in to access this page.</p>
+          <div className="card-body p-6 sm:p-8 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-base-content mb-4">
+              Welcome to Budget to Wealth
+            </h1>
+            <p className="text-base-content/70 mb-6 text-base sm:text-lg">
+              Take control of your financial future. Sign in to track your cash flow, manage your net worth, and build lasting wealth.
+            </p>
+            <a 
+              href="/auth/login" 
+              className="btn btn-primary btn-lg w-full"
+            >
+              Sign In to Get Started
+            </a>
+            <p className="text-sm text-base-content/50 mt-4">
+              New to Budget to Wealth? Signing in will create your account automatically.
+            </p>
           </div>
         </div>
       </div>
