@@ -117,10 +117,10 @@ public class ManualInvestmentReturnsController : ControllerBase
     private static IQueryable<ManualInvestmentReturn> ApplyDateFilter(IQueryable<ManualInvestmentReturn> query, DateOnly? startDate, DateOnly? endDate)
     {
         if (startDate.HasValue)
-            query = query.Where(investmentReturn => investmentReturn.EndDate >= startDate);
+            query = query.Where(investmentReturn => investmentReturn.StartDate >= startDate);
 
         if (endDate.HasValue)
-            query = query.Where(investmentReturn => investmentReturn.EndDate <= endDate);
+            query = query.Where(investmentReturn => investmentReturn.StartDate <= endDate);
 
         return query;
     }

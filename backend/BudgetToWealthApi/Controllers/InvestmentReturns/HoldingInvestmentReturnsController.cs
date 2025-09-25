@@ -25,21 +25,13 @@ public class HoldingInvestmentReturnsController : ControllerBase
 
         IQueryable<HoldingInvestmentReturn> query = _context.HoldingInvestmentReturns
                                                      .Where(investmentReturn => investmentReturn.UserId == userId);
-
-        if (startDate.HasValue && endDate.HasValue)
-        {
-            query = query.Where(investmentReturn =>
-                investmentReturn.StartHoldingSnapshot != null &&
-                investmentReturn.StartHoldingSnapshot.Date >= startDate &&
-                investmentReturn.StartHoldingSnapshot.Date <= endDate);
-        }
-        else if (startDate.HasValue)
+        if (startDate.HasValue)
         {
             query = query.Where(investmentReturn =>
                 investmentReturn.StartHoldingSnapshot != null &&
                 investmentReturn.StartHoldingSnapshot.Date >= startDate);
         }
-        else if (endDate.HasValue)
+        if (endDate.HasValue)
         {
             query = query.Where(investmentReturn =>
                 investmentReturn.StartHoldingSnapshot != null &&

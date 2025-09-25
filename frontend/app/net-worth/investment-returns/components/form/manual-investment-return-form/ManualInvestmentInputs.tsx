@@ -82,7 +82,7 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
             value={
               editingFormData.endDate
                 ? convertDateToISOString(new Date(editingFormData.endDate))
-                : convertDateToISOString(new Date())
+                : convertDateToISOString(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
             }
             onChange={onChange}
             className="input w-full"
