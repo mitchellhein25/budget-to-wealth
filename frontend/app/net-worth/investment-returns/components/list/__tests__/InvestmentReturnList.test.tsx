@@ -1,19 +1,27 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { deleteHoldingInvestmentReturn, deleteManualInvestmentReturn } from '@/app/lib/api';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { HoldingInvestmentReturn, ManualInvestmentReturn } from '@/app/net-worth/investment-returns';
 import { InvestmentReturnList } from '@/app/net-worth/investment-returns/components/list/InvestmentReturnList';
+import { useDeleteConfirmation } from '@/app/hooks';
+
+jest.mock('@/app/hooks', () => ({
+  useDeleteConfirmation: jest.fn(() => ({
+    isModalOpen: false,
+    isLoading: false,
+    openDeleteModal: jest.fn(),
+    closeDeleteModal: jest.fn(),
+    confirmDelete: jest.fn(),
+  })),
+}));
+
+jest.mock('@/app/components', () => ({
+  DeleteConfirmationModal: jest.fn(() => null),
+}));
 
 jest.mock('@/app/lib/api', () => ({
   deleteHoldingInvestmentReturn: jest.fn(),
   deleteManualInvestmentReturn: jest.fn(),
 }));
-
-const mockConfirm = jest.fn();
-Object.defineProperty(window, 'confirm', {
-  value: mockConfirm,
-  writable: true,
-});
 
 jest.mock('@/app/net-worth/investment-returns', () => ({
   ...jest.requireActual('@/app/net-worth/investment-returns'),
@@ -101,7 +109,6 @@ const defaultProps = {
 describe('InvestmentReturnList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockConfirm.mockReturnValue(true);
   });
 
   it('renders both holding and manual investment return lists', () => {
@@ -143,107 +150,43 @@ describe('InvestmentReturnList', () => {
     expect(screen.getByTestId('manual-investment-returns-count')).toHaveTextContent('0');
   });
 
-  it('calls onHoldingInvestmentReturnDeleted when holding delete is successful', async () => {
-    const mockDeleteHoldingInvestmentReturn = deleteHoldingInvestmentReturn as jest.MockedFunction<typeof deleteHoldingInvestmentReturn>;
-    mockDeleteHoldingInvestmentReturn.mockResolvedValue({
-      data: null,
-      responseMessage: 'Success',
-      successful: true,
+
+
+
+
+
+  it('calls openDeleteModal when holding delete button is clicked', () => {
+    const mockOpenDeleteModal = jest.fn();
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: mockOpenDeleteModal,
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
     });
 
     render(<InvestmentReturnList {...defaultProps} />);
     
     fireEvent.click(screen.getByTestId('holding-delete-button'));
     
-    await waitFor(() => {
-      expect(mockDeleteHoldingInvestmentReturn).toHaveBeenCalledWith(1);
-      expect(defaultProps.onHoldingInvestmentReturnDeleted).toHaveBeenCalledTimes(1);
-    });
+    expect(mockOpenDeleteModal).toHaveBeenCalledWith(1);
   });
 
-  it('calls onManualInvestmentReturnDeleted when manual delete is successful', async () => {
-    const mockDeleteManualInvestmentReturn = deleteManualInvestmentReturn as jest.MockedFunction<typeof deleteManualInvestmentReturn>;
-    mockDeleteManualInvestmentReturn.mockResolvedValue({
-      data: null,
-      responseMessage: 'Success',
-      successful: true,
+  it('calls openDeleteModal when manual delete button is clicked', () => {
+    const mockOpenDeleteModal = jest.fn();
+    (useDeleteConfirmation as jest.Mock).mockReturnValue({
+      isModalOpen: false,
+      isLoading: false,
+      openDeleteModal: mockOpenDeleteModal,
+      closeDeleteModal: jest.fn(),
+      confirmDelete: jest.fn(),
     });
 
     render(<InvestmentReturnList {...defaultProps} />);
     
     fireEvent.click(screen.getByTestId('manual-delete-button'));
     
-    await waitFor(() => {
-      expect(mockDeleteManualInvestmentReturn).toHaveBeenCalledWith(2);
-      expect(defaultProps.onManualInvestmentReturnDeleted).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it('does not call onHoldingInvestmentReturnDeleted when holding delete fails', async () => {
-    const mockDeleteHoldingInvestmentReturn = deleteHoldingInvestmentReturn as jest.MockedFunction<typeof deleteHoldingInvestmentReturn>;
-    mockDeleteHoldingInvestmentReturn.mockResolvedValue({
-      data: null,
-      responseMessage: 'Error',
-      successful: false,
-    });
-
-    render(<InvestmentReturnList {...defaultProps} />);
-    
-    fireEvent.click(screen.getByTestId('holding-delete-button'));
-    
-    await waitFor(() => {
-      expect(mockDeleteHoldingInvestmentReturn).toHaveBeenCalledWith(1);
-      expect(defaultProps.onHoldingInvestmentReturnDeleted).not.toHaveBeenCalled();
-    });
-  });
-
-  it('does not call onManualInvestmentReturnDeleted when manual delete fails', async () => {
-    const mockDeleteManualInvestmentReturn = deleteManualInvestmentReturn as jest.MockedFunction<typeof deleteManualInvestmentReturn>;
-    mockDeleteManualInvestmentReturn.mockResolvedValue({
-      data: null,
-      responseMessage: 'Error',
-      successful: false,
-    });
-
-    render(<InvestmentReturnList {...defaultProps} />);
-    
-    fireEvent.click(screen.getByTestId('manual-delete-button'));
-    
-    await waitFor(() => {
-      expect(mockDeleteManualInvestmentReturn).toHaveBeenCalledWith(2);
-      expect(defaultProps.onManualInvestmentReturnDeleted).not.toHaveBeenCalled();
-    });
-  });
-
-
-  it('does not call delete when user cancels confirmation', async () => {
-    mockConfirm.mockReturnValue(false);
-    const mockDeleteHoldingInvestmentReturn = deleteHoldingInvestmentReturn as jest.MockedFunction<typeof deleteHoldingInvestmentReturn>;
-
-    render(<InvestmentReturnList {...defaultProps} />);
-    
-    fireEvent.click(screen.getByTestId('holding-delete-button'));
-    
-    await waitFor(() => {
-      expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-      expect(mockDeleteHoldingInvestmentReturn).not.toHaveBeenCalled();
-      expect(defaultProps.onHoldingInvestmentReturnDeleted).not.toHaveBeenCalled();
-    });
-  });
-
-  it('does not call manual delete when user cancels confirmation', async () => {
-    mockConfirm.mockReturnValue(false);
-    const mockDeleteManualInvestmentReturn = deleteManualInvestmentReturn as jest.MockedFunction<typeof deleteManualInvestmentReturn>;
-
-    render(<InvestmentReturnList {...defaultProps} />);
-    
-    fireEvent.click(screen.getByTestId('manual-delete-button'));
-    
-    await waitFor(() => {
-      expect(mockConfirm).toHaveBeenCalledWith('Are you sure you want to delete this?');
-      expect(mockDeleteManualInvestmentReturn).not.toHaveBeenCalled();
-      expect(defaultProps.onManualInvestmentReturnDeleted).not.toHaveBeenCalled();
-    });
+    expect(mockOpenDeleteModal).toHaveBeenCalledWith(2);
   });
 
   it('passes correct callback functions to child components', () => {

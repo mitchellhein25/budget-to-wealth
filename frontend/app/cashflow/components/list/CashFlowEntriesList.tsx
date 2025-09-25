@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { deleteCashFlowEntry } from '@/app/lib/api';
-import { ListTable } from '@/app/components';
+import { ListTable, DeleteConfirmationModal } from '@/app/components';
+import { useDeleteConfirmation } from '@/app/hooks';
 import { CashFlowEntry, CashFlowType, DesktopCashFlowEntryRow, MobileCashFlowEntryCard } from '@/app/cashflow';
 
 interface CashFlowEntriesListProps {
@@ -17,13 +18,16 @@ interface CashFlowEntriesListProps {
 
 export function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 	
-	async function handleDelete(id: number) {
-		if (window.confirm('Are you sure you want to delete this?')) {
-			const result = await deleteCashFlowEntry(id);
-			if (result.successful)
-				props.onEntryDeleted();
-		}
-	};
+	const {
+		isModalOpen,
+		isLoading: isDeleting,
+		openDeleteModal,
+		closeDeleteModal,
+		confirmDelete
+	} = useDeleteConfirmation({
+		deleteFunction: deleteCashFlowEntry,
+		onSuccess: props.onEntryDeleted
+	});
 
 	const columnWidths = {
 		date: "w-2/12",
@@ -51,7 +55,7 @@ export function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			entry={entry}
 			columnWidths={columnWidths}
 			onEdit={props.onEntryIsEditing}
-			onDelete={handleDelete}
+			onDelete={openDeleteModal}
 			recurringOnly={props.recurringOnly}
 			actionColumnWidth={columnWidths.actions}
 		/>
@@ -62,20 +66,30 @@ export function CashFlowEntriesList(props: CashFlowEntriesListProps) {
 			key={entry.id}
 			entry={entry}
 			onEdit={props.onEntryIsEditing}
-			onDelete={handleDelete}
+			onDelete={openDeleteModal}
 			recurringOnly={props.recurringOnly}
 		/>
 	);
 
 	return (
-		<ListTable
-			title={props.cashFlowType + " Entries"}
-			headerRow={tableHeaderRow}
-			bodyRow={desktopRow}
-			mobileRow={mobileRow}
-			items={props.entries}
-			isError={props.isError}
-			isLoading={props.isLoading}
-		/>	
+		<>
+			<ListTable
+				title={props.cashFlowType + " Entries"}
+				headerRow={tableHeaderRow}
+				bodyRow={desktopRow}
+				mobileRow={mobileRow}
+				items={props.entries}
+				isError={props.isError}
+				isLoading={props.isLoading}
+			/>
+			<DeleteConfirmationModal
+				isOpen={isModalOpen}
+				onClose={closeDeleteModal}
+				onConfirm={confirmDelete}
+				isLoading={isDeleting}
+				title="Delete Entry"
+				message="Are you sure you want to delete this entry? This action cannot be undone."
+			/>
+		</>
 	);
 }
