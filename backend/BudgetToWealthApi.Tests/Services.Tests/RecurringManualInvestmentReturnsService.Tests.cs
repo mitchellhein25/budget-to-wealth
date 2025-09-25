@@ -53,7 +53,8 @@ public class RecurringManualInvestmentReturnsServiceTests : IDisposable
 		{
 			ManualInvestmentCategoryId = category.Id,
             ManualInvestmentCategory = category,
-            ManualInvestmentReturnDate = returnDate,
+            StartDate = returnDate.AddMonths(-1),
+            EndDate = returnDate,
             ManualInvestmentRecurrenceFrequency= recurrenceFrequency,
             ManualInvestmentRecurrenceEndDate = recurrenceEndDate,
 			ManualInvestmentPercentageReturn = percentage,
@@ -64,7 +65,7 @@ public class RecurringManualInvestmentReturnsServiceTests : IDisposable
 	private async Task<ManualInvestmentReturn?> GetManualInvestmentFromToday(Guid categoryId) =>
 		await _context.ManualInvestmentReturns.FirstOrDefaultAsync(ir =>
 			ir.ManualInvestmentCategoryId == categoryId &&
-			ir.ManualInvestmentReturnDate == DateOnly.FromDateTime(DateTime.UtcNow));
+			ir.EndDate == DateOnly.FromDateTime(DateTime.UtcNow));
 
 	public void Dispose()
 	{
@@ -226,7 +227,8 @@ public class RecurringManualInvestmentReturnsServiceTests : IDisposable
 		{
 			ManualInvestmentCategoryId = _testObjects.TestUser1ManualCategory.Id,
 			ManualInvestmentCategory = _testObjects.TestUser1ManualCategory,
-			ManualInvestmentReturnDate = DateOnly.FromDateTime(DateTime.UtcNow),
+			StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(-1),
+			EndDate = DateOnly.FromDateTime(DateTime.UtcNow),
 			ManualInvestmentRecurrenceEndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(30),
 			ManualInvestmentPercentageReturn = _defaultPercentage,
 			ManualInvestmentRecurrenceFrequency = RecurrenceFrequency.Weekly,
@@ -270,7 +272,7 @@ public class RecurringManualInvestmentReturnsServiceTests : IDisposable
 
 		DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 		List<ManualInvestmentReturn> created = await _context.ManualInvestmentReturns
-			.Where(ir => ir.ManualInvestmentReturnDate == today)
+			.Where(ir => ir.EndDate == today)
 			.ToListAsync();
 
 		Assert.Equal(2, created.Count);

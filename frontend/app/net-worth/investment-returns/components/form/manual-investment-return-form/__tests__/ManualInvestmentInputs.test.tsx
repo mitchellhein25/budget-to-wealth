@@ -25,7 +25,8 @@ describe('ManualInvestmentInputs', () => {
   const defaultProps = {
     editingFormData: {
       manualInvestmentCategoryId: '',
-      manualInvestmentReturnDate: new Date('2024-01-01'),
+      startDate: new Date('2024-01-01'),
+      endDate: new Date('2024-01-15'),
       manualInvestmentPercentageReturn: '',
     },
     onChange: mockOnChange,
@@ -40,12 +41,14 @@ describe('ManualInvestmentInputs', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
     expect(screen.getByTestId('field-manual-investment-return-category')).toBeInTheDocument();
-    expect(screen.getByTestId('field-return-date')).toBeInTheDocument();
+    expect(screen.getByTestId('field-start-date')).toBeInTheDocument();
+    expect(screen.getByTestId('field-end-date')).toBeInTheDocument();
     expect(screen.getByTestId('field-percentage-return')).toBeInTheDocument();
     expect(screen.getByTestId('field-recurrence')).toBeInTheDocument();
 
     expect(screen.getByTestId('required-manual-investment-return-category')).toHaveTextContent('true');
-    expect(screen.getByTestId('required-return-date')).toHaveTextContent('true');
+    expect(screen.getByTestId('required-start-date')).toHaveTextContent('true');
+    expect(screen.getByTestId('required-end-date')).toHaveTextContent('true');
     expect(screen.getByTestId('required-percentage-return')).toHaveTextContent('true');
     expect(screen.getByTestId('required-recurrence')).toHaveTextContent('false');
   });
@@ -77,14 +80,24 @@ describe('ManualInvestmentInputs', () => {
     expect(options[3]).toHaveTextContent('Real Estate');
   });
 
-  it('renders return date input with correct attributes', () => {
+  it('renders start date input with correct attributes', () => {
     render(<ManualInvestmentInputs {...defaultProps} />);
 
-    const dateInput = screen.getByTestId('field-return-date').querySelector('input') as HTMLInputElement;
-    expect(dateInput).toHaveAttribute('id', `${formId}-manualInvestmentReturnDate`);
-    expect(dateInput).toHaveAttribute('name', `${formId}-manualInvestmentReturnDate`);
-    expect(dateInput).toHaveAttribute('type', 'date');
-    expect(dateInput).toHaveClass('input', 'w-full');
+    const startDateInput = screen.getByTestId('field-start-date').querySelector('input') as HTMLInputElement;
+    expect(startDateInput).toHaveAttribute('id', `${formId}-startDate`);
+    expect(startDateInput).toHaveAttribute('name', `${formId}-startDate`);
+    expect(startDateInput).toHaveAttribute('type', 'date');
+    expect(startDateInput).toHaveClass('input', 'w-full');
+  });
+
+  it('renders end date input with correct attributes', () => {
+    render(<ManualInvestmentInputs {...defaultProps} />);
+
+    const endDateInput = screen.getByTestId('field-end-date').querySelector('input') as HTMLInputElement;
+    expect(endDateInput).toHaveAttribute('id', `${formId}-endDate`);
+    expect(endDateInput).toHaveAttribute('name', `${formId}-endDate`);
+    expect(endDateInput).toHaveAttribute('type', 'date');
+    expect(endDateInput).toHaveClass('input', 'w-full');
   });
 
   it('renders percentage return input with correct attributes', () => {
@@ -129,8 +142,11 @@ describe('ManualInvestmentInputs', () => {
     const categorySelect = screen.getByTestId('field-manual-investment-return-category').querySelector('select') as HTMLSelectElement;
     expect(categorySelect).toHaveValue('1');
 
-    const dateInput = screen.getByTestId('field-return-date').querySelector('input') as HTMLInputElement;
-    expect(dateInput).toHaveValue('2024-01-01');
+    const startDateInput = screen.getByTestId('field-start-date').querySelector('input') as HTMLInputElement;
+    expect(startDateInput).toHaveValue('2024-01-01');
+
+    const endDateInput = screen.getByTestId('field-end-date').querySelector('input') as HTMLInputElement;
+    expect(endDateInput).toHaveValue('2024-01-15');
 
     const percentageInput = screen.getByTestId('field-percentage-return').querySelector('input') as HTMLInputElement;
     expect(percentageInput).toHaveValue(5.75);
@@ -209,7 +225,7 @@ describe('ManualInvestmentInputs', () => {
     expect(call.target).toBe(recurrenceSelect);
   });
 
-  it('uses current date as default when manualInvestmentReturnDate is not provided', () => {
+  it('uses current date as default when start and end dates are not provided', () => {
     const propsWithoutDate = {
       ...defaultProps,
       editingFormData: {
@@ -220,9 +236,11 @@ describe('ManualInvestmentInputs', () => {
 
     render(<ManualInvestmentInputs {...propsWithoutDate} />);
 
-    const dateInput = screen.getByTestId('field-return-date').querySelector('input') as HTMLInputElement;
+    const startDateInput = screen.getByTestId('field-start-date').querySelector('input') as HTMLInputElement;
+    const endDateInput = screen.getByTestId('field-end-date').querySelector('input') as HTMLInputElement;
     // Should have some date value (current date)
-    expect(dateInput.value).toBeTruthy();
+    expect(startDateInput.value).toBeTruthy();
+    expect(endDateInput.value).toBeTruthy();
   });
 
   it('handles empty manualCategories array gracefully', () => {
@@ -261,7 +279,8 @@ describe('ManualInvestmentInputs', () => {
     render(<ManualInvestmentInputs {...propsWithEmptyData} />);
 
     expect(screen.getByTestId('field-manual-investment-return-category')).toBeInTheDocument();
-    expect(screen.getByTestId('field-return-date')).toBeInTheDocument();
+    expect(screen.getByTestId('field-start-date')).toBeInTheDocument();
+    expect(screen.getByTestId('field-end-date')).toBeInTheDocument();
     expect(screen.getByTestId('field-percentage-return')).toBeInTheDocument();
     expect(screen.getByTestId('field-recurrence')).toBeInTheDocument();
   });

@@ -16,7 +16,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
     const formData = new FormData();
     formData.append(`${formID}-id`, '123e4567-e89b-12d3-a456-426614174000');
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-    formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
+    formData.append(`${formID}-startDate`, '2024-01-01');
+    formData.append(`${formID}-endDate`, '2024-01-15');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
     formData.append(`${formID}-manualInvestmentRecurrenceFrequency`, RecurrenceFrequency.MONTHLY);
     formData.append(`${formID}-manualInvestmentRecurrenceEndDate`, '2024-12-31');
@@ -28,7 +29,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
       expect(result.data).toEqual({
         id: '123e4567-e89b-12d3-a456-426614174000',
         manualInvestmentCategoryId: 'category-1',
-        manualInvestmentReturnDate: new Date('2024-01-15'),
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-01-15'),
         manualInvestmentPercentageReturn: '5.75',
         manualInvestmentRecurrenceFrequency: RecurrenceFrequency.MONTHLY,
         manualInvestmentRecurrenceEndDate: '2024-12-31'
@@ -39,7 +41,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
   it('validates form data without optional fields', () => {
     const formData = new FormData();
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-    formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
+    formData.append(`${formID}-startDate`, '2024-01-01');
+    formData.append(`${formID}-endDate`, '2024-01-15');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
     const result = getManualInvestmentReturnValidationResult(formData);
@@ -47,7 +50,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.manualInvestmentCategoryId).toBe('category-1');
-      expect(result.data.manualInvestmentReturnDate).toEqual(new Date('2024-01-15'));
+      expect(result.data.startDate).toEqual(new Date('2024-01-01'));
+      expect(result.data.endDate).toEqual(new Date('2024-01-15'));
       expect(result.data.manualInvestmentPercentageReturn).toBe('5.75');
     }
   });
@@ -62,7 +66,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
     frequencies.forEach(frequency => {
       const formData = new FormData();
       formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-      formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
+      formData.append(`${formID}-startDate`, '2024-01-01');
+      formData.append(`${formID}-endDate`, '2024-01-15');
       formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
       formData.append(`${formID}-manualInvestmentRecurrenceFrequency`, frequency);
 
@@ -86,14 +91,15 @@ describe('getManualInvestmentReturnValidationResult', () => {
     dateFormats.forEach(dateFormat => {
       const formData = new FormData();
       formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-      formData.append(`${formID}-manualInvestmentReturnDate`, dateFormat);
+      formData.append(`${formID}-startDate`, '2024-01-01');
+      formData.append(`${formID}-endDate`, dateFormat);
       formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
       const result = getManualInvestmentReturnValidationResult(formData);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.manualInvestmentReturnDate).toBeInstanceOf(Date);
+        expect(result.data.endDate).toBeInstanceOf(Date);
       }
     });
   });
@@ -110,7 +116,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
     percentageFormats.forEach(percentage => {
       const formData = new FormData();
       formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-      formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
+      formData.append(`${formID}-startDate`, '2024-01-01');
+      formData.append(`${formID}-endDate`, '2024-01-15');
       formData.append(`${formID}-manualInvestmentPercentageReturn`, percentage);
 
       const result = getManualInvestmentReturnValidationResult(formData);
@@ -125,34 +132,37 @@ describe('getManualInvestmentReturnValidationResult', () => {
   it('validates with future dates', () => {
     const formData = new FormData();
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-    formData.append(`${formID}-manualInvestmentReturnDate`, '2030-12-31');
+    formData.append(`${formID}-startDate`, '2030-12-01');
+    formData.append(`${formID}-endDate`, '2030-12-31');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
     const result = getManualInvestmentReturnValidationResult(formData);
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.manualInvestmentReturnDate).toEqual(new Date('2030-12-31'));
+      expect(result.data.endDate).toEqual(new Date('2030-12-31'));
     }
   });
 
   it('validates with past dates', () => {
     const formData = new FormData();
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-    formData.append(`${formID}-manualInvestmentReturnDate`, '1990-01-01');
+    formData.append(`${formID}-startDate`, '1989-12-01');
+    formData.append(`${formID}-endDate`, '1990-01-01');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
     const result = getManualInvestmentReturnValidationResult(formData);
 
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.manualInvestmentReturnDate).toEqual(new Date('1990-01-01'));
+      expect(result.data.endDate).toEqual(new Date('1990-01-01'));
     }
   });
 
   it('rejects missing required fields', () => {
     const formData = new FormData();
-    formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
+    formData.append(`${formID}-startDate`, '2024-01-01');
+    formData.append(`${formID}-endDate`, '2024-01-15');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
     const result = getManualInvestmentReturnValidationResult(formData);
@@ -163,7 +173,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
   it('rejects invalid date format', () => {
     const formData = new FormData();
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-    formData.append(`${formID}-manualInvestmentReturnDate`, 'invalid-date');
+    formData.append(`${formID}-startDate`, '2024-01-01');
+    formData.append(`${formID}-endDate`, 'invalid-date');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
     const result = getManualInvestmentReturnValidationResult(formData);
@@ -175,7 +186,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
     const formData = new FormData();
     formData.append(`${formID}-id`, 'invalid-uuid');
     formData.append(`${formID}-manualInvestmentCategoryId`, 'category-1');
-    formData.append(`${formID}-manualInvestmentReturnDate`, '2024-01-15');
+    formData.append(`${formID}-startDate`, '2024-01-01');
+    formData.append(`${formID}-endDate`, '2024-01-15');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '5.75');
 
     const result = getManualInvestmentReturnValidationResult(formData);
@@ -186,7 +198,8 @@ describe('getManualInvestmentReturnValidationResult', () => {
   it('rejects empty string values', () => {
     const formData = new FormData();
     formData.append(`${formID}-manualInvestmentCategoryId`, '');
-    formData.append(`${formID}-manualInvestmentReturnDate`, '');
+    formData.append(`${formID}-startDate`, '');
+    formData.append(`${formID}-endDate`, '');
     formData.append(`${formID}-manualInvestmentPercentageReturn`, '');
 
     const result = getManualInvestmentReturnValidationResult(formData);

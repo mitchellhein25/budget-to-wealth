@@ -3,7 +3,8 @@ import { ManualInvestmentReturnFormData, ManualInvestmentReturn } from "@/app/ne
 export const convertManualInvestmentReturnItemToFormData = (item: ManualInvestmentReturn) : ManualInvestmentReturnFormData => ({
   id: item.id?.toString(),
   manualInvestmentCategoryId: item.manualInvestmentCategoryId,
-  manualInvestmentReturnDate: new Date(item.manualInvestmentReturnDate),
+  startDate: new Date(item.startDate),
+  endDate: new Date(item.endDate),
   manualInvestmentPercentageReturn: item.manualInvestmentPercentageReturn.toString(),
   manualInvestmentRecurrenceFrequency: item.manualInvestmentRecurrenceFrequency,
   manualInvestmentRecurrenceEndDate: item.manualInvestmentRecurrenceEndDate,

@@ -32,7 +32,7 @@ export function DesktopManualInvestmentReturnRow(props: DesktopManualInvestmentR
 				{props.investmentReturn.manualInvestmentPercentageReturn}%
 			</DesktopListItemCell>
 			<DesktopListItemCell className={props.columnWidths.month}>
-				{convertToDateMonthYear(convertToDate(props.investmentReturn.manualInvestmentReturnDate))}
+				{convertToDateMonthYear(convertToDate(props.investmentReturn.startDate))}
 			</DesktopListItemCell>
 		</DesktopListItemRow>
   )

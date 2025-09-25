@@ -65,7 +65,7 @@ public class RecurringManualInvestmentReturnsService
             return new List<ManualInvestmentReturn>();
 
         List<ManualInvestmentReturn> existingInvestmentReturnsToday = await _context.ManualInvestmentReturns
-            .Where(ir => ir.ManualInvestmentReturnDate == _today)
+            .Where(ir => ir.EndDate == _today)
             .ToListAsync();
 
         List<ManualInvestmentReturn> filteredInvestmentReturns = allRecurringInvestmentReturns
@@ -81,7 +81,7 @@ public class RecurringManualInvestmentReturnsService
     private bool ShouldCreateInvestmentReturnForToday(ManualInvestmentReturn recurrence)
     {
         return _recurrenceService.ShouldCreateRecurrenceForToday(
-            recurrence.ManualInvestmentReturnDate, 
+            recurrence.EndDate, 
             recurrence.ManualInvestmentRecurrenceFrequency!.Value);
     }
 
@@ -91,7 +91,8 @@ public class RecurringManualInvestmentReturnsService
         {
             ManualInvestmentCategoryId = template.ManualInvestmentCategoryId,
             ManualInvestmentCategory = template.ManualInvestmentCategory,
-            ManualInvestmentReturnDate = _today,
+            StartDate = _today.AddMonths(-1),
+            EndDate = _today,
             ManualInvestmentPercentageReturn = template.ManualInvestmentPercentageReturn,
             UserId = template.UserId
         }).ToList();

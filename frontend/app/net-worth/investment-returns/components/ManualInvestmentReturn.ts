@@ -5,7 +5,8 @@ export type ManualInvestmentReturn = ListTableItem & {
   id?: number;
   manualInvestmentCategoryId: string;
   manualInvestmentCategory?: Category;
-  manualInvestmentReturnDate: string;
+  startDate: string;
+  endDate: string;
   manualInvestmentPercentageReturn: number;
   manualInvestmentRecurrenceFrequency?: RecurrenceFrequency;
   manualInvestmentRecurrenceEndDate?: string;

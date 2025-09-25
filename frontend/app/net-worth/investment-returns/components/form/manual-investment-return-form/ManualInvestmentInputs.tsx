@@ -54,17 +54,35 @@ export function ManualInvestmentInputs({ editingFormData, onChange, manualCatego
         }
       />
       <InputFieldSetTemplate
-        label="Return Date"
+        label="Start Date"
         isRequired={true}
         inputChild={
-          < input
-            id={`${formId}-manualInvestmentReturnDate`}
-            name={`${formId}-manualInvestmentReturnDate`}
+          <input
+            id={`${formId}-startDate`}
+            name={`${formId}-startDate`}
             type="date"
             value={
-              editingFormData.manualInvestmentReturnDate
-                ? convertDateToISOString(new Date(editingFormData.manualInvestmentReturnDate))
-                : convertDateToISOString(new Date())
+              editingFormData.startDate
+                ? convertDateToISOString(new Date(editingFormData.startDate))
+                : convertDateToISOString(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1))
+            }
+            onChange={onChange}
+            className="input w-full"
+          />
+        }
+      />
+      <InputFieldSetTemplate
+        label="End Date"
+        isRequired={true}
+        inputChild={
+          <input
+            id={`${formId}-endDate`}
+            name={`${formId}-endDate`}
+            type="date"
+            value={
+              editingFormData.endDate
+                ? convertDateToISOString(new Date(editingFormData.endDate))
+                : convertDateToISOString(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
             }
             onChange={onChange}
             className="input w-full"

@@ -57,7 +57,8 @@ describe('ManualInvestmentReturnForm', () => {
   const mockFormState: FormState<ManualInvestmentReturn, ManualInvestmentReturnFormData> = {
     editingFormData: {
       manualInvestmentCategoryId: '',
-      manualInvestmentReturnDate: new Date('2024-01-01'),
+      startDate: new Date('2024-01-01'),
+      endDate: new Date('2024-01-15'),
       manualInvestmentPercentageReturn: '',
     },
     onChange: jest.fn() as jest.MockedFunction<() => void>,
