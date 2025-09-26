@@ -32,7 +32,7 @@ export function DesktopHoldingInvestmentReturnRow(props: DesktopHoldingInvestmen
 			{props.investmentReturn.returnPercentage}%
 		</DesktopListItemCell>
 		<DesktopListItemCell className={props.columnWidths.month}>
-			{convertToDateMonthYear(convertToDate(props.investmentReturn.endHoldingSnapshot?.date))}
+			{convertToDateMonthYear(convertToDate(props.investmentReturn.startHoldingSnapshot?.date))}
 		</DesktopListItemCell>
 		</DesktopListItemRow>
   )
