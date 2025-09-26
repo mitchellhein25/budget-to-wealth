@@ -51,7 +51,7 @@ export function DesktopBudgetRow({ budget, expenses, onEdit, onDelete, columnWid
 				<div className="flex items-center space-x-2">
 					<span>{convertCentsToDollars(remainingBudget)}</span>
 					<span className={remainingBudget === 0 ? "text-yellow-500" : remainingBudget > 0 ? "text-green-500" : "text-red-500"}>
-						<OverUnderOnIcon value={remainingBudget} size={18} />
+						<OverUnderOnIcon value={remainingBudget} size={18} inverted={true} />
 					</span>
 				</div>
 			</DesktopListItemCell>

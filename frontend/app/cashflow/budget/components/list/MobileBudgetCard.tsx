@@ -32,7 +32,7 @@ export function MobileBudgetCard({ budget, expenses, onEdit, onDelete }: MobileB
 						<div className="text-sm font-medium text-base-content">
 							{budget.category?.name}
 						</div>
-						<OverUnderOnIcon value={remainingBudget} size={18} />
+						<OverUnderOnIcon value={remainingBudget} size={18} inverted={true} />
 					</>
 				}
 				rightContent={

@@ -45,7 +45,7 @@ export function BudgetSummary(props: BudgetSummaryProps) {
       </div>
       <TotalDisplay
           label={getOverUnderLabel()}
-          labelSuffix={<OverUnderOnIcon value={overUnder} size={20} />}
+          labelSuffix={<OverUnderOnIcon value={overUnder} size={20} inverted={true} />}
           amount={overUnder}
           isLoading={isLoading}
           amountPrefix={overUnder >= 0 ? '+' : ''}
