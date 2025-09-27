@@ -6,6 +6,7 @@ export default async function Home() {
     <>
       <div>
         <main>
+          <p>Home Page</p>
         </main>
       </div>
     </>
