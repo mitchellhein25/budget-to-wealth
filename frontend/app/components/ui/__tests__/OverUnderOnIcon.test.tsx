@@ -20,8 +20,28 @@ describe('OverUnderOnIcon', () => {
     expect(icon).toHaveAttribute('height', testSize.toString());
   });
 
-  it('renders ArrowDown icon with green color when value is positive', () => {
+  it('renders ArrowUp icon with green color when value is positive (default)', () => {
     render(<OverUnderOnIcon value={5} size={testSize} />);
+    
+    const icon = screen.getByTestId('arrow-up-icon');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass('text-green-500');
+    expect(icon).toHaveAttribute('width', testSize.toString());
+    expect(icon).toHaveAttribute('height', testSize.toString());
+  });
+
+  it('renders ArrowDown icon with red color when value is negative (default)', () => {
+    render(<OverUnderOnIcon value={-3} size={testSize} />);
+    
+    const icon = screen.getByTestId('arrow-down-icon');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass('text-red-500');
+    expect(icon).toHaveAttribute('width', testSize.toString());
+    expect(icon).toHaveAttribute('height', testSize.toString());
+  });
+
+  it('renders ArrowDown icon with green color when value is positive and inverted', () => {
+    render(<OverUnderOnIcon value={5} size={testSize} inverted={true} />);
     
     const icon = screen.getByTestId('arrow-down-icon');
     expect(icon).toBeInTheDocument();
@@ -30,8 +50,8 @@ describe('OverUnderOnIcon', () => {
     expect(icon).toHaveAttribute('height', testSize.toString());
   });
 
-  it('renders ArrowUp icon with red color when value is negative', () => {
-    render(<OverUnderOnIcon value={-3} size={testSize} />);
+  it('renders ArrowUp icon with red color when value is negative and inverted', () => {
+    render(<OverUnderOnIcon value={-3} size={testSize} inverted={true} />);
     
     const icon = screen.getByTestId('arrow-up-icon');
     expect(icon).toBeInTheDocument();
@@ -48,11 +68,19 @@ describe('OverUnderOnIcon', () => {
     expect(screen.getByTestId('equal-icon')).toHaveAttribute('height', customSize.toString());
     
     rerender(<OverUnderOnIcon value={1} size={customSize} />);
-    expect(screen.getByTestId('arrow-down-icon')).toHaveAttribute('width', customSize.toString());
-    expect(screen.getByTestId('arrow-down-icon')).toHaveAttribute('height', customSize.toString());
-    
-    rerender(<OverUnderOnIcon value={-1} size={customSize} />);
     expect(screen.getByTestId('arrow-up-icon')).toHaveAttribute('width', customSize.toString());
     expect(screen.getByTestId('arrow-up-icon')).toHaveAttribute('height', customSize.toString());
+    
+    rerender(<OverUnderOnIcon value={-1} size={customSize} />);
+    expect(screen.getByTestId('arrow-down-icon')).toHaveAttribute('width', customSize.toString());
+    expect(screen.getByTestId('arrow-down-icon')).toHaveAttribute('height', customSize.toString());
+  });
+
+  it('defaults inverted prop to false', () => {
+    render(<OverUnderOnIcon value={5} size={testSize} />);
+    
+    const icon = screen.getByTestId('arrow-up-icon');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass('text-green-500');
   });
 });
