@@ -31,12 +31,12 @@ export function CashFlowPage({cashFlowType, recurringOnly}: {cashFlowType: CashF
       fetchItems: fetchItems,
     }
   );
-
+  
+  const totalAmount = useMemo(() => items.reduce((sum, entry) => sum + entry.amount, 0), [items]);
+  
 	useEffect(() => {
 		fetchItems();
 	}, [fetchItems]);
-  
-  const totalAmount = useMemo(() => items.reduce((sum, entry) => sum + entry.amount, 0), [items]);
 
   return (
     <ResponsiveFormListPage
