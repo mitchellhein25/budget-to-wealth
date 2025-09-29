@@ -20,8 +20,10 @@ export function BudgetSummary(props: BudgetSummaryProps) {
   const overUnder = totalBudget - totalExpenses;
 
   const getOverUnderLabel = () => {
-    if (overUnder === 0) return `On ${BUDGET_ITEM_NAME}`;
-    if (overUnder > 0) return `Under ${BUDGET_ITEM_NAME}`;
+    if (overUnder === 0) 
+      return `On ${BUDGET_ITEM_NAME}`;
+    if (overUnder > 0) 
+      return `Under ${BUDGET_ITEM_NAME}`;
     return `Over ${BUDGET_ITEM_NAME}`;
   };
 
