@@ -30,9 +30,8 @@ export function BudgetInputs({ editingFormData, onChange, setIsLoading }: Budget
     fetchCategories();
   }, [fetchCategories]);
 
-  return (
-    <>
-      <input
+  const idInput = (
+    <input
         id={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
         name={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
         readOnly
@@ -40,6 +39,11 @@ export function BudgetInputs({ editingFormData, onChange, setIsLoading }: Budget
         value={editingFormData?.id ?? ''}
         hidden={true}
       />
+  )
+
+  return (
+    <>
+      {idInput}
       <InputFieldSetTemplate 
         label="Amount" 
         isRequired={true}
