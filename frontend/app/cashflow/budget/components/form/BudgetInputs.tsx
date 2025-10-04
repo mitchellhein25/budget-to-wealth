@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
-import { getExpenseCategoriesList  } from '@/app/lib/api';
+import { getExpenseCategoriesList } from '@/app/lib/api';
 import { InputFieldSetTemplate, CurrencyInputField } from '@/app/components';
 import { CashFlowCategory } from '@/app/cashflow';
 import { BUDGET_ITEM_NAME_LOWERCASE, BudgetFormData } from '@/app/cashflow/budget';
@@ -16,7 +16,7 @@ interface BudgetInputsProps {
 
 export function BudgetInputs({ editingFormData, onChange, setIsLoading }: BudgetInputsProps) {
   const [categories, setCategories] = useState<CashFlowCategory[]>([]);
-  
+
   const fetchCategories = useCallback(async () => {
     setIsLoading(true);
     const response = await getExpenseCategoriesList();
@@ -32,33 +32,37 @@ export function BudgetInputs({ editingFormData, onChange, setIsLoading }: Budget
 
   const idInput = (
     <input
-        id={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
-        name={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
-        readOnly
-        type="text"
-        value={editingFormData?.id ?? ''}
-        hidden={true}
-      />
+      id={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
+      name={`${BUDGET_ITEM_NAME_LOWERCASE}-id`}
+      readOnly
+      type="text"
+      value={editingFormData?.id ?? ''}
+      hidden={true}
+    />
   )
+
+  const amountInput = (
+    <InputFieldSetTemplate
+      label="Amount"
+      isRequired={true}
+      inputChild={
+        <CurrencyInputField
+          id={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
+          name={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
+          value={editingFormData?.amount ?? ""}
+          onChange={onChange}
+          placeholder="0.00"
+          className="input m-0 w-full"
+        />}
+    />
+  );
 
   return (
     <>
       {idInput}
-      <InputFieldSetTemplate 
-        label="Amount" 
-        isRequired={true}
-        inputChild={
-          <CurrencyInputField
-            id={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
-            name={`${BUDGET_ITEM_NAME_LOWERCASE}-amount`}
-            value={editingFormData?.amount ?? ""}
-            onChange={onChange}
-            placeholder="0.00"
-            className="input m-0 w-full"
-          />}
-      />
-      <InputFieldSetTemplate 
-        label="Category" 
+      {amountInput}
+      <InputFieldSetTemplate
+        label="Category"
         isRequired={true}
         inputChild={
           <div className="flex items-center gap-2">
