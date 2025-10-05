@@ -57,39 +57,43 @@ export function BudgetInputs({ editingFormData, onChange, setIsLoading }: Budget
     />
   );
 
+  const categoryInput = (
+    <InputFieldSetTemplate
+      label="Category"
+      isRequired={true}
+      inputChild={
+        <div className="flex items-center gap-2">
+          <select
+            id={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
+            name={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
+            value={editingFormData.categoryId || ""}
+            onChange={onChange}
+            className="select flex-1"
+          >
+            <option value="" disabled>Pick a category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          <Link
+            href="/cashflow/expenses/expense-categories?returnUrl=/cashflow/budget"
+            className="btn btn-ghost btn-sm btn-circle"
+            title="Edit Expense Categories"
+          >
+            <Edit size={16} />
+          </Link>
+        </div>
+      }
+    />
+  )
+
   return (
     <>
       {idInput}
       {amountInput}
-      <InputFieldSetTemplate
-        label="Category"
-        isRequired={true}
-        inputChild={
-          <div className="flex items-center gap-2">
-            <select
-              id={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
-              name={`${BUDGET_ITEM_NAME_LOWERCASE}-categoryId`}
-              value={editingFormData.categoryId || ""}
-              onChange={onChange}
-              className="select flex-1"
-            >
-              <option value="" disabled>Pick a category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            <Link
-              href="/cashflow/expenses/expense-categories?returnUrl=/cashflow/budget"
-              className="btn btn-ghost btn-sm btn-circle"
-              title="Edit Expense Categories"
-            >
-              <Edit size={16} />
-            </Link>
-          </div>
-        }
-      />
+      {categoryInput}
     </>
   )
 }
